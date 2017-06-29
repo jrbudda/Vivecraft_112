@@ -1,0 +1,14 @@
+--- a/shadersmod/client/ShadersTex.java
++++ b/shadersmod/client/ShadersTex.java
+@@ -871,8 +871,10 @@
+         int k = 0;
+         int[] aint = null;
+ 
+-        for (String s : list)
++        for (Object s0 : list)
+         {
++        	String s = (String) s0;
++
+             if (s != null)
+             {
+                 try

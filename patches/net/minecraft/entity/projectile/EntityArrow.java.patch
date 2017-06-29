@@ -1,0 +1,38 @@
+--- a/net/minecraft/entity/projectile/EntityArrow.java
++++ b/net/minecraft/entity/projectile/EntityArrow.java
+@@ -7,6 +7,7 @@
+ import net.minecraft.block.Block;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.state.IBlockState;
++import net.minecraft.client.Minecraft;
+ import net.minecraft.enchantment.EnchantmentHelper;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityLivingBase;
+@@ -92,6 +93,12 @@
+ 
+         if (shooter instanceof EntityPlayer)
+         {
++        	//VIVE SET SPAWNPOS
++            Vec3d aimSource = Minecraft.getMinecraft().roomScale.getControllerPos_World(1);
++            Vec3d controllerDirection = Minecraft.getMinecraft().bowTracker.getAimVector();
++            this.setPosition(aimSource.x + controllerDirection.x * 0.1f,aimSource.y + controllerDirection.y * 0.1f,aimSource.z + controllerDirection.z * 0.1f);
++            ///
++            
+             this.pickupStatus = EntityArrow.PickupStatus.ALLOWED;
+         }
+     }
+@@ -122,6 +129,14 @@
+         float f = -MathHelper.sin(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F);
+         float f1 = -MathHelper.sin(pitch * 0.017453292F);
+         float f2 = MathHelper.cos(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F);
++        
++        //VIVE SET VELOCITY
++        if(this.shootingEntity instanceof EntityPlayer && !Minecraft.getMinecraft().vrSettings.seated ){
++        	velocity = (float) (Minecraft.getMinecraft().bowTracker.getDrawPercent() * 3f);
++        	this.damage *= 2;
++        }
++        ///
++        
+         this.setThrowableHeading((double)f, (double)f1, (double)f2, velocity, inaccuracy);
+         this.motionX += shooter.motionX;
+         this.motionZ += shooter.motionZ;

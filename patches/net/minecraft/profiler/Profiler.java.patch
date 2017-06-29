@@ -1,0 +1,37 @@
+--- a/net/minecraft/profiler/Profiler.java
++++ b/net/minecraft/profiler/Profiler.java
+@@ -57,6 +57,7 @@
+      */
+     public void startSection(String name)
+     {
++    	ended = false;
+         if (Lagometer.isActive())
+         {
+             int i = name.hashCode();
+@@ -106,6 +107,8 @@
+         }
+     }
+ 
++    String last = "";
++    boolean ended  = false;
+     /**
+      * End section
+      */
+@@ -115,9 +118,16 @@
+         {
+             if (this.profilingEnabled)
+             {
++            	if(ended){
++            		int a = 9;
++            	}
++            	ended = true;
++            	if(sectionList.size() == 0){
++            		return;
++            	}
+                 long i = System.nanoTime();
+                 long j = ((Long)this.timestampList.remove(this.timestampList.size() - 1)).longValue();
+-                this.sectionList.remove(this.sectionList.size() - 1);
++                last = this.sectionList.remove(this.sectionList.size() - 1);
+                 long k = i - j;
+ 
+                 if (this.profilingMap.containsKey(this.profilingSection))

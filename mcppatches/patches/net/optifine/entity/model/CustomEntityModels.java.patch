@@ -1,0 +1,42 @@
+--- a/net/optifine/entity/model/CustomEntityModels.java
++++ b/net/optifine/entity/model/CustomEntityModels.java
+@@ -15,6 +15,7 @@
+ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+ import net.minecraft.src.Config;
++import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.util.ResourceLocation;
+ import net.optifine.entity.model.anim.ModelResolver;
+ import net.optifine.entity.model.anim.ModelUpdater;
+@@ -23,12 +24,12 @@
+ {
+     private static boolean active = false;
+     private static Map<Class, Render> originalEntityRenderMap = null;
+-    private static Map<Class, TileEntitySpecialRenderer> originalTileEntityRenderMap = null;
++    private static Map<Class<? extends TileEntity>, TileEntitySpecialRenderer<? extends TileEntity>> originalTileEntityRenderMap = null;
+ 
+     public static void update()
+     {
+         Map<Class, Render> map = getEntityRenderMap();
+-        Map<Class, TileEntitySpecialRenderer> map1 = getTileEntityRenderMap();
++        Map<Class<? extends TileEntity>, TileEntitySpecialRenderer<? extends TileEntity>>map1 = getTileEntityRenderMap();
+ 
+         if (map == null)
+         {
+@@ -103,13 +104,13 @@
+         }
+     }
+ 
+-    private static Map<Class, TileEntitySpecialRenderer> getTileEntityRenderMap()
++    private static Map<Class<? extends TileEntity>, TileEntitySpecialRenderer<? extends TileEntity>> getTileEntityRenderMap()
+     {
+-        Map<Class, TileEntitySpecialRenderer> map = TileEntityRendererDispatcher.instance.renderers;
++         Map<Class<? extends TileEntity>, TileEntitySpecialRenderer<? extends TileEntity>> map = TileEntityRendererDispatcher.instance.renderers;
+ 
+         if (originalTileEntityRenderMap == null)
+         {
+-            originalTileEntityRenderMap = new HashMap<Class, TileEntitySpecialRenderer>(map);
++            originalTileEntityRenderMap = new HashMap(map);
+         }
+ 
+         return map;

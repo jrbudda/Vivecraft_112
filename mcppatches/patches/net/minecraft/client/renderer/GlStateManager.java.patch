@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/renderer/GlStateManager.java
++++ b/net/minecraft/client/renderer/GlStateManager.java
+@@ -394,6 +394,7 @@
+ 
+     private static GlStateManager.TexGenCoord texGenCoord(GlStateManager.TexGen texGen)
+     {
++		return null;
+     }
+ 
+     public static void setActiveTexture(int texture)

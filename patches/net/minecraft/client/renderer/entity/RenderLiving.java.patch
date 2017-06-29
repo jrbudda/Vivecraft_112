@@ -1,0 +1,47 @@
+--- a/net/minecraft/client/renderer/entity/RenderLiving.java
++++ b/net/minecraft/client/renderer/entity/RenderLiving.java
+@@ -1,5 +1,8 @@
+ package net.minecraft.client.renderer.entity;
+ 
++import com.mtbs3d.minecrift.provider.MCOpenVR;
++
++import net.minecraft.client.Minecraft;
+ import net.minecraft.client.model.ModelBase;
+ import net.minecraft.client.renderer.BufferBuilder;
+ import net.minecraft.client.renderer.GlStateManager;
+@@ -11,6 +14,7 @@
+ import net.minecraft.entity.EntityHanging;
+ import net.minecraft.entity.EntityLiving;
+ import net.minecraft.src.Config;
++import net.minecraft.util.math.Vec3d;
+ import shadersmod.client.Shaders;
+ 
+ public abstract class RenderLiving<T extends EntityLiving> extends RenderLivingBase<T>
+@@ -77,6 +81,7 @@
+         {
+             Entity entity = entityLivingIn.getLeashedToEntity();
+ 
++            
+             if (entity != null)
+             {
+                 y = y - (1.6D - (double)entityLivingIn.height) * 0.5D;
+@@ -100,6 +105,19 @@
+                 double d7 = this.interpolateValue(entity.prevPosY + (double)entity.getEyeHeight() * 0.7D, entity.posY + (double)entity.getEyeHeight() * 0.7D, (double)partialTicks) - d4 * 0.5D - 0.25D;
+                 double d8 = this.interpolateValue(entity.prevPosZ, entity.posZ, (double)partialTicks) - d3 * 0.7D + d2 * 0.5D * d5;
+                 double d9 = this.interpolateValue((double)entityLivingIn.prevRenderYawOffset, (double)entityLivingIn.renderYawOffset, (double)partialTicks) * 0.01745329238474369D + (Math.PI / 2D);
++                
++                
++                // VIVE START 
++                if (entity == Minecraft.getMinecraft().player)
++                {
++                        Vec3d aimSource = Minecraft.getMinecraft().entityRenderer.getControllerRenderPos(0);
++                        d6 = aimSource.x;
++                        d7 = aimSource.y; 
++                        d8 = aimSource.z;             		         
++                }
++                // VIVE END 
++
++                
+                 d2 = Math.cos(d9) * (double)entityLivingIn.width * 0.4D;
+                 d3 = Math.sin(d9) * (double)entityLivingIn.width * 0.4D;
+                 double d10 = this.interpolateValue(entityLivingIn.prevPosX, entityLivingIn.posX, (double)partialTicks) + d2;

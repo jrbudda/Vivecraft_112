@@ -1,0 +1,68 @@
+--- a/net/minecraft/util/MovementInputFromOptions.java
++++ b/net/minecraft/util/MovementInputFromOptions.java
+@@ -1,5 +1,10 @@
+ package net.minecraft.util;
+ 
++import com.mtbs3d.minecrift.settings.VRSettings;
++import com.mtbs3d.minecrift.utils.jkatvr;
++
++import net.minecraft.client.Minecraft;
++import net.minecraft.client.main.Main;
+ import net.minecraft.client.settings.GameSettings;
+ 
+ public class MovementInputFromOptions extends MovementInput
+@@ -15,8 +20,15 @@
+     {
+         this.moveStrafe = 0.0F;
+         this.moveForward = 0.0F;
+-
+-        if (this.gameSettings.keyBindForward.isKeyDown())
++        Minecraft mc = Minecraft.getMinecraft();
++        
++        boolean flag = false;
++        if(mc.climbTracker.isClimbeyClimb() &&
++        		!mc.player.isInWater() &&
++        		(mc.climbTracker.isGrabbingLadder())) 
++        	flag = true;
++        
++        if (!flag && this.gameSettings.keyBindForward.isKeyDown()) 
+         {
+             ++this.moveForward;
+             this.forwardKeyDown = true;
+@@ -56,13 +68,34 @@
+             this.rightKeyDown = false;
+         }
+ 
+-        this.jump = this.gameSettings.keyBindJump.isKeyDown();
+-        this.sneak = this.gameSettings.keyBindSneak.isKeyDown();
++
++        boolean ok = mc.currentScreen==null && (mc.vrPlayer.getFreeMove() || mc.vrSettings.simulateFalling); 
++        
++        //VIVECRAFT DO ok.
++       	this.jump = this.gameSettings.keyBindJump.isKeyDown() && ok;
++
++        if(mc.jumpTracker.isClimbeyJump()) this.jump = false;
++   	
++        if(this.gameSettings.keyBindJump.isKeyDown() == false) this.jump = false; 
++        
++        this.sneak = (Minecraft.getMinecraft().sneakTracker.sneakOverride || this.gameSettings.keyBindSneak.isKeyDown()) && mc.currentScreen==null ;
+ 
+         if (this.sneak)
+         {
+             this.moveStrafe = (float)((double)this.moveStrafe * 0.3D);
+             this.moveForward = (float)((double)this.moveForward * 0.3D);
+         }
++        
++        //VIVECRAFT ADDITIONS *** 
++        VRSettings vr = Minecraft.getMinecraft().vrSettings;
++        this.moveForward = this.moveForward * vr.movementSpeedMultiplier;
++        this.moveStrafe  = this.moveStrafe * vr.movementSpeedMultiplier;
++        
++        if(Main.katvr){
++        	this.moveStrafe = 0;
++        	this.moveForward =  jkatvr.getSpeed() * jkatvr.walkDirection() * vr.movementSpeedMultiplier;
++        }
++        
++        
+     }
+ }

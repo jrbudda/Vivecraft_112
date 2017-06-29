@@ -1,0 +1,86 @@
+--- a/net/minecraft/network/NetHandlerPlayServer.java
++++ b/net/minecraft/network/NetHandlerPlayServer.java
+@@ -1,9 +1,13 @@
+ package net.minecraft.network;
+ 
++import com.google.common.base.Charsets;
+ import com.google.common.collect.Lists;
+ import com.google.common.primitives.Doubles;
+ import com.google.common.primitives.Floats;
+ import com.google.common.util.concurrent.Futures;
++import com.mtbs3d.minecrift.api.NetworkHelper;
++import com.mtbs3d.minecrift.api.NetworkHelper.PacketDiscriminators;
++
+ import io.netty.util.concurrent.Future;
+ import io.netty.util.concurrent.GenericFutureListener;
+ import java.io.IOException;
+@@ -15,6 +19,7 @@
+ import net.minecraft.block.BlockCommandBlock;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.state.IBlockState;
++import net.minecraft.client.Minecraft;
+ import net.minecraft.crash.CrashReport;
+ import net.minecraft.crash.CrashReportCategory;
+ import net.minecraft.crash.ICrashReportDetail;
+@@ -90,6 +95,7 @@
+ import net.minecraft.network.play.server.SPacketSetSlot;
+ import net.minecraft.network.play.server.SPacketTabComplete;
+ import net.minecraft.server.MinecraftServer;
++import net.minecraft.src.Reflector;
+ import net.minecraft.tileentity.CommandBlockBaseLogic;
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.tileentity.TileEntityCommandBlock;
+@@ -587,8 +593,8 @@
+ 
+                                 if (flag2 && (flag || !flag1))
+                                 {
+-                                    this.setPlayerLocation(d0, d1, d2, f, f1);
+-                                    return;
++                                  //  this.setPlayerLocation(d0, d1, d2, f, f1);
++                                 //   return;
+                                 }
+                             }
+ 
+@@ -694,8 +700,14 @@
+                 double d1 = this.player.posY - ((double)blockpos.getY() + 0.5D) + 1.5D;
+                 double d2 = this.player.posZ - ((double)blockpos.getZ() + 0.5D);
+                 double d3 = d0 * d0 + d1 * d1 + d2 * d2;
++                
++                double dist = 262144.0D;
++                if (Reflector.forgeExists()) {
++	                dist = Reflector.callDouble(this.player.interactionManager, Reflector.PlayerInteractionManager_getBlockReachDistance) + 1;
++	                dist *= dist;
++                }
+ 
+-                if (d3 > 36.0D)
++                if (d3 > dist)
+                 {
+                     return;
+                 }
+@@ -1918,5 +1930,26 @@
+                 LOGGER.error("Couldn't pick item", (Throwable)exception);
+             }
+         }
++        // VIVE START - client querying if server is running this mod too
++        else if ("Vivecraft".equals(packetIn.getChannelName()))
++        {
++        	
++        	PacketDiscriminators dis = PacketDiscriminators.values()[packetIn.getBufferData().getByte(0)];
++        	
++        	switch (dis){
++        	case VERSION:
++            	String ver = Minecraft.getMinecraft().minecriftVerString;
++            	sendPacket(NetworkHelper.getVivecraftServerPacket(PacketDiscriminators.VERSION,ver));
++            	sendPacket(NetworkHelper.getVivecraftServerPacket(PacketDiscriminators.REQUESTDATA, new byte[]{}));  
++            	sendPacket(NetworkHelper.getVivecraftServerPacket(PacketDiscriminators.CLIMBING, new byte[]{}));
++            	sendPacket(NetworkHelper.getVivecraftServerPacket(PacketDiscriminators.TELEPORT, new byte[]{}));  
++
++        		break;
++        		
++        	default:
++        		break;
++        	}
++        }
++        // VIVE END - vivecraft packets
+     }
+ }

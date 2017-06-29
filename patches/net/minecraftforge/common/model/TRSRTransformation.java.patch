@@ -1,0 +1,16 @@
+--- a/net/minecraftforge/common/model/TRSRTransformation.java
++++ b/net/minecraftforge/common/model/TRSRTransformation.java
+@@ -1,11 +1,11 @@
+ package net.minecraftforge.common.model;
+ 
+-import net.minecraft.client.renderer.Matrix4f;
++import net.minecraft.client.renderer.Matrix4fof;
+ import org.apache.commons.lang3.NotImplementedException;
+ 
+ public class TRSRTransformation
+ {
+-    public TRSRTransformation(Matrix4f matrix)
++    public TRSRTransformation(Matrix4fof matrix)
+     {
+         throw new NotImplementedException("Forge dummy class");
+     }

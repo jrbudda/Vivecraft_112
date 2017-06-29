@@ -1,0 +1,96 @@
+--- a/net/minecraft/entity/item/EntityBoat.java
++++ b/net/minecraft/entity/item/EntityBoat.java
+@@ -7,6 +7,8 @@
+ import net.minecraft.block.BlockPlanks;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.state.IBlockState;
++import net.minecraft.client.Minecraft;
++import net.minecraft.client.entity.EntityPlayerSP;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityLivingBase;
+ import net.minecraft.entity.MoverType;
+@@ -742,41 +744,49 @@
+ 
+     private void controlBoat()
+     {
+-        if (this.isBeingRidden())
+-        {
+-            float f = 0.0F;
+-
+-            if (this.leftInputDown)
+-            {
+-                this.deltaRotation += -1.0F;
+-            }
+-
+-            if (this.rightInputDown)
+-            {
+-                ++this.deltaRotation;
+-            }
+-
+-            if (this.rightInputDown != this.leftInputDown && !this.forwardInputDown && !this.backInputDown)
+-            {
+-                f += 0.005F;
+-            }
+-
+-            this.rotationYaw += this.deltaRotation;
+-
+-            if (this.forwardInputDown)
+-            {
+-                f += 0.04F;
+-            }
+-
+-            if (this.backInputDown)
+-            {
+-                f -= 0.005F;
+-            }
+-
+-            this.motionX += (double)(MathHelper.sin(-this.rotationYaw * 0.017453292F) * f);
+-            this.motionZ += (double)(MathHelper.cos(this.rotationYaw * 0.017453292F) * f);
+-            this.setPaddleState(this.rightInputDown && !this.leftInputDown || this.forwardInputDown, this.leftInputDown && !this.rightInputDown || this.forwardInputDown);
+-        }
++    	if (this.isBeingRidden())
++    	{
++    		float f = 0.0F;
++
++    		if (this.leftInputDown)
++    		{
++    			this.deltaRotation += -1.0F;
++    		}
++
++    		if (this.rightInputDown)
++    		{
++    			++this.deltaRotation;
++    		}
++
++    		if (this.rightInputDown != this.leftInputDown && !this.forwardInputDown && !this.backInputDown)
++    		{
++    			f += 0.005F;
++    		}
++
++    		this.rotationYaw += this.deltaRotation;
++
++    		if (this.forwardInputDown)
++    		{
++    			f += 0.04F;
++    		}
++
++    		if (this.backInputDown)
++    		{
++    			f -= 0.005F;
++    		}
++    		if(!Minecraft.getMinecraft().rowTracker.isActive((EntityPlayerSP) this.getPassengers().get(0))){
++    			//VIVE USE OFFHAND
++    			float yaw = Minecraft.getMinecraft().roomScale.getControllerYaw_World(1);            
++    			this.motionX += (double)(MathHelper.sin(-yaw* 0.017453292F) * f);
++    			this.motionZ += (double)(MathHelper.cos(yaw * 0.017453292F) * f);
++    			this.rotationYaw =yaw;
++    			///
++    		}else{
++    			this.motionX += (double)(MathHelper.sin(-this.rotationYaw * 0.017453292F) * f);
++    			this.motionZ += (double)(MathHelper.cos(this.rotationYaw * 0.017453292F) * f);            	
++    		}
++    		this.setPaddleState(this.rightInputDown && !this.leftInputDown || this.forwardInputDown, this.leftInputDown && !this.rightInputDown || this.forwardInputDown);
++    	}
+     }
+ 
+     public void updatePassenger(Entity passenger)

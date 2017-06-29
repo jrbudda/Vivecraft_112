@@ -1,0 +1,32 @@
+--- a/net/minecraft/client/renderer/texture/TextureMap.java
++++ b/net/minecraft/client/renderer/texture/TextureMap.java
+@@ -7,6 +7,7 @@
+ import java.io.Closeable;
+ import java.io.IOException;
+ import java.io.InputStream;
++import java.util.ArrayList;
+ import java.util.HashMap;
+ import java.util.Iterator;
+ import java.util.List;
+@@ -105,7 +106,9 @@
+         this.missingImage.setIconHeight(i);
+         int[][] aint1 = new int[this.mipmapLevels + 1][];
+         aint1[0] = aint;
+-        this.missingImage.setFramesTextureData(Lists.newArrayList(aint1));
++        ArrayList<int[][]> x = new ArrayList<int[][]>();
++        x.add(aint1);
++        this.missingImage.setFramesTextureData(x);
+         this.missingImage.setIndexInMap(this.counterIndexInMap++);
+     }
+ 
+@@ -775,8 +778,9 @@
+     {
+         Map map = new HashMap();
+ 
+-        for (Entry entry : p_detectMinimumSpriteSize_1_.entrySet())
++        for (Object e : p_detectMinimumSpriteSize_1_.entrySet())
+         {
++        	Entry entry = (Entry) e;
+             TextureAtlasSprite textureatlassprite = (TextureAtlasSprite)entry.getValue();
+             ResourceLocation resourcelocation = new ResourceLocation(textureatlassprite.getIconName());
+             ResourceLocation resourcelocation1 = this.completeResourceLocation(resourcelocation);

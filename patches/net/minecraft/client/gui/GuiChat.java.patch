@@ -1,0 +1,41 @@
+--- a/net/minecraft/client/gui/GuiChat.java
++++ b/net/minecraft/client/gui/GuiChat.java
+@@ -1,7 +1,9 @@
+ package net.minecraft.client.gui;
+ 
+ import java.io.IOException;
++
+ import javax.annotation.Nullable;
++
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.util.ITabCompleter;
+ import net.minecraft.util.TabCompleter;
+@@ -10,11 +12,14 @@
+ import net.minecraft.util.math.RayTraceResult;
+ import net.minecraft.util.text.ITextComponent;
+ import net.minecraft.util.text.TextComponentString;
++
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ import org.lwjgl.input.Keyboard;
+ import org.lwjgl.input.Mouse;
+ 
++import com.mtbs3d.minecrift.provider.MCOpenVR;
++
+ public class GuiChat extends GuiScreen implements ITabCompleter
+ {
+     private static final Logger LOGGER = LogManager.getLogger();
+@@ -131,7 +136,12 @@
+                 this.sendChatMessage(s);
+             }
+ 
+-            this.mc.displayGuiScreen((GuiScreen)null);
++            // VIVE - don't close chat if using SteamVR keyboard
++            if (MCOpenVR.keyboardShowing) {
++            	this.inputField.setText("");
++            } else {
++            	this.mc.displayGuiScreen((GuiScreen)null);
++            }
+         }
+     }
+ 

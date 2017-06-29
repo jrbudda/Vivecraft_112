@@ -1,0 +1,14 @@
+--- a/net/minecraft/client/renderer/block/model/FaceBakery.java
++++ b/net/minecraft/client/renderer/block/model/FaceBakery.java
+@@ -50,11 +50,6 @@
+         }
+     };
+ 
+-    public BakedQuad makeBakedQuad(Vector3f posFrom, Vector3f posTo, BlockPartFace face, TextureAtlasSprite sprite, EnumFacing facing, ModelRotation modelRotationIn, @Nullable BlockPartRotation partRotation, boolean uvLocked, boolean shade)
+-    {
+-        return this.makeBakedQuad(posFrom, posTo, face, sprite, facing, modelRotationIn, partRotation, uvLocked, shade);
+-    }
+-
+     public BakedQuad makeBakedQuad(Vector3f p_makeBakedQuad_1_, Vector3f p_makeBakedQuad_2_, BlockPartFace p_makeBakedQuad_3_, TextureAtlasSprite p_makeBakedQuad_4_, EnumFacing p_makeBakedQuad_5_, ITransformation p_makeBakedQuad_6_, BlockPartRotation p_makeBakedQuad_7_, boolean p_makeBakedQuad_8_, boolean p_makeBakedQuad_9_)
+     {
+         BlockFaceUV blockfaceuv = p_makeBakedQuad_3_.blockFaceUV;

@@ -1,0 +1,14 @@
+--- a/net/minecraft/src/HttpUtils.java
++++ b/net/minecraft/src/HttpUtils.java
+@@ -85,8 +85,10 @@
+ 
+             if (p_post_1_ != null)
+             {
+-                for (String s : p_post_1_.keySet())
++                for (Object s0 : p_post_1_.keySet())
+                 {
++                	String s = (String) s0;
++
+                     String s1 = "" + p_post_1_.get(s);
+                     httpurlconnection.setRequestProperty(s, s1);
+                 }

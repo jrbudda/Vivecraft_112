@@ -1,0 +1,46 @@
+{
+	"inheritsFrom": "1.12",
+	"id": "1.12-Vivecraft-$VERSION",
+	"time": "1979-06-01T00:00:00-05:00", 
+	"releaseTime": "1979-06-02T00:00:00-05:00",
+	"type": "release",
+	"minecraftArguments": "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} --assetsDir ${assets_root} --assetIndex ${assets_index_name} --uuid ${auth_uuid} --accessToken ${auth_access_token} --userType ${user_type} --versionType ${version_type} --tweakClass optifine.OptiFineTweaker --tweakClass com.mtbs3d.minecrift.tweaker.MinecriftVanillaTweaker",
+	"libraries": [
+	{
+		"name": "optifine:OptiFine:1.12_HD_U_C3"
+	},
+	{
+		"name": "org.ow2.asm:asm-all:5.0.3"
+	}, 
+	{
+		"url": "http://central.maven.org/maven2/", 
+		"name": "org.json:json:20140107"
+	}, 
+	{
+		"name": "net.minecraft:launchwrapper:1.12"
+	}, 
+	{
+		"url": "http://vivecraft.org/jar/", 
+		"name": "com.sun:jna:4.2.1"
+	}, 
+	{
+		"url": "http://vivecraft.org/jar/", 
+		"name": "de.fruitfly.ovr:JRift:0.8.0.0.1"
+	}, 
+	{
+		"url": "http://vivecraft.org/jar/", 
+		"name": "net.aib42.mumblelink:JMumble:1.11"
+	}, 
+	{
+		"name": "java3d:vecmath:1.3.1",
+		"downloads": {
+			"artifact": {
+				"url": "https://libraries.minecraft.net/java3d/vecmath/1.3.1/vecmath-1.3.1.jar",
+				"sha1": "a0ae4f51da409fa0c20fa0ca59e6bbc9413ae71d",
+				"size": 289881
+			}
+		}
+	}
+	], 
+	"mainClass": "net.minecraft.launchwrapper.Launch"
+}

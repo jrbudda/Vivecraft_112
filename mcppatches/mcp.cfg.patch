@@ -1,0 +1,26 @@
+diff -u a/mcp.cfg b/mcp.cfg
+--- a/mcp.cfg
++++ b/mcp.cfg
+@@ -171,14 +171,14 @@
+ CmdPatch      = %s -p1 -u -i {patchfile} -d {srcdir}
+ CmdJad        = %s -b -d {outdir} -dead -o -r -s .java -stat -ff {classes}
+ CmdAStyle     = %s --suffix=none --quiet --options={conffile} {classes}
+-CmdRG         = %s -cp "{classpath}" RetroGuard -searge {conffile}
+-CmdRGReobf    = %s -cp "{classpath}" RetroGuard -notch {conffile}
+-CmdSS         = %s -cp "{classpath}" -jar %s -i {injar} -o {outjar} -m {mapfile} --kill-source
+-CmdSSReobf    = %s -cp "{classpath}" -jar %s -i {injar} -o {outjar} -r -m {mapfile} -d {identifier} -e %s
+-CmdJadretro   = %s -jar %s {targetdir}
+-CmdFernflower = %s -jar %s -din=1 -rbr=1 -dgs=1 -asc=1 -rsy=1 -iec=1 -jvn=1 -log=WARN {extra} {indir} {outdir}
+-CmdExceptor   = %s -jar %s --jarIn {input} --jarOut {output} --mapIn {conf} --log {log} --generateParams --lvt=LVT
+-CmdExceptorDry = %s -jar %s --jarIn {input} --mapIn {conf} --log {log} --lvt=LVT
++CmdRG         = %s -Xms1G -Xmx2G -cp "{classpath}" RetroGuard -searge {conffile}
++CmdRGReobf    = %s -Xms1G -Xmx2G -cp "{classpath}" RetroGuard -notch {conffile}
++CmdSS         = %s -Xms1G -Xmx2G -cp "{classpath}" -jar %s -i {injar} -o {outjar} -m {mapfile} --kill-source
++CmdSSReobf    = %s -Xms1G -Xmx2G -cp "{classpath}" -jar %s -i {injar} -o {outjar} -r -m {mapfile} -d {identifier} -e %s
++CmdJadretro   = %s -Xms1G -Xmx2G -jar  %s {targetdir}
++CmdFernflower = %s -Xms1G -Xmx3G -jar %s -din=1 -rbr=1 -dgs=1 -asc=1 -rsy=1 -iec=1 -jvn=1 -log=TRACE {extra} {indir} {outdir}
++CmdExceptor   = %s -Xms1G -Xmx2G -jar %s --jarIn {input} --jarOut {output} --mapIn {conf} --log {log} --generateParams --lvt=LVT
++CmdExceptorDry = %s -Xms1G -Xmx2G -jar %s --jarIn {input} --mapIn {conf} --log {log} --lvt=LVT
+ CmdRecomp     = %s -Xlint:-options -deprecation -g -source 1.6 -target 1.6 -classpath "{classpath}" -sourcepath {sourcepath} -d {outpath} @{javasrc}
+ CmdRecompScala = %s -encoding UTF-8 -deprecation -target:jvm-1.6 -classpath "{classpath}" -sourcepath {sourcepath} -d {outpath} @{javasrc} @{scalasrc}
+ CmdStartSrv   = %s -Xincgc -Xms1024M -Xmx1024M -cp "{classpath}" net.minecraft.server.MinecraftServer

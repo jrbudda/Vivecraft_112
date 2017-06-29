@@ -1,0 +1,11 @@
+--- a/optifine/Installer.java
++++ b/optifine/Installer.java
+@@ -268,7 +268,7 @@
+ 
+         try
+         {
+-            Enumeration<ZipEntry> enumeration = zipfile.entries();
++            Enumeration<ZipEntry> enumeration = (Enumeration<ZipEntry>) zipfile.entries();
+ 
+             while (enumeration.hasMoreElements())
+             {

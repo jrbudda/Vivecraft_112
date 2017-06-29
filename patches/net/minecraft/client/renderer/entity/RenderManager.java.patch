@@ -1,0 +1,65 @@
+--- a/net/minecraft/client/renderer/entity/RenderManager.java
++++ b/net/minecraft/client/renderer/entity/RenderManager.java
+@@ -1,6 +1,8 @@
+ package net.minecraft.client.renderer.entity;
+ 
+ import com.google.common.collect.Maps;
++import com.mtbs3d.minecrift.render.PlayerModelController;
++
+ import java.util.Collections;
+ import java.util.Map;
+ import javax.annotation.Nullable;
+@@ -122,7 +124,8 @@
+     public final Map<Class, Render> entityRenderMap = Maps. < Class ,Render> newHashMap();
+     private final Map<String, RenderPlayer> skinMap = Maps.<String, RenderPlayer>newHashMap();
+     private final RenderPlayer playerRenderer;
+-
++    RenderPlayerVR n;
++    
+     /** Renders fonts */
+     private FontRenderer textRenderer;
+     private double renderPosX;
+@@ -271,16 +274,22 @@
+     @Nullable
+     public <T extends Entity> Render<T> getEntityRenderObject(Entity entityIn)
+     {
+-        if (entityIn instanceof AbstractClientPlayer)
+-        {
+-            String s = ((AbstractClientPlayer)entityIn).getSkinType();
+-            RenderPlayer renderplayer = this.skinMap.get(s);
+-            return (Render<T>)(renderplayer != null ? renderplayer : this.playerRenderer);
+-        }
+-        else
+-        {
+-            return this.<T>getEntityClassRenderObject(entityIn.getClass());
+-        }
++    	if (entityIn instanceof AbstractClientPlayer)
++    	{
++    		String s = ((AbstractClientPlayer)entityIn).getSkinType();
++    		RenderPlayer renderplayer = (RenderPlayer)this.skinMap.get(s);
++
++    		if(PlayerModelController.getInstance().isTracked(((AbstractClientPlayer) entityIn).getGameProfile().getId()))
++    		{
++    			if(n==null) n = new RenderPlayerVR(this);
++    			return (Render<T>) n;            	
++    		}  else 
++    			return (Render<T>) (renderplayer != null ? renderplayer : this.playerRenderer);
++    	}      
++    	else
++    	{
++    		return this.<T>getEntityClassRenderObject(entityIn.getClass());
++    	}
+     }
+ 
+     public void cacheActiveRenderInfo(World worldIn, FontRenderer textRendererIn, Entity livingPlayerIn, Entity pointedEntityIn, GameSettings optionsIn, float partialTicks)
+@@ -573,8 +582,10 @@
+         return this.entityRenderMap;
+     }
+ 
++    //Forge
+     public Map<String, RenderPlayer> getSkinMap()
+     {
+         return Collections.<String, RenderPlayer>unmodifiableMap(this.skinMap);
+     }
++    ///
+ }

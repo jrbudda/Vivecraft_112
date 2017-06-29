@@ -1,0 +1,42 @@
+--- a/net/minecraft/client/renderer/vertex/DefaultVertexFormats.java
++++ b/net/minecraft/client/renderer/vertex/DefaultVertexFormats.java
+@@ -26,6 +26,8 @@
+     public static final VertexFormatElement TEX_2S = new VertexFormatElement(1, VertexFormatElement.EnumType.SHORT, VertexFormatElement.EnumUsage.UV, 2);
+     public static final VertexFormatElement NORMAL_3B = new VertexFormatElement(0, VertexFormatElement.EnumType.BYTE, VertexFormatElement.EnumUsage.NORMAL, 3);
+     public static final VertexFormatElement PADDING_1B = new VertexFormatElement(0, VertexFormatElement.EnumType.BYTE, VertexFormatElement.EnumUsage.PADDING, 1);
++    
++    public static VertexFormat ORIG_DEFAULT_BAKED_FORMAT;
+ 
+     public static void updateVertexFormats()
+     {
+@@ -40,9 +42,29 @@
+             ITEM = ITEM_VANILLA;
+         }
+ 
++        
+         if (Reflector.Attributes_DEFAULT_BAKED_FORMAT.exists())
+         {
+-            VertexFormat vertexformat = ITEM;
++        	// OptiFine is trash
++            /*VertexFormat vertexformat = ITEM;
++            VertexFormat vertexformat1 = (VertexFormat)Reflector.getFieldValue(Reflector.Attributes_DEFAULT_BAKED_FORMAT);
++            vertexformat1.clear();
++
++            for (int i = 0; i < vertexformat.getElementCount(); ++i)
++            {
++                vertexformat1.addElement(vertexformat.getElement(i));
++            }*/
++        	
++        	if (ORIG_DEFAULT_BAKED_FORMAT == null) {
++        		ORIG_DEFAULT_BAKED_FORMAT = new VertexFormat();
++        		VertexFormat format = (VertexFormat)Reflector.getFieldValue(Reflector.Attributes_DEFAULT_BAKED_FORMAT);
++        		for (int i = 0; i < format.getElementCount(); ++i)
++                {
++        			ORIG_DEFAULT_BAKED_FORMAT.addElement(format.getElement(i));
++                }
++        	}
++        	
++        	VertexFormat vertexformat = Config.isShaders() ? ITEM : ORIG_DEFAULT_BAKED_FORMAT;
+             VertexFormat vertexformat1 = (VertexFormat)Reflector.getFieldValue(Reflector.Attributes_DEFAULT_BAKED_FORMAT);
+             vertexformat1.clear();
+ 

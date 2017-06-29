@@ -1,0 +1,23 @@
+--- a/shadersmod/client/SVertexBuilder.java
++++ b/shadersmod/client/SVertexBuilder.java
+@@ -281,17 +281,17 @@
+             {
+                 ByteBuffer bytebuffer = wrr.getByteBuffer();
+                 bytebuffer.position(32);
+-                GL20.glVertexAttribPointer(Shaders.midTexCoordAttrib, 2, GL11.GL_FLOAT, false, i, bytebuffer);
++                GL20.glVertexAttribPointer(Shaders.midTexAttrib, 2, GL11.GL_FLOAT, false, i, bytebuffer);
+                 bytebuffer.position(40);
+                 GL20.glVertexAttribPointer(Shaders.tangentAttrib, 4, GL11.GL_SHORT, false, i, bytebuffer);
+                 bytebuffer.position(48);
+                 GL20.glVertexAttribPointer(Shaders.entityAttrib, 3, GL11.GL_SHORT, false, i, bytebuffer);
+                 bytebuffer.position(0);
+-                GL20.glEnableVertexAttribArray(Shaders.midTexCoordAttrib);
++                GL20.glEnableVertexAttribArray(Shaders.midTexAttrib);
+                 GL20.glEnableVertexAttribArray(Shaders.tangentAttrib);
+                 GL20.glEnableVertexAttribArray(Shaders.entityAttrib);
+                 GL11.glDrawArrays(drawMode, first, count);
+-                GL20.glDisableVertexAttribArray(Shaders.midTexCoordAttrib);
++                GL20.glDisableVertexAttribArray(Shaders.midTexAttrib);
+                 GL20.glDisableVertexAttribArray(Shaders.tangentAttrib);
+                 GL20.glDisableVertexAttribArray(Shaders.entityAttrib);
+             }

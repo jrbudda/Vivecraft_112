@@ -1,0 +1,17 @@
+--- a/net/minecraft/client/gui/advancements/GuiScreenAdvancements.java
++++ b/net/minecraft/client/gui/advancements/GuiScreenAdvancements.java
+@@ -169,8 +169,13 @@
+         GlStateManager.enableBlend();
+         RenderHelper.disableStandardItemLighting();
+         this.mc.getTextureManager().bindTexture(WINDOW);
++        
++        //VIVECRAFT
++        GlStateManager.colorMask(true, true, true, false);
+         this.drawTexturedModalRect(p_191934_1_, p_191934_2_, 0, 0, 252, 140);
+-
++        GlStateManager.colorMask(true, true, true, true);
++        ///
++        
+         if (this.tabs.size() > 1)
+         {
+             this.mc.getTextureManager().bindTexture(TABS);

@@ -1,0 +1,11 @@
+--- a/net/minecraft/src/SmartLeaves.java
++++ b/net/minecraft/src/SmartLeaves.java
+@@ -132,7 +132,7 @@
+ 
+                     if (ibakedmodel != null && ibakedmodel != modelmanager.getMissingModel())
+                     {
+-                        List list = ibakedmodel.getQuads((IBlockState)null, (EnumFacing)null, 0L);
++                        List<BakedQuad> list = ibakedmodel.getQuads((IBlockState)null, (EnumFacing)null, 0L);
+ 
+                         if (list.size() == 0)
+                         {

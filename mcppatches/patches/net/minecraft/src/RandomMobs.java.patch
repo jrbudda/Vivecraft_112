@@ -1,0 +1,28 @@
+--- a/net/minecraft/src/RandomMobs.java
++++ b/net/minecraft/src/RandomMobs.java
+@@ -80,7 +80,7 @@
+         }
+         else
+         {
+-            ResourceLocation entity;
++            ResourceLocation out;
+ 
+             try
+             {
+@@ -122,14 +122,14 @@
+                     return resourcelocation1;
+                 }
+ 
+-                entity = p_getTextureLocation_0_;
++                out = p_getTextureLocation_0_;
+             }
+             finally
+             {
+                 working = false;
+             }
+ 
+-            return entity;
++            return out;
+         }
+     }
+ 

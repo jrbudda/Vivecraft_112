@@ -1,0 +1,687 @@
+patching file net/minecraft/client/ClientBrandRetriever.java
+patching file net/minecraft/client/LoadingScreenRenderer.java
+Hunk #1 succeeded at 8 with fuzz 1.
+Hunk #2 FAILED at 119.
+1 out of 2 hunks FAILED -- saving rejects to file net/minecraft/client/LoadingScreen#
+patching file net/minecraft/client/Minecraft.java
+Hunk #2 FAILED at 14.
+Hunk #3 FAILED at 106.
+Hunk #4 succeeded at 131 with fuzz 2 (offset 11 lines).
+Hunk #5 FAILED at 176.
+Hunk #6 succeeded at 191 (offset 7 lines).
+Hunk #7 FAILED at 213.
+Hunk #8 succeeded at 236 (offset 10 lines).
+Hunk #9 FAILED at 244.
+Hunk #10 succeeded at 258 (offset 8 lines).
+Hunk #11 succeeded at 416 with fuzz 2 (offset 10 lines).
+Hunk #12 succeeded at 431 (offset 6 lines).
+Hunk #13 succeeded at 528 (offset 10 lines).
+Hunk #14 succeeded at 536 (offset 6 lines).
+Hunk #15 succeeded at 584 (offset 12 lines).
+Hunk #16 FAILED at 620.
+Hunk #17 FAILED at 640.
+Hunk #18 FAILED at 732.
+Hunk #19 succeeded at 744 (offset 10 lines).
+Hunk #20 succeeded at 755 (offset 12 lines).
+Hunk #21 succeeded at 791 with fuzz 2 (offset 10 lines).
+Hunk #22 FAILED at 812.
+Hunk #23 FAILED at 826.
+Hunk #24 succeeded at 833 (offset -2 lines).
+Hunk #25 succeeded at 875 with fuzz 1 (offset 11 lines).
+Hunk #26 succeeded at 942 (offset -2 lines).
+Hunk #27 succeeded at 964 with fuzz 1 (offset 11 lines).
+Hunk #28 succeeded at 1158 (offset 35 lines).
+Hunk #29 succeeded at 1275 (offset 11 lines).
+Hunk #30 succeeded at 1383 (offset 35 lines).
+Hunk #31 FAILED at 1398.
+Hunk #32 succeeded at 1434 (offset 11 lines).
+Hunk #33 succeeded at 1496 (offset 35 lines).
+Hunk #34 FAILED at 1512.
+Hunk #35 FAILED at 1589.
+Hunk #36 succeeded at 1937 (offset 17 lines).
+Hunk #37 succeeded at 2092 (offset 35 lines).
+Hunk #38 FAILED at 2128.
+Hunk #39 FAILED at 2192.
+Hunk #40 succeeded at 2241 (offset 17 lines).
+Hunk #41 succeeded at 2267 (offset 35 lines).
+Hunk #42 succeeded at 2340 (offset 17 lines).
+Hunk #43 succeeded at 2381 (offset 35 lines).
+Hunk #44 succeeded at 2477 (offset 18 lines).
+Hunk #45 succeeded at 2518 (offset 35 lines).
+Hunk #46 succeeded at 2538 (offset 18 lines).
+Hunk #47 succeeded at 2612 (offset 36 lines).
+Hunk #48 succeeded at 2634 (offset 18 lines).
+Hunk #49 succeeded at 2669 (offset 36 lines).
+Hunk #50 succeeded at 2660 (offset 18 lines).
+Hunk #51 succeeded at 2686 (offset 36 lines).
+Hunk #52 succeeded at 2718 (offset 18 lines).
+Hunk #53 succeeded at 2845 (offset 36 lines).
+Hunk #54 succeeded at 2926 with fuzz 2 (offset 29 lines).
+Hunk #55 succeeded at 2993 (offset 36 lines).
+Hunk #56 succeeded at 3014 (offset 29 lines).
+Hunk #57 succeeded at 3052 (offset 36 lines).
+Hunk #58 succeeded at 3106 (offset 29 lines).
+Hunk #59 FAILED at 3157.
+Hunk #60 FAILED at 3187.
+Hunk #61 succeeded at 3217 (offset 36 lines).
+Hunk #62 succeeded at 3221 (offset 29 lines).
+Hunk #63 FAILED at 3237.
+Hunk #64 succeeded at 3284 (offset 36 lines).
+Hunk #65 succeeded at 3388 with fuzz 1 (offset 29 lines).
+Hunk #66 succeeded at 3412 (offset 36 lines).
+Hunk #67 succeeded at 3578 (offset 29 lines).
+Hunk #68 succeeded at 3916 (offset 55 lines).
+Hunk #69 succeeded at 4083 (offset 51 lines).
+Hunk #70 succeeded at 4269 with fuzz 2 (offset 84 lines).
+18 out of 70 hunks FAILED -- saving rejects to file net/minecraft/client/Minecraft.jav#
+patching file net/minecraft/client/audio/SoundHandler.java
+Hunk #1 succeeded at 51 (offset 1 line).
+patching file net/minecraft/client/entity/AbstractClientPlayer.java
+patching file net/minecraft/client/entity/EntityPlayerSP.java
+Hunk #4 succeeded at 65 (offset 1 line).
+Hunk #5 FAILED at 74.
+Hunk #6 succeeded at 89 (offset 2 lines).
+Hunk #7 succeeded at 160 (offset 2 lines).
+Hunk #8 succeeded at 204 with fuzz 2 (offset 3 lines).
+Hunk #9 FAILED at 275.
+Hunk #10 succeeded at 374 (offset 5 lines).
+Hunk #11 succeeded at 385 (offset 3 lines).
+Hunk #12 succeeded at 438 (offset 5 lines).
+Hunk #13 succeeded at 458 (offset 3 lines).
+Hunk #14 succeeded at 659 (offset 19 lines).
+Hunk #15 succeeded at 773 (offset 3 lines).
+Hunk #16 succeeded at 854 (offset 19 lines).
+Hunk #17 succeeded at 1195 (offset 4 lines).
+Hunk #18 succeeded at 1298 (offset 19 lines).
+Hunk #19 succeeded at 1305 (offset 4 lines).
+Hunk #20 succeeded at 1355 (offset 19 lines).
+Hunk #21 FAILED at 1414.
+Hunk #22 succeeded at 1528 (offset 4 lines).
+3 out of 22 hunks FAILED -- saving rejects to file net/minecraft/client/entity/EntityPlayerS#
+patching file net/minecraft/client/gui/GuiChat.java
+patching file net/minecraft/client/gui/GuiIngame.java
+Hunk #1 FAILED at 9.
+Hunk #2 FAILED at 23.
+Hunk #3 FAILED at 63.
+Hunk #4 succeeded at 177 with fuzz 1 (offset 21 lines).
+Hunk #6 succeeded at 205 (offset 21 lines).
+Hunk #8 succeeded at 599 (offset 21 lines).
+Hunk #9 succeeded at 597 with fuzz 2.
+Hunk #10 succeeded at 796 (offset 25 lines).
+Hunk #12 succeeded at 1013 (offset 25 lines).
+Hunk #14 succeeded at 1131 (offset 25 lines).
+Hunk #15 FAILED at 1156.
+Hunk #16 FAILED at 1210.
+Hunk #17 succeeded at 1381 (offset 14 lines).
+5 out of 17 hunks FAILED -- saving rejects to file net/minecraft/client/gui/GuiIngame.jav#
+patching file net/minecraft/client/gui/GuiIngameMenu.java
+Hunk #1 FAILED at 1.
+Hunk #2 FAILED at 29.
+Hunk #3 FAILED at 102.
+3 out of 3 hunks FAILED -- saving rejects to file net/minecraft/client/gui/GuiIngameMenu#
+patching file net/minecraft/client/gui/GuiLanguage.java
+Hunk #1 FAILED at 129.
+1 out of 1 hunk FAILED -- saving rejects to file net/minecraft/client/gui/GuiLanguage.j#
+patching file net/minecraft/client/gui/GuiMainMenu.java
+Hunk #1 FAILED at 681.
+1 out of 1 hunk FAILED -- saving rejects to file net/minecraft/client/gui/GuiMainMenu.j#
+patching file net/minecraft/client/gui/GuiOptions.java
+Hunk #3 FAILED at 35.
+1 out of 5 hunks FAILED -- saving rejects to file net/minecraft/client/gui/GuiOptions.ja#
+patching file net/minecraft/client/gui/GuiOverlayDebug.java
+Hunk #3 FAILED at 130.
+Hunk #4 succeeded at 183 with fuzz 1.
+Hunk #5 FAILED at 215.
+2 out of 6 hunks FAILED -- saving rejects to file net/minecraft/client/gui/GuiOverlayDeb#
+patching file net/minecraft/client/gui/GuiScreen.java
+Hunk #2 succeeded at 19 with fuzz 2.
+Hunk #3 FAILED at 27.
+Hunk #4 succeeded at 39 (offset -3 lines).
+Hunk #6 FAILED at 73.
+Hunk #7 FAILED at 85.
+Hunk #8 succeeded at 110 (offset -2 lines).
+Hunk #10 FAILED at 192.
+Hunk #11 succeeded at 228 with fuzz 2 (offset 12 lines).
+Hunk #12 succeeded at 470 (offset -24 lines).
+Hunk #13 succeeded at 534 (offset 12 lines).
+Hunk #14 FAILED at 585.
+Hunk #15 succeeded at 587 (offset -24 lines).
+Hunk #16 succeeded at 646 (offset 12 lines).
+Hunk #17 succeeded at 627 (offset -24 lines).
+Hunk #18 FAILED at 669.
+Hunk #19 succeeded at 742 (offset 12 lines).
+Hunk #20 succeeded at 807 (offset -17 lines).
+Hunk #21 succeeded at 874 (offset 12 lines).
+6 out of 21 hunks FAILED -- saving rejects to file net/minecraft/client/gui/GuiScreen.jav#
+patching file net/minecraft/client/gui/GuiSleepMP.java
+patching file net/minecraft/client/gui/GuiSlot.java
+Hunk #4 FAILED at 237.
+Hunk #5 succeeded at 312 (offset -8 lines).
+Hunk #6 succeeded at 356 with fuzz 2.
+Hunk #7 succeeded at 424 (offset -5 lines).
+1 out of 8 hunks FAILED -- saving rejects to file net/minecraft/client/gui/GuiSlot.java#
+patching file net/minecraft/client/gui/GuiTextField.java
+Hunk #1 FAILED at 2.
+Hunk #2 succeeded at 20 with fuzz 2 (offset 1 line).
+Hunk #3 succeeded at 519 (offset -3 lines).
+Hunk #4 FAILED at 570.
+Hunk #5 FAILED at 733.
+3 out of 5 hunks FAILED -- saving rejects to file net/minecraft/client/gui/GuiTextField.#
+patching file net/minecraft/client/gui/GuiVideoSettings.java
+Hunk #1 succeeded at 171 (offset 14 lines).
+can't find file to patch at input line 3
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|--- a/net/minecraft/client/gui/achievement/GuiAchievements.java
+|+++ b/net/minecraft/client/gui/achievement/GuiAchievements.java
+--------------------------
+No file to patch.  Skipping patch.
+14 out of 14 hunks ignored
+patching file net/minecraft/client/gui/inventory/GuiContainer.java
+Hunk #1 succeeded at 124 with fuzz 2 (offset -1 lines).
+Hunk #3 succeeded at 171 (offset -1 lines).
+Hunk #4 FAILED at 192.
+Hunk #5 succeeded at 425 (offset 1 line).
+1 out of 5 hunks FAILED -- saving rejects to file net/minecraft/client/gui/inventory/GuiContainer.#
+patching file net/minecraft/client/gui/inventory/GuiContainerCreative.java
+Hunk #1 succeeded at 9 with fuzz 2 (offset 1 line).
+Hunk #2 FAILED at 596.
+1 out of 2 hunks FAILED -- saving rejects to file net/minecraft/client/gui/inventory/GuiContainerC#
+patching file net/minecraft/client/gui/inventory/GuiEditSign.java
+Hunk #3 succeeded at 48 with fuzz 2.
+patching file net/minecraft/client/main/Main.java
+Hunk #2 FAILED at 44.
+1 out of 3 hunks FAILED -- saving rejects to file net/minecraft/client/main/Main.java.rej
+patching file net/minecraft/client/model/ModelPlayer.java
+patching file net/minecraft/client/network/NetHandlerPlayClient.java
+Hunk #1 FAILED at 5.
+Hunk #2 FAILED at 220.
+Hunk #3 succeeded at 266 (offset 11 lines).
+Hunk #4 FAILED at 319.
+Hunk #5 succeeded at 334 (offset 2 lines).
+Hunk #6 succeeded at 366 (offset 11 lines).
+Hunk #7 succeeded at 867 (offset 2 lines).
+Hunk #8 succeeded at 909 (offset 11 lines).
+Hunk #9 succeeded at 955 with fuzz 1 (offset 2 lines).
+Hunk #10 FAILED at 972.
+Hunk #11 FAILED at 1133.
+Hunk #12 succeeded at 1224 (offset 3 lines).
+Hunk #13 succeeded at 1419 (offset 3 lines).
+Hunk #14 succeeded at 1545 (offset 6 lines).
+Hunk #15 succeeded at 1746 (offset 52 lines).
+Hunk #16 succeeded at 2121 (offset 6 lines).
+Hunk #17 succeeded at 2545 with fuzz 2 (offset 57 lines).
+5 out of 17 hunks FAILED -- saving rejects to file net/minecraft/client/network/NetHandlerPla#
+patching file net/minecraft/client/particle/ParticleBlockDust.java
+patching file net/minecraft/client/particle/ParticleFirework.java
+patching file net/minecraft/client/renderer/ActiveRenderInfo.java
+patching file net/minecraft/client/renderer/EntityRenderer.java
+Hunk #1 FAILED at 2.
+Hunk #2 FAILED at 60.
+Hunk #3 succeeded at 74 (offset 1 line).
+Hunk #5 succeeded at 99 (offset 1 line).
+Hunk #6 FAILED at 116.
+Hunk #7 succeeded at 187 (offset 1 line).
+Hunk #8 FAILED at 322.
+Hunk #9 succeeded at 335 (offset 1 line).
+Hunk #10 succeeded at 345 with fuzz 2 (offset 2 lines).
+Hunk #11 FAILED at 363.
+Hunk #12 succeeded at 431 (offset 1 line).
+Hunk #13 succeeded at 516 (offset 2 lines).
+Hunk #14 FAILED at 576.
+Hunk #15 FAILED at 771.
+Hunk #16 FAILED at 833.
+Hunk #17 succeeded at 1151 (offset 8 lines).
+Hunk #18 FAILED at 1335.
+Hunk #19 succeeded at 1502 (offset 5 lines).
+Hunk #20 succeeded at 1541 (offset 8 lines).
+Hunk #21 succeeded at 1551 (offset 5 lines).
+Hunk #22 FAILED at 1574.
+Hunk #23 FAILED at 2235.
+Hunk #24 succeeded at 2445 (offset 12 lines).
+Hunk #25 succeeded at 2482 (offset 5 lines).
+Hunk #26 succeeded at 2499 with fuzz 2 (offset 12 lines).
+Hunk #27 succeeded at 2518 with fuzz 1 (offset 5 lines).
+Hunk #28 FAILED at 2596.
+Hunk #29 succeeded at 2625 (offset 12 lines).
+Hunk #30 succeeded at 2684 (offset 5 lines).
+Hunk #31 succeeded at 2723 (offset 12 lines).
+Hunk #32 succeeded at 2778 with fuzz 1 (offset 5 lines).
+Hunk #33 succeeded at 2969 (offset 12 lines).
+Hunk #34 succeeded at 2991 (offset 5 lines).
+Hunk #35 succeeded at 3158 (offset 81 lines).
+Hunk #36 succeeded at 3093 (offset 5 lines).
+12 out of 36 hunks FAILED -- saving rejects to file net/minecraft/client/renderer/EntityRendere#
+patching file net/minecraft/client/renderer/GlStateManager.java
+patching file net/minecraft/client/renderer/ItemRenderer.java
+Hunk #1 FAILED at 1.
+Hunk #2 succeeded at 24 (offset 1 line).
+Hunk #4 succeeded at 80 (offset 1 line).
+Hunk #5 FAILED at 115.
+Hunk #7 succeeded at 158 (offset 1 line).
+Hunk #9 succeeded at 194 (offset 1 line).
+Hunk #11 succeeded at 253 (offset 1 line).
+Hunk #12 FAILED at 294.
+Hunk #13 FAILED at 428.
+Hunk #14 FAILED at 993.
+5 out of 14 hunks FAILED -- saving rejects to file net/minecraft/client/renderer/ItemRenderer.#
+patching file net/minecraft/client/renderer/OpenGlHelper.java
+Hunk #1 FAILED at 933.
+1 out of 1 hunk FAILED -- saving rejects to file net/minecraft/client/renderer/OpenGlHelper.#
+patching file net/minecraft/client/renderer/RenderGlobal.java
+Hunk #3 succeeded at 110 with fuzz 1 (offset 1 line).
+Hunk #4 FAILED at 208.
+Hunk #5 FAILED at 399.
+Hunk #6 FAILED at 462.
+Hunk #7 FAILED at 656.
+Hunk #8 succeeded at 766 (offset 11 lines).
+Hunk #9 FAILED at 944.
+Hunk #10 succeeded at 1141 (offset 21 lines).
+Hunk #11 succeeded at 1227 (offset 17 lines).
+Hunk #12 succeeded at 1478 (offset 21 lines).
+Hunk #13 FAILED at 1741.
+Hunk #14 succeeded at 1703 (offset -33 lines).
+Hunk #15 succeeded at 1767 (offset 21 lines).
+Hunk #16 succeeded at 1738 (offset -33 lines).
+Hunk #17 succeeded at 1823 (offset 21 lines).
+Hunk #18 succeeded at 1784 (offset -33 lines).
+Hunk #19 succeeded at 1881 (offset 21 lines).
+Hunk #20 succeeded at 1839 with fuzz 2 (offset -33 lines).
+Hunk #21 succeeded at 1940 (offset 21 lines).
+Hunk #22 succeeded at 1917 (offset -33 lines).
+Hunk #23 succeeded at 1979 (offset 21 lines).
+Hunk #24 succeeded at 2005 (offset -33 lines).
+Hunk #25 FAILED at 2021.
+Hunk #26 FAILED at 2559.
+Hunk #27 succeeded at 3129 (offset 38 lines).
+Hunk #28 succeeded at 3116 (offset -33 lines).
+Hunk #29 succeeded at 3231 (offset 38 lines).
+Hunk #30 succeeded at 3208 (offset -33 lines).
+Hunk #31 succeeded at 3310 (offset 38 lines).
+Hunk #32 succeeded at 3281 with fuzz 2 (offset -33 lines).
+8 out of 32 hunks FAILED -- saving rejects to file net/minecraft/client/renderer/RenderGlobal.#
+patching file net/minecraft/client/renderer/RenderItem.java
+Hunk #2 succeeded at 163 (offset -8 lines).
+Hunk #3 FAILED at 218.
+Hunk #4 FAILED at 348.
+Hunk #6 succeeded at 403 (offset 2 lines).
+Hunk #7 FAILED at 440.
+Hunk #8 FAILED at 486.
+Hunk #9 succeeded at 1235 (offset 37 lines).
+4 out of 9 hunks FAILED -- saving rejects to file net/minecraft/client/renderer/RenderItem.ja#
+patching file net/minecraft/client/renderer/block/model/FaceBakery.java
+patching file net/minecraft/client/renderer/block/model/ModelBakery.java
+patching file net/minecraft/client/renderer/entity/Render.java
+patching file net/minecraft/client/renderer/entity/RenderFish.java
+Hunk #1 succeeded at 105 with fuzz 2.
+patching file net/minecraft/client/renderer/entity/RenderLiving.java
+Hunk #1 succeeded at 1 with fuzz 2.
+patching file net/minecraft/client/renderer/entity/RenderLivingBase.java
+Hunk #5 FAILED at 114.
+Hunk #6 succeeded at 155 (offset 2 lines).
+1 out of 6 hunks FAILED -- saving rejects to file net/minecraft/client/renderer/entity/RenderLivingB#
+patching file net/minecraft/client/renderer/entity/RenderManager.java
+Hunk #2 FAILED at 119.
+Hunk #3 FAILED at 245.
+Hunk #4 FAILED at 273.
+Hunk #5 succeeded at 587 (offset 1 line).
+3 out of 5 hunks FAILED -- saving rejects to file net/minecraft/client/renderer/entity/RenderManager#
+patching file net/minecraft/client/renderer/entity/RenderPlayer.java
+Hunk #1 succeeded at 1 with fuzz 2.
+Hunk #3 succeeded at 63 (offset 1 line).
+Hunk #5 succeeded at 114 (offset 1 line).
+Hunk #7 succeeded at 223 (offset 1 line).
+patching file net/minecraft/client/renderer/entity/layers/LayerHeldItem.java
+patching file net/minecraft/client/renderer/texture/TextureMap.java
+patching file net/minecraft/client/renderer/texture/TextureUtil.java
+patching file net/minecraft/client/renderer/vertex/DefaultVertexFormats.java
+patching file net/minecraft/client/settings/GameSettings.java
+Hunk #1 succeeded at 111 (offset 8 lines).
+Hunk #2 succeeded at 217 (offset 4 lines).
+Hunk #3 succeeded at 449 (offset 36 lines).
+Hunk #4 FAILED at 1138.
+Hunk #5 FAILED at 1223.
+Hunk #6 FAILED at 1309.
+Hunk #7 succeeded at 1984 (offset 197 lines).
+Hunk #8 succeeded at 1927 (offset 36 lines).
+Hunk #9 succeeded at 2932 (offset 230 lines).
+Hunk #10 succeeded at 3028 (offset 36 lines).
+Hunk #11 succeeded at 3233 (offset 230 lines).
+Hunk #12 succeeded at 3063 (offset 36 lines).
+Hunk #13 succeeded at 3402 (offset 230 lines).
+Hunk #14 succeeded at 3217 (offset 36 lines).
+3 out of 14 hunks FAILED -- saving rejects to file net/minecraft/client/settings/GameSettings.#
+patching file net/minecraft/client/shader/Framebuffer.java
+Hunk #1 FAILED at 1.
+1 out of 13 hunks FAILED -- saving rejects to file net/minecraft/client/shader/Framebuffer.j#
+patching file net/minecraft/client/shader/ShaderGroup.java
+patching file net/minecraft/entity/ai/EntityAICreeperSwell.java
+patching file net/minecraft/entity/item/EntityBoat.java
+Hunk #2 succeeded at 744 (offset 34 lines).
+patching file net/minecraft/entity/monster/EntityEnderman.java
+Hunk #5 succeeded at 641 (offset 37 lines).
+patching file net/minecraft/entity/player/EntityPlayerMP.java
+Hunk #1 FAILED at 3.
+Hunk #2 succeeded at 22 (offset 1 line).
+Hunk #3 succeeded at 41 (offset 1 line).
+Hunk #4 FAILED at 82.
+Hunk #5 FAILED at 100.
+Hunk #6 FAILED at 111.
+Hunk #7 succeeded at 193 (offset 11 lines).
+Hunk #9 succeeded at 238 with fuzz 1 (offset 11 lines).
+Hunk #10 succeeded at 239 (offset 1 line).
+Hunk #11 succeeded at 355 (offset 37 lines).
+Hunk #12 succeeded at 380 (offset 6 lines).
+Hunk #13 succeeded at 563 (offset -1 lines).
+Hunk #14 succeeded at 604 (offset 8 lines).
+Hunk #15 succeeded at 773 with fuzz 1 (offset 62 lines).
+Hunk #16 succeeded at 902 (offset 15 lines).
+Hunk #17 succeeded at 980 (offset 62 lines).
+Hunk #18 succeeded at 946 (offset 15 lines).
+Hunk #19 succeeded at 1050 (offset 62 lines).
+Hunk #20 succeeded at 1018 (offset 15 lines).
+Hunk #21 succeeded at 1195 (offset 67 lines).
+Hunk #22 succeeded at 1178 (offset 10 lines).
+Hunk #23 succeeded at 1301 with fuzz 2 (offset 59 lines).
+Hunk #24 succeeded at 1660 with fuzz 2 (offset 102 lines).
+4 out of 24 hunks FAILED -- saving rejects to file net/minecraft/entity/player/EntityPlayerM#
+patching file net/minecraft/entity/projectile/EntityArrow.java
+Hunk #2 succeeded at 93 (offset -1 lines).
+patching file net/minecraft/entity/projectile/EntityFireball.java
+patching file net/minecraft/entity/projectile/EntityFishHook.java
+patching file net/minecraft/entity/projectile/EntityThrowable.java
+patching file net/minecraft/init/Bootstrap.java
+Hunk #1 FAILED at 1.
+Hunk #2 succeeded at 18 (offset 2 lines).
+Hunk #3 FAILED at 41.
+Hunk #4 FAILED at 66.
+Hunk #5 succeeded at 275 (offset 4 lines).
+Hunk #6 FAILED at 514.
+4 out of 6 hunks FAILED -- saving rejects to file net/minecraft/init/Bootstrap.jav#
+patching file net/minecraft/init/Items.java
+Hunk #1 FAILED at 220.
+Hunk #2 FAILED at 456.
+2 out of 2 hunks FAILED -- saving rejects to file net/minecraft/init/Items.java.rej
+patching file net/minecraft/init/SoundEvents.java
+Hunk #1 succeeded at 555 with fuzz 2 (offset 56 lines).
+patching file net/minecraft/network/NetHandlerPlayServer.java
+Hunk #2 succeeded at 19 (offset 2 lines).
+Hunk #3 FAILED at 92.
+Hunk #4 FAILED at 382.
+Hunk #5 FAILED at 509.
+Hunk #6 FAILED at 542.
+Hunk #7 succeeded at 592 (offset 39 lines).
+Hunk #8 succeeded at 662 with fuzz 2 (offset 3 lines).
+Hunk #9 FAILED at 727.
+Hunk #10 FAILED at 949.
+Hunk #11 FAILED at 1103.
+Hunk #12 FAILED at 1142.
+Hunk #13 succeeded at 1948 with fuzz 1 (offset 127 lines).
+8 out of 13 hunks FAILED -- saving rejects to file net/minecraft/network/NetHandlerPla#
+patching file net/minecraft/network/handshake/client/C00Handshake.java
+patching file net/minecraft/profiler/Profiler.java
+patching file net/minecraft/src/Config.java
+Hunk #1 FAILED at 119.
+Hunk #2 FAILED at 865.
+Hunk #3 succeeded at 2154 (offset 375 lines).
+Hunk #4 succeeded at 1979 (offset -48 lines).
+2 out of 4 hunks FAILED -- saving rejects to file net/minecraft/src/Config.java#
+patching file net/minecraft/src/GuiPerformanceSettingsOF.java
+Hunk #1 succeeded at 43 with fuzz 1.
+patching file net/minecraft/src/GuiQualitySettingsOF.java
+Hunk #1 succeeded at 12 with fuzz 1.
+patching file net/minecraft/src/Reflector.java
+Hunk #3 succeeded at 68 with fuzz 2 (offset 2 lines).
+Hunk #4 FAILED at 88.
+Hunk #6 succeeded at 224 (offset 4 lines).
+Hunk #8 succeeded at 271 (offset 4 lines).
+Hunk #9 succeeded at 300 (offset 1 line).
+Hunk #10 succeeded at 314 (offset 4 lines).
+Hunk #11 succeeded at 326 (offset 1 line).
+Hunk #12 succeeded at 343 (offset 4 lines).
+Hunk #13 succeeded at 415 (offset 10 lines).
+Hunk #14 succeeded at 585 (offset 4 lines).
+1 out of 14 hunks FAILED -- saving rejects to file net/minecraft/src/Reflector.jav#
+patching file net/minecraft/util/MovementInputFromOptions.java
+Hunk #2 FAILED at 20.
+Hunk #3 FAILED at 68.
+2 out of 3 hunks FAILED -- saving rejects to file net/minecraft/util/MovementInput#
+patching file net/minecraft/util/math/Vec3d.java
+Hunk #1 FAILED at 243.
+1 out of 1 hunk FAILED -- saving rejects to file net/minecraft/util/math/Vec3d.java.rej
+patching file net/minecraft/world/ChunkCache.java
+Hunk #6 succeeded at 169 with fuzz 1.
+Hunk #7 FAILED at 179.
+1 out of 8 hunks FAILED -- saving rejects to file net/minecraft/world/ChunkCache.ja#
+patching file optifine/OptiFineClassTransformer.java
+patching file shadersmod/client/GuiShaders.java
+Hunk #1 succeeded at 55 (offset 1 line).
+patching file shadersmod/client/Shaders.java
+Hunk #1 succeeded at 26 with fuzz 1 (offset -3 lines).
+Hunk #2 succeeded at 208 with fuzz 1 (offset 15 lines).
+Hunk #3 succeeded at 358 (offset 4 lines).
+Hunk #4 succeeded at 709 (offset 17 lines).
+Hunk #5 succeeded at 1524 (offset 278 lines).
+Hunk #6 succeeded at 2981 (offset 118 lines).
+Hunk #7 succeeded at 3215 (offset 278 lines).
+Hunk #8 succeeded at 3068 (offset 118 lines).
+Hunk #9 FAILED at 3098.
+Hunk #10 FAILED at 3121.
+Hunk #11 FAILED at 3133.
+Hunk #12 FAILED at 3146.
+Hunk #13 succeeded at 3327 (offset 278 lines).
+Hunk #14 FAILED at 3367.
+Hunk #15 FAILED at 3381.
+Hunk #16 succeeded at 3244 (offset 118 lines).
+Hunk #17 succeeded at 3434 (offset 278 lines).
+Hunk #18 FAILED at 3490.
+Hunk #19 succeeded at 3388 with fuzz 2 (offset 166 lines).
+Hunk #20 FAILED at 3480.
+Hunk #21 succeeded at 3611 (offset 280 lines).
+Hunk #22 succeeded at 3506 (offset 166 lines).
+Hunk #23 succeeded at 3634 (offset 280 lines).
+Hunk #24 succeeded at 3562 (offset 166 lines).
+Hunk #25 FAILED at 3572.
+Hunk #26 succeeded at 3886 (offset 291 lines).
+Hunk #27 succeeded at 3785 (offset 166 lines).
+Hunk #28 succeeded at 4015 (offset 292 lines).
+Hunk #29 succeeded at 3898 (offset 166 lines).
+Hunk #30 succeeded at 4145 (offset 292 lines).
+Hunk #31 succeeded at 4364 (offset 175 lines).
+Hunk #32 succeeded at 4497 (offset 292 lines).
+Hunk #33 FAILED at 4751.
+10 out of 33 hunks FAILED -- saving rejects to file shadersmod/client/Shaders.java#
+patching file shadersmod/client/ShadersRender.java
+Hunk #1 FAILED at 108.
+Hunk #2 FAILED at 123.
+Hunk #3 succeeded at 156 with fuzz 2 (offset 22 lines).
+Hunk #4 succeeded at 181 (offset 1 line).
+Hunk #5 succeeded at 214 (offset 22 lines).
+Hunk #6 succeeded at 210 (offset 1 line).
+Hunk #7 succeeded at 263 (offset 22 lines).
+Hunk #8 succeeded at 375 (offset 1 line).
+Hunk #9 succeeded at 571 (offset 105 lines).
+2 out of 9 hunks FAILED -- saving rejects to file shadersmod/client/ShadersRender#
+Applying Changes...
+Backing up src/minecraft to src/minecraft-bak
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\api\ErrorHelper.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\api\IRoomscaleAdapter.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\api\IStereoProvider.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\api\NetworkHelper.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\api\PatreonReceiver.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\api\Vec3History.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\asm\ASMClassHandler.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\asm\ASMMethodHandler.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\asm\ASMUtil.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\asm\ClassTuple.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\asm\MethodTuple.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\asm\ObfNames.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\asm\VivecraftASMTransformer.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\asm\handler\ASMHandlerGuiContainer.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\asm\handler\ASMHandlerGuiContainerCreative.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\asm\handler\ASMHandlerGuiIngameForge.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\control\DiscreteAngle.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\control\ViveButtons.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\control\VRControllerButtonMapping.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\gameplay\BackpackTracker.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\gameplay\BowTracker.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\gameplay\ClimbTracker.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\gameplay\EatingTracker.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\gameplay\JumpTracker.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\gameplay\ParticleVRTeleportFX.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\gameplay\RowTracker.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\gameplay\RunTracker.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\gameplay\SneakTracker.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\gameplay\SwimTracker.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\gameplay\VRMovementStyle.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\gui\GuiHUDSettings.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\gui\GuiLocomotionSettings.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\gui\GuiMinecriftSettings.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\gui\GuiOtherHUDSettings.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\gui\GuiOtherRenderOpticsSettings.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\gui\GuiQuickCommandEditor.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\gui\GuiQuickCommandsInGame.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\gui\GuiQuickCommandsList.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\gui\GuiRenderOpticsSettings.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\gui\GuiSeatedOptions.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\gui\GuiSelectSettingsProfile.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\gui\GuiVRControls.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\gui\GuiVRControlsList.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\gui\framework\BaseGuiSettings.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\gui\framework\GuiButtonEx.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\gui\framework\GuiEnterText.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\gui\framework\GuiEventEx.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\gui\framework\GuiSelectOption.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\gui\framework\GuiSliderEx.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\gui\framework\GuiSmallButtonEx.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\gui\framework\VROption.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\main\VivecraftMain.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\provider\MCOculus.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\provider\MCOpenVR.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\provider\NullStereoRenderer.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\provider\OpenVRPlayer.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\provider\OpenVRStereoRenderer.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\render\GLUtils.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\render\MenuWorldRenderer.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\render\OpenGLdebugging.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\render\PlayerModelController.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\render\QuaternionHelper.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\render\RenderConfigException.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\render\RenderVRPlayer.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\render\ShaderHelper.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\render\StaticTexture.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\render\VRShaders.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\render\ik\IKHelper.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\render\ik\IKInfo.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\settings\AutoCalibration.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\settings\BooleanValue.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\settings\FloatValue.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\settings\IntValue.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\settings\OptionValue.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\settings\StringValue.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\settings\VRHotkeys.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\settings\VRSettings.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\settings\profile\ProfileManager.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\settings\profile\ProfileReader.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\settings\profile\ProfileWriter.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\tweaker\MinecriftClassTransformer.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\tweaker\MinecriftForgeTweaker.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\tweaker\MinecriftVanillaTweaker.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\utils\Angle.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\utils\ASMDelegator.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\utils\Axis.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\utils\BlockWithData.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\utils\FakeBlockAccess.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\utils\InputInjector.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\utils\jkatvr.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\utils\KeyboardSimulator.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\utils\MCReflection.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\utils\MenuWorldDownloader.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\utils\MenuWorldExporter.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\utils\Quaternion.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\utils\Utils.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\utils\Vector2.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\com\mtbs3d\minecrift\utils\Vector3.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\javax\vecmath\Matrix4f.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\AlignedStructure.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\AppOverrideKeys_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\CameraVideoStreamFrameHeader_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\CameraVideoStreamFrame_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\Compositor_CumulativeStats.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\Compositor_FrameTiming.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\Compositor_OverlaySettings.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\COpenVRContext.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\DistortionCoordinates_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\HiddenAreaMesh_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\HmdColor_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\HmdMatrix34_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\HmdMatrix44_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\HmdQuad_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\HmdQuaternion_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\HmdRect2_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\HmdVector2_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\HmdVector3d_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\HmdVector3_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\HmdVector4_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\IntersectionMaskCircle_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\IntersectionMaskRectangle_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\JMonkeyHelpers.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\JOpenVRLibrary.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\NativeLong64.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\NotificationBitmap_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\OpenVRUtil.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\RenderModel_ComponentState_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\RenderModel_ControllerMode_State_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\RenderModel_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\RenderModel_TextureMap_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\RenderModel_Vertex_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\Texture_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\TrackedDevicePose_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VRControllerAxis_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VRControllerState_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VREvent_ApplicationLaunch_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VREvent_Chaperone_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VREvent_Controller_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VREvent_Data_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VREvent_EditingCameraSurface_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VREvent_Ipd_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VREvent_Keyboard_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VREvent_MessageOverlay_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VREvent_Mouse_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VREvent_Notification_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VREvent_Overlay_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VREvent_PerformanceTest_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VREvent_Process_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VREvent_Reserved_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VREvent_ScreenshotProgress_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VREvent_Screenshot_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VREvent_Scroll_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VREvent_SeatedZeroPoseReset_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VREvent_Status_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VREvent_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VREvent_TouchPadMove_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VROverlayIntersectionMaskPrimitive_Data_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VROverlayIntersectionMaskPrimitive_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VROverlayIntersectionParams_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VROverlayIntersectionResults_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VRTextureBounds_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VRVulkanTextureData_t.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VR_IVRApplications_FnTable.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VR_IVRChaperoneSetup_FnTable.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VR_IVRChaperone_FnTable.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VR_IVRCompositor_FnTable.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VR_IVRExtendedDisplay_FnTable.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VR_IVRNotifications_FnTable.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VR_IVROverlay_FnTable.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VR_IVRRenderModels_FnTable.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VR_IVRResources_FnTable.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VR_IVRScreenshots_FnTable.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VR_IVRSettings_FnTable.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VR_IVRSystem_FnTable.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\jopenvr\VR_IVRTrackedCamera_FnTable.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\net\minecraft\client\model\ModelArmorVR.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\net\minecraft\client\model\ModelPlayerVR.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\net\minecraft\client\renderer\entity\RenderPlayerVR.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\net\minecraft\client\renderer\entity\layers\LayerBipedArmorVR.java
+Copying file Z:\Vivecraft\112\Vivecraft_112\src\net\minecraft\item\ItemFoodWonder.java

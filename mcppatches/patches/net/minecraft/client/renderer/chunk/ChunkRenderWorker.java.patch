@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/chunk/ChunkRenderWorker.java
++++ b/net/minecraft/client/renderer/chunk/ChunkRenderWorker.java
+@@ -102,7 +102,7 @@
+ 
+         Entity entity1 = Minecraft.getMinecraft().getRenderViewEntity();
+ 
+-        if (entity == null)
++        if (entity1 == null)
+         {
+             generator.finish();
+         }

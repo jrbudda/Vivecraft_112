@@ -1,0 +1,77 @@
+--- a/net/minecraft/entity/monster/EntityEnderman.java
++++ b/net/minecraft/entity/monster/EntityEnderman.java
+@@ -11,6 +11,8 @@
+ import net.minecraft.block.Block;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.state.IBlockState;
++import net.minecraft.client.Minecraft;
++import net.minecraft.client.entity.EntityPlayerSP;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityLiving;
+ import net.minecraft.entity.EntityLivingBase;
+@@ -35,6 +37,7 @@
+ import net.minecraft.network.datasync.DataSerializers;
+ import net.minecraft.network.datasync.EntityDataManager;
+ import net.minecraft.pathfinding.PathNodeType;
++import net.minecraft.src.Reflector;
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.EntityDamageSourceIndirect;
+ import net.minecraft.util.EnumParticleTypes;
+@@ -208,8 +211,16 @@
+             return false;
+         }
+         else
+-        {
+-            Vec3d vec3d = player.getLook(1.0F).normalize();
++        {      	
++        	//VIVE FIX
++            Vec3d vec3d;
++        	if(Minecraft.getMinecraft().isSingleplayer()){
++                vec3d = Minecraft.getMinecraft().vrPlayer.getHMDDir_World();
++        	}else {
++                vec3d = player.getLook(1.0F).normalize();        		
++        	}
++        	//
++        	
+             Vec3d vec3d1 = new Vec3d(this.posX - player.posX, this.getEntityBoundingBox().minY + (double)this.getEyeHeight() - (player.posY + (double)player.getEyeHeight()), this.posZ - player.posZ);
+             double d0 = vec3d1.lengthVector();
+             vec3d1 = vec3d1.normalize();
+@@ -292,7 +303,18 @@
+      */
+     private boolean teleportTo(double x, double y, double z)
+     {
+-        boolean flag = this.attemptTeleport(x, y, z);
++        boolean flag = false;
++        if (Reflector.EnderTeleportEvent_Constuctor.exists())
++        {
++           Object event = null;
++           event = Reflector.newInstance(Reflector.EnderTeleportEvent_Constuctor, new Object[] {this,x,y,z,0});
++           if (Reflector.postForgeBusEvent(event))
++               return false;
++           flag = this.attemptTeleport(Reflector.callDouble(event, Reflector.EnderTeleportEvent_getTargetX),Reflector.callDouble(event, Reflector.EnderTeleportEvent_getTargetY),Reflector.callDouble(event, Reflector.EnderTeleportEvent_getTargetZ));
++        } else {
++            flag = this.attemptTeleport(x, y, z);
++        }
++        
+ 
+         if (flag)
+         {
+@@ -619,4 +641,18 @@
+             }
+         }
+     }
++    
++        /*===================================== Forge Start ==============================*/
++        public static void setCarriable(Block block, boolean canCarry)
++        {
++            if (canCarry) CARRIABLE_BLOCKS.add(block);
++            else          CARRIABLE_BLOCKS.remove(block);
++        }
++        public static boolean getCarriable(Block block)
++        {
++            return CARRIABLE_BLOCKS.contains(block);
++        }
++        /*===================================== Forge End ==============================*/
++    
++    
+ }

@@ -1,0 +1,38 @@
+--- a/optifine/OptiFineClassTransformer.java
++++ b/optifine/OptiFineClassTransformer.java
+@@ -26,7 +26,7 @@
+ 
+         try
+         {
+-            URLClassLoader urlclassloader = (URLClassLoader)OptiFineClassTransformer.class.getClassLoader();
++            URLClassLoader urlclassloader = (URLClassLoader)Differ.class.getClassLoader();
+             URL[] aurl = urlclassloader.getURLs();
+ 
+             for (int i = 0; i < aurl.length; ++i)
+@@ -66,7 +66,7 @@
+             File file1 = new File(uri);
+             ZipFile zipfile = new ZipFile(file1);
+ 
+-            if (zipfile.getEntry("optifine/OptiFineClassTransformer.class") == null)
++            if (zipfile.getEntry("optifine/Differ.class") == null)
+             {
+                 zipfile.close();
+                 return null;
+@@ -93,7 +93,7 @@
+     public InputStream getResourceStream(String path)
+     {
+         path = Utils.ensurePrefix(path, "/");
+-        return OptiFineClassTransformer.class.getResourceAsStream(path);
++        return Differ.class.getResourceAsStream(path);
+     }
+ 
+     public synchronized byte[] getOptiFineResource(String name)
+@@ -190,7 +190,7 @@
+                 }
+                 catch (Exception exception)
+                 {
+-                    exception.printStackTrace();
++                  //  exception.printStackTrace();
+                     return null;
+                 }
+             }

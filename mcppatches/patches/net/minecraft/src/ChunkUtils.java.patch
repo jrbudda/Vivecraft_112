@@ -1,0 +1,23 @@
+--- a/net/minecraft/src/ChunkUtils.java
++++ b/net/minecraft/src/ChunkUtils.java
+@@ -50,16 +50,18 @@
+             p_findFieldHasEntities_0_.setHasEntities(false);
+             List list2 = new ArrayList();
+ 
+-            for (Field field1 : list)
++            for (Object f : list)
+             {
++            	Field field1 = (Field) f;
+                 list2.add(field1.get(p_findFieldHasEntities_0_));
+             }
+ 
+             p_findFieldHasEntities_0_.setHasEntities(true);
+             List list3 = new ArrayList();
+ 
+-            for (Field field2 : list)
++            for (Object f : list)
+             {
++            	Field field2 = (Field) f;
+                 list3.add(field2.get(p_findFieldHasEntities_0_));
+             }
+ 

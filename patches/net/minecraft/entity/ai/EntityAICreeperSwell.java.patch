@@ -1,0 +1,19 @@
+--- a/net/minecraft/entity/ai/EntityAICreeperSwell.java
++++ b/net/minecraft/entity/ai/EntityAICreeperSwell.java
+@@ -19,13 +19,15 @@
+         this.setMutexBits(1);
+     }
+ 
++    public float creeperBlowyUppyRadius = 1.75f; //VIVE default is 3.
++    
+     /**
+      * Returns whether the EntityAIBase should begin execution.
+      */
+     public boolean shouldExecute()
+     {
+         EntityLivingBase entitylivingbase = this.swellingCreeper.getAttackTarget();
+-        return this.swellingCreeper.getCreeperState() > 0 || entitylivingbase != null && this.swellingCreeper.getDistanceSqToEntity(entitylivingbase) < 9.0D;
++        return this.swellingCreeper.getCreeperState() > 0 || entitylivingbase != null && this.swellingCreeper.getDistanceSqToEntity(entitylivingbase) < (creeperBlowyUppyRadius*creeperBlowyUppyRadius);
+     }
+ 
+     /**
