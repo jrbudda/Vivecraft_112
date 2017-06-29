@@ -58,33 +58,6 @@
      }
  
      public static void preRenderChunkLayer(BlockRenderLayer blockLayerIn)
-@@ -407,7 +413,7 @@
-         if (OpenGlHelper.useVbo())
-         {
-             GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
--            GL20.glEnableVertexAttribArray(Shaders.midTexCoordAttrib);
-+            GL20.glEnableVertexAttribArray(Shaders.midTexAttrib);
-             GL20.glEnableVertexAttribArray(Shaders.tangentAttrib);
-             GL20.glEnableVertexAttribArray(Shaders.entityAttrib);
-         }
-@@ -418,7 +424,7 @@
-         if (OpenGlHelper.useVbo())
-         {
-             GL11.glDisableClientState(GL11.GL_NORMAL_ARRAY);
--            GL20.glDisableVertexAttribArray(Shaders.midTexCoordAttrib);
-+            GL20.glDisableVertexAttribArray(Shaders.midTexAttrib);
-             GL20.glDisableVertexAttribArray(Shaders.tangentAttrib);
-             GL20.glDisableVertexAttribArray(Shaders.entityAttrib);
-         }
-@@ -439,7 +445,7 @@
-         GL11.glTexCoordPointer(2, GL11.GL_SHORT, 56, 24L);
-         OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
-         GL11.glNormalPointer(GL11.GL_BYTE, 56, 28L);
--        GL20.glVertexAttribPointer(Shaders.midTexCoordAttrib, 2, GL11.GL_FLOAT, false, 56, 32L);
-+        GL20.glVertexAttribPointer(Shaders.midTexAttrib, 2, GL11.GL_FLOAT, false, 56, 32L);
-         GL20.glVertexAttribPointer(Shaders.tangentAttrib, 4, GL11.GL_SHORT, false, 56, 40L);
-         GL20.glVertexAttribPointer(Shaders.entityAttrib, 3, GL11.GL_SHORT, false, 56, 48L);
-     }
 @@ -566,3 +572,4 @@
          }
      }
