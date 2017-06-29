@@ -1,4 +1,4 @@
-Vivecraft for Minecraft 1.11
+Vivecraft for Minecraft 1.12
 =========
 
 This readme is intended for developers. For downloads and gameplay instructions please see the [official website](http://www.vivecraft.org/)
