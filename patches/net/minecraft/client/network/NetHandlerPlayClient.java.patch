@@ -273,7 +273,7 @@
  
              if (potion != null)
              {
-@@ -2066,6 +2183,109 @@
+@@ -2066,6 +2183,111 @@
              String s1 = packetbuffer3.readString(256);
              this.gameController.getSoundHandler().stop(s1, SoundCategory.getByName(s));
          }
@@ -360,10 +360,12 @@
 +        	case UBERPACKET:
 +        		Long hi = packetbuffer.readLong();
 +        		Long low = packetbuffer.readLong();
-+        		byte[] hmd = packetbuffer.readBytes(29).array();
-+        		byte[] c0 = packetbuffer.readBytes(29).array();       		
-+        		byte[] c1 = packetbuffer.readBytes(29).array();
-+		
++        		byte[] hmd = new byte[29];
++        		byte[] c0 = new byte[29];
++        		byte[] c1 = new byte[29];
++        		packetbuffer.readBytes(29).getBytes(0, hmd);
++        		packetbuffer.readBytes(29).getBytes(0, c0);
++        		packetbuffer.readBytes(29).getBytes(0, c1);
 +        		UUID u = new UUID(hi, low);
 +        		
 +        		PlayerModelController.getInstance().Update(u, hmd, c0, c1);    		
@@ -383,7 +385,7 @@
      }
  
      /**
-@@ -2341,4 +2561,12 @@
+@@ -2341,4 +2563,12 @@
      {
          return this.advancementManager;
      }

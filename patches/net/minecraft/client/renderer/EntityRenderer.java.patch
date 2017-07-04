@@ -785,10 +785,10 @@
 -        {
 -            GlStateManager.translate((float)(pass * 2 - 1) * 0.1F, 0.0F, 0.0F);
 -        }
--
--        this.hurtCameraEffect(partialTicks);
 +		/** MINECRIFT */
  
+-        this.hurtCameraEffect(partialTicks);
+-
 -        if (this.mc.gameSettings.viewBobbing)
 -        {
 -            this.applyBobbing(partialTicks);
@@ -1115,9 +1115,7 @@
 -            Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2 - 20);
 -            Mouse.setGrabbed(true);
 -        }
-+    	if(mc.currentPass == renderPass.Left) //contains all the stuff that was in this method that only needs to be called once per frame.
-+    		updateCameraAndRender_OnePass(partialTicks);
- 
+-
 -        if (this.mc.inGameHasFocus && flag)
 -        {
 -            this.mc.mouseHelper.mouseXYChange();
@@ -1127,7 +1125,9 @@
 -            float f2 = (float)this.mc.mouseHelper.deltaX * f1;
 -            float f3 = (float)this.mc.mouseHelper.deltaY * f1;
 -            int i = 1;
--
++    	if(mc.currentPass == renderPass.Left) //contains all the stuff that was in this method that only needs to be called once per frame.
++    		updateCameraAndRender_OnePass(partialTicks);
+ 
 -            if (this.mc.gameSettings.invertMouse)
 -            {
 -                i = -1;
@@ -1243,42 +1243,14 @@
 -                        Lagometer.showLagometer(scaledresolution);
 -                    }
 -                }
-+    			if (this.mc.currentScreen != null)
-+    			{
-+    				// this.setupOverlayRendering();
-+    			//	this.renderItemActivation(640,480, partialTicks);	
-+
-+    				//						GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
-+    				//						boolean var12 = this.mc.gameSettings.fancyGraphics;
-+    				//
-+    				//						if (!Config.isVignetteEnabled())
-+    				//						{
-+    				//							this.mc.gameSettings.fancyGraphics = false;
-+    				//						}
-+    				//						
-+    				//						//why was this called twice per loop??
-+    				//					//	this.mc.ingameGUI.renderGameOverlay(par1, this.mc.currentScreen != null, var161, var171);
-+    				//						
-+    				//						this.mc.gameSettings.fancyGraphics = var12;
-+
-+    			}
-+    		} else {
-+                // Forge: Fix MC-112292
-+                TileEntityRendererDispatcher.instance.renderEngine = this.mc.getTextureManager();
-+                // Forge: also fix rendering text before entering world (not part of MC-112292, but the same reason)
-+                MCReflection.setField(MCReflection.TileEntityRendererDispatcher_fontRenderer, TileEntityRendererDispatcher.instance, this.mc.fontRenderer); //TileEntityRendererDispatcher.instance.fontRenderer = this.mc.fontRendererObj;
-+    		}
-+    		/** END MINECRIFT */
-+    	}//END RENDER WORLD
- 
+-
 -                this.mc.mcProfiler.endSection();
 -            }
- 
+-
 -            if (this.mc.currentScreen != null)
 -            {
 -                GlStateManager.clear(256);
-+    	renderFadeEffects();
- 
+-
 -                try
 -                {
 -                    if (Reflector.ForgeHooksClient_drawScreen.exists())
@@ -1319,14 +1291,49 @@
 -                }
 -            }
 -        }
-+    	GlStateManager.disableBlend();
-+    	GlStateManager.disableAlpha();
-+    	GlStateManager.enableDepth();
-+    	GlStateManager.enableTexture2D();
++    			if (this.mc.currentScreen != null)
++    			{
++    				// this.setupOverlayRendering();
++    			//	this.renderItemActivation(640,480, partialTicks);	
++
++    				//						GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
++    				//						boolean var12 = this.mc.gameSettings.fancyGraphics;
++    				//
++    				//						if (!Config.isVignetteEnabled())
++    				//						{
++    				//							this.mc.gameSettings.fancyGraphics = false;
++    				//						}
++    				//						
++    				//						//why was this called twice per loop??
++    				//					//	this.mc.ingameGUI.renderGameOverlay(par1, this.mc.currentScreen != null, var161, var171);
++    				//						
++    				//						this.mc.gameSettings.fancyGraphics = var12;
++
++    			}
++    		} else {
++                // Forge: Fix MC-112292
++                TileEntityRendererDispatcher.instance.renderEngine = this.mc.getTextureManager();
++                // Forge: also fix rendering text before entering world (not part of MC-112292, but the same reason)
++                MCReflection.setField(MCReflection.TileEntityRendererDispatcher_fontRenderer, TileEntityRendererDispatcher.instance, this.mc.fontRenderer); //TileEntityRendererDispatcher.instance.fontRenderer = this.mc.fontRendererObj;
++    		}
++    		/** END MINECRIFT */
++    	}//END RENDER WORLD
  
 -        this.frameFinish();
 -        this.waitForServerThread();
 -        Lagometer.updateLagometer();
+ 
+-        if (this.mc.gameSettings.ofProfiler)
+-        {
+-            this.mc.gameSettings.showDebugProfilerChart = true;
+-        }
++    	renderFadeEffects();
++
++    	GlStateManager.disableBlend();
++    	GlStateManager.disableAlpha();
++    	GlStateManager.enableDepth();
++    	GlStateManager.enableTexture2D();
++
 +    	if (this.mc.world == null || mc.currentScreen instanceof GuiWinGame) {
 +    		this.mc.mcProfiler.startSection("renderGui");
 +    		GL11.glDisable(GL11.GL_STENCIL_TEST);
@@ -1348,11 +1355,7 @@
 +    	handleNotificationText();
 +
 +    	this.renderEndNanoTime = System.nanoTime();
- 
--        if (this.mc.gameSettings.ofProfiler)
--        {
--            this.mc.gameSettings.showDebugProfilerChart = true;
--        }
++
      }
  
      private void createWorldIcon()
@@ -1500,14 +1503,14 @@
 +        	this.mc.mcProfiler.endStartSection("shadersModBeginRender");	
 +        		Shaders.beginRender(this.mc, partialTicks, finishTimeNano);
 +        }
-+
+ 
+-        if (flag)
 +               
 +        GlStateManager.enableDepth();
 +        GlStateManager.enableAlpha();
 +        GlStateManager.alphaFunc(516, 0.1F);
 +        
- 
--        if (flag)
++
 +        if (shadersMod)
          {
              Shaders.beginRenderPass(pass, partialTicks, finishTimeNano);
@@ -1869,6 +1872,17 @@
 -            {
 -                Reflector.callVoid(Reflector.ForgeHooksClient_setRenderPass, Integer.valueOf(0));
 -            }
+-
+-            renderglobal.renderEntities(entity, icamera, partialTicks);
+-
+-            if (Reflector.ForgeHooksClient_setRenderPass.exists())
+-            {
+-                Reflector.callVoid(Reflector.ForgeHooksClient_setRenderPass, Integer.valueOf(-1));
+-            }
+-
+-            RenderHelper.disableStandardItemLighting();
+-            this.disableLightmap();
+-        }
 +	            RenderHelper.enableStandardItemLighting();
 +	
 +	            if (Reflector.ForgeHooksClient_setRenderPass.exists())
@@ -1910,17 +1924,6 @@
 +	            this.disableLightmap();
 +		        GlStateManager.enableTexture2D();	
  
--            renderglobal.renderEntities(entity, icamera, partialTicks);
--
--            if (Reflector.ForgeHooksClient_setRenderPass.exists())
--            {
--                Reflector.callVoid(Reflector.ForgeHooksClient_setRenderPass, Integer.valueOf(-1));
--            }
--
--            RenderHelper.disableStandardItemLighting();
--            this.disableLightmap();
--        }
--
 -        GlStateManager.matrixMode(5888);
 +        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
          GlStateManager.popMatrix();
@@ -2350,41 +2353,57 @@
              this.fogColorBlue *= f11;
          }
  
--        IBlockState iblockstate = ActiveRenderInfo.getBlockStateAtEntityViewpoint(this.mc.world, entity, partialTicks);
+-        IBlockState iblockstate1 = ActiveRenderInfo.getBlockStateAtEntityViewpoint(this.mc.world, entity, partialTicks);
 -
 +        //IBlockState iblockstate = ActiveRenderInfo.getBlockStateAtEntityViewpoint(this.mc.world, entity, partialTicks);
 +        Vec3d pos = getEyeRenderPos(mc.currentPass);
 +        
          if (this.cloudFog)
          {
-             Vec3d vec3d3 = world.getCloudColour(partialTicks);
-@@ -2286,7 +2435,7 @@
+             Vec3d vec3d4 = world.getCloudColour(partialTicks);
+@@ -2296,7 +2445,7 @@
              this.fogColorGreen = (float)vec3d3.y;
              this.fogColorBlue = (float)vec3d3.z;
          }
--        else if (iblockstate.getMaterial() == Material.WATER)
+-        else if (iblockstate1.getMaterial() == Material.WATER)
 +        else if (itemRenderer.isInsideOfMaterial(pos, Material.WATER))
          {
              float f12 = 0.0F;
  
-@@ -2312,7 +2461,7 @@
-                 this.fogColorBlue = (float)vec3d4.z;
+@@ -2313,16 +2462,16 @@
+             this.fogColorRed = 0.02F + f12;
+             this.fogColorGreen = 0.02F + f12;
+             this.fogColorBlue = 0.2F + f12;
+-            Vec3d vec3d6 = CustomColors.getUnderwaterColor(this.mc.world, this.mc.getRenderViewEntity().posX, this.mc.getRenderViewEntity().posY + 1.0D, this.mc.getRenderViewEntity().posZ);
++            Vec3d vec3d4 = CustomColors.getUnderwaterColor(this.mc.world, this.mc.getRenderViewEntity().posX, this.mc.getRenderViewEntity().posY + 1.0D, this.mc.getRenderViewEntity().posZ);
+ 
+-            if (vec3d6 != null)
++            if (vec3d4 != null)
+             {
+-                this.fogColorRed = (float)vec3d6.x;
+-                this.fogColorGreen = (float)vec3d6.y;
+-                this.fogColorBlue = (float)vec3d6.z;
++                this.fogColorRed = (float)vec3d4.x;
++                this.fogColorGreen = (float)vec3d4.y;
++                this.fogColorBlue = (float)vec3d4.z;
              }
          }
--        else if (iblockstate.getMaterial() == Material.LAVA)
+-        else if (iblockstate1.getMaterial() == Material.LAVA)
 +        else if (itemRenderer.isInsideOfMaterial(pos, Material.LAVA))
          {
              this.fogColorRed = 0.6F;
              this.fogColorGreen = 0.1F;
-@@ -2392,6 +2541,7 @@
+@@ -2402,7 +2551,8 @@
  
          if (Reflector.EntityViewRenderEvent_FogColors_Constructor.exists())
          {
+-            Object object = Reflector.newInstance(Reflector.EntityViewRenderEvent_FogColors_Constructor, this, entity, iblockstate1, partialTicks, this.fogColorRed, this.fogColorGreen, this.fogColorBlue);
 +        	IBlockState iblockstate = this.mc.world.getBlockState(new BlockPos(pos.x, pos.y, pos.z));
-             Object object = Reflector.newInstance(Reflector.EntityViewRenderEvent_FogColors_Constructor, this, entity, iblockstate, partialTicks, this.fogColorRed, this.fogColorGreen, this.fogColorBlue);
++            Object object = Reflector.newInstance(Reflector.EntityViewRenderEvent_FogColors_Constructor, this, entity, iblockstate, partialTicks, this.fogColorRed, this.fogColorGreen, this.fogColorBlue);
              Reflector.postForgeBusEvent(object);
              this.fogColorRed = Reflector.callFloat(object, Reflector.EntityViewRenderEvent_FogColors_getRed);
-@@ -2406,14 +2556,20 @@
+             this.fogColorGreen = Reflector.callFloat(object, Reflector.EntityViewRenderEvent_FogColors_getGreen);
+@@ -2416,14 +2566,20 @@
       * Sets up the fog to be rendered. If the arg passed in is -1 the fog starts at 0 and goes to 80% of far plane
       * distance and is used for sky rendering.
       */
@@ -2407,7 +2426,7 @@
          float f = -1.0F;
  
          if (Reflector.ForgeHooksClient_getFogDensity.exists())
-@@ -2444,7 +2600,7 @@
+@@ -2454,7 +2610,7 @@
                  GlStateManager.setFog(GlStateManager.FogMode.LINEAR);
              }
  
@@ -2416,7 +2435,7 @@
              {
                  GlStateManager.setFogStart(0.0F);
                  GlStateManager.setFogEnd(f2 * 0.8F);
-@@ -2473,7 +2629,7 @@
+@@ -2483,7 +2639,7 @@
  
              GlStateManager.setFogDensity(0.1F);
          }
@@ -2425,7 +2444,7 @@
          {
              if (Config.isShaders())
              {
-@@ -2505,7 +2661,7 @@
+@@ -2515,7 +2671,7 @@
                  GlStateManager.setFogDensity(0.02F);
              }
          }
@@ -2434,7 +2453,7 @@
          {
              if (Config.isShaders())
              {
-@@ -2532,7 +2688,7 @@
+@@ -2542,7 +2698,7 @@
                  GlStateManager.setFog(GlStateManager.FogMode.LINEAR);
              }
  
@@ -2443,7 +2462,7 @@
              {
                  GlStateManager.setFogStart(0.0F);
                  GlStateManager.setFogEnd(f1);
-@@ -2564,10 +2720,10 @@
+@@ -2574,10 +2730,10 @@
  
              if (Reflector.ForgeHooksClient_onFogRender.exists())
              {
@@ -2456,7 +2475,7 @@
          GlStateManager.enableColorMaterial();
          GlStateManager.enableFog();
          GlStateManager.colorMaterial(1028, 4608);
-@@ -2751,10 +2907,12 @@
+@@ -2761,10 +2917,12 @@
              this.updatedWorld = world;
          }
  
@@ -2473,7 +2492,7 @@
      }
  
      private void frameFinish()
-@@ -2778,39 +2936,6 @@
+@@ -2788,39 +2946,6 @@
          }
      }
  
@@ -2513,7 +2532,7 @@
      public boolean setFxaaShader(int p_setFxaaShader_1_)
      {
          if (!OpenGlHelper.isFramebufferEnabled())
-@@ -2971,8 +3096,9 @@
+@@ -2981,8 +3106,9 @@
          this.itemActivationOffY = this.random.nextFloat() * 2.0F - 1.0F;
      }
  
@@ -2525,7 +2544,7 @@
          if (this.itemActivationItem != null && this.itemActivationTicks > 0)
          {
              int i = 40 - this.itemActivationTicks;
-@@ -2981,26 +3107,2340 @@
+@@ -2991,26 +3117,2342 @@
              float f2 = f * f1;
              float f3 = 10.25F * f2 * f1 + -24.95F * f1 * f1 + 25.5F * f2 + -13.8F * f1 + 4.0F * f;
              float f4 = f3 * (float)Math.PI;
@@ -2559,7 +2578,7 @@
 -            GlStateManager.disableDepth();
 -        }
 +                    }
-+    }
+     }
 +    
 +    //VIVECRAFT ADDITIONS *********************************************************
 +	public void setupClipPlanes()
@@ -4721,7 +4740,7 @@
 +		//does nothing at all.
 +		Shaders.endFPOverlay();
 +	}
-+}
+ }
 +
 +	
 +	private void renderVRThings(float par1){
@@ -4879,7 +4898,10 @@
 +
 +    		mc.vrPlayer.checkandUpdateRotateScale(true, par1);
 +    	}
-     }
++    }
++    
++    
 +	// VIVE END - render functions
 +
- }
++}
+\ No newline at end of file

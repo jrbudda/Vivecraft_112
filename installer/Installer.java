@@ -51,11 +51,11 @@ public class Installer extends JPanel  implements PropertyChangeListener
     private static final String MC_VERSION        = "1.12";
     private static final String MC_MD5            = "253d74d38e334133e3e9dca0017a9b5b";
     private static final String OF_LIB_PATH       = "libraries/optifine/OptiFine/";
-    private static final String OF_FILE_NAME      = "1.12_HD_U_C3";
-    private static final String OF_JSON_NAME      = "1.12_HD_U_C3";
-    private static final String OF_MD5            = "c3ed48e521c55fd2018d0dc2f43d0b70";
+    private static final String OF_FILE_NAME      = "1.12_HD_U_C4";
+    private static final String OF_JSON_NAME      = "1.12_HD_U_C4";
+    private static final String OF_MD5            = "4a1a67757a6cd9c85c03f609550191d1";
     private static final String OF_VERSION_EXT    = ".jar";
-    private static final String FORGE_VERSION     = "14.21.0.2385";
+    private static final String FORGE_VERSION     = "14.21.1.2387";
     /* END OF DO NOT RENAME */
 
     private String mc_url = "https://s3.amazonaws.com/Minecraft.Download/versions/" + MINECRAFT_VERSION + "/" + MINECRAFT_VERSION +".jar";

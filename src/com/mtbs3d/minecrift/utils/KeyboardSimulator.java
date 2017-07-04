@@ -436,7 +436,7 @@ public class KeyboardSimulator {
 			case Keyboard.KEY_L: return KeyEvent.VK_L;
 			case Keyboard.KEY_SEMICOLON: return KeyEvent.VK_SEMICOLON;
 			case Keyboard.KEY_APOSTROPHE: return KeyEvent.VK_QUOTE;
-			case Keyboard.KEY_GRAVE: return KeyEvent.VK_DEAD_GRAVE;
+			case Keyboard.KEY_GRAVE: return KeyEvent.VK_BACK_QUOTE;
 			//case Keyboard.KEY_LSHIFT: return KeyEvent.VK_SHIFT;
 			case Keyboard.KEY_BACKSLASH: return KeyEvent.VK_BACK_SLASH;
 			case Keyboard.KEY_Z: return KeyEvent.VK_Z;

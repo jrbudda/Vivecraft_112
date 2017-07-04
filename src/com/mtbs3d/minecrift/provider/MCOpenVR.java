@@ -73,6 +73,7 @@ import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 public class MCOpenVR 
 {
@@ -366,7 +367,10 @@ public class MCOpenVR
 	    mc.gameSettings.keyBindings = (KeyBinding[])((KeyBinding[])ArrayUtils.add(mc.gameSettings.keyBindings, hotbarNext));	
 	    mc.gameSettings.keyBindings = (KeyBinding[])((KeyBinding[])ArrayUtils.add(mc.gameSettings.keyBindings, hotbarPrev));	
 	
-		
+	    //TODO: Forge?
+	    Map<String, Integer> co = (Map<String, Integer>) MCReflection.getField(MCReflection.KeyBinding_Category_Order, null);
+	    co.put("Vivecraft", Integer.valueOf(8));
+	    	    
 		initialized = true;
 		
 		if(Main.katvr){
@@ -1913,7 +1917,7 @@ public class MCOpenVR
 
 	
 	private static void changeHotbar(int dir){
-		if (Reflector.forgeExists() && mc.currentScreen == null)
+		if (Reflector.forgeExists() && mc.currentScreen == null && Display.isActive())
 			KeyboardSimulator.robot.mouseWheel(-dir * 120);
 		else
 			mc.player.inventory.changeCurrentItem(dir);

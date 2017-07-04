@@ -1,5 +1,5 @@
 {
-	"id": "1.12-forge1.12-14.21.0.2343",
+	"id": "1.12-forge1.12-14.21.1.2387",
 	"time": "2017-06-21T08:47:26+0000",
 	"releaseTime": "1960-01-01T00:00:00-0700",
 	"type": "release",
@@ -10,7 +10,7 @@
 	"logging": {},
 	"libraries": [
 		{
-			"name": "net.minecraftforge:forge:1.12-14.21.0.2385",
+			"name": "net.minecraftforge:forge:1.12-14.21.1.2387",
 			"url": "http://files.minecraftforge.net/maven/"
 		},
 		{
@@ -188,7 +188,7 @@
 		"name": "net.aib42.mumblelink:JMumble:1.11"
 	},
 	{
-		"name": "optifine:OptiFine:1.12_HD_U_C3"
+		"name": "optifine:OptiFine:1.12_HD_U_C4"
 }
 	]
 }

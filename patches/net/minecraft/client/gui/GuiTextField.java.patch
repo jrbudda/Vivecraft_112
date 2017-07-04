@@ -22,21 +22,22 @@
  
      /** Has the current text being edited on the textbox. */
      private String text = "";
-@@ -516,7 +519,12 @@
+@@ -516,7 +519,13 @@
          if (this.canLoseFocus)
          {
              this.setFocused(flag);
 -        }
 +       }  else {
-+           	
-+            // VIVE START - show keyboard
-+    	   if(flag && this.canLoseFocus == true) MCOpenVR.setKeyboardOverlayShowing(true, this);           // VIVE END - show keyboard
-+ 	
++	
 +         }
++       	
++        // VIVE START - show keyboard
++	   if(flag && this.canLoseFocus == true) MCOpenVR.setKeyboardOverlayShowing(true, this);           // VIVE END - show keyboard
++
  
          if (this.isFocused && flag && mouseButton == 0)
          {
-@@ -568,7 +576,10 @@
+@@ -568,7 +577,10 @@
              if (!s.isEmpty())
              {
                  String s1 = flag ? s.substring(0, j) : s;
@@ -48,7 +49,7 @@
              }
  
              boolean flag2 = this.cursorPosition < this.text.length() || this.text.length() >= this.getMaxStringLength();
-@@ -732,6 +743,12 @@
+@@ -732,6 +744,12 @@
          {
              Minecraft.getMinecraft().currentScreen.setFocused(isFocusedIn);
          }

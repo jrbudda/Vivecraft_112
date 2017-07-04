@@ -91,29 +91,12 @@
                      set1.remove(enumfacing);
                  }
  
-@@ -1452,12 +1466,12 @@
-     {
-         this.debugFixedClippingHelper = new ClippingHelperImpl();
-         ((ClippingHelperImpl)this.debugFixedClippingHelper).init();
--        Matrix4f matrix4f = new Matrix4f(this.debugFixedClippingHelper.modelviewMatrix);
-+        Matrix4fof matrix4f = new Matrix4fof(this.debugFixedClippingHelper.modelviewMatrix);
-         matrix4f.transpose();
--        Matrix4f matrix4f1 = new Matrix4f(this.debugFixedClippingHelper.projectionMatrix);
-+        Matrix4fof matrix4f1 = new Matrix4fof(this.debugFixedClippingHelper.projectionMatrix);
-         matrix4f1.transpose();
--        Matrix4f matrix4f2 = new Matrix4f();
--        Matrix4f.mul(matrix4f1, matrix4f, matrix4f2);
-+        Matrix4fof matrix4f2 = new Matrix4fof();
-+        Matrix4fof.mul(matrix4f1, matrix4f, matrix4f2);
-         matrix4f2.invert();
-         this.debugTerrainFrustumPosition.x = x;
-         this.debugTerrainFrustumPosition.y = y;
 @@ -1473,7 +1487,7 @@
  
          for (int i = 0; i < 8; ++i)
          {
 -            Matrix4f.transform(matrix4f2, this.debugTerrainMatrix[i], this.debugTerrainMatrix[i]);
-+            Matrix4fof.transform(matrix4f2, this.debugTerrainMatrix[i], this.debugTerrainMatrix[i]);
++        	Matrix4f.transform(matrix4f2, this.debugTerrainMatrix[i], this.debugTerrainMatrix[i]);
              this.debugTerrainMatrix[i].x /= this.debugTerrainMatrix[i].w;
              this.debugTerrainMatrix[i].y /= this.debugTerrainMatrix[i].w;
              this.debugTerrainMatrix[i].z /= this.debugTerrainMatrix[i].w;

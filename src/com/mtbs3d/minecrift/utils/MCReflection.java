@@ -24,7 +24,8 @@ public class MCReflection {
 	public static Method KeyBinding_unpressKey = getDeclaredMethod(KeyBinding.class, "unpressKey", "k", "func_74505_d");
 	public static Field WorldProvider_terrainType = getDeclaredField(WorldProvider.class, "terrainType", "h", "field_76577_b");
 	public static Field TileEntityRendererDispatcher_fontRenderer = getDeclaredField(TileEntityRendererDispatcher.class, "fontRenderer", "o", "field_147557_n");
-	
+	public static Field KeyBinding_Category_Order = getDeclaredField(KeyBinding.class, "CATEGORY_ORDER", "d", "field_193627_d");
+
 	public static Object getField(Field field, Object obj) {
 		try {
 			return field.get(obj);

@@ -395,7 +395,7 @@
      }
  
      /**
-@@ -319,23 +398,23 @@
+@@ -319,148 +398,381 @@
       */
      public void renderItemInFirstPerson(float partialTicks)
      {
@@ -408,41 +408,50 @@
 -        boolean flag1 = true;
 -
 -        if (abstractclientplayer.isHandActive())
--        {
++    	AbstractClientPlayer player = this.mc.player;
++    	float swingprogress = player.getSwingProgress(partialTicks);
++    	EnumHand hand = (EnumHand)MoreObjects.firstNonNull(player.swingingHand, EnumHand.MAIN_HAND);
++    	float f1 = player.prevRotationPitch + (player.rotationPitch - player.prevRotationPitch) * partialTicks;
++    	float f2 = player.prevRotationYaw + (player.rotationYaw - player.prevRotationYaw) * partialTicks;
++    	boolean doRighthand = true;
++    	boolean doLeftHand = true;
++
++    	if (player.isHandActive())
++    	{
++    		ItemStack itemstack = player.getActiveItemStack();
++
++    		if (BowTracker.isBow(itemstack))
++    		{//bow mode
++    			EnumHand enumhand1 = player.getActiveHand();
++    			doRighthand = enumhand1 == EnumHand.MAIN_HAND;
++    			doLeftHand = !doRighthand;
++
++    			this.rotateArroundXAndY(f1, f2);
++    			this.setLightmap();
++    			this.rotateArm(partialTicks);
++    			GlStateManager.enableRescaleNormal();
++    		}
++    	}
++    	
++        if (doRighthand)
+         {
 -            ItemStack itemstack = abstractclientplayer.getActiveItemStack();
 -
--            if (itemstack != null && itemstack.getItem() == Items.BOW)
+-            if (!itemstack.isEmpty() && itemstack.getItem() == Items.BOW)
 -            {
 -                EnumHand enumhand1 = abstractclientplayer.getActiveHand();
 -                flag = enumhand1 == EnumHand.MAIN_HAND;
 -                flag1 = !flag;
-+        AbstractClientPlayer player = this.mc.player;
-+        float swingprogress = player.getSwingProgress(partialTicks);
-+        EnumHand hand = (EnumHand)MoreObjects.firstNonNull(player.swingingHand, EnumHand.MAIN_HAND);
-+        float f1 = player.prevRotationPitch + (player.rotationPitch - player.prevRotationPitch) * partialTicks;
-+        float f2 = player.prevRotationYaw + (player.rotationYaw - player.prevRotationYaw) * partialTicks;
-+        boolean doRighthand = true;
-+        boolean doLeftHand = true;
-+
-+        if (player.isHandActive())
-+        {
-+            ItemStack itemstack = player.getActiveItemStack();
-+
-+            if (BowTracker.isBow(itemstack))
-+            {//bow mode
-+                EnumHand enumhand1 = player.getActiveHand();
-+                doRighthand = enumhand1 == EnumHand.MAIN_HAND;
-+                doLeftHand = !doRighthand;
-             }
-         }
- 
-@@ -344,123 +423,356 @@
-         this.rotateArm(partialTicks);
-         GlStateManager.enableRescaleNormal();
- 
+-            }
+-        }
+-
+-        this.rotateArroundXAndY(f1, f2);
+-        this.setLightmap();
+-        this.rotateArm(partialTicks);
+-        GlStateManager.enableRescaleNormal();
+-
 -        if (flag)
-+        if (doRighthand)
-         {
+-        {
 -            float f3 = enumhand == EnumHand.MAIN_HAND ? f : 0.0F;
 +            float f3 = hand == EnumHand.MAIN_HAND ? swingprogress : 0.0F;
              float f5 = 1.0F - (this.prevEquippedProgressMainHand + (this.equippedProgressMainHand - this.prevEquippedProgressMainHand) * partialTicks);
@@ -897,9 +906,85 @@
      }
  
      /**
-@@ -518,6 +830,128 @@
-         GlStateManager.enableAlpha();
-     }
+@@ -468,56 +780,173 @@
+      */
+     public void renderOverlays(float partialTicks)
+     {
++    	inportal = false;
++    	inwater = false;
++    	inblock = false;
++    	onfire = false;
++    	
+         GlStateManager.disableAlpha();
+-
+-        if (this.mc.player.isEntityInsideOpaqueBlock())
++        Vec3d pos = mc.entityRenderer.getEyeRenderPos(mc.currentPass);
++        if (isInsideOpaqueBlock(pos.add(mc.roomScale.getHMDDir_World().scale(0.05)), true))
+         {
+-            IBlockState iblockstate = this.mc.world.getBlockState(new BlockPos(this.mc.player));
+-            BlockPos blockpos = new BlockPos(this.mc.player);
+-            EntityPlayer entityplayer = this.mc.player;
++              //  this.renderBlockInHand(partialTicks, this.mc.getBlockRendererDispatcher().getBlockModelShapes().getTexture(iblockstate));
++            	inblock = true;
++        }
+ 
+-            for (int i = 0; i < 8; ++i)
++        if (!this.mc.player.isSpectator())
++        {
++            if (isInsideOfMaterial(pos, Material.WATER) )
+             {
+-                double d0 = entityplayer.posX + (double)(((float)((i >> 0) % 2) - 0.5F) * entityplayer.width * 0.8F);
+-                double d1 = entityplayer.posY + (double)(((float)((i >> 1) % 2) - 0.5F) * 0.1F);
+-                double d2 = entityplayer.posZ + (double)(((float)((i >> 2) % 2) - 0.5F) * entityplayer.width * 0.8F);
+-                BlockPos blockpos1 = new BlockPos(d0, d1 + (double)entityplayer.getEyeHeight(), d2);
+-                IBlockState iblockstate1 = this.mc.world.getBlockState(blockpos1);
+-
+-                if (iblockstate1.causesSuffocation())
+-                {
+-                    iblockstate = iblockstate1;
+-                    blockpos = blockpos1;
+-                }
++            	inwater = true;
++              //  this.renderWaterOverlayTexture(partialTicks);
+             }
+ 
+-            if (iblockstate.getRenderType() != EnumBlockRenderType.INVISIBLE)
++            
++            if (this.mc.player.isBurning() && !Reflector.callBoolean(Reflector.ForgeEventFactory_renderFireOverlay, new Object[] {this.mc.player, Float.valueOf(partialTicks)}))
+             {
+-                Object object = Reflector.getFieldValue(Reflector.RenderBlockOverlayEvent_OverlayType_BLOCK);
+-
+-                if (!Reflector.callBoolean(Reflector.ForgeEventFactory_renderBlockOverlay, this.mc.player, partialTicks, object, iblockstate, blockpos))
+-                {
+-                    this.renderBlockInHand(this.mc.getBlockRendererDispatcher().getBlockModelShapes().getTexture(iblockstate));
+-                }
++                this.renderFireInFirstPerson();
++                onfire = true;
+             }
+         }
+ 
+-        if (!this.mc.player.isSpectator())
++		
++        if (!this.mc.player.isPotionActive(MobEffects.NAUSEA))
+         {
+-            if (this.mc.player.isInsideOfMaterial(Material.WATER) && !Reflector.callBoolean(Reflector.ForgeEventFactory_renderWaterOverlay, this.mc.player, partialTicks))
+-            {
+-                this.renderWaterOverlayTexture(partialTicks);
+-            }
++            float f = this.mc.player.prevTimeInPortal + (this.mc.player.timeInPortal - this.mc.player.prevTimeInPortal) * partialTicks;
+ 
+-            if (this.mc.player.isBurning() && !Reflector.callBoolean(Reflector.ForgeEventFactory_renderFireOverlay, this.mc.player, partialTicks))
++            if (f > 0.0F)
+             {
+-                this.renderFireInFirstPerson();
++            	inportal = true;
++               // this.renderPortal(f, new ScaledResolution(mc));
+             }
+         }
++		
++                
++        GlStateManager.enableAlpha();
++    }
  
 +    public boolean inwater, inportal, inblock, onfire;
 +    public float inBlock = 0;
@@ -936,7 +1021,7 @@
 +        tessellator.draw();
 +        GlStateManager.depthMask(true);
 +        GlStateManager.enableDepth();
-+        GlStateManager.enableAlpha();
+         GlStateManager.enableAlpha();
 +        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 +    }
 +
@@ -1020,8 +1105,8 @@
 +
 +    	return false;
 +    	
-+    }
-+
+     }
+ 
 +
      /**
       * Render the block in the player's hand

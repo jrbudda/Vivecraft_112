@@ -25,6 +25,17 @@
  public class GuiChat extends GuiScreen implements ITabCompleter
  {
      private static final Logger LOGGER = LogManager.getLogger();
+@@ -55,9 +60,9 @@
+         this.inputField = new GuiTextField(0, this.fontRenderer, 4, this.height - 12, this.width - 4, 12);
+         this.inputField.setMaxStringLength(256);
+         this.inputField.setEnableBackgroundDrawing(false);
++        this.inputField.setCanLoseFocus(false);
+         this.inputField.setFocused(true);
+         this.inputField.setText(this.defaultInputFieldText);
+-        this.inputField.setCanLoseFocus(false);
+         this.tabCompleter = new GuiChat.ChatTabCompleter(this.inputField);
+     }
+ 
 @@ -131,7 +136,12 @@
                  this.sendChatMessage(s);
              }

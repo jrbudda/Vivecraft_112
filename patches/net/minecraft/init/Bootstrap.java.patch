@@ -67,7 +67,7 @@
              PotionType.registerPotionTypes();
              PotionHelper.init();
              EntityList.init();
-@@ -514,6 +536,24 @@
+@@ -514,6 +536,30 @@
                  LOGGER.error("Errors with built-in recipes!");
              }
  
@@ -82,17 +82,23 @@
 +            is2.getTagCompound().setBoolean("Unbreakable", true);
 +            is2.getTagCompound().setInteger("HideFlags",4);
 +            
-+            ShapedRecipes boot = new ShapedRecipes("", 1, 2, NonNullList.from(Ingredient.fromItem(Items.LEATHER_BOOTS), Ingredient.fromStacks(new ItemStack(Blocks.SLIME_BLOCK))), is);
-+            ShapedRecipes claw = new ShapedRecipes("", 3, 2, NonNullList.from(Ingredient.fromItem(Items.SPIDER_EYE),Ingredient.EMPTY,Ingredient.fromItem(Items.SPIDER_EYE),Ingredient.fromItem(Items.SHEARS),Ingredient.EMPTY,Ingredient.fromItem(Items.SHEARS)), is2);
-+            
-+            CraftingManager.register("jumpboots", boot);
-+            CraftingManager.register("climbclaws", claw);
++            ShapedRecipes boot = new ShapedRecipes("", 1, 2, NonNullList.from(Ingredient.EMPTY,Ingredient.fromItem(Items.LEATHER_BOOTS), Ingredient.fromStacks(new ItemStack(Blocks.SLIME_BLOCK))), is);
++            ShapedRecipes claw = new ShapedRecipes("", 3, 2, NonNullList.from(Ingredient.EMPTY,Ingredient.fromItem(Items.SPIDER_EYE),Ingredient.EMPTY,Ingredient.fromItem(Items.SPIDER_EYE),Ingredient.fromItem(Items.SHEARS),Ingredient.EMPTY,Ingredient.fromItem(Items.SHEARS)), is2);
++
++            if(Reflector.forgeExists()){
++            	//TODO: Handle forge case.
++            }
++            else
++            {
++            	CraftingManager.register("jumpboots", boot);
++            	CraftingManager.register("climbclaws", claw);
++            }
 +            //
 +
              StatList.init();
  
              if (LOGGER.isDebugEnabled())
-@@ -530,6 +570,7 @@
+@@ -530,6 +576,7 @@
                      LOGGER.error("Errors with built-in loot tables");
                  }
              }
