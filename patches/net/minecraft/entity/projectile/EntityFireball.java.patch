@@ -16,8 +16,8 @@
          this.setSize(1.0F, 1.0F);
 -        this.setLocationAndAngles(shooter.posX, shooter.posY, shooter.posZ, shooter.rotationYaw, shooter.rotationPitch);
 +        
-+        if(shooter instanceof EntityPlayer){
-+        	//VIVE USE CONTROLLER
++        //VIVE USE CONTROLLER
++        if(shooter.getEntityId() == Minecraft.getMinecraft().player.getEntityId()){
 +        	float yaw = Minecraft.getMinecraft().roomScale.getControllerYaw_World(0);
 +        	float pitch = -Minecraft.getMinecraft().roomScale.getControllerPitch_World(0);
 +        	Vec3d aimSource = Minecraft.getMinecraft().roomScale.getControllerPos_World(0);

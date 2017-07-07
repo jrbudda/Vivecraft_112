@@ -298,7 +298,7 @@
 +	 * The minecriftVerString will be automatically updated by the build scripts, do not modify here.
 +	 * Modify minecriftversion.py in root minecrift dir.
 +	 */
-+    public final String minecriftVerString = "Vivecraft 1.12 jrbudda-alpha6";
++    public final String minecriftVerString = "Vivecraft 1.12 jrbudda-1";
 +	/* end version */
 +	/** END MINECRIFT */
 +    
@@ -1714,7 +1714,7 @@
          int i = Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey();
  
          if (i != 0 && !Keyboard.isRepeatEvent())
-@@ -3564,4 +4254,1211 @@
+@@ -3564,4 +4254,1212 @@
      {
          return this.tutorial;
      }
@@ -2903,6 +2903,7 @@
 +		if (angle < 0) angle += 360;
 +		return angle;
 +	}
++	
 +	
 +	private float angleDiff(float a, float b) {
 +		float d = Math.abs(a - b) % 360;

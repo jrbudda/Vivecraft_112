@@ -56,6 +56,8 @@ public class Installer extends JPanel  implements PropertyChangeListener
     private static final String OF_MD5            = "4a1a67757a6cd9c85c03f609550191d1";
     private static final String OF_VERSION_EXT    = ".jar";
     private static final String FORGE_VERSION     = "14.21.1.2387";
+	private static final String DEFAULT_PROFILE_NAME = "ViveCraft " + MINECRAFT_VERSION;
+	private static final String DEFAULT_PROFILE_NAME_FORGE = "ViveCraft-Forge " + MINECRAFT_VERSION;
     /* END OF DO NOT RENAME */
 
     private String mc_url = "https://s3.amazonaws.com/Minecraft.Download/versions/" + MINECRAFT_VERSION + "/" + MINECRAFT_VERSION +".jar";
@@ -1562,7 +1564,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
         
         
         this.add(Box.createVerticalGlue());
-        JLabel github = linkify("Vivecraft is open source. find it on Github","https://github.com/jrbudda/Vivecraft_111","Vivecraft 1.11 Github");
+        JLabel github = linkify("Vivecraft is open source. find it on Github","https://github.com/jrbudda/Vivecraft_112","Vivecraft 1.12 Github");
         JLabel wiki = linkify("Vivecraft home page","http://www.vivecraft.org","Vivecraft Home");
         JLabel donate = linkify("If you think Vivecraft is awesome, please consider donating.","https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=JVBJLN5HJJS52&lc=US&item_name=jrbudda&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted)","jrbudda's Paypal");
         JLabel optifine = linkify("Vivecraft includes OptiFine for performance. Consider donating to them as well.","http://optifine.net/donate.php","http://optifine.net/donate.php");
@@ -1721,15 +1723,8 @@ public class Installer extends JPanel  implements PropertyChangeListener
 
     private String getMinecraftProfileName(boolean usingForge, boolean sm)
     {
-        if(!usingForge) {
-			if(sm)
-				return "ViveCraft-ShadersMod " + MINECRAFT_VERSION;
-			else
-				return "ViveCraft " + MINECRAFT_VERSION;
-        } else if(sm)
-				return "ViveCraft-SM-Forge " + MINECRAFT_VERSION;
-			else
-				return "ViveCraft-Forge " + MINECRAFT_VERSION;
+        if(!usingForge)	return DEFAULT_PROFILE_NAME;
+        else return DEFAULT_PROFILE_NAME_FORGE;
     }
 
     public static String readAsciiFile(File file)

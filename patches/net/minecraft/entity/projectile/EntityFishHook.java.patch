@@ -8,38 +8,48 @@
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.MoverType;
  import net.minecraft.entity.item.EntityItem;
-@@ -83,9 +84,20 @@
+@@ -83,17 +84,33 @@
      }
  
      private void shoot()
 -    {
 -        float f = this.angler.prevRotationPitch + (this.angler.rotationPitch - this.angler.prevRotationPitch);
 -        float f1 = this.angler.prevRotationYaw + (this.angler.rotationYaw - this.angler.prevRotationYaw);
-+    {   	
-+    	//VIVE USE CONTROLLER
-+        int c = 1;
-+        if (this.angler.getHeldItemMainhand().getItem() == Items.FISHING_ROD) c = 0;
-+        float yaw = Minecraft.getMinecraft().roomScale.getControllerYaw_World(c);
-+        float pitch = -Minecraft.getMinecraft().roomScale.getControllerPitch_World(c);
-+        Vec3d aimSource = Minecraft.getMinecraft().roomScale.getControllerPos_World(c);
-+        this.setLocationAndAngles(aimSource.x, aimSource.y, aimSource.z, yaw, pitch);
-+        float f = pitch;
-+        float f1 = yaw;
-+        //END VIVE
-+    	
-+//    	float f = this.angler.prevRotationPitch + (this.angler.rotationPitch - this.angler.prevRotationPitch);
-+//      float f1 = this.angler.prevRotationYaw + (this.angler.rotationYaw - this.angler.prevRotationYaw);      
-         float f2 = MathHelper.cos(-f1 * 0.017453292F - (float)Math.PI);
-         float f3 = MathHelper.sin(-f1 * 0.017453292F - (float)Math.PI);
-         float f4 = -MathHelper.cos(-f * 0.017453292F);
-@@ -93,7 +105,9 @@
-         double d0 = this.angler.prevPosX + (this.angler.posX - this.angler.prevPosX) - (double)f3 * 0.3D;
-         double d1 = this.angler.prevPosY + (this.angler.posY - this.angler.prevPosY) + (double)this.angler.getEyeHeight();
-         double d2 = this.angler.prevPosZ + (this.angler.posZ - this.angler.prevPosZ) - (double)f2 * 0.3D;
+-        float f2 = MathHelper.cos(-f1 * 0.017453292F - (float)Math.PI);
+-        float f3 = MathHelper.sin(-f1 * 0.017453292F - (float)Math.PI);
+-        float f4 = -MathHelper.cos(-f * 0.017453292F);
+-        float f5 = MathHelper.sin(-f * 0.017453292F);
+-        double d0 = this.angler.prevPosX + (this.angler.posX - this.angler.prevPosX) - (double)f3 * 0.3D;
+-        double d1 = this.angler.prevPosY + (this.angler.posY - this.angler.prevPosY) + (double)this.angler.getEyeHeight();
+-        double d2 = this.angler.prevPosZ + (this.angler.posZ - this.angler.prevPosZ) - (double)f2 * 0.3D;
 -        this.setLocationAndAngles(d0, d1, d2, f1, f);
++    {   	
++
++    	float f = this.angler.prevRotationPitch + (this.angler.rotationPitch - this.angler.prevRotationPitch);
++    	float f1 = this.angler.prevRotationYaw + (this.angler.rotationYaw - this.angler.prevRotationYaw);
++    	float f2 = MathHelper.cos(-f1 * 0.017453292F - (float)Math.PI);
++    	float f3 = MathHelper.sin(-f1 * 0.017453292F - (float)Math.PI);
++    	float f4 = -MathHelper.cos(-f * 0.017453292F);
++    	float f5 = MathHelper.sin(-f * 0.017453292F);
 +        
-+       
-+       // this.setLocationAndAngles(d0, d1, d2, f1, f);
++    	//VIVE USE CONTROLLER
++    	if(angler.getEntityId() == Minecraft.getMinecraft().player.getEntityId()){
++    		int c = 1;
++    		if (this.angler.getHeldItemMainhand().getItem() == Items.FISHING_ROD) c = 0;
++    		float yaw = Minecraft.getMinecraft().roomScale.getControllerYaw_World(c);
++    		float pitch = -Minecraft.getMinecraft().roomScale.getControllerPitch_World(c);
++    		Vec3d aimSource = Minecraft.getMinecraft().roomScale.getControllerPos_World(c);
++    		this.setLocationAndAngles(aimSource.x, aimSource.y, aimSource.z, yaw, pitch);
++    		 f = pitch;
++    		 f1 = yaw;
++    	}else {
++        	double d0 = this.angler.prevPosX + (this.angler.posX - this.angler.prevPosX) - (double)f3 * 0.3D;
++        	double d1 = this.angler.prevPosY + (this.angler.posY - this.angler.prevPosY) + (double)this.angler.getEyeHeight();
++            double d2 = this.angler.prevPosZ + (this.angler.posZ - this.angler.prevPosZ) - (double)f2 * 0.3D;
++            this.setLocationAndAngles(d0, d1, d2, f1, f);
++    	}
++    	//END VIVE
++
          this.motionX = (double)(-f3);
          this.motionY = (double)MathHelper.clamp(-(f5 / f4), -5.0F, 5.0F);
          this.motionZ = (double)(-f2);

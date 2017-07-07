@@ -22,7 +22,7 @@
 -        this.setPosition(x, y, z);
 +
 +    	//VIVE SET SPAWNPOS
-+        if (this.thrower instanceof EntityPlayer)
++        if (this.thrower.getEntityId() == Minecraft.getMinecraft().player.getEntityId())
 +        {
 +	        Vec3d aimSource = Minecraft.getMinecraft().roomScale.getControllerPos_World(0);
 +	        this.setPosition(aimSource.x, aimSource.y, aimSource.z);
@@ -44,7 +44,7 @@
      public void setHeadingFromThrower(Entity entityThrower, float rotationPitchIn, float rotationYawIn, float pitchOffset, float velocity, float inaccuracy)
      {
 +    	//VIVE USE CONTROLLER
-+        if (entityThrower instanceof EntityPlayer)
++        if (entityThrower.getEntityId() == Minecraft.getMinecraft().player.getEntityId())
 +        {
 +        	rotationYawIn = Minecraft.getMinecraft().roomScale.getControllerYaw_World(0);
 +        	rotationPitchIn = -Minecraft.getMinecraft().roomScale.getControllerPitch_World(0);
