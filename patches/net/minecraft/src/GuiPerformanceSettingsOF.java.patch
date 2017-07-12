@@ -4,7 +4,7 @@
              {
                  this.buttonList.add(new GuiOptionSliderOF(gamesettings$options.returnEnumOrdinal(), j, k, gamesettings$options));
              }
-+            if (gamesettings$options == GameSettings.Options.SMOOTH_FPS || gamesettings$options == GameSettings.Options.SMOOTH_WORLD) {
++            if (gamesettings$options == GameSettings.Options.SMOOTH_FPS || gamesettings$options == GameSettings.Options.SMOOTH_WORLD || gamesettings$options == GameSettings.Options.CHUNK_UPDATES || gamesettings$options == GameSettings.Options.CHUNK_UPDATES_DYNAMIC || gamesettings$options == GameSettings.Options.LAZY_CHUNK_LOADING) {
 +            	this.buttonList.get(i).enabled = false;
 +            }
          }

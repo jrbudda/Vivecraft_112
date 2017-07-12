@@ -714,6 +714,7 @@ public class MCOpenVR
 
 	public static boolean setKeyboardOverlayShowing(boolean showingState, GuiTextField gui) {
 		if (vrOverlay == null) return false;
+		if (Main.kiosk) return false;
 		if(mc.vrSettings.seated) showingState = false;
 		keyboardGui = gui;
 		int ret = 1;
@@ -1407,7 +1408,7 @@ public class MCOpenVR
 		
 		if(pressedRAppMenu  && !lastpressedRAppMenu) { 
 			if(mc.gameSettings.keyBindPickBlock.isKeyDown() && mc.vrSettings.displayMirrorMode == mc.vrSettings.MIRROR_MIXED_REALITY){				
-				VRHotkeys.snapMRCam(mc,0);
+				if(!Main.kiosk)VRHotkeys.snapMRCam(mc,0);
 				mc.vrSettings.saveOptions();
 			}
 		}
@@ -1764,7 +1765,7 @@ public class MCOpenVR
 
 		if(pressedA  && !lastpressedA) { //handle menu directly
 			if(mc.gameSettings.keyBindPickBlock.isKeyDown() && mc.vrSettings.displayMirrorMode == mc.vrSettings.MIRROR_MIXED_REALITY){				
-				VRHotkeys.snapMRCam(mc,0);
+				if(!Main.kiosk)VRHotkeys.snapMRCam(mc,0);
 				mc.vrSettings.saveOptions();
 			}
 		}

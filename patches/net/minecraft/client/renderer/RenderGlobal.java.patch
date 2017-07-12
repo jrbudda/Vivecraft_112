@@ -35,6 +35,17 @@
  import shadersmod.client.Shaders;
  import shadersmod.client.ShadersRender;
  import shadersmod.client.ShadowUtils;
+@@ -199,8 +206,8 @@
+     private final Set<BlockPos> setLightUpdates = Sets.<BlockPos>newHashSet();
+     private CloudRenderer cloudRenderer;
+     public Entity renderedEntity;
+-    public Set chunksToResortTransparency = new LinkedHashSet();
+-    public Set chunksToUpdateForced = new LinkedHashSet();
++    //public Set chunksToResortTransparency = new LinkedHashSet();
++    //public Set chunksToUpdateForced = new LinkedHashSet();
+     private Deque visibilityDeque = new ArrayDeque();
+     private List renderInfosEntities = new ArrayList(1024);
+     private List renderInfosTileEntities = new ArrayList(1024);
 @@ -402,7 +409,7 @@
          }
      }
@@ -91,7 +102,27 @@
                      set1.remove(enumfacing);
                  }
  
-@@ -1473,7 +1487,7 @@
+@@ -1368,14 +1382,13 @@
+                     BlockPos blockpos2 = renderchunk4.getPosition();
+                     boolean flag4 = blockpos1.distanceSq((double)(blockpos2.getX() + 8), (double)(blockpos2.getY() + 8), (double)(blockpos2.getZ() + 8)) < 768.0D;
+ 
+-                    if (!flag4)
+-                    {
++                    if ((Reflector.forgeExists() && (Boolean)Reflector.getFieldValue(Reflector.ForgeModContainer_alwaysSetupTerrainOffThread)) || (!renderchunk4.needsImmediateUpdate() && !flag4))                    {
+                         this.chunksToUpdate.add(renderchunk4);
+                     }
+-                    else if (!renderchunk4.isPlayerUpdate())
+-                    {
+-                        this.chunksToUpdateForced.add(renderchunk4);
+-                    }
++                    //else if (!renderchunk4.isPlayerUpdate())
++                    //{
++                    //    this.chunksToUpdateForced.add(renderchunk4);
++                    //}
+                     else
+                     {
+                         this.mc.mcProfiler.startSection("build near");
+@@ -1473,7 +1486,7 @@
  
          for (int i = 0; i < 8; ++i)
          {
@@ -100,7 +131,7 @@
              this.debugTerrainMatrix[i].x /= this.debugTerrainMatrix[i].w;
              this.debugTerrainMatrix[i].y /= this.debugTerrainMatrix[i].w;
              this.debugTerrainMatrix[i].z /= this.debugTerrainMatrix[i].w;
-@@ -1481,22 +1495,22 @@
+@@ -1481,22 +1494,22 @@
          }
      }
  
@@ -139,7 +170,24 @@
  
      public int renderBlockLayer(BlockRenderLayer blockLayerIn, double partialTicks, int pass, Entity entityIn)
      {
-@@ -1762,9 +1776,9 @@
+@@ -1515,14 +1528,13 @@
+                 this.prevRenderSortY = entityIn.posY;
+                 this.prevRenderSortZ = entityIn.posZ;
+                 int k = 0;
+-                this.chunksToResortTransparency.clear();
++                //this.chunksToResortTransparency.clear();
+ 
+                 for (RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation : this.renderInfos)
+                 {
+                     if (renderglobal$containerlocalrenderinformation.renderChunk.compiledChunk.isLayerStarted(blockLayerIn) && k++ < 15)
+                     {
+-                        this.chunksToResortTransparency.add(renderglobal$containerlocalrenderinformation.renderChunk);
+-                    }
++                    	this.renderDispatcher.updateTransparencyLater(renderglobal$containerlocalrenderinformation.renderChunk);                              }
+                 }
+             }
+ 
+@@ -1762,9 +1774,9 @@
          else if (this.mc.world.provider.isSurfaceWorld())
          {
              GlStateManager.disableTexture2D();
@@ -151,7 +199,7 @@
              {
                  Shaders.disableTexture2D();
              }
-@@ -1772,7 +1786,7 @@
+@@ -1772,7 +1784,7 @@
              Vec3d vec3d = this.world.getSkyColor(this.mc.getRenderViewEntity(), partialTicks);
              vec3d = CustomColors.getSkyColor(vec3d, this.mc.world, this.mc.getRenderViewEntity().posX, this.mc.getRenderViewEntity().posY + 1.0D, this.mc.getRenderViewEntity().posZ);
  
@@ -160,7 +208,7 @@
              {
                  Shaders.setSkyColor(vec3d);
              }
-@@ -1797,14 +1811,14 @@
+@@ -1797,14 +1809,14 @@
              GlStateManager.depthMask(false);
              GlStateManager.enableFog();
  
@@ -177,7 +225,7 @@
              {
                  Shaders.preSkyList();
              }
-@@ -1828,7 +1842,7 @@
+@@ -1828,7 +1840,7 @@
  
              GlStateManager.disableFog();
  
@@ -186,7 +234,7 @@
              {
                  Shaders.disableFog();
              }
-@@ -1843,7 +1857,7 @@
+@@ -1843,7 +1855,7 @@
              {
                  GlStateManager.disableTexture2D();
  
@@ -195,7 +243,7 @@
                  {
                      Shaders.disableTexture2D();
                  }
-@@ -1886,7 +1900,7 @@
+@@ -1886,7 +1898,7 @@
  
              GlStateManager.enableTexture2D();
  
@@ -204,7 +252,7 @@
              {
                  Shaders.enableTexture2D();
              }
-@@ -1898,14 +1912,14 @@
+@@ -1898,14 +1910,14 @@
              GlStateManager.rotate(-90.0F, 0.0F, 1.0F, 0.0F);
              CustomSky.renderSky(this.world, this.renderEngine, partialTicks);
  
@@ -221,7 +269,7 @@
              {
                  Shaders.postCelestialRotate();
              }
-@@ -1945,7 +1959,7 @@
+@@ -1945,7 +1957,7 @@
  
              GlStateManager.disableTexture2D();
  
@@ -230,7 +278,7 @@
              {
                  Shaders.disableTexture2D();
              }
-@@ -1976,7 +1990,7 @@
+@@ -1976,7 +1988,7 @@
              GlStateManager.enableAlpha();
              GlStateManager.enableFog();
  
@@ -239,7 +287,7 @@
              {
                  Shaders.enableFog();
              }
-@@ -1984,7 +1998,7 @@
+@@ -1984,7 +1996,7 @@
              GlStateManager.popMatrix();
              GlStateManager.disableTexture2D();
  
@@ -248,7 +296,7 @@
              {
                  Shaders.disableTexture2D();
              }
-@@ -2064,7 +2078,7 @@
+@@ -2064,7 +2076,7 @@
              GlStateManager.popMatrix();
              GlStateManager.enableTexture2D();
  
@@ -257,7 +305,57 @@
              {
                  Shaders.enableTexture2D();
              }
-@@ -2846,9 +2860,9 @@
+@@ -2351,9 +2363,9 @@
+ 
+     public void updateChunks(long finishTimeNano)
+     {
+-        finishTimeNano = (long)((double)finishTimeNano + 1.0E8D);
++        //finishTimeNano = (long)((double)finishTimeNano + 1.0E8D);
+         this.displayListEntitiesDirty |= this.renderDispatcher.runChunkUploads(finishTimeNano);
+-
++/*
+         if (this.chunksToUpdateForced.size() > 0)
+         {
+             Iterator iterator = this.chunksToUpdateForced.iterator();
+@@ -2388,10 +2400,11 @@
+                 }
+             }
+         }
+-
+-        int j = 0;
++*/
++        
++        //int j = 0;
+         int k = Config.getUpdatesPerFrame();
+-        int i = k * 2;
++        //int i = k * 2;
+ 
+         if (!this.chunksToUpdate.isEmpty())
+         {
+@@ -2419,7 +2432,13 @@
+                 renderchunk1.clearNeedsUpdate();
+                 iterator1.remove();
+ 
+-                if (renderchunk1.getCompiledChunk().isEmpty() && k < i)
++                long i = finishTimeNano - System.nanoTime();
++                if (i < 0L)
++                {
++                	break;
++                }
++                
++            /*    if (renderchunk1.getCompiledChunk().isEmpty() && k < i)
+                 {
+                     ++k;
+                 }
+@@ -2430,6 +2449,7 @@
+                 {
+                     break;
+                 }
++                */
+             }
+         }
+     }
+@@ -2846,9 +2866,9 @@
      {
      }
  
@@ -269,7 +367,7 @@
      }
  
      public void spawnParticle(int id, boolean ignoreRange, boolean p_190570_3_, final double x, final double y, final double z, double xSpeed, double ySpeed, double zSpeed, int... parameters)
-@@ -2879,28 +2893,28 @@
+@@ -2879,28 +2899,28 @@
          }
      }
  
@@ -306,7 +404,7 @@
  
              if (particleID == EnumParticleTypes.EXPLOSION_HUGE.getParticleID() && !Config.isAnimatedExplosion())
              {
-@@ -2996,21 +3010,21 @@
+@@ -2996,21 +3016,21 @@
                      }
                  }
  
@@ -332,7 +430,7 @@
                  }
  
                  if (particleID == EnumParticleTypes.TOWN_AURA.getParticleID())
-@@ -3025,7 +3039,7 @@
+@@ -3025,7 +3045,7 @@
  
                  if (particleID == EnumParticleTypes.REDSTONE.getParticleID())
                  {
@@ -341,7 +439,7 @@
                  }
  
                  return particle;
-@@ -3134,6 +3148,8 @@
+@@ -3134,6 +3154,8 @@
      public void playEvent(EntityPlayer player, int type, BlockPos blockPosIn, int data)
      {
          Random random = this.world.rand;
@@ -350,7 +448,7 @@
  
          switch (type)
          {
-@@ -3190,18 +3206,30 @@
+@@ -3190,18 +3212,30 @@
                  break;
  
              case 1011:
@@ -381,7 +479,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_FENCE_GATE_CLOSE, SoundCategory.BLOCKS, 1.0F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -3222,14 +3250,26 @@
+@@ -3222,14 +3256,26 @@
                  break;
  
              case 1019:
@@ -408,7 +506,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.ENTITY_ZOMBIE_BREAK_DOOR_WOOD, SoundCategory.HOSTILE, 2.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F, false);
                  break;
  
-@@ -3258,10 +3298,17 @@
+@@ -3258,10 +3304,17 @@
                  break;
  
              case 1030:
@@ -426,7 +524,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_ANVIL_LAND, SoundCategory.BLOCKS, 0.3F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -3282,6 +3329,9 @@
+@@ -3282,6 +3335,9 @@
                  break;
  
              case 1036:
@@ -436,7 +534,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_IRON_TRAPDOOR_CLOSE, SoundCategory.BLOCKS, 1.0F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -3321,6 +3371,9 @@
+@@ -3321,6 +3377,9 @@
                      {
                          soundtype = (SoundType)Reflector.call(block, Reflector.ForgeBlock_getSoundType, Block.getStateById(data), this.world, blockPosIn, null);
                      }

@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/renderer/chunk/RenderChunk.java
++++ b/net/minecraft/client/renderer/chunk/RenderChunk.java
+@@ -126,6 +126,7 @@
+ 
+             this.chunk = null;
+             this.initModelviewMatrix();
++            this.needsUpdate = true;
+         }
+     }
+ 

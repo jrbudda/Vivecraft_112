@@ -1714,7 +1714,7 @@
          int i = Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey();
  
          if (i != 0 && !Keyboard.isRepeatEvent())
-@@ -3564,4 +4254,1212 @@
+@@ -3564,4 +4254,1211 @@
      {
          return this.tutorial;
      }
@@ -1760,7 +1760,6 @@
 +			conrot = matrixBuffer2;
 +		}
 +
-+
 +		GlStateManager.matrixMode(GL11.GL_MODELVIEW);
 +		GlStateManager.pushMatrix();
 +			GlStateManager.loadIdentity();
@@ -1777,14 +1776,14 @@
 +			GlStateManager.translate(-mul.x, -mul.y, -mul.z);
 +	
 +			GlStateManager.rotate(-vrSettings.vrWorldRotation, 0, 1, 0); //WHYYY
-+	
-+			GlStateManager.multMatrix(conrot);
-+	
-+			GlStateManager.translate(0, -localt.y, 0);
-+	
++			
 +			GlStateManager.rotate(vrSettings.mrMovingCamOffsetYaw, 0.0F, 1.0F, 0.0F);
 +			GlStateManager.rotate(vrSettings.mrMovingCamOffsetRoll, 0.0F, 0.0F, 1.0F);
 +			GlStateManager.rotate(vrSettings.mrMovingCamOffsetPitch, 1.0F, 0.0F, 0.0F);
++			
++			GlStateManager.multMatrix(conrot);
++	
++			GlStateManager.translate(0, -localt.y, 0);
 +	
 +			GlStateManager.rotate(-vrSettings.vrWorldRotation, 0, 1, 0); //oh god what			
 +	

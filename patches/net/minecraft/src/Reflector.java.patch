@@ -284,7 +284,7 @@
      public static ReflectorClass WorldEvent_Load = new ReflectorClass("net.minecraftforge.event.world.WorldEvent$Load");
      public static ReflectorConstructor WorldEvent_Load_Constructor = new ReflectorConstructor(WorldEvent_Load, new Class[] {World.class});
      private static boolean logVanilla = logEntry("*** Reflector Vanilla ***");
-@@ -416,7 +584,17 @@
+@@ -416,7 +584,18 @@
      public static ReflectorField TileEntitySkullRenderer_dragonHead = new ReflectorField(TileEntitySkullRenderer, ModelDragonHead.class, 0);
      public static ReflectorField TileEntitySkullRenderer_skeletonHead = new ReflectorField(TileEntitySkullRenderer, ModelSkeletonHead.class, 0);
      public static ReflectorField TileEntitySkullRenderer_humanoidHead = new ReflectorField(TileEntitySkullRenderer, ModelSkeletonHead.class, 1);
@@ -293,6 +293,7 @@
 +    public static ReflectorMethod EnderTeleportEvent_getTargetX = new ReflectorMethod(EnderTeleportEvent, "getTargetX");
 +    public static ReflectorMethod EnderTeleportEvent_getTargetY = new ReflectorMethod(EnderTeleportEvent, "getTargetY");
 +    public static ReflectorMethod EnderTeleportEvent_getTargetZ = new ReflectorMethod(EnderTeleportEvent, "getTargetZ");
++    public static ReflectorField ForgeModContainer_alwaysSetupTerrainOffThread = new ReflectorField(ForgeModContainer, "alwaysSetupTerrainOffThread");
  
 +    public static boolean forgeExists()
 +    {

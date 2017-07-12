@@ -1112,6 +1112,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
                 }
             }
             boolean profileCreated = false;
+            finalMessage = "Failed: Couldn't setup profile!";
             if (createProfile.isSelected())
             {
                 monitor.setProgress(95);
@@ -1240,7 +1241,9 @@ public class Installer extends JPanel  implements PropertyChangeListener
             try {
                 prof = (JSONObject) profiles.get(profileName);
             }
-            catch (Exception e) {}
+            catch (Exception e) {
+				e.printStackTrace();
+			}
 			java.text.DateFormat dateFormat=new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
             if (prof == null) {
                 prof = new JSONObject();
