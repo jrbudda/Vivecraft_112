@@ -134,7 +134,7 @@
                  }
              }
          }
-@@ -546,7 +590,22 @@
+@@ -546,7 +590,18 @@
          {
              while (Mouse.next())
              {
@@ -150,14 +150,10 @@
                  this.handleMouseInput();
 +                if (Reflector.forgeExists() && this.equals(this.mc.currentScreen) && !this.mouseHandled) Reflector.postForgeBusEvent(Reflector.GuiScreenEvent_MouseInputEvent_Post_Constructor, this);
 +                
-+            	if(mc.currentScreen == null){
-+            		int a = 9; // wtf is this?
-+            	}
-+            	
              }
          }
  
-@@ -554,7 +613,10 @@
+@@ -554,7 +609,10 @@
          {
              while (Keyboard.next())
              {
@@ -168,7 +164,7 @@
              }
          }
      }
-@@ -568,6 +630,15 @@
+@@ -568,6 +626,15 @@
          int j = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
          int k = Mouse.getEventButton();
  
@@ -184,7 +180,7 @@
          if (Mouse.getEventButtonState())
          {
              if (this.mc.gameSettings.touchscreen && this.touchValue++ > 0)
-@@ -601,6 +672,11 @@
+@@ -601,6 +668,11 @@
       */
      public void handleKeyboardInput() throws IOException
      {
@@ -196,7 +192,7 @@
          char c0 = Keyboard.getEventCharacter();
  
          if (Keyboard.getEventKey() == 0 && c0 >= ' ' || Keyboard.getEventKeyState())
-@@ -631,13 +707,23 @@
+@@ -631,13 +703,23 @@
      public void drawDefaultBackground()
      {
          this.drawWorldBackground(0);
@@ -221,7 +217,7 @@
          }
          else
          {
-@@ -722,7 +808,7 @@
+@@ -722,7 +804,7 @@
       */
      public static boolean isShiftKeyDown()
      {
@@ -230,7 +226,7 @@
      }
  
      /**
-@@ -760,4 +846,74 @@
+@@ -760,4 +842,74 @@
      {
          this.setWorldAndResolution(mcIn, w, h);
      }

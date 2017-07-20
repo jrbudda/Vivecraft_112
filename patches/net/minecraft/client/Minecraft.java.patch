@@ -298,7 +298,7 @@
 +	 * The minecriftVerString will be automatically updated by the build scripts, do not modify here.
 +	 * Modify minecriftversion.py in root minecrift dir.
 +	 */
-+    public final String minecriftVerString = "Vivecraft 1.12 jrbudda-1";
++    public final String minecriftVerString = "Vivecraft 1.12 jrbudda-2b4";
 +	/* end version */
 +	/** END MINECRIFT */
 +    
@@ -1665,7 +1665,7 @@
      public static boolean isFancyGraphicsEnabled()
      {
          return instance != null && instance.gameSettings.fancyGraphics;
-@@ -2699,8 +3375,16 @@
+@@ -2699,8 +3375,14 @@
      /**
       * Called when user clicked he's mouse middle button (pick block)
       */
@@ -1673,17 +1673,15 @@
 +    public void middleClickMouse() //VIVECRAFT PUBLIC
      {
 +    	
-+    	if(Reflector.forgeExists()){
-+    		if (Reflector.callBoolean(Reflector.ForgeHooks_onPickBlock, new Object[]{this.objectMouseOver,this.player,this.world}))
-+    		{
-+    			return;
-+    		}
++    	if(Reflector.forgeExists() && this.objectMouseOver != null){
++    		Reflector.call(Reflector.ForgeHooks_onPickBlock, new Object[]{this.objectMouseOver,this.player,this.world});
++			return;
 +    	}
 +    	
          if (this.objectMouseOver != null && this.objectMouseOver.typeOfHit != RayTraceResult.Type.MISS)
          {
              boolean flag = this.player.capabilities.isCreativeMode;
-@@ -2864,7 +3548,8 @@
+@@ -2864,7 +3546,8 @@
          }
      }
  
@@ -1693,7 +1691,7 @@
      {
          NBTTagCompound nbttagcompound = te.writeToNBT(new NBTTagCompound());
  
-@@ -3194,6 +3879,11 @@
+@@ -3194,6 +3877,11 @@
       */
      public static int getGLMaximumTextureSize()
      {
@@ -1705,7 +1703,7 @@
          for (int i = 16384; i > 0; i >>= 1)
          {
              GlStateManager.glTexImage2D(32868, 0, 6408, i, i, 0, 6408, 5121, (IntBuffer)null);
-@@ -3382,7 +4072,7 @@
+@@ -3382,7 +4070,7 @@
      }
  
      public void dispatchKeypresses()
@@ -1714,7 +1712,7 @@
          int i = Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey();
  
          if (i != 0 && !Keyboard.isRepeatEvent())
-@@ -3564,4 +4254,1211 @@
+@@ -3564,4 +4252,1211 @@
      {
          return this.tutorial;
      }

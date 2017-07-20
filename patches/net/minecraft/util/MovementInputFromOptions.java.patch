@@ -1,8 +1,10 @@
 --- a/net/minecraft/util/MovementInputFromOptions.java
 +++ b/net/minecraft/util/MovementInputFromOptions.java
-@@ -1,5 +1,10 @@
+@@ -1,5 +1,12 @@
  package net.minecraft.util;
  
++import com.mtbs3d.minecrift.control.VRControllerButtonMapping;
++import com.mtbs3d.minecrift.provider.MCOpenVR;
 +import com.mtbs3d.minecrift.settings.VRSettings;
 +import com.mtbs3d.minecrift.utils.jkatvr;
 +
@@ -11,7 +13,7 @@
  import net.minecraft.client.settings.GameSettings;
  
  public class MovementInputFromOptions extends MovementInput
-@@ -15,8 +20,15 @@
+@@ -15,8 +22,15 @@
      {
          this.moveStrafe = 0.0F;
          this.moveForward = 0.0F;
@@ -29,13 +31,30 @@
          {
              ++this.moveForward;
              this.forwardKeyDown = true;
-@@ -56,13 +68,34 @@
+@@ -56,13 +70,51 @@
              this.rightKeyDown = false;
          }
  
 -        this.jump = this.gameSettings.keyBindJump.isKeyDown();
 -        this.sneak = this.gameSettings.keyBindSneak.isKeyDown();
 +
++        if(mc.vrSettings.vrFreeMoveMode == mc.vrSettings.FREEMOVE_JOYPAD){
++        	//override everything
++        	this.moveForward = MCOpenVR.joyPadZ;
++        	this.moveStrafe = MCOpenVR.joyPadX;
++        	
++        	//just assuming all this below is needed for compatibility.
++        	this.forwardKeyDown = this.moveForward > 0;
++        	this.backKeyDown = this.moveForward < 0;
++        	this.leftKeyDown = this.moveStrafe < 0 ;
++        	this.rightKeyDown = this.moveStrafe > 0;
++        	VRControllerButtonMapping.setKeyBindState(this.gameSettings.keyBindForward, this.forwardKeyDown);
++        	VRControllerButtonMapping.setKeyBindState(this.gameSettings.keyBindBack, this.backKeyDown);
++        	VRControllerButtonMapping.setKeyBindState(this.gameSettings.keyBindLeft, this.leftKeyDown);
++        	VRControllerButtonMapping.setKeyBindState(this.gameSettings.keyBindRight, this.rightKeyDown);
++        }
++        
++        
 +        boolean ok = mc.currentScreen==null && (mc.vrPlayer.getFreeMove() || mc.vrSettings.simulateFalling); 
 +        
 +        //VIVECRAFT DO ok.

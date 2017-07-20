@@ -342,6 +342,9 @@ public class ModelPlayerVR extends ModelBiped
         	case 3:
         		this.vrHMD.setTextureLocation(this.DIAMOND_HMD);	
         		break;
+        	case 4:
+        		this.vrHMD.setTextureLocation(this.DIAMOND_HMD);	
+        		break;
         	}
 
         copyModelAngles(this.bipedHead, this.bipedHeadwear);

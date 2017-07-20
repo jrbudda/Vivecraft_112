@@ -347,7 +347,9 @@ public class GuiLocomotionSettings extends BaseGuiSettings implements GuiEventEx
                             "Controller: Uses left controller direction, max speed",
                             "HMD: Uses head direction, max speed",
                             "Run In Place: Use average controllers direction. Speed based",
-                            "on controller motion."
+                            "on controller motion.",
+                            "Joy/Pad: Uses the left touchpad or joystick for all motion.",
+                            "Overrides all 4 movement direction keybinds."
                             
                     } ;
                 case VEHICLE_ROTATION:

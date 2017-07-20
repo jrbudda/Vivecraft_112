@@ -15,31 +15,24 @@
  import net.minecraft.util.EnumParticleTypes;
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.datafix.DataFixer;
-@@ -50,12 +52,22 @@
-     public EntityThrowable(World worldIn, double x, double y, double z)
+@@ -56,7 +58,16 @@
+     public EntityThrowable(World worldIn, EntityLivingBase throwerIn)
      {
-         this(worldIn);
--        this.setPosition(x, y, z);
+         this(worldIn, throwerIn.posX, throwerIn.posY + (double)throwerIn.getEyeHeight() - 0.10000000149011612D, throwerIn.posZ);
 +
+         this.thrower = throwerIn;
++        
 +    	//VIVE SET SPAWNPOS
 +        if (this.thrower.getEntityId() == Minecraft.getMinecraft().player.getEntityId())
 +        {
 +	        Vec3d aimSource = Minecraft.getMinecraft().roomScale.getControllerPos_World(0);
 +	        this.setPosition(aimSource.x, aimSource.y, aimSource.z);
-+        } else 
-+	        this.setPosition(x, y, z);
++        } 
 +        ///
      }
  
-     public EntityThrowable(World worldIn, EntityLivingBase throwerIn)
-     {
-         this(worldIn, throwerIn.posX, throwerIn.posY + (double)throwerIn.getEyeHeight() - 0.10000000149011612D, throwerIn.posZ);
-+
-+       
-         this.thrower = throwerIn;
-     }
- 
-@@ -84,6 +96,14 @@
+     protected void entityInit()
+@@ -84,6 +95,14 @@
       */
      public void setHeadingFromThrower(Entity entityThrower, float rotationPitchIn, float rotationYawIn, float pitchOffset, float velocity, float inaccuracy)
      {
@@ -54,7 +47,7 @@
          float f = -MathHelper.sin(rotationYawIn * 0.017453292F) * MathHelper.cos(rotationPitchIn * 0.017453292F);
          float f1 = -MathHelper.sin((rotationPitchIn + pitchOffset) * 0.017453292F);
          float f2 = MathHelper.cos(rotationYawIn * 0.017453292F) * MathHelper.cos(rotationPitchIn * 0.017453292F);
-@@ -259,7 +279,8 @@
+@@ -259,7 +278,8 @@
              }
              else
              {

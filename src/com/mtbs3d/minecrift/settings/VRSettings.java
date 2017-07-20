@@ -75,6 +75,7 @@ public class VRSettings
     public static final int FREEMOVE_CONTROLLER= 1;
     public static final int FREEMOVE_HMD= 2;
     public static final int FREEMOVE_RUNINPLACE= 3;
+    public static final int FREEMOVE_JOYPAD = 4;
     
     public static final int NO_SHADER = -1;
 
@@ -926,6 +927,8 @@ public class VRSettings
                 	return var4 + " HMD";
                 case FREEMOVE_RUNINPLACE:
                 	return var4 + " RunInPlace";
+                case FREEMOVE_JOYPAD:
+                	return var4 + " Joy/Pad";
                 }
             case FOV_REDUCTION:
                 return this.useFOVReduction ? var4 + "ON" : var4 + "OFF";
@@ -1188,6 +1191,9 @@ public class VRSettings
                    	this.vrFreeMoveMode = FREEMOVE_RUNINPLACE;
                 	break;
                 case FREEMOVE_RUNINPLACE:
+                   	this.vrFreeMoveMode = FREEMOVE_JOYPAD;
+                	break;
+                case FREEMOVE_JOYPAD:
                    	this.vrFreeMoveMode = FREEMOVE_CONTROLLER;
                 	break;
                 }

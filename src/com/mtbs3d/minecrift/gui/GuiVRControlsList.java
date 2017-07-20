@@ -27,46 +27,6 @@ public class GuiVRControlsList extends GuiListExtended
     private final GuiListExtended.IGuiListEntry[] listEntries;
     private int maxListLabelWidth = 0;
     private static final String __OBFID = "CL_00000732";
-
-    public ArrayList<String>  getPossibleFunctions(){
-    	ArrayList<String> out = new ArrayList<String>();
-    	
-    	out.add("none");
-
-    	for (KeyBinding key : mc.gameSettings.keyBindings) {
-			out.add(key.getKeyDescription());
-		}
-    	
-    	out.add("keyboard(press)");
-    	out.add("keyboard(hold)");
-    	out.add("keyboard-shift");
-    	out.add("keyboard-ctrl");
-    	out.add("keyboard-alt");
-    	
-    	return out;  	
-    }
-    
-    public void bindKey(VRControllerButtonMapping key){
-    	if(key.FunctionDesc.equals("none")){
-    		key.key = null;
-    		key.FunctionExt = 0;
-    		return;
-    	}
-    	if(key.FunctionDesc.startsWith("keyboard")){
-    		key.key = null;
-    		if(key.FunctionDesc.contains("-")) key.FunctionExt = 0;
-    		return;
-    	}
-        KeyBinding[] var3 = mc.gameSettings.keyBindings;
-        for (final KeyBinding keyBinding : var3) {	
-        	if (keyBinding.getKeyDescription().equals(key.FunctionDesc)){
-        		key.key = keyBinding;    
-        		key.FunctionExt = 0;
-        		return;
-        	}
-		}	
-        System.out.println("Keybind not found for " + key.FunctionDesc);
-    }
     
     public GuiVRControlsList(GuiVRControls parent, Minecraft mc)
     {
@@ -82,20 +42,13 @@ public class GuiVRControlsList extends GuiListExtended
        
         this.listEntries = new GuiListExtended.IGuiListEntry[bindings.size()];
         
-      //  Arrays.sort(bindings);
         String var5 = null;
         int var4 = 0;
         int var7 = bindings.size();
         for (int i = 0; i < var7; i++)
         {
         	VRControllerButtonMapping kb = bindings.get(i);
-            String cat = "VR"; // kb.getKeyCategory();
-
-            if (!cat.equals(var5))
-            {
-                var5 = cat;
-          //      this.listEntries[var4++] = new GuiVRControlsList.CategoryEntry(cat);
-            }
+            String cat = "VR";
 
             int width = mc.fontRenderer.getStringWidth(I18n.format(kb.FunctionDesc, new Object[0]));
 
@@ -157,14 +110,15 @@ public class GuiVRControlsList extends GuiListExtended
             return false;
         }
 
-        public void mouseReleased(int p_148277_1_, int p_148277_2_, int p_148277_3_, int p_148277_4_, int p_148277_5_, int p_148277_6_) {}
+        public void mouseReleased(int p_148277_1_, int p_148277_2_, int p_148277_3_, int p_148277_4_, int p_148277_5_, int p_148277_6_) 
+        {
+        }
 
 
 
 		@Override
-		public void updatePosition(int p_178011_1_, int p_178011_2_, int p_178011_3_, float partial) {
-			// TODO Auto-generated method stub
-			
+		public void updatePosition(int p_178011_1_, int p_178011_2_, int p_178011_3_, float partial) 
+		{		
 		}
 
     }
@@ -173,19 +127,15 @@ public class GuiVRControlsList extends GuiListExtended
     {
         private final VRControllerButtonMapping myKey;
         private final GuiButton btnChangeKeyBinding;
-        private final GuiButton btnKey;
-        private final ArrayList<String> possibilites;
-        private int myi;
         private static final String __OBFID = "CL_00000735";
         private GuiEnterText guiEnterText;
+        private GuiVRControls parentScreen;
         
-        private MappingEntry(VRControllerButtonMapping key)
+        private MappingEntry(VRControllerButtonMapping key, GuiVRControls parent)
         {
             this.myKey = key;
             this.btnChangeKeyBinding = new GuiButton(0, 0, 0, 150, 18, I18n.format(key.FunctionDesc, new Object[0]));
-            this.possibilites = GuiVRControlsList.this.getPossibleFunctions();
-            myi = this.possibilites.indexOf(myKey.FunctionDesc);    
-            btnKey =new GuiButton(0, 0, 0, 18, 18, "");
+            this.parentScreen = parent;
         }
         
 		@Override
@@ -195,46 +145,19 @@ public class GuiVRControlsList extends GuiListExtended
         	GuiVRControlsList.this.mc.fontRenderer.drawString(myKey.Button.toString().replace("BUTTON_", "").replace("OCULUS_", ""), x + 40  - GuiVRControlsList.this.maxListLabelWidth, y + p_148279_5_ / 2 - GuiVRControlsList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
         	this.btnChangeKeyBinding.x = x + 90;
         	this.btnChangeKeyBinding.y= y;
-        	this.btnChangeKeyBinding.displayString = I18n.format(this.myKey.FunctionDesc, new Object[0]);             
+        	this.btnChangeKeyBinding.displayString = I18n.format(this.myKey.FunctionDesc, new Object[0]) + " " + this.myKey.FunctionExt;             
         
-        	this.btnKey.x= x+240;
-        	this.btnKey.y = y;
-        	this.btnKey.visible = (myKey.FunctionDesc.startsWith("keyboard("));
-            this.btnKey.displayString = String.valueOf((myKey.FunctionExt));        		
-
         	boolean var10 = GuiVRControlsList.this.parent.buttonId == myKey;
-        	
-        	if (var10)
-        	{
-        		this.btnKey.displayString = TextFormatting.WHITE + "> " + TextFormatting.YELLOW + this.btnKey.displayString + TextFormatting.WHITE + " <";
-        	}
-        	else if (false)
-        	{ //alow multi binding.
-        		this.btnKey.displayString = TextFormatting.RED + this.btnKey.displayString;
-        	}
-
         	this.btnChangeKeyBinding.drawButton(GuiVRControlsList.this.mc, p_148279_7_, p_148279_8_, par);
-        	this.btnKey.drawButton(GuiVRControlsList.this.mc, p_148279_7_, p_148279_8_, par);
         }
         
         public boolean mousePressed(int p_148278_1_, int p_148278_2_, int p_148278_3_, int p_148278_4_, int p_148278_5_, int p_148278_6_)
         {
-        	
             if (this.btnChangeKeyBinding.mousePressed(GuiVRControlsList.this.mc, p_148278_2_, p_148278_3_))
-            {
-            	//cycle? select from list?
-            	myi++;
-            	if(myi >= possibilites.size()) myi = 0;
-            	this.myKey.FunctionDesc = possibilites.get(myi);
-            	bindKey(myKey);
-            	
-                return true;
-            }
-            else if (this.btnKey.mousePressed(GuiVRControlsList.this.mc, p_148278_2_, p_148278_3_))
-            {       	
-                GuiVRControlsList.this.parent.buttonId = myKey; 
-                
-                return true;
+            {           	
+            	parent.selectionMode = true;
+            	parent.buttonId = myKey;         	
+            	return true;          
             }
             else
             {
@@ -245,19 +168,11 @@ public class GuiVRControlsList extends GuiListExtended
         public void mouseReleased(int p_148277_1_, int p_148277_2_, int p_148277_3_, int p_148277_4_, int p_148277_5_, int p_148277_6_)
         {
             this.btnChangeKeyBinding.mouseReleased(p_148277_2_, p_148277_3_);
-      //      this.btnReset.mouseReleased(p_148277_2_, p_148277_3_);
-        }
-
-        MappingEntry(VRControllerButtonMapping p_i45030_2_, Object p_i45030_3_)
-        {
-            this(p_i45030_2_);
         }
 
 
 		@Override
-		public void updatePosition(int p_192633_1_, int p_192633_2_, int p_192633_3_, float p_192633_4_) {
-			// TODO Auto-generated method stub
-			
+		public void updatePosition(int p_192633_1_, int p_192633_2_, int p_192633_3_, float p_192633_4_) {	
 		}
 
 

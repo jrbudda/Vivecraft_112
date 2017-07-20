@@ -16,16 +16,24 @@ import net.minecraft.client.gui.GuiKeyBindingList;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiSlot;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
 
 public class GuiVRControls extends BaseGuiSettings {
 
-	private GuiVRControlsList guiList;
 	public VRControllerButtonMapping buttonId; 
-	
+	public boolean selectionMode = false;
+    public boolean waitingForKey;
+    
+	private GuiVRControlsList guiList;
+	private GuiKeyBindingSelection guiSelection;
+    private GuiButton btnDefaults;
+    private GuiButton btnDone;
+    private GuiButton btnCancel;
+
 	public GuiVRControls(GuiScreen par1GuiScreen, VRSettings par2vrSettings) {
 		super(par1GuiScreen, par2vrSettings);
-        screenTitle = "Control Remapping";
+        screenTitle = "VR Control Remapping";
 	}
 
     /**
@@ -34,44 +42,96 @@ public class GuiVRControls extends BaseGuiSettings {
      */
     protected void keyTyped(char typedChar, int keyCode)
     {
-        if (this.buttonId != null)
+        if (waitingForKey)
         {
         	buttonId.FunctionExt = typedChar;
-            this.buttonId = null;
+            waitingForKey = false;
         }
         else
         {
             try {
 				super.keyTyped(typedChar, keyCode);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
         }
     }
 
+
+    
     /**
      * Adds the buttons (and other controls) to the screen in question.
      */
     public void initGui() {
     	this.guiList = new GuiVRControlsList(this, mc);
+    	this.guiSelection = new GuiKeyBindingSelection(this, mc);
         this.buttonList.clear();
-        this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, "Reset To Defaults"));
-        this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, "Done"));
+        btnDefaults = (new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, "Reset To Defaults"));
+        btnDone = (new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, "Done"));
+        btnCancel = (new GuiButtonEx(99, this.width / 2 - 155  + 80, this.height -25,150,20, "Cancel"));
+        btnCancel.visible = false;
+        this.buttonList.add(btnDefaults);
+        this.buttonList.add(btnDone);
+        this.buttonList.add(btnCancel);
     }
 
     /**
      * Draws the screen and all the components in it.
      */
     public void drawScreen(int par1, int par2, float par3) {
-        if (reinit) {
-            initGui();
-            reinit = false;
-        }
-        this.guiList.drawScreen(par1, par2, par3);
-        super.drawScreen(par1,par2,par3,false);
-    }
+    	if (reinit) {
+    		initGui();
+    		reinit = false;
+    	}    
 
+    	if(waitingForKey){
+    		screenTitle = "Press Keyboard Key...";
+    		btnCancel.visible = true;
+    		btnDone.visible = false;
+    		btnDefaults.visible = false;
+    	}else {
+    		if(this.selectionMode && this.buttonId != null){
+    			btnCancel.visible = true;
+    			btnDone.visible = false;
+    			btnDefaults.visible = false;
+    			screenTitle = "Choose action for " + this.buttonId.Button.toString() + " (Current: " + I18n.format(this.buttonId.FunctionDesc)+")";
+    			this.guiSelection.drawScreen(par1, par2, par3);
+    		}
+    		else{
+    			btnCancel.visible = false;
+    			btnDone.visible = true;
+    			btnDefaults.visible = true;
+    			this.selectionMode = false;
+    			screenTitle = "VR Control Remapping";
+    			this.guiList.drawScreen(par1, par2, par3);       
+    		}
+    	}
+    	super.drawScreen(par1,par2,par3,false);
+
+    }
+    
+    public void bindKey(VRControllerButtonMapping key){
+    	if(key.FunctionDesc.equals("None")){
+    		key.key = null;
+    		key.FunctionExt = 0;
+    		return;
+    	}
+    	if(key.FunctionDesc.startsWith("keyboard")){
+    		key.key = null;
+    		if(key.FunctionDesc.contains("-")) key.FunctionExt = 0;
+    		return;
+    	}
+        KeyBinding[] var3 = mc.gameSettings.keyBindings;
+        for (final KeyBinding keyBinding : var3) {	
+        	if (keyBinding.getKeyDescription().equals(key.FunctionDesc)){
+        		key.key = keyBinding;    
+        		key.FunctionExt = 0;
+        		return;
+        	}
+		}	
+        System.out.println("Keybind not found for " + key.FunctionDesc);
+    }
+    
     /**
      * Fired when a control is clicked. This is the equivalent of ActionListener.actionPerformed(ActionEvent e).
      */
@@ -82,6 +142,9 @@ public class GuiVRControls extends BaseGuiSettings {
         } else if (par1GuiButton.id == ID_GENERIC_DEFAULTS){
         	mc.vrSettings.resetBindings();
         	this.initGui();
+        }   else if (par1GuiButton.id == 99){ //selection cancel
+        	this.selectionMode = false;
+        	this.waitingForKey = false;
         }
     }
     
@@ -90,13 +153,21 @@ public class GuiVRControls extends BaseGuiSettings {
      */
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton)
     {
-        this.buttonId = null;
-      if (mouseButton != 0 || !this.guiList.mouseClicked(mouseX, mouseY, mouseButton))
+      
+        boolean flag = false;
+        
+        if(this.selectionMode){
+        		flag = this.guiSelection.mouseClicked(mouseX, mouseY, mouseButton);
+        		this.guiList.setEnabled(true);
+        }else{
+        		flag = this.guiList.mouseClicked(mouseX, mouseY, mouseButton);
+        		this.guiSelection.setEnabled(true);
+        }
+      if (!flag)
         {
             try {
 				super.mouseClicked(mouseX, mouseY, mouseButton);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
         }
