@@ -188,6 +188,7 @@ public class VRSettings
     public boolean useCrosshairOcclusion = false;
 	public boolean seatedHudAltMode = true;
 	public boolean autoOpenKeyboard = false;
+	public int forceHardwareDetection = 0; // 0 = off, 1 = vive, 2 = oculus
     //
      	
     private Minecraft mc;
@@ -626,6 +627,10 @@ public class VRSettings
                     
                     if(optionTokens[0].equals("autoOpenKeyboard")){
                         this.autoOpenKeyboard=optionTokens[1].equals("true");
+                    }
+                    
+                    if(optionTokens[0].equals("forceHardwareDetection")){
+                        this.forceHardwareDetection=Integer.parseInt(optionTokens[1]);
                     }
 
                     if (optionTokens[0].startsWith("BUTTON_") || optionTokens[0].startsWith("OCULUS_"))
@@ -1409,6 +1414,7 @@ public class VRSettings
             var5.println("fovReduction:" + this.useFOVReduction);
             var5.println("alwaysSimulateKeyboard:" + this.alwaysSimulateKeyboard);
             var5.println("autoOpenKeyboard:" + this.autoOpenKeyboard);
+            var5.println("forceHardwareDetection:" + this.forceHardwareDetection);
 
             if (vrQuickCommands == null) vrQuickCommands = getQuickCommandsDefaults(); //defaults
             

@@ -8,3 +8,23 @@
          }
      }
  
+@@ -141,7 +142,9 @@
+             this.postRenderBlocks(BlockRenderLayer.TRANSLUCENT, x, y, z, bufferbuilder, compiledchunk);
+         }
+     }
+-
++    
++    BlockPosM blockposm;
++    
+     public void rebuildChunk(float x, float y, float z, ChunkCompileTaskGenerator generator)
+     {
+         CompiledChunk compiledchunk = new CompiledChunk();
+@@ -182,7 +185,7 @@
+ 
+                 for (Object b : BlockPosM.getAllInBoxMutable(blockpos, blockpos1))
+                 {
+-                	BlockPosM blockposm= (BlockPosM) b;
++                	blockposm = (BlockPosM) b;
+                     IBlockState iblockstate = chunkcacheof.getBlockState(blockposm);
+                     Block block = iblockstate.getBlock();
+ 

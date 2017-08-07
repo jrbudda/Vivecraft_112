@@ -15,6 +15,7 @@ import net.minecraft.world.WorldProvider;
 
 public class MCReflection {
 	public static Field SoundManager_sndSystem = getDeclaredField(SoundManager.class, "sndSystem", "f", "field_148620_e");
+	public static Field SoundManager_loaded= getDeclaredField(SoundManager.class, "loaded", "g", "field_148617_f");
 	public static Method WorldProvider_generateLightBrightnessTable = getDeclaredMethod(WorldProvider.class, "generateLightBrightnessTable", "a", "func_76556_a");
 	public static Field PlayerControllerMP_blockHitDelay = getDeclaredField(PlayerControllerMP.class, "blockHitDelay", "g", "field_78781_i");
 	public static Field PlayerControllerMP_isHittingBlock = getDeclaredField(PlayerControllerMP.class, "isHittingBlock", "h", "field_78778_j");

@@ -33,6 +33,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
     private String tempDir = System.getProperty("java.io.tmpdir");
 
     private static final boolean ALLOW_FORGE_INSTALL = true; 
+    private static final boolean DEFAULT_FORGE_INSTALL = false; 
     private static final boolean ALLOW_HYDRA_INSTALL = false; 
     private static final boolean ALLOW_KATVR_INSTALL = true; 
     private static final boolean ALLOW_KIOSK_INSTALL = true; 
@@ -50,15 +51,15 @@ public class Installer extends JPanel  implements PropertyChangeListener
     public static String winredist2010_32url = "http://download.microsoft.com/download/C/6/D/C6D0FD4E-9E53-4897-9B91-836EBA2AACD3/vcredist_x86.exe";
 
     /* DO NOT RENAME THESE STRING CONSTS - THEY ARE USED IN (AND THE VALUES UPDATED BY) THE AUTOMATED BUILD SCRIPTS */
-    private static final String MINECRAFT_VERSION = "1.12";
-    private static final String MC_VERSION        = "1.12";
-    private static final String MC_MD5            = "253d74d38e334133e3e9dca0017a9b5b";
+    private static final String MINECRAFT_VERSION = "1.12.1";
+    private static final String MC_VERSION        = "1.12.1";
+    private static final String MC_MD5            = "c0c5a6f387727a00dfc6cf8d118ede75";
     private static final String OF_LIB_PATH       = "libraries/optifine/OptiFine/";
-    private static final String OF_FILE_NAME      = "1.12_HD_U_C4";
-    private static final String OF_JSON_NAME      = "1.12_HD_U_C4";
-    private static final String OF_MD5            = "4a1a67757a6cd9c85c03f609550191d1";
+    private static final String OF_FILE_NAME      = "1.12.1_HD_U_C5";
+    private static final String OF_JSON_NAME      = "1.12.1_HD_U_C5";
+    private static final String OF_MD5            = "2a9f6c8f95644ab4c444cb24470772c6";
     private static final String OF_VERSION_EXT    = ".jar";
-    private static final String FORGE_VERSION     = "14.21.1.2387";
+    private static final String FORGE_VERSION     = "14.22.0.2446";
     /* END OF DO NOT RENAME */
 
 	private static final String DEFAULT_PROFILE_NAME = "ViveCraft " + MINECRAFT_VERSION;
@@ -992,6 +993,8 @@ public class Installer extends JPanel  implements PropertyChangeListener
         emptyFrame.setVisible(true);
         emptyFrame.setLocationRelativeTo(null);
         dialog = optionPane.createDialog(emptyFrame, "Vivecraft Installer");
+		dialog.setResizable(true);
+		dialog.setSize(620,748);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         dialog.setVisible(true);
         String str =  ((String)optionPane.getValue());
@@ -1190,8 +1193,6 @@ public class Installer extends JPanel  implements PropertyChangeListener
      
     public Installer(File target)
     {
-		this.setMaximumSize(new Dimension(640,780));
-		this.setPreferredSize(new Dimension(640,780));
 		targetDir = target;
         ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -1202,11 +1203,10 @@ public class Installer extends JPanel  implements PropertyChangeListener
             // Read png
             BufferedImage image;
             image = ImageIO.read(Installer.class.getResourceAsStream("logo.png"));
-            ImageIcon icon = new ImageIcon(image);
+            ImageIcon icon = new ImageIcon(image.getScaledInstance(500, 200,  java.awt.Image.SCALE_SMOOTH));
             JLabel logoLabel = new JLabel(icon);
             logoLabel.setAlignmentX(LEFT_ALIGNMENT);
             logoLabel.setAlignmentY(CENTER_ALIGNMENT);
-            logoLabel.setSize(image.getWidth(), image.getHeight());
             if (!QUIET_DEV)	// VIVE - hide oculus logo
 	            logoSplash.add(logoLabel);
         } catch (IOException e) {
@@ -1312,6 +1312,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
         AbstractAction actf = new updateActionF();
         actf.putValue(AbstractAction.NAME, "Install Vivecraft with Forge " + FORGE_VERSION);
         useForge.setAction(actf);
+		useForge.setSelected(DEFAULT_FORGE_INSTALL);
         forgeVersion = new JComboBox();
         if (!ALLOW_FORGE_INSTALL)
             useForge.setEnabled(false);

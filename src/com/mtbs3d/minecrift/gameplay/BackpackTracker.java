@@ -23,6 +23,7 @@ public class BackpackTracker {
 		if(p == null) return false;
 		if(p.isDead) return false;
 		if(p.isPlayerSleeping()) return false;
+		if(Minecraft.getMinecraft().bowTracker.isDrawing) return false;
 		return true;
 	}
 

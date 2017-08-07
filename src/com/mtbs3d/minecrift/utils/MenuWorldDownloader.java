@@ -47,7 +47,7 @@ public class MenuWorldDownloader {
 				}
 			}
 			System.out.println("Downloading world " + path);
-			Utils.httpReadToFile(baseUrl + path, file);
+			Utils.httpReadToFile(baseUrl + path, file, true);
 			return new FileInputStream(file);
 		} catch (IOException e) {
 			e.printStackTrace();

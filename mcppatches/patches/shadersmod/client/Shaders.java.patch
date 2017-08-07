@@ -20,7 +20,7 @@
              if (s1.startsWith(s))
              {
                  String s2 = s1.substring(s.length());
-@@ -1168,7 +1171,7 @@
+@@ -1169,7 +1172,7 @@
  
                      if (shaderoption == null)
                      {
@@ -29,7 +29,7 @@
                      }
                      else if (shaderoption instanceof ShaderOptionRest)
                      {
-@@ -3736,12 +3739,12 @@
+@@ -3739,12 +3742,12 @@
          checkGLError("end beginRender");
      }
  
@@ -45,7 +45,7 @@
  
              if (world != null && world != null)
              {
-@@ -4735,8 +4738,6 @@
+@@ -4738,8 +4741,6 @@
      public static void setFog(GlStateManager.FogMode fogMode)
      {
          GlStateManager.setFog(fogMode);
@@ -54,7 +54,7 @@
          if (fogEnabled)
          {
              setProgramUniform1i("fogMode", fogMode.capabilityId);
-@@ -4912,8 +4913,10 @@
+@@ -4915,8 +4916,10 @@
                          Lang.loadLocaleData(inputstream, properties);
                          inputstream.close();
  

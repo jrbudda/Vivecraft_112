@@ -408,6 +408,23 @@
 -        boolean flag1 = true;
 -
 -        if (abstractclientplayer.isHandActive())
+-        {
+-            ItemStack itemstack = abstractclientplayer.getActiveItemStack();
+-
+-            if (!itemstack.isEmpty() && itemstack.getItem() == Items.BOW)
+-            {
+-                EnumHand enumhand1 = abstractclientplayer.getActiveHand();
+-                flag = enumhand1 == EnumHand.MAIN_HAND;
+-                flag1 = !flag;
+-            }
+-        }
+-
+-        this.rotateArroundXAndY(f1, f2);
+-        this.setLightmap();
+-        this.rotateArm(partialTicks);
+-        GlStateManager.enableRescaleNormal();
+-
+-        if (flag)
 +    	AbstractClientPlayer player = this.mc.player;
 +    	float swingprogress = player.getSwingProgress(partialTicks);
 +    	EnumHand hand = (EnumHand)MoreObjects.firstNonNull(player.swingingHand, EnumHand.MAIN_HAND);
@@ -435,23 +452,6 @@
 +    	
 +        if (doRighthand)
          {
--            ItemStack itemstack = abstractclientplayer.getActiveItemStack();
--
--            if (!itemstack.isEmpty() && itemstack.getItem() == Items.BOW)
--            {
--                EnumHand enumhand1 = abstractclientplayer.getActiveHand();
--                flag = enumhand1 == EnumHand.MAIN_HAND;
--                flag1 = !flag;
--            }
--        }
--
--        this.rotateArroundXAndY(f1, f2);
--        this.setLightmap();
--        this.rotateArm(partialTicks);
--        GlStateManager.enableRescaleNormal();
--
--        if (flag)
--        {
 -            float f3 = enumhand == EnumHand.MAIN_HAND ? f : 0.0F;
 +            float f3 = hand == EnumHand.MAIN_HAND ? swingprogress : 0.0F;
              float f5 = 1.0F - (this.prevEquippedProgressMainHand + (this.equippedProgressMainHand - this.prevEquippedProgressMainHand) * partialTicks);
@@ -681,7 +681,7 @@
 +
 +    					Item item =  itemstack.getItem();
 +
-+    					boolean vive = MCOpenVR.isVive;
++    					boolean vive = MCOpenVR.isVive();
 +
 +    					boolean sword = false, tool = false;
 +    					boolean bow = BowTracker.isBow(itemstack);

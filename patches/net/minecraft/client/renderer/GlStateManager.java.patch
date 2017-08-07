@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/GlStateManager.java
 +++ b/net/minecraft/client/renderer/GlStateManager.java
-@@ -21,7 +21,7 @@
+@@ -22,7 +22,7 @@
      private static final GlStateManager.BooleanState lightingState = new GlStateManager.BooleanState(2896);
      private static final GlStateManager.BooleanState[] lightState = new GlStateManager.BooleanState[8];
      private static final GlStateManager.ColorMaterialState colorMaterialState;
@@ -9,7 +9,7 @@
      private static final GlStateManager.DepthState depthState;
      private static final GlStateManager.FogState fogState;
      private static final GlStateManager.CullState cullState;
-@@ -394,7 +394,23 @@
+@@ -395,7 +395,23 @@
  
      private static GlStateManager.TexGenCoord texGenCoord(GlStateManager.TexGen texGen)
      {
@@ -34,7 +34,7 @@
      }
  
      public static void setActiveTexture(int texture)
-@@ -1003,7 +1019,7 @@
+@@ -1017,7 +1033,7 @@
          }
      }
  

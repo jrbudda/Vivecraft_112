@@ -389,7 +389,6 @@ public class KeyboardSimulator {
 			case KeyEvent.VK_PAGE_DOWN: return Keyboard.KEY_NEXT;
 			case KeyEvent.VK_INSERT: return Keyboard.KEY_INSERT;
 			case KeyEvent.VK_DELETE: return Keyboard.KEY_DELETE;
-			case KeyEvent.VK_META: return Keyboard.KEY_LWIN;
 	    }
 	    return Keyboard.KEY_NONE;
 	}
@@ -504,7 +503,6 @@ public class KeyboardSimulator {
 			case Keyboard.KEY_NEXT: return KeyEvent.VK_PAGE_DOWN;
 			case Keyboard.KEY_INSERT: return KeyEvent.VK_INSERT;
 			case Keyboard.KEY_DELETE: return KeyEvent.VK_DELETE;
-			case Keyboard.KEY_LWIN: return KeyEvent.VK_META;
 	    }
 	    return Keyboard.KEY_NONE;
 	}

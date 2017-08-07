@@ -120,7 +120,10 @@ public class MCOpenVR
 	public static Vec3History hmdPivotHistory = new Vec3History();
 	public static Vec3History[] controllerHistory = new Vec3History[] { new Vec3History(), new Vec3History()};
 
-	public static boolean isVive=true;
+	/**
+	 * Do not make this public and reference it! Call the {@link #isVive()} method instead!
+	 */
+	private static boolean isVive = true;
 
 	// TextureIDs of framebuffers for each eye
 	private int LeftEyeTextureId;
@@ -681,7 +684,7 @@ public class MCOpenVR
 			updateTouchpadSampleBuffer();
 
 			if(mc.world != null){
-				if(MCOpenVR.isVive){
+				if(isVive()){
 					processControllerButtons(sleeping, mc.currentScreen != null);
 					processTouchpadSampleBuffer();
 				}else {
@@ -931,7 +934,7 @@ public class MCOpenVR
 		boolean lastpressedShift,pressedshift,lastpressedleftclick,
 		lastpressedrightclick,lastpressedmiddleclick,pressedleftclick,pressedrightclick,pressedmiddleclick;
 
-		if(MCOpenVR.isVive){
+		if(isVive()){
 			//left controller
 			lastpressedShift = (lastControllerState[LEFT_CONTROLLER].ulButtonPressed & k_buttonGrip) > 0;			
 			pressedshift = (controllerStateReference[LEFT_CONTROLLER].ulButtonPressed & k_buttonGrip) > 0;
@@ -2727,6 +2730,10 @@ public class MCOpenVR
 	public static double getCurrentTimeSecs()
 	{
 		return System.nanoTime() / 1000000000d;
+	}
+	
+	public static boolean isVive() {
+		return mc.vrSettings.forceHardwareDetection == 0 ? isVive : mc.vrSettings.forceHardwareDetection == 1;
 	}
 
 	public static void resetPosition() {

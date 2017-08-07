@@ -1,6 +1,6 @@
 --- a/net/minecraft/profiler/Profiler.java
 +++ b/net/minecraft/profiler/Profiler.java
-@@ -57,6 +57,7 @@
+@@ -58,6 +58,7 @@
       */
      public void startSection(String name)
      {
@@ -8,7 +8,7 @@
          if (Lagometer.isActive())
          {
              int i = name.hashCode();
-@@ -106,6 +107,8 @@
+@@ -118,6 +119,8 @@
          }
      }
  
@@ -17,7 +17,7 @@
      /**
       * End section
       */
-@@ -115,9 +118,16 @@
+@@ -127,9 +130,16 @@
          {
              if (this.profilingEnabled)
              {

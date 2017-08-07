@@ -109,19 +109,29 @@ public class VRControllerButtonMapping {
     
     public static void pressKey(KeyBinding kb) {
     	int awtCode = KeyboardSimulator.translateToAWT(kb.getKeyCode());
-    	if (Display.isActive() && awtCode != Keyboard.KEY_NONE && !MCOpenVR.isVivecraftBinding(kb) && (!Reflector.forgeExists() || Reflector.call(kb, Reflector.ForgeKeyBinding_getKeyModifier) == Reflector.getFieldValue(Reflector.KeyModifier_NONE))) {
-    		KeyboardSimulator.robot.keyPress(awtCode);
-    	} else {
-    		setKeyBindState(kb, true);
+    	boolean flag = Display.isActive() && awtCode != Keyboard.KEY_NONE && !MCOpenVR.isVivecraftBinding(kb) && (!Reflector.forgeExists() || Reflector.call(kb, Reflector.ForgeKeyBinding_getKeyModifier) == Reflector.getFieldValue(Reflector.KeyModifier_NONE));
+    	if (flag) {
+    		try { // because apparently java is just stupid
+    			KeyboardSimulator.robot.keyPress(awtCode);
+    		} catch (Exception e) {
+    			System.out.println("Key error: " + e.toString() + ", LWJGL code: " + kb.getKeyCode() + ", AWT code: " + awtCode);
+    			flag = false;
+    		}
     	}
+    	if (!flag) setKeyBindState(kb, true);
     }
     
     public static void unpressKey(KeyBinding kb) {
     	int awtCode = KeyboardSimulator.translateToAWT(kb.getKeyCode());
-    	if (Display.isActive() && awtCode != Keyboard.KEY_NONE && !MCOpenVR.isVivecraftBinding(kb) && (!Reflector.forgeExists() || Reflector.call(kb, Reflector.ForgeKeyBinding_getKeyModifier) == Reflector.getFieldValue(Reflector.KeyModifier_NONE))) {
-    		KeyboardSimulator.robot.keyRelease(awtCode);
-    	} else {
-    		MCReflection.invokeMethod(MCReflection.KeyBinding_unpressKey, kb);
+    	boolean flag = Display.isActive() && awtCode != Keyboard.KEY_NONE && !MCOpenVR.isVivecraftBinding(kb) && (!Reflector.forgeExists() || Reflector.call(kb, Reflector.ForgeKeyBinding_getKeyModifier) == Reflector.getFieldValue(Reflector.KeyModifier_NONE));
+    	if (flag) {
+    		try { // because apparently java is just stupid
+    			KeyboardSimulator.robot.keyRelease(awtCode);
+    		} catch (Exception e) {
+    			System.out.println("Key error: " + e.toString() + ", LWJGL code: " + kb.getKeyCode() + ", AWT code: " + awtCode);
+    			flag = false;
+    		}
     	}
+    	if (!flag) MCReflection.invokeMethod(MCReflection.KeyBinding_unpressKey, kb);
     }
 }

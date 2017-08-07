@@ -11,17 +11,7 @@
  import java.io.IOException;
  import java.util.ArrayDeque;
  import java.util.ArrayList;
-@@ -19,7 +22,9 @@
- import java.util.Map;
- import java.util.Random;
- import java.util.Set;
-+
- import javax.annotation.Nullable;
-+
- import net.minecraft.block.Block;
- import net.minecraft.block.BlockChest;
- import net.minecraft.block.BlockEnderChest;
-@@ -105,11 +110,13 @@
+@@ -106,11 +109,13 @@
  import net.minecraft.world.border.WorldBorder;
  import net.minecraft.world.chunk.Chunk;
  import net.minecraft.world.chunk.IChunkProvider;
@@ -35,7 +25,7 @@
  import shadersmod.client.Shaders;
  import shadersmod.client.ShadersRender;
  import shadersmod.client.ShadowUtils;
-@@ -199,8 +206,8 @@
+@@ -200,8 +205,8 @@
      private final Set<BlockPos> setLightUpdates = Sets.<BlockPos>newHashSet();
      private CloudRenderer cloudRenderer;
      public Entity renderedEntity;
@@ -46,7 +36,7 @@
      private Deque visibilityDeque = new ArrayDeque();
      private List renderInfosEntities = new ArrayList(1024);
      private List renderInfosTileEntities = new ArrayList(1024);
-@@ -402,7 +409,7 @@
+@@ -403,7 +408,7 @@
          }
      }
  
@@ -55,7 +45,7 @@
      {
          int i = 64;
          int j = 6;
-@@ -465,7 +472,7 @@
+@@ -466,7 +471,7 @@
          }
      }
  
@@ -64,7 +54,7 @@
      {
          Random random = new Random(10842L);
          worldRendererIn.begin(7, DefaultVertexFormats.POSITION);
-@@ -760,6 +767,8 @@
+@@ -761,6 +766,8 @@
                              {
                                  boolean flag3 = this.mc.getRenderViewEntity() instanceof EntityLivingBase ? ((EntityLivingBase)this.mc.getRenderViewEntity()).isPlayerSleeping() : false;
  
@@ -73,7 +63,7 @@
                                  if ((entity2 != this.mc.getRenderViewEntity() || this.mc.gameSettings.thirdPersonView != 0 || flag3) && (entity2.posY < 0.0D || entity2.posY >= 256.0D || this.world.isBlockLoaded(blockpos$pooledmutableblockpos.setPos(entity2))))
                                  {
                                      ++this.countEntitiesRendered;
-@@ -1143,10 +1152,12 @@
+@@ -1144,10 +1151,12 @@
          }
  
          this.mc.mcProfiler.endStartSection("culling");
@@ -88,7 +78,7 @@
          this.lastViewEntityX = viewEntity.posX;
          this.lastViewEntityY = viewEntity.posY;
          this.lastViewEntityZ = viewEntity.posZ;
-@@ -1237,8 +1248,11 @@
+@@ -1238,8 +1247,11 @@
  
                  if (set1.size() == 1)
                  {
@@ -102,7 +92,7 @@
                      set1.remove(enumfacing);
                  }
  
-@@ -1368,14 +1382,13 @@
+@@ -1369,14 +1381,13 @@
                      BlockPos blockpos2 = renderchunk4.getPosition();
                      boolean flag4 = blockpos1.distanceSq((double)(blockpos2.getX() + 8), (double)(blockpos2.getY() + 8), (double)(blockpos2.getZ() + 8)) < 768.0D;
  
@@ -122,7 +112,7 @@
                      else
                      {
                          this.mc.mcProfiler.startSection("build near");
-@@ -1473,7 +1486,7 @@
+@@ -1474,7 +1485,7 @@
  
          for (int i = 0; i < 8; ++i)
          {
@@ -131,7 +121,7 @@
              this.debugTerrainMatrix[i].x /= this.debugTerrainMatrix[i].w;
              this.debugTerrainMatrix[i].y /= this.debugTerrainMatrix[i].w;
              this.debugTerrainMatrix[i].z /= this.debugTerrainMatrix[i].w;
-@@ -1481,22 +1494,22 @@
+@@ -1482,22 +1493,22 @@
          }
      }
  
@@ -170,7 +160,7 @@
  
      public int renderBlockLayer(BlockRenderLayer blockLayerIn, double partialTicks, int pass, Entity entityIn)
      {
-@@ -1515,14 +1528,13 @@
+@@ -1516,14 +1527,13 @@
                  this.prevRenderSortY = entityIn.posY;
                  this.prevRenderSortZ = entityIn.posZ;
                  int k = 0;
@@ -187,125 +177,7 @@
                  }
              }
  
-@@ -1762,9 +1774,9 @@
-         else if (this.mc.world.provider.isSurfaceWorld())
-         {
-             GlStateManager.disableTexture2D();
--            boolean flag = Config.isShaders();
-+            boolean shadersmod = Config.isShaders();
- 
--            if (flag)
-+            if (shadersmod)
-             {
-                 Shaders.disableTexture2D();
-             }
-@@ -1772,7 +1784,7 @@
-             Vec3d vec3d = this.world.getSkyColor(this.mc.getRenderViewEntity(), partialTicks);
-             vec3d = CustomColors.getSkyColor(vec3d, this.mc.world, this.mc.getRenderViewEntity().posX, this.mc.getRenderViewEntity().posY + 1.0D, this.mc.getRenderViewEntity().posZ);
- 
--            if (flag)
-+            if (shadersmod)
-             {
-                 Shaders.setSkyColor(vec3d);
-             }
-@@ -1797,14 +1809,14 @@
-             GlStateManager.depthMask(false);
-             GlStateManager.enableFog();
- 
--            if (flag)
-+            if (shadersmod)
-             {
-                 Shaders.enableFog();
-             }
- 
-             GlStateManager.color(f, f1, f2);
- 
--            if (flag)
-+            if (shadersmod)
-             {
-                 Shaders.preSkyList();
-             }
-@@ -1828,7 +1840,7 @@
- 
-             GlStateManager.disableFog();
- 
--            if (flag)
-+            if (shadersmod)
-             {
-                 Shaders.disableFog();
-             }
-@@ -1843,7 +1855,7 @@
-             {
-                 GlStateManager.disableTexture2D();
- 
--                if (flag)
-+                if (shadersmod)
-                 {
-                     Shaders.disableTexture2D();
-                 }
-@@ -1886,7 +1898,7 @@
- 
-             GlStateManager.enableTexture2D();
- 
--            if (flag)
-+            if (shadersmod)
-             {
-                 Shaders.enableTexture2D();
-             }
-@@ -1898,14 +1910,14 @@
-             GlStateManager.rotate(-90.0F, 0.0F, 1.0F, 0.0F);
-             CustomSky.renderSky(this.world, this.renderEngine, partialTicks);
- 
--            if (flag)
-+            if (shadersmod)
-             {
-                 Shaders.preCelestialRotate();
-             }
- 
-             GlStateManager.rotate(this.world.getCelestialAngle(partialTicks) * 360.0F, 1.0F, 0.0F, 0.0F);
- 
--            if (flag)
-+            if (shadersmod)
-             {
-                 Shaders.postCelestialRotate();
-             }
-@@ -1945,7 +1957,7 @@
- 
-             GlStateManager.disableTexture2D();
- 
--            if (flag)
-+            if (shadersmod)
-             {
-                 Shaders.disableTexture2D();
-             }
-@@ -1976,7 +1988,7 @@
-             GlStateManager.enableAlpha();
-             GlStateManager.enableFog();
- 
--            if (flag)
-+            if (shadersmod)
-             {
-                 Shaders.enableFog();
-             }
-@@ -1984,7 +1996,7 @@
-             GlStateManager.popMatrix();
-             GlStateManager.disableTexture2D();
- 
--            if (flag)
-+            if (shadersmod)
-             {
-                 Shaders.disableTexture2D();
-             }
-@@ -2064,7 +2076,7 @@
-             GlStateManager.popMatrix();
-             GlStateManager.enableTexture2D();
- 
--            if (flag)
-+            if (shadersmod)
-             {
-                 Shaders.enableTexture2D();
-             }
-@@ -2351,9 +2363,9 @@
+@@ -2351,9 +2361,9 @@
  
      public void updateChunks(long finishTimeNano)
      {
@@ -317,37 +189,36 @@
          if (this.chunksToUpdateForced.size() > 0)
          {
              Iterator iterator = this.chunksToUpdateForced.iterator();
-@@ -2388,10 +2400,11 @@
+@@ -2388,10 +2398,10 @@
                  }
              }
          }
 -
--        int j = 0;
-+*/
-+        
-+        //int j = 0;
-         int k = Config.getUpdatesPerFrame();
--        int i = k * 2;
-+        //int i = k * 2;
+-        int l1 = 0;
++ 		*/
++        //int l1 = 0;
+         int i2 = Config.getUpdatesPerFrame();
+-        int k1 = i2 * 2;
++        //int k1 = i2 * 2;
  
          if (!this.chunksToUpdate.isEmpty())
          {
-@@ -2419,7 +2432,13 @@
-                 renderchunk1.clearNeedsUpdate();
-                 iterator1.remove();
+@@ -2418,7 +2428,14 @@
  
--                if (renderchunk1.getCompiledChunk().isEmpty() && k < i)
+                 renderchunk2.clearNeedsUpdate();
+                 iterator1.remove();
++                
 +                long i = finishTimeNano - System.nanoTime();
 +                if (i < 0L)
 +                {
 +                	break;
 +                }
-+                
-+            /*    if (renderchunk1.getCompiledChunk().isEmpty() && k < i)
+ 
++                /*
+                 if (renderchunk2.getCompiledChunk().isEmpty() && i2 < k1)
                  {
-                     ++k;
-                 }
-@@ -2430,6 +2449,7 @@
+                     ++i2;
+@@ -2430,6 +2447,7 @@
                  {
                      break;
                  }
@@ -355,7 +226,7 @@
              }
          }
      }
-@@ -2846,9 +2866,9 @@
+@@ -2846,9 +2864,9 @@
      {
      }
  
@@ -367,79 +238,7 @@
      }
  
      public void spawnParticle(int id, boolean ignoreRange, boolean p_190570_3_, final double x, final double y, final double z, double xSpeed, double ySpeed, double zSpeed, int... parameters)
-@@ -2879,28 +2899,28 @@
-         }
-     }
- 
--    private void spawnParticle(EnumParticleTypes particleIn, double xCoord, double yCoord, double zCoord, double xSpeed, double ySpeed, double zSpeed, int... parameters)
-+    private void spawnParticle(EnumParticleTypes particleIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, int... parameters)
-     {
--        this.spawnParticle(particleIn.getParticleID(), particleIn.getShouldIgnoreRange(), xCoord, yCoord, zCoord, xSpeed, ySpeed, zSpeed, parameters);
-+        this.spawnParticle(particleIn.getParticleID(), particleIn.getShouldIgnoreRange(), x, y, z, xSpeed, ySpeed, zSpeed, parameters);
-     }
- 
-     @Nullable
--    private Particle spawnEntityFX(int particleID, boolean ignoreRange, double xCoord, double yCoord, double zCoord, double xSpeed, double ySpeed, double zSpeed, int... parameters)
-+    private Particle spawnEntityFX(int particleID, boolean ignoreRange, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, int... parameters)
-     {
--        return this.spawnParticle0(particleID, ignoreRange, false, xCoord, yCoord, zCoord, xSpeed, ySpeed, zSpeed, parameters);
-+        return this.spawnParticle0(particleID, ignoreRange, false, x, y, z, xSpeed, ySpeed, zSpeed, parameters);
-     }
- 
-     @Nullable
--    private Particle spawnParticle0(int particleID, boolean ignoreRange, boolean minParticles, double xCoord, double yCoord, double zCoord, double xSpeed, double ySpeed, double zSpeed, int... parameters)
-+    private Particle spawnParticle0(int particleID, boolean ignoreRange, boolean minParticles, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, int... parameters)
-     {
-         Entity entity = this.mc.getRenderViewEntity();
- 
-         if (this.mc != null && entity != null && this.mc.effectRenderer != null)
-         {
-             int i = this.calculateParticleLevel(minParticles);
--            double d0 = entity.posX - xCoord;
--            double d1 = entity.posY - yCoord;
--            double d2 = entity.posZ - zCoord;
-+            double d0 = entity.posX - x;
-+            double d1 = entity.posY - y;
-+            double d2 = entity.posZ - z;
- 
-             if (particleID == EnumParticleTypes.EXPLOSION_HUGE.getParticleID() && !Config.isAnimatedExplosion())
-             {
-@@ -2996,21 +3016,21 @@
-                     }
-                 }
- 
--                Particle particle = this.mc.effectRenderer.spawnEffectParticle(particleID, xCoord, yCoord, zCoord, xSpeed, ySpeed, zSpeed, parameters);
-+                Particle particle = this.mc.effectRenderer.spawnEffectParticle(particleID, x, y, z, xSpeed, ySpeed, zSpeed, parameters);
- 
-                 if (particleID == EnumParticleTypes.WATER_BUBBLE.getParticleID())
-                 {
--                    CustomColors.updateWaterFX(particle, this.world, xCoord, yCoord, zCoord, this.renderEnv);
-+                    CustomColors.updateWaterFX(particle, this.world, x, y, z, this.renderEnv);
-                 }
- 
-                 if (particleID == EnumParticleTypes.WATER_SPLASH.getParticleID())
-                 {
--                    CustomColors.updateWaterFX(particle, this.world, xCoord, yCoord, zCoord, this.renderEnv);
-+                    CustomColors.updateWaterFX(particle, this.world, x, y, z, this.renderEnv);
-                 }
- 
-                 if (particleID == EnumParticleTypes.WATER_DROP.getParticleID())
-                 {
--                    CustomColors.updateWaterFX(particle, this.world, xCoord, yCoord, zCoord, this.renderEnv);
-+                    CustomColors.updateWaterFX(particle, this.world, x, y, z, this.renderEnv);
-                 }
- 
-                 if (particleID == EnumParticleTypes.TOWN_AURA.getParticleID())
-@@ -3025,7 +3045,7 @@
- 
-                 if (particleID == EnumParticleTypes.REDSTONE.getParticleID())
-                 {
--                    CustomColors.updateReddustFX(particle, this.world, xCoord, yCoord, zCoord);
-+                    CustomColors.updateReddustFX(particle, this.world, x, y, z);
-                 }
- 
-                 return particle;
-@@ -3134,6 +3154,8 @@
+@@ -3134,6 +3152,8 @@
      public void playEvent(EntityPlayer player, int type, BlockPos blockPosIn, int data)
      {
          Random random = this.world.rand;
@@ -448,7 +247,7 @@
  
          switch (type)
          {
-@@ -3190,18 +3212,30 @@
+@@ -3190,18 +3210,30 @@
                  break;
  
              case 1011:
@@ -479,7 +278,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_FENCE_GATE_CLOSE, SoundCategory.BLOCKS, 1.0F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -3222,14 +3256,26 @@
+@@ -3222,14 +3254,26 @@
                  break;
  
              case 1019:
@@ -506,7 +305,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.ENTITY_ZOMBIE_BREAK_DOOR_WOOD, SoundCategory.HOSTILE, 2.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F, false);
                  break;
  
-@@ -3258,10 +3304,17 @@
+@@ -3258,10 +3302,17 @@
                  break;
  
              case 1030:
@@ -524,7 +323,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_ANVIL_LAND, SoundCategory.BLOCKS, 0.3F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -3282,6 +3335,9 @@
+@@ -3282,6 +3333,9 @@
                  break;
  
              case 1036:
@@ -534,7 +333,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_IRON_TRAPDOOR_CLOSE, SoundCategory.BLOCKS, 1.0F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -3321,6 +3377,9 @@
+@@ -3321,6 +3375,9 @@
                      {
                          soundtype = (SoundType)Reflector.call(block, Reflector.ForgeBlock_getSoundType, Block.getStateById(data), this.world, blockPosIn, null);
                      }

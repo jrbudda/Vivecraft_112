@@ -1,6 +1,6 @@
 --- a/net/minecraft/src/HttpUtils.java
 +++ b/net/minecraft/src/HttpUtils.java
-@@ -85,8 +85,10 @@
+@@ -87,8 +87,10 @@
  
              if (p_post_1_ != null)
              {

@@ -2389,22 +2389,8 @@
          {
              float f12 = 0.0F;
  
-@@ -2313,16 +2465,16 @@
-             this.fogColorRed = 0.02F + f12;
-             this.fogColorGreen = 0.02F + f12;
-             this.fogColorBlue = 0.2F + f12;
--            Vec3d vec3d6 = CustomColors.getUnderwaterColor(this.mc.world, this.mc.getRenderViewEntity().posX, this.mc.getRenderViewEntity().posY + 1.0D, this.mc.getRenderViewEntity().posZ);
-+            Vec3d vec3d4 = CustomColors.getUnderwaterColor(this.mc.world, this.mc.getRenderViewEntity().posX, this.mc.getRenderViewEntity().posY + 1.0D, this.mc.getRenderViewEntity().posZ);
- 
--            if (vec3d6 != null)
-+            if (vec3d4 != null)
-             {
--                this.fogColorRed = (float)vec3d6.x;
--                this.fogColorGreen = (float)vec3d6.y;
--                this.fogColorBlue = (float)vec3d6.z;
-+                this.fogColorRed = (float)vec3d4.x;
-+                this.fogColorGreen = (float)vec3d4.y;
-+                this.fogColorBlue = (float)vec3d4.z;
+@@ -2322,7 +2474,7 @@
+                 this.fogColorBlue = (float)vec3d7.z;
              }
          }
 -        else if (iblockstate1.getMaterial() == Material.LAVA)
@@ -2412,7 +2398,7 @@
          {
              this.fogColorRed = 0.6F;
              this.fogColorGreen = 0.1F;
-@@ -2402,7 +2554,7 @@
+@@ -2410,7 +2562,7 @@
  
          if (Reflector.EntityViewRenderEvent_FogColors_Constructor.exists())
          {
@@ -2421,7 +2407,7 @@
              Reflector.postForgeBusEvent(object);
              this.fogColorRed = Reflector.callFloat(object, Reflector.EntityViewRenderEvent_FogColors_getRed);
              this.fogColorGreen = Reflector.callFloat(object, Reflector.EntityViewRenderEvent_FogColors_getGreen);
-@@ -2416,14 +2568,20 @@
+@@ -2424,14 +2576,20 @@
       * Sets up the fog to be rendered. If the arg passed in is -1 the fog starts at 0 and goes to 80% of far plane
       * distance and is used for sky rendering.
       */
@@ -2444,7 +2430,7 @@
          float f = -1.0F;
  
          if (Reflector.ForgeHooksClient_getFogDensity.exists())
-@@ -2454,7 +2612,7 @@
+@@ -2462,7 +2620,7 @@
                  GlStateManager.setFog(GlStateManager.FogMode.LINEAR);
              }
  
@@ -2453,7 +2439,7 @@
              {
                  GlStateManager.setFogStart(0.0F);
                  GlStateManager.setFogEnd(f2 * 0.8F);
-@@ -2483,7 +2641,7 @@
+@@ -2491,7 +2649,7 @@
  
              GlStateManager.setFogDensity(0.1F);
          }
@@ -2462,7 +2448,7 @@
          {
              if (Config.isShaders())
              {
-@@ -2515,7 +2673,7 @@
+@@ -2523,7 +2681,7 @@
                  GlStateManager.setFogDensity(0.02F);
              }
          }
@@ -2471,7 +2457,7 @@
          {
              if (Config.isShaders())
              {
-@@ -2542,7 +2700,7 @@
+@@ -2550,7 +2708,7 @@
                  GlStateManager.setFog(GlStateManager.FogMode.LINEAR);
              }
  
@@ -2480,7 +2466,7 @@
              {
                  GlStateManager.setFogStart(0.0F);
                  GlStateManager.setFogEnd(f1);
-@@ -2574,10 +2732,10 @@
+@@ -2582,10 +2740,10 @@
  
              if (Reflector.ForgeHooksClient_onFogRender.exists())
              {
@@ -2493,7 +2479,7 @@
          GlStateManager.enableColorMaterial();
          GlStateManager.enableFog();
          GlStateManager.colorMaterial(1028, 4608);
-@@ -2761,10 +2919,12 @@
+@@ -2769,10 +2927,12 @@
              this.updatedWorld = world;
          }
  
@@ -2510,7 +2496,7 @@
      }
  
      private void frameFinish()
-@@ -2788,39 +2948,6 @@
+@@ -2796,39 +2956,6 @@
          }
      }
  
@@ -2550,7 +2536,7 @@
      public boolean setFxaaShader(int p_setFxaaShader_1_)
      {
          if (!OpenGlHelper.isFramebufferEnabled())
-@@ -2981,8 +3108,9 @@
+@@ -2989,8 +3116,9 @@
          this.itemActivationOffY = this.random.nextFloat() * 2.0F - 1.0F;
      }
  
@@ -2562,7 +2548,7 @@
          if (this.itemActivationItem != null && this.itemActivationTicks > 0)
          {
              int i = 40 - this.itemActivationTicks;
-@@ -2991,26 +3119,2352 @@
+@@ -2999,26 +3127,2352 @@
              float f2 = f * f1;
              float f3 = 10.25F * f2 * f1 + -24.95F * f1 * f1 + 25.5F * f2 + -13.8F * f1 + 4.0F * f;
              float f4 = f3 * (float)Math.PI;

@@ -12,15 +12,15 @@
  import java.util.List;
  import java.util.Map.Entry;
 @@ -27,6 +31,7 @@
- import net.minecraft.world.WorldType;
  import net.minecraft.world.chunk.Chunk;
+ 
  import org.lwjgl.opengl.Display;
 +import org.lwjgl.util.vector.Matrix4f;
  
  public class GuiOverlayDebug extends Gui
  {
-@@ -173,6 +178,24 @@
-                 list.add(String.format("Looking at: %d %d %d", blockpos1.getX(), blockpos1.getY(), blockpos1.getZ()));
+@@ -255,11 +260,29 @@
+                 }
              }
  
 +//            list.add("c0 tm " + MCOpenVR.controllerHistory[0].averageSpeed(0.25));
@@ -44,12 +44,9 @@
              return list;
          }
      }
-@@ -235,7 +258,7 @@
-         }
-     }
  
 -    private void renderLagometer()
 +    public void renderLagometer()
      {
-         GlStateManager.disableDepth();
-         FrameTimer frametimer = this.mc.getFrameTimer();
+     }
+ 
