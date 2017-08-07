@@ -1,5 +1,5 @@
 {
-	"id": "1.12-forge1.12-14.22.0.2246",
+	"id": "1.12.1-forge1.12.1-14.22.0.2446",
 	"time": "2017-06-21T08:47:26+0000",
 	"releaseTime": "1960-01-01T00:00:00-0700",
 	"type": "release",
@@ -10,7 +10,7 @@
 	"logging": {},
 	"libraries": [
 		{
-			"name": "net.minecraftforge:forge:1.12-14.22.0.2246",
+			"name": "net.minecraftforge:forge:1.12.1-14.22.0.2446",
 			"url": "http://files.minecraftforge.net/maven/"
 		},
 		{
