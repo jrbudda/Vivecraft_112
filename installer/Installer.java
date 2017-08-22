@@ -162,8 +162,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
                 }
 
                 // Need to attempt download...
-                success = downloadFile("http://optifine.net/download.php?f=OptiFine_" + OF_FILE_NAME + OF_VERSION_EXT, fo);
-
+                success = downloadFile("http://vivecraft.org/jar/Optifine/OptiFine_" + OF_FILE_NAME + OF_VERSION_EXT, fo);
                 // Check (potentially) downloaded optifine md5
                 optOnDiskMd5 = GetMd5(fo);
                 if (success == false || optOnDiskMd5 == null || !optOnDiskMd5.equalsIgnoreCase(OF_MD5)) {
@@ -1091,6 +1090,8 @@ public class Installer extends JPanel  implements PropertyChangeListener
             prof.put("lastUsed", dateFormat.format(new java.util.Date()));
 			if(chkCustomGameDir.isSelected() && txtCustomGameDir.getText().trim() != ""){
 				prof.put("gameDir", txtCustomGameDir.getText());
+			} else {
+				prof.remove("gameDir");
 			}
 
             FileWriter fwJson = new FileWriter(fileJson);

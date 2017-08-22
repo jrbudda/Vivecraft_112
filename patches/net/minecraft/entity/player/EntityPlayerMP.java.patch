@@ -138,7 +138,7 @@
      {
 +    	
 +    	if(Reflector.forgeExists()){
-+    		if(Reflector.callBoolean(Reflector.ForgeHooks_onLivingDeath, new Object[]{this, cause}));
++    		if(Reflector.callBoolean(Reflector.ForgeHooks_onLivingDeath, new Object[]{this, cause}))
 +    			return;
 +    	}
 +    	
@@ -153,8 +153,8 @@
 +        
 +        	//FORGE
 +        	if(Reflector.forgeExists()){
-+	        	Reflector.setFieldValue(Reflector.ForgeEntity_captureDrops, true);
-+	        	c =  (ArrayList<EntityItem>) Reflector.getFieldValue(Reflector.ForgeEntity_capturedDrops);
++	        	Reflector.setFieldValue(this, Reflector.ForgeEntity_captureDrops, true);
++	        	c = (ArrayList<EntityItem>) Reflector.getFieldValue(this, Reflector.ForgeEntity_capturedDrops);
 +	        	c.clear();
 +        	}
 +        	///
@@ -164,10 +164,10 @@
 +
 +        	//FORGE
 +        	if(Reflector.forgeExists()){
-+	        	Reflector.setFieldValue(Reflector.ForgeEntity_captureDrops, false);
-+	
++	        	Reflector.setFieldValue(this, Reflector.ForgeEntity_captureDrops, false);
 +	        	Object event = Reflector.newInstance(Reflector.PlayerDropsEvent_Constructor, new Object[]{this, cause, c, this.recentlyHit > 0});
-+	        	if(!Reflector.postForgeBusEvent(event)){
++	        	boolean ret = Reflector.postForgeBusEvent(event);
++	        	if(!ret){
 +	        		for (net.minecraft.entity.item.EntityItem item : c)
 +	        		{
 +	        			this.world.spawnEntity(item);

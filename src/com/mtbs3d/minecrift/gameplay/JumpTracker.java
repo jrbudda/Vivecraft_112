@@ -1,6 +1,5 @@
 package com.mtbs3d.minecrift.gameplay;
 
-import com.mojang.realmsclient.dto.RealmsServer.McoServerComparator;
 import com.mtbs3d.minecrift.api.IRoomscaleAdapter;
 import com.mtbs3d.minecrift.api.NetworkHelper;
 import com.mtbs3d.minecrift.provider.MCOpenVR;
