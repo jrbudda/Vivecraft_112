@@ -34,7 +34,7 @@
      protected void entityInit()
 @@ -84,6 +95,14 @@
       */
-     public void setHeadingFromThrower(Entity entityThrower, float rotationPitchIn, float rotationYawIn, float pitchOffset, float velocity, float inaccuracy)
+     public void shoot(Entity entityThrower, float rotationPitchIn, float rotationYawIn, float pitchOffset, float velocity, float inaccuracy)
      {
 +    	//VIVE USE CONTROLLER
 +        if (entityThrower.getEntityId() == Minecraft.getMinecraft().player.getEntityId())

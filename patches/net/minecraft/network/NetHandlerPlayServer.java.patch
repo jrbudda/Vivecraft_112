@@ -30,7 +30,7 @@
  import net.minecraft.tileentity.CommandBlockBaseLogic;
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.tileentity.TileEntityCommandBlock;
-@@ -589,8 +595,8 @@
+@@ -597,8 +603,8 @@
  
                                  if (flag2 && (flag || !flag1))
                                  {
@@ -41,7 +41,7 @@
                                  }
                              }
  
-@@ -696,8 +702,14 @@
+@@ -704,8 +710,14 @@
                  double d1 = this.player.posY - ((double)blockpos.getY() + 0.5D) + 1.5D;
                  double d2 = this.player.posZ - ((double)blockpos.getZ() + 0.5D);
                  double d3 = d0 * d0 + d1 * d1 + d2 * d2;
@@ -57,7 +57,7 @@
                  {
                      return;
                  }
-@@ -1839,5 +1851,26 @@
+@@ -1852,5 +1864,26 @@
                  LOGGER.error("Couldn't pick item", (Throwable)exception);
              }
          }

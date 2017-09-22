@@ -71,12 +71,12 @@ public class SwimTracker {
 
 			player.addVelocity(0, 0.018D , 0); //counteract most gravity.
 
-			double neutal = player.isCollidedHorizontally? 0.5 : 1;
+			double neutal = player.collidedHorizontally? 0.5 : 1;
 
 			if(percent > neutal && percent < 2){ //between halfway submerged and 1 body length under.
 				//rise!
 				double buoyancy = 2 - percent;
-				if(player.isCollidedHorizontally)  player.addVelocity(0, 00.03f, 0);	
+				if(player.collidedHorizontally)  player.addVelocity(0, 00.03f, 0);	
 				player.addVelocity(0, 0.0015 + buoyancy/100 , 0);		
 			}
 

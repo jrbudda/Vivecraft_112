@@ -9,32 +9,7 @@
      private static final GlStateManager.DepthState depthState;
      private static final GlStateManager.FogState fogState;
      private static final GlStateManager.CullState cullState;
-@@ -395,7 +395,23 @@
- 
-     private static GlStateManager.TexGenCoord texGenCoord(GlStateManager.TexGen texGen)
-     {
--		return null;
-+        switch (texGen)
-+        {
-+            case S:
-+                return texGenState.s;
-+
-+            case T:
-+                return texGenState.t;
-+
-+            case R:
-+                return texGenState.r;
-+
-+            case Q:
-+                return texGenState.q;
-+
-+            default:
-+                return texGenState.s;
-+        }
-     }
- 
-     public static void setActiveTexture(int texture)
-@@ -1017,7 +1033,7 @@
+@@ -1033,7 +1033,7 @@
          }
      }
  

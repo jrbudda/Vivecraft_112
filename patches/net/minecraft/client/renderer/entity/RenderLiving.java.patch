@@ -19,7 +19,7 @@
  public abstract class RenderLiving<T extends EntityLiving> extends RenderLivingBase<T>
 @@ -77,6 +81,7 @@
          {
-             Entity entity = entityLivingIn.getLeashedToEntity();
+             Entity entity = entityLivingIn.getLeashHolder();
  
 +            
              if (entity != null)

@@ -27,17 +27,17 @@ func_110148_a,getEntityAttribute,2,
 func_110149_m,setAbsorptionAmount,2,
 func_110159_bB,updateLeashedState,2,"Applies logic related to leashes, for example dragging the entity or breaking the leash."
 func_110160_i,clearLeashed,2,Removes the leash from this entity
-func_110162_b,setLeashedToEntity,2,Sets the entity to be leashed to.
+func_110162_b,setLeashHolder,2,Sets the entity to be leashed to.
 func_110163_bv,enablePersistence,2,Enable the Entity persistence
 func_110165_bF,recreateLeash,2,
-func_110166_bE,getLeashedToEntity,2,
+func_110166_bE,getLeashHolder,2,
 func_110167_bD,getLeashed,2,
 func_110173_bK,isWithinHomeDistanceCurrentPosition,2,
 func_110174_bM,getMaximumHomeDistance,2,
 func_110175_bO,hasHome,2,Returns whether a home area is defined for this entity.
 func_110177_bN,detachHome,2,
 func_110182_bF,isAttacking,0,
-func_110195_a,addGrowth,2,"""Adds the value of the parameter times 20 to the age of this entity. If the entity is an adult (if the entity's age is greater than 0), it will have no effect."""
+func_110195_a,addGrowth,2,Increases this entity's age. If the entity is an adult (if the entity's age is greater than or equal to 0) then the entity's age will be set to {@link #forcedAge}. This method does not update {@link #forcedAge}.
 func_110198_t,increaseTemper,2,
 func_110199_f,openGUI,2,
 func_110200_cJ,canMate,2,"Return true if the horse entity ready to mate. (no rider, not riding, tame, adult, not steril...)"
@@ -368,7 +368,7 @@ func_145753_i,getCommand,2,Returns the command of the command block.
 func_145754_b,setName,2,
 func_145755_a,trigger,2,
 func_145756_e,updateCommand,2,
-func_145757_a,fillInInfo,0,"Fills in information about the command block for the packet. X/Y/Z for the minecart version, and entityId for the traditional version"
+func_145757_a,fillInInfo,0,"Fills in information about the command block for the packet. entityId for the minecart version, and X/Y/Z for the traditional version"
 func_145759_b,readDataFromNBT,2,Reads NBT formatting and stored data into variables.
 func_145760_g,getSuccessCount,2,returns the successCount int.
 func_145769_d,setEntityId,2,
@@ -413,7 +413,7 @@ func_145883_k,transferItemsOut,2,
 func_145884_b,getSourceInventory,2,Gets the inventory that the provided hopper will transfer items from.
 func_145887_i,updateHopper,2,
 func_145888_j,isOnTransferCooldown,2,
-func_145891_a,captureDroppedItems,2,
+func_145891_a,pullItems,2,Pull dropped {@link net.minecraft.entity.item.EntityItem EntityItem}s from the world above the hopper and items from any inventory attached to this hopper into the hopper's inventory.\n\n@param hopper the hopper in question\n@return whether any items were successfully added to the hopper
 func_145893_b,getInventoryAtPosition,2,Returns the IInventory (if applicable) of the TileEntity at the specified position
 func_145894_a,canCombine,2,
 func_145895_l,getInventoryForHopperTransfer,2,Returns the IInventory that this hopper is pointing into
@@ -480,7 +480,7 @@ func_146116_c,mousePressed,0,Returns true if the mouse has been pressed on this 
 func_146117_b,getButtonWidth,0,
 func_146118_a,mouseReleased,0,Fired when the mouse button is released. Equivalent of MouseListener.mouseReleased(MouseEvent e).
 func_146119_b,mouseDragged,0,Fired when the mouse button is dragged. Equivalent of MouseListener.mouseDragged(MouseEvent e).
-func_146136_c,returnEnumOptions,0,
+func_146136_c,getOption,0,
 func_146140_b,setSelected,0,
 func_146141_c,isSelected,0,
 func_146158_b,getChatGUI,0,"returns a pointer to the persistant Chat GUI, containing all previous chat messages and such"
@@ -630,7 +630,7 @@ func_147099_x,getStatFile,2,Gets the stats file for reading achievements
 func_147100_a,handleClientSettings,2,
 func_147104_D,getCurrentServerData,0,
 func_147107_h,isFramerateLimitBelowMax,0,
-func_147108_a,displayGuiScreen,0,Sets the argument GuiScreen as the main (topmost visible) screen.
+func_147108_a,displayGuiScreen,0,"Sets the argument GuiScreen as the main (topmost visible) screen.\n \n<p><strong>WARNING</strong>: This method is not thread-safe. Opening GUIs from a thread other than the main thread may cause many different issues, including the GUI being rendered before it has initialized (leading to unusual crashes). If on a thread other than the main thread, use {@link #addScheduledTask}:\n \n<pre>\nminecraft.addScheduledTask(() -> minecraft.displayGuiScreen(gui));\n</pre>\n \n@param guiScreenIn The {@link GuiScreen} to display. If it is {@code null}, any open GUI will be closed."
 func_147109_W,getAmbientMusicType,0,
 func_147110_a,getFramebuffer,0,
 func_147111_S,isJava64bit,0,
@@ -1456,7 +1456,7 @@ func_150881_a,parseJson,2,
 func_150882_a,readStatFile,2,
 func_150883_b,saveStatFile,2,
 func_150891_b,getIdFromItem,2,
-func_150893_a,getStrVsBlock,2,
+func_150893_a,getDestroySpeed,2,
 func_150895_a,getSubItems,0,"returns a list of items with the same ID, but different meta (eg: dye returns 16 items)"
 func_150897_b,canHarvestBlock,2,Check whether this Item can harvest the given Block
 func_150898_a,getItemFromBlock,2,
@@ -1471,7 +1471,7 @@ func_150911_c,createMapDataPacket,2,
 func_150912_a,loadMapData,0,
 func_150927_i,getRecordNameLocal,0,
 func_150930_a,isNBTValid,2,"this method returns true if the book's NBT Tag List ""pages"" is valid"
-func_150931_i,getDamageVsEntity,2,Returns the amount of damage this item will deal. One heart of damage is equal to 2 damage points.
+func_150931_i,getAttackDamage,2,Returns the amount of damage this item will deal. One heart of damage is equal to 2 damage points.
 func_150932_j,getToolMaterialName,2,Return the name for this tool's material.
 func_150943_a,setSubtypeNames,2,
 func_150951_e,getStatName,2,
@@ -1488,7 +1488,7 @@ func_150976_a,getMetadata,2,Gets the item damage value on an ItemStack that repr
 func_150977_f,getCookedSaturationModifier,2,Gets the saturation modifier to apply to the heal amount when the player eats the cooked version of this fish.
 func_150978_a,byItemStack,2,"Gets the FishType that corresponds to the given ItemStack, defaulting to COD if the given ItemStack does not actually contain a fish."
 func_150995_f,getRepairItem,2,
-func_150997_a,getStrVsBlock,2,
+func_150997_a,getDestroySpeed,2,
 func_150998_b,canHarvestBlock,2,Check whether the given Block can be harvested using this ItemStack.
 func_151000_E,getTextComponent,2,Get a ChatComponent for this Item's display name that shows this Item on hover
 func_151001_c,setStackDisplayName,2,
@@ -1974,7 +1974,7 @@ func_174969_t,postRenderDamagedBlocks,0,
 func_174970_a,setupTerrain,0,
 func_174971_n,updateDestroyBlockIcons,0,
 func_174972_a,spawnParticle,0,
-func_174974_b,spawnEntityFX,0,
+func_174974_b,spawnParticle0,0,
 func_174975_c,renderEntityOutlineFramebuffer,0,
 func_174976_a,renderSky,0,
 func_174977_a,renderBlockLayer,0,
@@ -2053,7 +2053,7 @@ func_175147_b,getOfflineUUID,2,
 func_175148_a,isWearing,0,
 func_175149_v,isSpectator,2,Returns true if the player is in spectator mode.
 func_175150_k,setReducedDebug,0,
-func_175151_a,canPlayerEdit,2,
+func_175151_a,canPlayerEdit,2,"Returns whether this player can modify the block at a certain location with the given stack.\n<p>\nThe position being queried is {@code pos.offset(facing.getOpposite()))}.\n\n@return Whether this player may modify the queried location in the current world\n@see ItemStack#canPlaceOn(Block)\n@see ItemStack#canEditBlocks()\n@see PlayerCapabilities#allowEdit\n \n@param pos a position adjacent to the queried position\n@param facing the direction from the queried location to (that is, pointing away from the location queried) {@code pos}\n@param stack the {@code ItemStack} that would be used to edit the world"
 func_175154_l,getSkinType,0,
 func_175155_b,getPlayerInfo,0,
 func_175156_o,getFovModifier,0,
@@ -2209,7 +2209,7 @@ func_175493_co,incrementDroppedSkulls,2,
 func_175495_n,isSpawnedByPlayer,2,
 func_175496_a,setSpawnedByPlayer,2,Sets if this mob was spawned by a player or not.
 func_175500_n,onGrowingAdult,2,"This is called when Entity's growing age timer reaches 0 (negative values are considered as a child, positive as an adult)"
-func_175501_a,ageUp,2,
+func_175501_a,ageUp,2,"Increases this entity's age, optionally updating {@link #forcedAge}. If the entity is an adult (if the entity's age is greater than or equal to 0) then the entity's age will be set to {@link #forcedAge}.\n \n@param growthSeconds Number of seconds to grow this entity by. The entity's age will be increased by 20 times this number (i.e. this number converted to ticks).\n@param updateForcedAge If true, updates {@link #forcedAge} and {@link #forcedAgeTimer}"
 func_175505_a,consumeItemFromStack,2,Decreases ItemStack size by one
 func_175509_cj,getFleeceColor,2,Gets the wool color of this sheep.
 func_175510_a,getRandomSheepColor,2,"Chooses a ""vanilla"" sheep color based on the provided random."
@@ -2403,7 +2403,7 @@ func_175795_b,isInsideStructure,2,
 func_175796_a,isPositionInStructure,2,
 func_175797_c,getStructureAt,2,
 func_175798_a,isSwampHut,2,
-func_175799_b,getScatteredFeatureSpawnList,2,Gets the scattered feature spawn list
+func_175799_b,getEnemies,2,Gets the scattered feature spawn list
 func_175804_a,fillWithBlocks,2,Fill the given area with the selected blocks
 func_175807_a,getBlockStateFromPos,2,
 func_175808_b,replaceAirAndLiquidDownwards,2,Replaces air and liquid from given position downwards. Stops when hitting anything else than air or liquid
@@ -3124,12 +3124,12 @@ func_177971_a,add,2,Add the given Vector to this BlockPos
 func_177972_a,offset,2,Offset this BlockPos 1 block in the given direction
 func_177973_b,subtract,2,Subtract the given Vector from this BlockPos
 func_177974_f,east,2,Offset this BlockPos 1 block in eastern direction
-func_177975_b,getAllInBoxMutable,2,"Like getAllInBox but reuses a single MutableBlockPos instead. If this method is used, the resulting BlockPos instances can only be used inside the iteration loop."
+func_177975_b,getAllInBoxMutable,2,"Creates an Iterable that returns all positions in the box specified by the given corners. There is no requirement that one corner is greater than the other; individual coordinates will be swapped as needed.\n \nThis method uses {@link BlockPos.MutableBlockPos MutableBlockPos} instead of regular BlockPos, which grants better performance. However, the resulting BlockPos instances can only be used inside the iteration loop (as otherwise the value will change), unless {@link #toImmutable()} is called. This method is ideal for searching large areas and only storing a few locations.\n \n@see #getAllInBox(BlockPos, BlockPos)\n@see #getAllInBox(int, int, int, int, int, int)\n@see #getAllInBoxMutable(BlockPos, BlockPos)\n@see #mutablesBetween(int, int, int, int, int, int)\n \n@param from One corner of the box\n@param to Another corner of the box"
 func_177976_e,west,2,Offset this BlockPos 1 block in western direction
 func_177977_b,down,2,Offset this BlockPos 1 block down
 func_177978_c,north,2,Offset this BlockPos 1 block in northern direction
 func_177979_c,down,2,Offset this BlockPos n blocks down
-func_177980_a,getAllInBox,2,Create an Iterable that returns all positions in the box specified by the given corners
+func_177980_a,getAllInBox,2,"Create an Iterable that returns all positions in the box specified by the given corners. There is no requirement that one corner is greater than the other; individual coordinates will be swapped as needed.\n \nIn situations where it is usable, prefer {@link #getAllInBoxMutable(BlockPos, BlockPos}) instead as it has better performance (fewer allocations)\n \n@see #getAllInBox(int, int, int, int, int, int)\n@see #getAllInBoxMutable(BlockPos, BlockPos)\n@see #mutablesBetween(int, int, int, int, int, int)\n \n@param from One corner of the box\n@param to Another corner of the box"
 func_177981_b,up,2,Offset this BlockPos n blocks up
 func_177982_a,add,2,Add the given coordinates to the coordinates of this BlockPos
 func_177984_a,up,2,Offset this BlockPos 1 block up
@@ -3307,8 +3307,8 @@ func_178413_a,getFaceShadeColor,0,
 func_178414_a,makeBakedQuad,0,
 func_178439_a,withSuffix,0,
 func_178440_a,withName,0,
-func_178441_a,build,0,
-func_178442_a,ignore,0,"Add properties that will not be used to compute all possible states of a block, used for block rendering to ignore some property that does not alter block's appearance"
+func_178441_a,build,0,Build a new {@code StateMap} with the settings contained in this {@code StateMap.Builder}. The {@code StateMap} will work with any {@code Block} that has the required {@code IProperty}s.\n@return a new {@code StateMap} with the settings contained in this {@code StateMap.Builder}\n@see #ignore(IProperty...)\n@see #withName(IProperty)\n@see #withSuffix(String)
+func_178442_a,ignore,0,"Ignore the listed {@code IProperty}s when building the variant string for the final {@code ModelResourceLocation}. It is valid to pass a {@code Block} that does not have one of these {@code IProperty}s to the built {@code StateMap}.\n@return {@code this}, for convenience in chaining\n \n@param ignores the {@code IProperty}s to ignore when building a variant string"
 func_178446_a,putAllStateModelLocations,0,
 func_178447_a,registerBlockStateMapper,0,
 func_178448_a,registerBuiltInBlocks,0,
@@ -3689,7 +3689,7 @@ func_179543_a,getSubCompound,2,Get an NBTTagCompound from this stack's NBT data.
 func_179544_c,canDestroy,2,
 func_179545_c,areItemsEqual,2,Compares Item and damage value of the two stacks
 func_179546_a,onItemUse,2,"Called when the player uses this ItemStack on a Block (right-click). Places blocks, etc. (Legacy name: tryPlaceItemIntoWorld)"
-func_179547_d,canPlaceOn,2,
+func_179547_d,canPlaceOn,2,"Returns whether this stack is explicitly allowed to be used on the given block via the {@code ""CanPlaceOn""} NBT tag.\n\n@return whether the {@code ""CanPlaceOn""} tag contains the given block.\n \n@param blockIn the block the NBT is being tested for"
 func_179548_a,onBlockDestroyed,2,Called when a Block is destroyed using this ItemStack
 func_179554_a,getRegisteredItem,2,
 func_179628_a,getResult,2,
@@ -3776,7 +3776,7 @@ func_179825_a,getBlockPosition,0,
 func_179827_b,getBlockPosition,0,
 func_179830_a,isDifficultyLocked,0,
 func_179831_b,getDifficulty,0,
-func_179834_f,getFlags,0,
+func_179834_f,getFlags,0,"Returns a set of which fields are relative. Items in this set indicate that the value is a relative change applied to the player's position, rather than an exact value."
 func_179836_c,getFacing,0,
 func_179837_b,getPosition,0,
 func_179840_c,getWindowTitle,0,
@@ -4173,7 +4173,7 @@ func_181156_c,setPage,0,
 func_181157_b,initializeClassLookup,2,
 func_181159_b,atan2,2,
 func_181160_c,pct,2,
-func_181161_i,fastInvSqrt,2,
+func_181161_i,fastInvSqrt,2,"Computes 1/sqrt(n) using <a href=""https://en.wikipedia.org/wiki/Fast_inverse_square_root"">the fast inverse square root</a> with a constant of 0x5FE6EB50C7B537AA."
 func_181162_h,frac,0,"Gets the decimal portion of the given double. For instance, {@code frac(5.5)} returns {@code .5}."
 func_181535_r,getMusicTicker,0,Return the musicTicker's instance
 func_181536_a,draw,0,Draw with the WorldRenderer
@@ -4476,13 +4476,13 @@ func_184408_a,setRotation,2,
 func_184409_c,setSize,2,
 func_184410_b,setMetadata,2,
 func_184411_a,setMirror,2,
-func_184412_n,load,2,
+func_184412_n,load,2,"Loads the given template, both into this structure block and into the world, aborting if the size of the template does not match the size in this structure block.\n \n@return true if the template was successfully added to the world."
 func_184414_b,setPosition,2,
 func_184415_a,filterRelatedCornerBlocks,2,
 func_184416_a,calculateEnclosingBoundingBox,2,
 func_184417_l,detectSize,2,
 func_184418_a,getNearbyCornerBlocks,2,
-func_184419_m,save,2,
+func_184419_m,save,2,"Saves the template, writing it to disk.\n \n@return true if the template was successfully saved."
 func_184429_b,getSlotFor,0,Finds the stack or an equivalent one in the main inventory
 func_184430_d,pickItem,2,
 func_184431_b,stackEqualExact,2,"Checks item, NBT, and meta if the item is not damageable"
@@ -4492,7 +4492,7 @@ func_184434_a,setPickedItemStack,0,
 func_184435_e,isHotbar,2,
 func_184436_a,canMergeStacks,2,
 func_184437_d,deleteStack,2,
-func_184438_a,getStrVsBlock,2,
+func_184438_a,getDestroySpeed,2,
 func_184441_l,getBoatGlide,2,Decides how much the boat should be gliding on the land (based on any slippery blocks)
 func_184442_a,updateInputs,0,
 func_184443_x,controlBoat,2,
@@ -4540,12 +4540,12 @@ func_184531_j,getOrigin,0,
 func_184534_a,setFuse,2,
 func_184535_k,getFuseDataManager,2,Gets the fuse from the data manager
 func_184536_l,getFuse,2,
-func_184538_a,setHeadingFromThrower,2,Sets throwable heading based on an entity that's throwing it
+func_184538_a,shoot,2,Sets throwable heading based on an entity that's throwing it
 func_184541_a,setItem,2,
 func_184542_a,extinguishFires,2,
 func_184543_l,getPotion,2,
 func_184544_n,isLingering,2,
-func_184547_a,setAim,2,
+func_184547_a,shoot,2,
 func_184548_a,arrowHit,2,
 func_184549_a,onHit,2,Called when the arrow hits a block or an entity
 func_184550_j,getArrowStack,2,
@@ -5122,14 +5122,14 @@ func_186237_a,getTemplate,2,
 func_186238_c,writeTemplate,2,writes the template to an external folder
 func_186239_a,readTemplateFromStream,2,reads a template from an inputstream
 func_186252_a,setAuthor,2,
-func_186253_b,addBlocksToWorld,2,This takes the data stored in this instance and puts them into the world.
+func_186253_b,addBlocksToWorld,2,This takes the data stored in this instance and puts them into the world.\n \n@param worldIn The world to use\n@param pos The origin position for the structure\n@param placementIn Placement settings to use
 func_186254_a,takeBlocksFromWorld,2,takes blocks from the world and puts the data them into this template
 func_186255_a,takeEntitiesFromWorld,2,takes blocks from the world and puts the data them into this template
 func_186256_b,read,2,
 func_186257_a,transformedSize,2,
 func_186258_a,getDataBlocks,2,
 func_186259_a,getSize,2,
-func_186260_a,addBlocksToWorldChunk,2,
+func_186260_a,addBlocksToWorldChunk,2,"Add blocks and entities from this structure to the given world, restricting placement to within the chunk bounding box.\n \n@see PlacementSettings#setBoundingBoxFromChunk\n \n@param worldIn The world to use\n@param pos The origin position for the structure"
 func_186261_b,getAuthor,2,
 func_186262_a,calculateConnectedPos,2,
 func_186263_a,addEntitiesToWorld,2,
@@ -5146,7 +5146,7 @@ func_186289_a,getPriority,2,
 func_186309_a,setPoint,2,
 func_186310_f,getCurrentPos,2,
 func_186311_b,read,0,
-func_186315_a,initProcessor,2,
+func_186315_a,init,2,
 func_186316_c,setCanSwim,2,
 func_186317_a,setCanEnterDoors,2,
 func_186318_b,getStart,2,
@@ -5249,9 +5249,9 @@ func_186652_a,deserialize,2,
 func_186657_a,testProperty,2,
 func_186660_b,intersectsWithYZ,2,
 func_186661_a,isClosest,2,
-func_186662_g,grow,2,"Creates a new {@link AxisAlignedBB} that is expanded by the given value in all directions. Equivalent to {@link #expand(double, double, double)} with the given value for all 3 params. Negative values will shrink the AABB.\n<br/>\nSide lengths will be increased by 2 times the value of the parameter, since both min and max are changed.\n<br/>\nIf contracting and the amount to contract by is larger than the length of a side, then the side will wrap (still creating a valid AABB - see samples on {@link #expand(double, double, double)}).\n \n@return A modified AABB."
+func_186662_g,grow,2,"Creates a new {@link AxisAlignedBB} that is expanded by the given value in all directions. Equivalent to {@link #grow(double, double, double)} with the given value for all 3 params. Negative values will shrink the AABB.\n<br/>\nSide lengths will be increased by 2 times the value of the parameter, since both min and max are changed.\n<br/>\nIf contracting and the amount to contract by is larger than the length of a side, then the side will wrap (still creating a valid AABB - see samples on {@link #grow(double, double, double)}).\n \n@return A modified AABB."
 func_186663_b,collideWithYPlane,2,
-func_186664_h,shrink,2,"Creates a new {@link AxisAlignedBB} that is expanded by the given value in all directions. Equivalent to {@link #expandXyz(double)} with value set to the negative of the value provided here. Passing a negative value to this method values will grow the AABB.\n<br/>\nSide lengths will be decreased by 2 times the value of the parameter, since both min and max are changed.\n<br/>\nIf contracting and the amount to contract by is larger than the length of a side, then the side will wrap (still creating a valid AABB - see samples on {@link #expand(double, double, double)}).\n \n@return A modified AABB."
+func_186664_h,shrink,2,"Creates a new {@link AxisAlignedBB} that is expanded by the given value in all directions. Equivalent to {@link #grow(double)} with value set to the negative of the value provided here. Passing a negative value to this method values will grow the AABB.\n<br/>\nSide lengths will be decreased by 2 times the value of the parameter, since both min and max are changed.\n<br/>\nIf contracting and the amount to contract by is larger than the length of a side, then the side will wrap (still creating a valid AABB - see samples on {@link #grow(double, double, double)}).\n \n@return A modified AABB."
 func_186665_c,collideWithZPlane,2,
 func_186666_e,setMaxY,2,Helper method that returns a new {@link AxisAlignedBB} with the given value for {@link #maxY} and all other values taken from this bounding box.
 func_186667_c,intersectsWithXZ,2,
@@ -5276,8 +5276,8 @@ func_186720_a,colorMultiplier,0,
 func_186722_a,registerBlockColorHandler,0,
 func_186723_a,init,0,
 func_186724_a,colorMultiplier,0,
-func_186726_a,getColorFromItemstack,0,
-func_186728_a,getColorFromItemstack,0,
+func_186726_a,colorMultiplier,0,
+func_186728_a,colorMultiplier,0,
 func_186729_a,init,0,
 func_186730_a,registerItemColorHandler,0,
 func_186731_a,registerItemColorHandler,0,
@@ -5446,7 +5446,7 @@ func_187026_d,getFacingX,2,
 func_187028_a,getHand,2,
 func_187040_a,pack,2,
 func_187042_a,getMask,2,
-func_187043_b,isSet,2,
+func_187043_b,isSet,2,Checks if this flag is set within the given set of flags.
 func_187044_a,unpack,2,
 func_187052_a,getAssetsIndex,0,
 func_187054_b,renderMultipass,0,
@@ -5726,7 +5726,7 @@ func_188205_a,renderBeamSegment,0,
 func_188206_a,renderBeacon,0,
 func_188207_b,positiveModulo,0,
 func_188208_f,hash,2,
-func_188209_b,clampAngle,2,Adjust the angle so that his value is in range [-180;180[
+func_188209_b,wrapDegrees,2,Adjust the angle so that his value is in range [-180;180[
 func_188210_a,getRandomUUID,2,Generates a random UUID using the shared random
 func_188216_a,getFixVersion,2,
 func_188217_a,fixTagCompound,2,
@@ -5783,7 +5783,7 @@ func_188383_a,getAndRemove,2,
 func_188388_a,renderEntityStatic,0,
 func_188389_a,renderMultipass,0,
 func_188390_b,isRenderMultipass,0,
-func_188391_a,doRenderEntity,0,
+func_188391_a,renderEntity,0,
 func_188397_a,getType,2,
 func_188398_b,getResult,2,
 func_188401_b,getDamageAfterMagicAbsorb,2,
@@ -5868,7 +5868,7 @@ func_188647_a,makeMultipartModel,0,
 func_188648_a,putModel,0,
 func_188650_g,getTargetLocation,2,Returns the location the dragon is flying toward
 func_188651_f,getMaxRiseOrFall,2,Returns the maximum amount dragon may rise or fall during this phase
-func_188652_i,getPhaseList,2,
+func_188652_i,getType,2,
 func_188653_h,getYawFactor,2,
 func_188654_a,getIsStationary,2,
 func_188655_a,onCrystalDestroyed,2,
@@ -6042,9 +6042,9 @@ func_189708_j,getMetadata,0,
 func_189709_F,isStructureLoadable,2,
 func_189710_f,setShowBoundingBox,2,
 func_189711_e,getPosition,0,
-func_189712_b,save,2,
+func_189712_b,save,2,"Saves the template, either updating the local version or writing it to disk.\n \n@return true if the template was successfully saved.\n \n@param writeToDisk If true, {@link TemplateManager#writeTemplate} will be called with the template, and its return value will dictate the return value of this method. If false, the template will be updated but not written to disk."
 func_189713_m,ignoresEntities,0,
-func_189714_c,load,2,
+func_189714_c,load,2,"Loads the given template, both into this structure block and into the world.\n \n@return true if the template was successfully added to the world.\n \n@param requireMatchingSize If true, and the size of the loaded template does not match the size in this structure block, the structure will not be loaded into the world and false will be returned. Regardless of the value of this parameter, the size in the structure block will be updated after calling this method."
 func_189715_d,getName,2,
 func_189716_h,getMirror,0,
 func_189717_g,getStructureSize,0,
@@ -6126,7 +6126,7 @@ func_189821_a,parseSeed,0,
 func_189822_a,updateEntitiesButton,0,
 func_189823_j,updateMode,0,
 func_189824_i,updateDirectionButtons,0,
-func_189862_a,doTeleport,2,Perform the actual teleport
+func_189862_a,doTeleport,2,Perform the actual teleport\n \n@param teleportingEntity the entity being teleported
 func_189863_a,teleportEntityToCoordinates,2,Teleports an entity to the specified coordinates
 func_189865_a,getDustColor,0,
 func_189868_a,registerFixes,2,
@@ -6166,9 +6166,9 @@ func_189950_a,setRandom,2,
 func_189954_a,idFor,2,
 func_189955_a,stateFor,2,
 func_189956_a,addMapping,2,
-func_189960_a,addBlocksToWorld,2,
+func_189960_a,addBlocksToWorld,2,"Adds blocks and entities from this structure to the given world.\n \n@param worldIn The world to use\n@param pos The origin position for the structure\n@param templateProcessor The template processor to use\n@param placementIn Placement settings to use\n@param flags Flags to pass to {@link World#setBlockState(BlockPos, IBlockState, int)}"
 func_189961_a,getZeroPositionWithTransform,2,
-func_189962_a,addBlocksToWorld,2,This takes the data stored in this instance and puts them into the world.
+func_189962_a,addBlocksToWorld,2,"Adds blocks and entities from this structure to the given world.\n \n@param worldIn The world to use\n@param pos The origin position for the structure\n@param placementIn Placement settings to use\n@param flags Flags to pass to {@link World#setBlockState(BlockPos, IBlockState, int)}"
 func_189964_i,getTarget,0,
 func_189965_h,getClosedSet,0,
 func_189966_g,getOpenSet,0,
@@ -6295,14 +6295,14 @@ func_190641_b,registerFixesVindicator,2,
 func_190645_o,getOwner,2,
 func_190646_di,getBoundOrigin,2,
 func_190647_dj,isCharging,2,
-func_190648_a,setIsCharging,2,
+func_190648_a,setCharging,2,
 func_190651_g,setBoundOrigin,2,
 func_190653_a,setLimitedLife,2,
 func_190656_b,getVexFlag,2,
 func_190658_a,setOwner,2,
 func_190660_a,setVexFlag,2,
 func_190663_b,registerFixesVex,2,
-func_190669_a,holdingSpawnEggOfClass,2,
+func_190669_a,holdingSpawnEggOfClass,2,Checks if the given item is a spawn egg that spawns the given class of entity.
 func_190670_t_,getWorld,2,
 func_190671_u_,getPos,2,
 func_190672_a,finalizeMobSpawn,2,
@@ -6398,7 +6398,7 @@ func_190903_i,getDefaultInstance,0,
 func_190905_a,renderBiomePreviewMap,2,Draws ambiguous landmasses representing unexplored terrain onto a treasure map
 func_190906_a,setupNewMap,2,
 func_190907_h,getColor,0,
-func_190908_h,getNamedIdFrom,2,
+func_190908_h,getNamedIdFrom,2,"Gets the entity type ID from the given itemstack.\n \n@return The type ID, or {@code null} if there is no valid tag on the item."
 func_190909_a,getYOffset,2,
 func_190910_a,makeBanner,2,
 func_190912_e,isNatural,2,
@@ -6510,7 +6510,7 @@ func_191163_a,getIcon,2,
 func_191179_b,getType,2,
 func_191180_f,renderOnFrame,0,
 func_191194_a,offset,2,
-func_191195_a,contract,2,"Creates a new {@link AxisAlignedBB} that has been contracted by the given amount, with positive changes decreasing max values and negative changes increasing min values.\n<br/>\nIf the amount to contract by is larger than the length of a side, then the side will wrap (still creating a valid AABB - see last sample).\n \n<h3>Samples:</h3>\n<table>\n<tr><th>Input</th><th>Result</th></tr>\n<tr><td><pre><code>new AxisAlignedBB(0, 0, 0, 4, 4, 4).contract(2, 2, 2)</code></pre></td><td><pre><samp>box[0.0, 0.0, 0.0 -> 2.0, 2.0, 2.0]</samp></pre></td></tr>\n<tr><td><pre><code>new AxisAlignedBB(0, 0, 0, 4, 4, 4).contract(-2, -2, -2)</code></pre></td><td><pre><samp>box[2.0, 2.0, 2.0 -> 4.0, 4.0, 4.0]</samp></pre></td></tr>\n<tr><td><pre><code>new AxisAlignedBB(5, 5, 5, 7, 7, 7).contract(0, 1, -1)</code></pre></td><td><pre><samp>box[5.0, 5.0, 6.0 -> 7.0, 6.0, 7.0]</samp></pre></td></tr>\n<tr><td><pre><code>new AxisAlignedBB(-2, -2, -2, 2, 2, 2).contract(4, -4, 0)</code></pre></td><td><pre><samp>box[-8.0, 2.0, -2.0 -> -2.0, 8.0, 2.0]</samp></pre></td></tr>\n</table>\n \n<h3>See Also:</h3>\n<ul>\n<li>{@link #addCoord(double, double, double)} - like this, except for expanding.</li>\n<li>{@link #expand(double, double, double)} and {@link #expandXyz(double)} - expands in all directions.</li>\n<li>{@link #contract(double)} - contracts in all directions (like {@link #expandXyz(double)})</li>\n</ul>\n \n@return A new modified bounding box."
+func_191195_a,contract,2,"Creates a new {@link AxisAlignedBB} that has been contracted by the given amount, with positive changes decreasing max values and negative changes increasing min values.\n<br/>\nIf the amount to contract by is larger than the length of a side, then the side will wrap (still creating a valid AABB - see last sample).\n \n<h3>Samples:</h3>\n<table>\n<tr><th>Input</th><th>Result</th></tr>\n<tr><td><pre><code>new AxisAlignedBB(0, 0, 0, 4, 4, 4).contract(2, 2, 2)</code></pre></td><td><pre><samp>box[0.0, 0.0, 0.0 -> 2.0, 2.0, 2.0]</samp></pre></td></tr>\n<tr><td><pre><code>new AxisAlignedBB(0, 0, 0, 4, 4, 4).contract(-2, -2, -2)</code></pre></td><td><pre><samp>box[2.0, 2.0, 2.0 -> 4.0, 4.0, 4.0]</samp></pre></td></tr>\n<tr><td><pre><code>new AxisAlignedBB(5, 5, 5, 7, 7, 7).contract(0, 1, -1)</code></pre></td><td><pre><samp>box[5.0, 5.0, 6.0 -> 7.0, 6.0, 7.0]</samp></pre></td></tr>\n<tr><td><pre><code>new AxisAlignedBB(-2, -2, -2, 2, 2, 2).contract(4, -4, 0)</code></pre></td><td><pre><samp>box[-8.0, 2.0, -2.0 -> -2.0, 8.0, 2.0]</samp></pre></td></tr>\n</table>\n \n<h3>See Also:</h3>\n<ul>\n<li>{@link #expand(double, double, double)} - like this, except for expanding.</li>\n<li>{@link #grow(double, double, double)} and {@link #grow(double)} - expands in all directions.</li>\n<li>{@link #shrink(double)} - contracts in all directions (like {@link #grow(double)})</li>\n</ul>\n \n@return A new modified bounding box."
 func_191196_a,create,2,
 func_191197_a,withSize,2,"Creates a new NonNullList with <i>fixed</i> size, and filled with the object passed."
 func_191205_a,getMapInstanceIfExists,0,
@@ -6548,7 +6548,7 @@ func_191401_d,loadStaticModels,0,
 func_191420_l,isEmpty,2,
 func_191500_a,intersect,2,
 func_191503_g,isInsideWorldBorder,2,
-func_191504_a,getCollisionBoxes_,2,
+func_191504_a,getCollisionBoxes,2,"Gets all <strong>block</strong> collision boxes in the given area. Also gets a world border collision box. Does not get entity collision boxes.\n \n@return true if any box intersects (i.e. resultList is not empty)\n \n@param entityIn The entity to check with. Used for the world border and {@link IBlockState#addCollisionBoxToList}. May be null, in which case the world border is skipped.\n@param aabb The area to search\n@param outList A list to store the intersecting AABBs."
 func_191507_d,setFixedColor,2,
 func_191508_b,getCustomColor,2,
 func_191510_k,dealExplosionDamage,2,
@@ -6564,12 +6564,12 @@ func_191526_e,getSweepingDamageRatio,2,
 func_191527_a,getSweepingDamageRatio,2,
 func_191528_c,getFishingSpeedBonus,2,
 func_191529_b,getFishingLuckBonus,2,
-func_191531_b,mutablesBetween,2,
-func_191532_a,getAllInBox,2,
+func_191531_b,getAllInBoxMutable,2,"Creates an Iterable that returns all positions in the box specified by the given corners. <strong>Coordinates must be in order</strong>; e.g. x1 <= x2.\n \nThis method uses {@link BlockPos.MutableBlockPos MutableBlockPos} instead of regular BlockPos, which grants better performance. However, the resulting BlockPos instances can only be used inside the iteration loop (as otherwise the value will change), unless {@link #toImmutable()} is called. This method is ideal for searching large areas and only storing a few locations.\n \n@see #getAllInBox(BlockPos, BlockPos)\n@see #getAllInBox(int, int, int, int, int, int)\n@see #getAllInBoxMutable(BlockPos, BlockPos)\n \n@param x1 The lower x coordinate\n@param y1 The lower y coordinate\n@param z1 The lower z coordinate\n@param x2 The upper x coordinate\n@param y2 The upper y coordinate\n@param z2 The upper z coordinate"
+func_191532_a,getAllInBox,2,"Create an Iterable that returns all positions in the box specified by the coordinates. <strong>Coordinates must be in order</strong>; e.g. x1 <= x2.\n \nIn situations where it is usable, prefer {@link #getAllInBoxMutable(BlockPos, BlockPos}) instead as it has better performance (fewer allocations)\n \n@see #getAllInBox(BlockPos, BlockPos)\n@see #getAllInBoxMutable(BlockPos, BlockPos)\n@see #mutablesBetween(int, int, int, int, int, int)\n \n@param x1 The lower x coordinate\n@param y1 The lower y coordinate\n@param z1 The lower z coordinate\n@param x2 The upper x coordinate\n@param y2 The upper y coordinate\n@param z2 The upper z coordinate"
 func_191553_a,addUpdate,0,
 func_191556_a,renderDebugText,0,
 func_191560_c,isCompatibleWith,2,
-func_191742_a,addChatMessage,0,
+func_191742_a,addChatMessage,0,Forwards the given chat message to all listeners.
 func_191745_a,drawButton,0,Draws this button to the screen.
 func_191746_c,setPosition,0,
 func_191751_a,initTextureValues,0,
@@ -6657,7 +6657,7 @@ func_191986_a,travel,2,
 func_191987_a,setPartying,0,
 func_191989_p,setMoveForward,2,
 func_191990_c,isPreventingPlayerRest,2,
-func_191991_a,startConverting,2,
+func_191991_a,startConverting,2,Starts conversion of this zombie villager to a villager\n \n@param conversionStarterIn The entity that started the conversion's UUID\n@param conversionTimeIn The time that it will take to finish conversion
 func_191993_do,getLoveCause,2,
 func_191994_f,setEntityOnShoulder,2,
 func_191995_du,canSitOnShoulder,2,
@@ -6695,13 +6695,13 @@ func_192057_a,writeTo,2,
 func_192058_a,resolveParent,2,"Tries to resolve the parent of this advancement, if possible. Returns true on success."
 func_192059_a,deserialize,2,
 func_192060_b,readFrom,2,
-func_192067_g,getId,2,
-func_192068_c,getDisplay,2,
-func_192069_e,getChildren,2,
-func_192070_b,getParent,2,
-func_192071_a,addChild,2,
+func_192067_g,getId,2,Get this {@code Advancement}'s unique identifier.\n\n@return this {@code Advancement}'s unique identifier
+func_192068_c,getDisplay,2,"Get information that defines this {@code Advancement}'s appearance in GUIs.\n\n@return information that defines this {@code Advancement}'s appearance in GUIs. If {@code null}, signifies an invisible {@code Advancement}."
+func_192069_e,getChildren,2,Get the children of this {@code Advancement}.\n\n@return an {@code Iterable} of this {@code Advancement}'s children.\n@see #getParent()
+func_192070_b,getParent,2,"Get the {@code Advancement} that is this {@code Advancement}'s parent. This determines the tree structure that appears in the {@linkplain GuiScreenAdvancements GUI}.\n\n@return the parent {@code Advancement} of this {@code Advancement}, or {@code null} to signify that this {@code Advancement} is a root with no parent."
+func_192071_a,addChild,2,Add the given {@code Advancement} as a child of this {@code Advancement}.\n\n@see #getParent()
 func_192072_d,getRewards,2,
-func_192073_f,getCriteria,2,
+func_192073_f,getCriteria,2,Get the {@link Criterion Criteria} used to decide the completion of this {@code Advancement}. Each key-value pair consists of a {@code Criterion} and its name.\n\n@return the criteria used to decide the completion of this {@code Advancement}\n@see #getRequirements()
 func_192074_h,getRequirements,2,
 func_192075_a,copy,2,Creates a new advancement builder with the data from this advancement
 func_192083_a,loadAdvancements,2,
@@ -6728,11 +6728,11 @@ func_192118_a,register,2,
 func_192119_a,get,2,
 func_192120_a,getAll,2,
 func_192140_a,serializeToNetwork,2,
-func_192141_a,serializeToNetwork,2,
-func_192142_c,criteriaFromNetwork,2,
+func_192141_a,serializeToNetwork,2,Write {@code criteria} to {@code buf}.\n\n@see #criteriaFromNetwork(PacketBuffer)\n \n@param criteria the criteria to write to {@code buf}. Each key-value pair consists of a {@code Criterion} and its name.\n@param buf the {@code PacketBuffer} to write to
+func_192142_c,criteriaFromNetwork,2,"Read criteria from {@code buf}.\n\n@return the read criteria. Each key-value pair consists of a {@code Criterion} and its name.\n@see #serializeToNetwork(Map, PacketBuffer)\n \n@param bus the {@code PacketBuffer} to read from"
 func_192143_a,getCriterionInstance,2,
-func_192144_b,criteriaFromJson,2,
-func_192145_a,criterionFromJson,2,
+func_192144_b,criteriaFromJson,2,"Read criteria from {@code json}. The keys of the object name the criteria, and the values (which must be objects) are the criteria themselves.\n\n@return the deserialized criteria. Each key-value pair consists of a {@code Criterion} and its name.\n@see #criterionFromJson(JsonObject, JsonDeserializationContext)\n \n@param json the {@code JsonObject} to deserialize from\n@param context the {@code JsonDeserializationContext} to deserialize in"
+func_192145_a,criterionFromJson,2,"Deserialize a <em>single</em> {@code Criterion} from {@code json}. The {@link ICriterionTrigger} is chosen by the {@code ""trigger""} property of the object, which can then handle the optional {@code ""conditions""} in the object. The {@code ""conditions""}, if present, must be a {@code JsonObject}. The resulting {@link ICriterionInstance} is wrapped in a {@code Criterion}.\n\n@return the deserialized {@code Criterion}.\n@see ICriterionTrigger#deserializeInstance(JsonObject, JsonDeserializationContext)\n \n@param json the {@code JsonObject} to deserialize from\n@param context the {@code JsonDeserializationContext} to deserialize in"
 func_192146_b,criterionFromNetwork,2,
 func_192148_e,serialize,2,
 func_192149_a,read,2,
@@ -6826,7 +6826,7 @@ func_192388_b,addItem,2,
 func_192389_a,slotChangedCraftingGrid,2,
 func_192394_m,isAlignedRight,0,
 func_192396_c,getDyeColorName,0,
-func_192399_d,isHidden,2,
+func_192399_d,isDynamic,2,
 func_192400_c,getIngredients,0,
 func_192402_a,deserializeIngredients,2,
 func_192403_f,getWidth,0,
@@ -6906,7 +6906,7 @@ func_192572_a,writeResourceLocation,2,
 func_192573_m,readTime,2,
 func_192574_a,writeTime,2,
 func_192575_l,readResourceLocation,2,
-func_192576_a,say,0,
+func_192576_a,say,0,"Called whenever this listener receives a chat message, if this listener is registered to the given type in {@link net.minecraft.client.gui.GuiIngame#chatListeners chatListeners}\n \n@param chatTypeIn The type of chat message\n@param message The chat message."
 func_192582_a,byId,2,
 func_192583_a,getId,2,
 func_192590_c,getType,2,
@@ -7056,8 +7056,8 @@ func_193104_a,copyFrom,2,
 func_193105_t,hasDisconnected,2,
 func_193106_Q,getEnteredNetherPosition,2,
 func_193115_c,isVisible,0,
-func_193123_j,getDisplayText,2,
-func_193124_g,getRequirementCount,0,
+func_193123_j,getDisplayText,2,"Returns the {@code ITextComponent} that is shown in the chat message sent after this {@code Advancement} is completed.\n\n@return the {@code ITextComponent} that is shown in the chat message sent after this {@code Advancement} is completed. If this {@code Advancement} is {@linkplain #getDisplay() invisible}, then it consists simply of {@link #getId()}. Otherwise, it is the {@linkplain DisplayInfo#getTitle() title} inside square brackets, colored by the {@linkplain net.minecraft.advancements.FrameType#getFormat frame type}, and hovering over it shows the {@linkplain DisplayInfo#getDescription() description}."
+func_193124_g,getRequirementCount,0,Get how many requirements this {@code Advancement} has.\n\n@return {@code this.getRequirements().length}\n@see #getRequirements()
 func_193126_d,getProgressText,0,
 func_193128_g,getFirstProgressDate,2,
 func_193140_d,getObtained,2,
@@ -7146,7 +7146,7 @@ func_193376_a,parseRecipeJson,2,
 func_193377_a,init,2,
 func_193379_a,register,2,
 func_193382_c,isExceptBlockForAttachWithPiston,2,
-func_193383_a,getBlockFaceShape,2,
+func_193383_a,getBlockFaceShape,2,"Get the geometry of the queried face at the given position and state. This is used to decide whether things like buttons are allowed to be placed on the face, or how glass panes connect to the face, among other things.\n<p>\nCommon values are {@code SOLID}, which is the default, and {@code UNDEFINED}, which represents something that does not fit the other descriptions and will generally cause other things not to connect to the face.\n\n@return an approximation of the form of the given face"
 func_193384_b,isExceptionBlockForAttaching,2,
 func_193385_b,isHeadPiece,0,
 func_193386_c,executeChain,2,
@@ -7298,10 +7298,10 @@ func_193767_b,hasErrored,2,
 func_193769_a,preparePiece,0,
 func_193770_a,getModelVersion,0,
 func_193771_b,render,0,
-func_193824_a,apply,2,
-func_193825_e,addDisplayedRecipe,2,
-func_193830_f,containsRecipe,2,
-func_193831_b,removeRecipe,2,
+func_193824_a,copyFrom,2,
+func_193825_e,markNew,2,
+func_193830_f,isUnlocked,2,
+func_193831_b,lock,2,
 func_193834_b,remove,2,
 func_193835_a,add,2,
 func_193837_a,fromJson,2,
@@ -7375,10 +7375,10 @@ func_194060_b,printArray,0,"Prints the entire array to the logger, on debug leve
 func_194070_a,hasPunchedTreesPreviously,0,
 func_194071_a,didPlayerCraftedPlanks,0,Indicates if the players crafted at least one time planks.\n \n@param player The player
 func_194072_f,getGameType,0,
-func_194073_a,setRecipes,2,
-func_194074_f,setRecipeSeen,2,
+func_194073_a,unlock,2,
+func_194074_f,markSeen,2,
 func_194075_d,getRecipeId,2,
-func_194076_e,isRecipeUnseen,0,
+func_194076_e,isNew,0,
 func_194079_d,getRecipes,2,
 func_194080_e,getDisplayedRecipes,2,
 func_194081_a,sendPacket,2,
@@ -7466,11 +7466,11 @@ func_70013_c,getBrightness,2,Gets how bright this entity is.
 func_70014_b,writeEntityToNBT,2,(abstract) Protected helper method to write subclass entity data to NBT.
 func_70015_d,setFire,2,"Sets entity to burn for x amount of seconds, cannot lower amount of existing fire."
 func_70016_h,setVelocity,0,"Updates the entity motion clientside, called by packets from the server"
-func_70018_K,setBeenAttacked,2,Sets that this entity has been attacked.
+func_70018_K,markVelocityChanged,2,"Marks this entity's velocity as changed, so that it can be re-synced with the client later"
 func_70020_e,readFromNBT,2,Reads the entity from NBT (calls an abstract helper method to read specialized data)
 func_70021_al,getParts,2,Return the Entity parts making up this Entity (currently only for dragons)
 func_70022_Q,getEntityString,2,Returns the string that identifies this Entity's class
-func_70024_g,addVelocity,2,Adds to the current velocity of the entity.
+func_70024_g,addVelocity,2,"Adds to the current velocity of the entity, and sets {@link #isAirBorne} to true."
 func_70026_G,isWet,2,Checks if this entity is either in water or on an open air block in rain (used in wolves).
 func_70027_ad,isBurning,2,Returns true if the entity is on fire. Used by render to add the fire effect on rendering.
 func_70028_i,isEntityEqual,2,Returns true if Entity argument is equal to this Entity
@@ -7488,7 +7488,7 @@ func_70041_e_,canTriggerWalking,2,returns if this entity triggers Block.onEntity
 func_70042_X,getMountedYOffset,2,Returns the Y offset from the entity's position for any entity riding this one.
 func_70044_A,setOnFireFromLava,2,Called whenever the entity is walking inside of lava.
 func_70045_F,isImmuneToFire,2,
-func_70046_E,getCollisionBoundingBox,2,Returns the collision bounding box for this entity
+func_70046_E,getCollisionBoundingBox,2,"Returns the <b>solid</b> collision bounding box for this entity. Used to make (e.g.) boats solid. Return null if this entity is not solid.\n \nFor general purposes, use {@link #width} and {@link #height}.\n \n@see getEntityBoundingBox"
 func_70047_e,getEyeHeight,2,
 func_70049_a,newFloatNBTList,2,Returns a new NBTTagList filled with the specified floats
 func_70050_g,setAir,2,
@@ -7540,7 +7540,7 @@ func_70112_a,isInRangeToRenderDist,0,Checks if the entity is in range to render.
 func_70114_g,getCollisionBox,2,"Returns a boundingBox used to collide the entity with other entities and blocks. This enables the entity to be pushable on contact, like boats or minecarts."
 func_70184_a,onImpact,2,Called when this EntityThrowable hits a block or entity.
 func_70185_h,getGravityVelocity,2,Gets the amount of gravity to apply to the thrown entity with each tick.
-func_70186_c,setThrowableHeading,2,"Similar to setArrowHeading, it's point the throwable entity to a x, y, z direction."
+func_70186_c,shoot,2,"Similar to setArrowHeading, it's point the throwable entity to a x, y, z direction."
 func_70227_a,onImpact,2,Called when this EntityFireball hits a block or entity.
 func_70239_b,setDamage,2,
 func_70240_a,setKnockbackStrength,2,Sets the amount of knockback the arrow applies when it hits a mob.
@@ -7620,7 +7620,7 @@ func_70609_aI,onDeathUpdate,2,"handles entity death timer, experience orb and pa
 func_70610_aX,isMovementBlocked,2,Dead and sleeping entities cannot move
 func_70613_aW,isServerWorld,2,Returns whether the entity is in a server world
 func_70615_aA,eatGrassBonus,2,This function applies the benefits of growing back wool and faster growing up to the acting entity. (This function is used in the AIEatGrass)
-func_70617_f_,isOnLadder,2,"returns true if this entity is by a ladder, false otherwise"
+func_70617_f_,isOnLadder,2,"Returns true if this entity should move as if it were on a ladder (either because it's actually on a ladder, or for AI reasons)"
 func_70619_bc,updateAITasks,2,
 func_70623_bb,despawnEntity,2,Makes the entity despawn if requirements are reached
 func_70624_b,setAttackTarget,2,Sets the active target the Task system uses for tracking
@@ -7643,7 +7643,7 @@ func_70645_a,onDeath,2,Called when the mob's health reaches 0.
 func_70646_bf,getVerticalFaceSpeed,2,The speed it takes to move the entityliving's rotationPitch through the faceEntity method. This is only currently use in wolves.
 func_70647_i,getSoundPitch,2,Gets the pitch of living sounds in living entities.
 func_70648_aU,canBreatheUnderwater,2,
-func_70650_aV,isAIEnabled,2,Returns true if the newer Entity AI code should be run
+func_70650_aV,ableToCauseSkullDrop,2,"Returns true if an entity is able to drop its skull due to being blown up by this creeper.\n \nDoes not test if this creeper is charged; the caller must do that. However, does test the doMobLoot gamerule."
 func_70651_bq,getActivePotionEffects,2,
 func_70652_k,attackEntityAsMob,2,
 func_70653_a,knockBack,2,"Constructs a knockback vector from the given direction ratio and magnitude and adds it to the entity's velocity. If it is on the ground (i.e. {@code this.onGround}), the Y-velocity is increased as well, clamping it to {@code .4}.\n\nThe entity's existing horizontal velocity is halved, and if the entity is on the ground the Y-velocity is too."
@@ -7926,7 +7926,7 @@ func_71386_F,getSystemTime,0,Gets the system time in milliseconds.
 func_71387_A,isIntegratedServerRunning,0,
 func_71389_H,startTimerHackThread,0,
 func_71396_d,addGraphicsAndWorldToCrashReport,0,"adds core server Info (GL version , Texture pack, isModded, type), and the worldInfo to the crash report"
-func_71398_f,freeMemory,0,
+func_71398_f,freeMemory,0,"Attempts to free as much memory as possible, including leaving the world and running the garbage collector."
 func_71400_g,shutdown,0,Called when the window is closing. Sets 'running' to false which allows the game loop to exit cleanly.
 func_71401_C,getIntegratedServer,0,Returns the currently running integrated server
 func_71403_a,loadWorld,0,unloads the current world first
@@ -7962,12 +7962,12 @@ func_71560_a,registerCommand,2,adds the command and any aliases it has to the in
 func_71565_a,filterAllowedCharacters,2,"Filter a string, keeping only characters for which {@link #isAllowedCharacter(char)} returns true.\n \nNote that this method strips line breaks, as {@link #isAllowedCharacter(char)} returns false for those.\n@return A filtered version of the input string"
 func_71566_a,isAllowedCharacter,2,Checks if the given character is allowed to be put into chat.
 func_71575_a,getCrashReport,2,Gets the CrashReport wrapped by this exception.
-func_72314_b,grow,2,"Creates a new {@link AxisAlignedBB} that has been contracted by the given amount in both directions. Negative values will shrink the AABB instead of expanding it.\n<br/>\nSide lengths will be increased by 2 times the value of the parameters, since both min and max are changed.\n<br/>\nIf contracting and the amount to contract by is larger than the length of a side, then the side will wrap (still creating a valid AABB - see last ample).\n \n<h3>Samples:</h3>\n<table>\n<tr><th>Input</th><th>Result</th></tr>\n<tr><td><pre><code>new AxisAlignedBB(0, 0, 0, 1, 1, 1).expand(2, 2, 2)</code></pre></td><td><pre><samp>box[-2.0, -2.0, -2.0 -> 3.0, 3.0, 3.0]</samp></pre></td></tr>\n<tr><td><pre><code>new AxisAlignedBB(0, 0, 0, 6, 6, 6).expand(-2, -2, -2)</code></pre></td><td><pre><samp>box[2.0, 2.0, 2.0 -> 4.0, 4.0, 4.0]</samp></pre></td></tr>\n<tr><td><pre><code>new AxisAlignedBB(5, 5, 5, 7, 7, 7).expand(0, 1, -1)</code></pre></td><td><pre><samp>box[5.0, 4.0, 6.0 -> 7.0, 8.0, 6.0]</samp></pre></td></tr>\n<tr><td><pre><code>new AxisAlignedBB(1, 1, 1, 3, 3, 3).expand(-4, -2, -3)</code></pre></td><td><pre><samp>box[-1.0, 1.0, 0.0 -> 5.0, 3.0, 4.0]</samp></pre></td></tr>\n</table>\n \n<h3>See Also:</h3>\n<ul>\n<li>{@link #addCoord(double, double, double)} - expands in only one direction.</li>\n<li>{@link #contract(double, double, double)} - contracts in only one direction.</li>\n<lu>{@link #expandXyz(double)} - version of this that expands in all directions from one parameter.</li>\n<li>{@link #contract(double)} - contracts in all directions</li>\n</ul>\n \n@return A modified bounding box."
+func_72314_b,grow,2,"Creates a new {@link AxisAlignedBB} that has been contracted by the given amount in both directions. Negative values will shrink the AABB instead of expanding it.\n<br/>\nSide lengths will be increased by 2 times the value of the parameters, since both min and max are changed.\n<br/>\nIf contracting and the amount to contract by is larger than the length of a side, then the side will wrap (still creating a valid AABB - see last ample).\n \n<h3>Samples:</h3>\n<table>\n<tr><th>Input</th><th>Result</th></tr>\n<tr><td><pre><code>new AxisAlignedBB(0, 0, 0, 1, 1, 1).grow(2, 2, 2)</code></pre></td><td><pre><samp>box[-2.0, -2.0, -2.0 -> 3.0, 3.0, 3.0]</samp></pre></td></tr>\n<tr><td><pre><code>new AxisAlignedBB(0, 0, 0, 6, 6, 6).grow(-2, -2, -2)</code></pre></td><td><pre><samp>box[2.0, 2.0, 2.0 -> 4.0, 4.0, 4.0]</samp></pre></td></tr>\n<tr><td><pre><code>new AxisAlignedBB(5, 5, 5, 7, 7, 7).grow(0, 1, -1)</code></pre></td><td><pre><samp>box[5.0, 4.0, 6.0 -> 7.0, 8.0, 6.0]</samp></pre></td></tr>\n<tr><td><pre><code>new AxisAlignedBB(1, 1, 1, 3, 3, 3).grow(-4, -2, -3)</code></pre></td><td><pre><samp>box[-1.0, 1.0, 0.0 -> 5.0, 3.0, 4.0]</samp></pre></td></tr>\n</table>\n \n<h3>See Also:</h3>\n<ul>\n<li>{@link #expand(double, double, double)} - expands in only one direction.</li>\n<li>{@link #contract(double, double, double)} - contracts in only one direction.</li>\n<lu>{@link #grow(double)} - version of this that expands in all directions from one parameter.</li>\n<li>{@link #shrink(double)} - contracts in all directions</li>\n</ul>\n \n@return A modified bounding box."
 func_72316_a,calculateXOffset,2,"if instance and the argument bounding boxes overlap in the Y and Z dimensions, calculate the offset between them in the X dimension.  return var2 if the bounding boxes do not overlap or if var2 is closer to 0 then the calculated offset.  Otherwise return the calculated offset."
 func_72317_d,offset,2,Offsets the current bounding box by the specified amount.
 func_72318_a,contains,2,Returns if the supplied Vec3D is completely inside the bounding box
 func_72320_b,getAverageEdgeLength,2,Returns the average length of the edges of the bounding box.
-func_72321_a,expand,2,"Creates a new {@link AxisAlignedBB} that has been expanded by the given amount, with positive changes increasing max values and negative changes decreasing min values.\n\n<h3>Samples:</h3>\n<table>\n<tr><th>Input</th><th>Result</th></tr>\n<tr><td><pre><code>new AxisAlignedBB(0, 0, 0, 1, 1, 1).addCoord(2, 2, 2)</code></pre></td><td><pre><samp>box[0, 0, 0 -> 3, 3, 3]</samp></pre></td><td>\n<tr><td><pre><code>new AxisAlignedBB(0, 0, 0, 1, 1, 1).addCoord(-2, -2, -2)</code></pre></td><td><pre><samp>box[-2, -2, -2 -> 1, 1, 1]</samp></pre></td><td>\n<tr><td><pre><code>new AxisAlignedBB(5, 5, 5, 7, 7, 7).addCoord(0, 1, -1)</code></pre></td><td><pre><samp>box[5, 5, 4, 7, 8, 7]</samp></pre></td><td>\n</table>\n\n<h3>See Also:</h3>\n<ul>\n<li>{@link #contract(double, double, double)} - like this, except for shrinking.</li>\n<li>{@link #expand(double, double, double)} and {@link #expandXyz(double)} - expands in all directions.</li>\n<li>{@link #contract(double)} - contracts in all directions (like {@link #expandXyz(double)})</li>\n</ul>\n\n@return A modified bounding box that will always be equal or greater in volume to this bounding box."
+func_72321_a,expand,2,"Creates a new {@link AxisAlignedBB} that has been expanded by the given amount, with positive changes increasing max values and negative changes decreasing min values.\n\n<h3>Samples:</h3>\n<table>\n<tr><th>Input</th><th>Result</th></tr>\n<tr><td><pre><code>new AxisAlignedBB(0, 0, 0, 1, 1, 1).expand(2, 2, 2)</code></pre></td><td><pre><samp>box[0, 0, 0 -> 3, 3, 3]</samp></pre></td><td>\n<tr><td><pre><code>new AxisAlignedBB(0, 0, 0, 1, 1, 1).expand(-2, -2, -2)</code></pre></td><td><pre><samp>box[-2, -2, -2 -> 1, 1, 1]</samp></pre></td><td>\n<tr><td><pre><code>new AxisAlignedBB(5, 5, 5, 7, 7, 7).expand(0, 1, -1)</code></pre></td><td><pre><samp>box[5, 5, 4, 7, 8, 7]</samp></pre></td><td>\n</table>\n\n<h3>See Also:</h3>\n<ul>\n<li>{@link #contract(double, double, double)} - like this, except for shrinking.</li>\n<li>{@link #grow(double, double, double)} and {@link #grow(double)} - expands in all directions.</li>\n<li>{@link #shrink(double)} - contracts in all directions (like {@link #grow(double)})</li>\n</ul>\n\n@return A modified bounding box that will always be equal or greater in volume to this bounding box."
 func_72322_c,calculateZOffset,2,"if instance and the argument bounding boxes overlap in the Y and X dimensions, calculate the offset between them in the Z dimension.  return var2 if the bounding boxes do not overlap or if var2 is closer to 0 then the calculated offset.  Otherwise return the calculated offset."
 func_72323_b,calculateYOffset,2,"if instance and the argument bounding boxes overlap in the X and Z dimensions, calculate the offset between them in the Y dimension.  return var2 if the bounding boxes do not overlap or if var2 is closer to 0 then the calculated offset.  Otherwise return the calculated offset."
 func_72326_a,intersects,2,Checks if the bounding box intersects with another.
@@ -8160,7 +8160,7 @@ func_72970_h,createChunkProvider,2,Creates the chunk provider for this world. Ca
 func_72971_b,getSunBrightness,0,"Returns the sun brightness - checks time of day, rain and thunder"
 func_72973_f,removeEntityDangerously,2,Do NOT use this method to remove normal entities- use normal removeEntity
 func_72974_f,setInitialSpawnLocation,0,"Sets a new spawn location by finding an uncovered block at a random (x,z) location in the chunk."
-func_72975_g,markBlocksDirtyVertical,2,marks a vertical line of blocks as dirty
+func_72975_g,markBlocksDirtyVertical,2,"Marks a vertical column of blocks dirty, scheduling a render update.\n \nAutomatically swaps y1 and y2 if they are backwards."
 func_72979_l,updateWeather,2,Updates all weather states.
 func_72981_t,getDebugLoadedEntities,0,This string is 'All: (number of loaded entities)' Viewable by press ing F3
 func_73022_a,removeAllEntities,0,also releases skins.
@@ -8260,11 +8260,11 @@ func_74308_b,getOptionOrdinalValue,0,
 func_74372_a,grabMouseCursor,0,Grabs the mouse cursor it doesn't move and isn't seen.
 func_74373_b,ungrabMouseCursor,0,Ungrabs the mouse cursor so it can be moved and set it to the center of the screen
 func_74374_c,mouseXYChange,0,
-func_74378_d,getEnumString,0,
-func_74379_a,getEnumOptions,0,
-func_74380_a,getEnumFloat,0,
-func_74381_c,returnEnumOrdinal,0,
-func_74382_b,getEnumBoolean,0,
+func_74378_d,getTranslation,0,GameSettings$Options.Options
+func_74379_a,byOrdinal,0,
+func_74380_a,isFloat,0,
+func_74381_c,getOrdinal,0,
+func_74382_b,isBoolean,0,
 func_74428_b,processReceivedPackets,2,Checks timeouts and processes all packets received
 func_74430_c,getRemoteAddress,2,Returns the socket address of the remote side. Server-only.
 func_74505_d,unpressKey,0,
@@ -8460,7 +8460,7 @@ func_75492_a,tryMoveToXYZ,2,"Try to find and set a path to XYZ. Returns true if 
 func_75493_a,isDirectPathBetweenPoints,2,Checks if the specified entity can safely walk to the specified location.
 func_75494_a,getPathToEntityLiving,2,Returns the path to the given EntityLiving. Args : entity
 func_75497_a,tryMoveToEntityLiving,2,"Try to find and set a path to EntityLiving. Returns true if successful. Args : entity, speed"
-func_75499_g,clearPathEntity,2,sets active PathEntity to null
+func_75499_g,clearPath,2,sets active PathEntity to null
 func_75500_f,noPath,2,If null path or reached the end
 func_75501_e,onUpdateNavigation,2,
 func_75502_i,getEntityPosition,2,
@@ -8511,8 +8511,8 @@ func_75660_a,setJumping,2,
 func_75661_b,doJump,2,Called to actually make the entity jump if isJumping is true.
 func_75664_a,updateRenderAngles,2,Update the Head and Body rendenring angles
 func_75665_a,computeAngleWithBound,2,"Return the new angle2 such that the difference between angle1 and angle2 is lower than angleMax. Args : angle1, angle2, angleMax"
-func_75734_a,waitForFinish,2,
-func_75735_a,queueIO,2,threaded io
+func_75734_a,waitForFinish,2,"Causes the current thread to block until all pending IO tasks have been written, and also disables the sleep between IO tasks until that time."
+func_75735_a,queueIO,2,"Queues an IO task. If the given task has already been queued, nothing happens."
 func_75736_b,processQueue,2,Process the items that are in the queue
 func_75742_a,getOrLoadData,2,"Loads an existing MapDataBase corresponding to the given id from disk, instantiating the given Class, or returns null if none such file exists."
 func_75743_a,getUniqueDataId,2,Returns an unique new data id for the given prefix and saves the idCounts map to the 'idcounts' file.
@@ -8559,7 +8559,7 @@ func_75810_a,addRegionFilesToCollection,2,"filters the files in the par1 directo
 func_75811_a,convertChunks,2,"copies a 32x32 chunk set from par2File to par1File, via AnvilConverterData"
 func_75812_c,getSaveVersion,2,
 func_75813_a,convertFile,2,
-func_75814_c,writeNextIO,2,Returns a boolean stating if the write was unsuccessful.
+func_75814_c,writeNextIO,2,"Writes one queued IO action.\n \n@return true if there are more IO actions to perform afterwards, or false if there are none (and this instance of IThreadedFileIO should be removed from the queued list)"
 func_75815_a,loadChunk,2,Loads the specified(XZ) chunk into the specified world.
 func_75816_a,saveChunk,2,
 func_75817_a,chunkTick,2,Called every World.tick()
@@ -8581,7 +8581,7 @@ func_75847_a,sortBack,2,Sorts a point to the left
 func_75848_a,clearPath,2,Clears the path
 func_75849_a,addPoint,2,Adds a point to the path
 func_75850_a,changeDistance,2,Changes the provided point's distance to target
-func_75853_a,createEntityPath,2,Returns a new PathEntity for a given start and end point
+func_75853_a,createPath,2,Returns a new PathEntity for a given start and end point
 func_75870_c,getFinalPathPoint,2,returns the last PathPoint of the Array
 func_75871_b,setCurrentPathLength,2,
 func_75872_c,setCurrentPathIndex,2,
@@ -8864,7 +8864,7 @@ func_76795_a,genStandardOre1,2,"Standard ore generation helper. Vanilla uses thi
 func_76797_b,generateOres,2,Generates ores in the current chunk
 func_76838_a,cleanupCache,2,Removes BiomeCacheBlocks from this cache that haven't been accessed in at least 30 seconds.
 func_76839_e,getCachedBiomes,2,Returns the array of cached biome types in the BiomeCacheBlock at the given location.
-func_76840_a,getBiomeCacheBlock,2,Returns a biome cache block at location specified.
+func_76840_a,getEntry,2,Returns a biome cache block at location specified.
 func_76885_a,getBiome,2,"Returns the BiomeGenBase related to the x, z position from the cache block."
 func_76931_a,getBiomes,2,Gets a list of biomes for the specified blocks.
 func_76932_a,getBiomesToSpawnIn,2,Gets the list of valid biomes for the player to spawn in.
@@ -8918,7 +8918,7 @@ func_77165_h,getTerrainType,2,
 func_77166_b,enableCommands,0,Enables Commands (cheats).
 func_77167_c,isBonusChestEnabled,2,Returns true if the Bonus Chest is enabled.
 func_77176_a,setScheduledTime,2,Sets the scheduled time for this tick entry
-func_77191_a,performWorldGenSpawning,2,Called during chunk generation to spawn initial creatures.
+func_77191_a,performWorldGenSpawning,2,Called during chunk generation to spawn initial creatures.\n \n@param centerX The X coordinate of the point to spawn mobs arround.\n@param centerZ The Z coordinate of the point to spawn mobs arround.\n@param diameterX The X diameter of the rectangle to spawn mobs in\n@param diameterZ The Z diameter of the rectangle to spawn mobs in
 func_77192_a,findChunksForSpawning,2,"adds all chunks within the spawn radius of the players to eligibleChunksForSpawning. pars: the world, hostileCreatures, passiveCreatures. returns number of eligible chunks."
 func_77201_a,readRecipiesFromTags,2,
 func_77202_a,getRecipiesAsTags,2,
@@ -9068,8 +9068,8 @@ func_77989_b,areItemStacksEqual,2,compares ItemStack argument1 with ItemStack ar
 func_77995_e,getEnchantability,2,Return the natural enchantability factor of the material.
 func_77996_d,getHarvestLevel,2,"The level of material this tool can harvest (3 = DIAMOND, 2 = IRON, 1 = STONE, 0 = IRON/GOLD)"
 func_77997_a,getMaxUses,2,"The number of uses this material allows. (wood = 59, stone = 131, iron = 250, diamond = 1561, gold = 32)"
-func_77998_b,getEfficiencyOnProperMaterial,2,The strength of this tool material against blocks which it is effective against.
-func_78000_c,getDamageVsEntity,2,Returns the damage against a given entity.
+func_77998_b,getEfficiency,2,The strength of this tool material against blocks which it is effective against.
+func_78000_c,getAttackDamage,2,Returns the damage against a given entity.
 func_78013_b,getTabLabel,0,
 func_78014_h,setNoTitle,2,
 func_78015_f,getBackgroundImageName,0,
@@ -9244,7 +9244,7 @@ func_82187_q,setLookingForHome,2,
 func_82194_d,getWorld,2,
 func_82195_e,attackDragonFrom,2,Provides a way to cause damage to an ender dragon.
 func_82196_d,attackEntityWithRangedAttack,2,Attack the specified entity using a ranged attack.
-func_82197_f,setAggressive,2,Set whether this witch is aggressive at an entity.
+func_82197_f,setDrinkingPotion,2,Set whether this witch is aggressive at an entity.
 func_82203_t,getWatchedTargetId,2,"Returns the target entity ID if present, or -1 if not @param par1 The target offset, should be from 0-2"
 func_82204_b,rotlerp,2,
 func_82205_o,isArmored,2,Returns whether the wither is armored with its boss armor or not by checking whether its health is below half of its maximum.
@@ -9327,7 +9327,7 @@ func_82656_d,getMinY,2,"Return the minimum Y coordinate for this layer, set duri
 func_82657_a,getLayerCount,2,Return the amount of layers for this set of layers.
 func_82658_c,getFillBlockMeta,2,Return the block metadata used on this set of layers.
 func_82660_d,setMinY,2,Set the minimum Y coordinate for this layer.
-func_82667_a,getScatteredFeatureSpawnList,2,returns possible spawns for scattered features
+func_82667_a,getEnemies,2,returns possible spawns for scattered features
 func_82683_b,setDefaultPlayerReputation,2,
 func_82684_a,getPlayerReputation,2,Return the village reputation for a player
 func_82685_c,getNearestTargetPlayer,2,
@@ -9359,7 +9359,7 @@ func_82744_b,setCloudUpdateTick,0,saves the current Cloud update tick into the P
 func_82747_f,getId,2,
 func_82749_j,getGeneratorOptions,2,
 func_82750_a,setGeneratorOptions,2,
-func_82752_c,isAdventure,2,Returns true if this is the ADVENTURE game type
+func_82752_c,hasLimitedInteractions,2,Returns true if this is the ADVENTURE game type
 func_82753_a,setPriority,2,
 func_82756_a,getString,2,Gets the GameRule's value as String.
 func_82757_a,setValue,2,Set this game rule value.
@@ -9377,15 +9377,15 @@ func_82783_a,increaseMaxTradeUses,2,
 func_82784_g,isRecipeDisabled,2,
 func_82785_h,compensateToolUses,0,Compensates {@link net.minecraft.village.MerchantRecipe#toolUses toolUses} with {@link net.minecraft.village.MerchantRecipe#maxTradeUses maxTradeUses}
 func_82787_a,findMatchingResult,2,Retrieves an ItemStack that has multiple recipes for it.
-func_82788_x,canItemEditBlocks,2,"Returns true if players can use this item to affect the world (e.g. placing blocks, placing ender eyes in portal) when not in creative"
-func_82789_a,getIsRepairable,2,Return whether this item is repairable in an anvil.
+func_82788_x,canItemEditBlocks,2,Returns whether this item is always allowed to edit the world. Forces {@link net.minecraft.entity.player.EntityPlayer#canPlayerEdit EntityPlayer#canPlayerEdit} to return {@code true}.\n\n@return whether this item ignores other restrictions on how a player can modify the world.\n@see ItemStack#canEditBlocks
+func_82789_a,getIsRepairable,2,Return whether this item is repairable in an anvil.\n \n@param toRepair the {@code ItemStack} being repaired\n@param repair the {@code ItemStack} being used to perform the repair
 func_82812_d,getArmorMaterial,2,Return the armor material for this armor item.
 func_82813_b,setColor,2,Sets the color of the specified armor ItemStack
 func_82814_b,getColor,2,Return the color for the specified armor ItemStack.
 func_82815_c,removeColor,2,Remove the color from the specified armor ItemStack.
 func_82816_b_,hasColor,2,Return whether the specified armor ItemStack has a color.
 func_82833_r,getDisplayName,2,returns the display name of the itemstack
-func_82835_x,canEditBlocks,2,
+func_82835_x,canEditBlocks,2,Returns whether this stack is always allowed to edit the world. Forces {@link net.minecraft.entity.player.EntityPlayer#canPlayerEdit EntityPlayer#canPlayerEdit} to return {@code true}.\n\n@return whether this stack ignores other restrictions on how a player can modify the world.\n@see Item#canItemEditBlocks
 func_82836_z,getItemFrame,2,Return the item frame this stack is on. Returns null if not on an item frame.
 func_82837_s,hasDisplayName,2,Returns true if the itemstack has a display name
 func_82838_A,getRepairCost,2,"Get this stack's repair cost, or 0 if no repair cost is defined."

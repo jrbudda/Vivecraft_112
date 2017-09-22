@@ -184,8 +184,9 @@ public class MenuWorldRenderer {
 	
 	public void destroy() {
 		if (vertexBuffers != null) {
-			for (VertexBuffer vertexBuffer : vertexBuffers)
-				vertexBuffer.deleteGlBuffers();
+			for (VertexBuffer vertexBuffer : vertexBuffers) {
+				if (vertexBuffer != null) vertexBuffer.deleteGlBuffers();
+			}
 			vertexBuffers = null;
 		}
 		ready = false;

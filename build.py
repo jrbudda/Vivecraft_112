@@ -74,8 +74,8 @@ def create_install(mcp_dir):
                 #    continue
                 #if cur_file in {'aej.class', 'aej$1.class', 'aej$2.class', 'aej$3.class', 'aej$4.class', 'aej$5.class', 'aej$6.class', 'aej$7.class', 'aej$8.class', 'aej$9.class', 'aej$10.class', 'aej$11.class', 'aej$12.class'}: #skip creativetabs - wtf
                 #    continue
-                #if cur_file in {'big.class', 'bip.class', 'bip$a.class', 'bip$b.class'}: #skip guicontainer and guicontainercreative - asm
-                #    continue
+                if cur_file in {'bme.class', 'bmn.class', 'bmn$a.class','bmn$b.class', 'bmn$c.class'}: #skip guicontainer and guicontainercreative - asm
+                    continue
                 if cur_file in {'Matrix4f.class'}: #why
                     continue
                 # Just don't ask about this nonsense because I don't have any idea

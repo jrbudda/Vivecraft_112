@@ -40,8 +40,8 @@
          }
      }
  
--    private void renderSky(BufferBuilder worldRendererIn, float posY, boolean reverseX)
-+    public void renderSky(BufferBuilder worldRendererIn, float posY, boolean reverseX)
+-    private void renderSky(BufferBuilder bufferBuilderIn, float posY, boolean reverseX)
++    public void renderSky(BufferBuilder bufferBuilderIn, float posY, boolean reverseX)
      {
          int i = 64;
          int j = 6;
@@ -49,11 +49,11 @@
          }
      }
  
--    private void renderStars(BufferBuilder worldRendererIn)
-+    public void renderStars(BufferBuilder worldRendererIn)
+-    private void renderStars(BufferBuilder bufferBuilderIn)
++    public void renderStars(BufferBuilder bufferBuilderIn)
      {
          Random random = new Random(10842L);
-         worldRendererIn.begin(7, DefaultVertexFormats.POSITION);
+         bufferBuilderIn.begin(7, DefaultVertexFormats.POSITION);
 @@ -761,6 +766,8 @@
                              {
                                  boolean flag3 = this.mc.getRenderViewEntity() instanceof EntityLivingBase ? ((EntityLivingBase)this.mc.getRenderViewEntity()).isPlayerSleeping() : false;

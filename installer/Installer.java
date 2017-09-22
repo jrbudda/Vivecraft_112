@@ -51,15 +51,15 @@ public class Installer extends JPanel  implements PropertyChangeListener
     public static String winredist2010_32url = "http://download.microsoft.com/download/C/6/D/C6D0FD4E-9E53-4897-9B91-836EBA2AACD3/vcredist_x86.exe";
 
     /* DO NOT RENAME THESE STRING CONSTS - THEY ARE USED IN (AND THE VALUES UPDATED BY) THE AUTOMATED BUILD SCRIPTS */
-    private static final String MINECRAFT_VERSION = "1.12.1";
-    private static final String MC_VERSION        = "1.12.1";
-    private static final String MC_MD5            = "c0c5a6f387727a00dfc6cf8d118ede75";
+    private static final String MINECRAFT_VERSION = "1.12.2";
+    private static final String MC_VERSION        = "1.12.2";
+    private static final String MC_MD5            = "8c0443868b9e46c77d39db61c755679d";
     private static final String OF_LIB_PATH       = "libraries/optifine/OptiFine/";
-    private static final String OF_FILE_NAME      = "1.12.1_HD_U_C5";
-    private static final String OF_JSON_NAME      = "1.12.1_HD_U_C5";
-    private static final String OF_MD5            = "2a9f6c8f95644ab4c444cb24470772c6";
+    private static final String OF_FILE_NAME      = "1.12.2_HD_U_C5";
+    private static final String OF_JSON_NAME      = "1.12.2.HD_U_C5";
+    private static final String OF_MD5            = "e67fa3489563f55329d1d88ccffa9c9d";
     private static final String OF_VERSION_EXT    = ".jar";
-    private static final String FORGE_VERSION     = "14.22.0.2446";
+    private static final String FORGE_VERSION     = "14.23.0.2489";
     /* END OF DO NOT RENAME */
 
 	private static final String DEFAULT_PROFILE_NAME = "ViveCraft " + MINECRAFT_VERSION;

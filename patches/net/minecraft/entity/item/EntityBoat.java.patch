@@ -9,7 +9,7 @@
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityLivingBase;
  import net.minecraft.entity.MoverType;
-@@ -742,41 +744,49 @@
+@@ -747,41 +749,49 @@
  
      private void controlBoat()
      {
