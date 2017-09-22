@@ -23,3 +23,20 @@
              this.pickupStatus = EntityArrow.PickupStatus.ALLOWED;
          }
      }
+@@ -122,6 +131,16 @@
+         float f = -MathHelper.sin(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F);
+         float f1 = -MathHelper.sin(pitch * 0.017453292F);
+         float f2 = MathHelper.cos(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F);
++        
++        //VIVE SET VELOCITY
++        if(shooter.getEntityId() == Minecraft.getMinecraft().player.getEntityId()){
++        	if(!Minecraft.getMinecraft().vrSettings.seated ){
++        		velocity = (float) (Minecraft.getMinecraft().bowTracker.getDrawPercent() * 3f);
++        		this.damage *= 2;
++        	}
++        }
++        ///
++
+         this.shoot((double)f, (double)f1, (double)f2, velocity, inaccuracy);
+         this.motionX += shooter.motionX;
+         this.motionZ += shooter.motionZ;

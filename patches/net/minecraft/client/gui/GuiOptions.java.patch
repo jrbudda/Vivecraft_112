@@ -26,7 +26,32 @@
          this.title = I18n.format("options.title");
          int i = 0;
  
-@@ -199,6 +204,14 @@
+@@ -38,11 +43,21 @@
+         {
+             if (gamesettings$options.isFloat())
+             {
+-                this.buttonList.add(new GuiOptionSlider(gamesettings$options.getOrdinal(), this.width / 2 - 155 + i % 2 * 160, this.height / 6 - 12 + 24 * (i >> 1), gamesettings$options));
+-            }
++            	/** MINECRIFT */
++            	if (gamesettings$options.getTranslation().equalsIgnoreCase("options.fov"))
++            	{
++            		GuiOptionButton var7 = new GuiOptionButton(666, this.width / 2 - 155 + var1 % 2 * 160, this.height / 6 - 12 + 24 * (var1 >> 1), "VR Settings...");
++            		this.buttonList.add(var7);
++            	}
++            	else
++            	{
++            		this.buttonList.add(new GuiOptionSlider(gamesettings$options.getOrdinal(), this.width / 2 - 155 + var1 % 2 * 160, this.height / 6 - 12 + 24 * (var1 >> 1), gamesettings$options));
++            	}
++            	/** END MINECRIFT */            }
++
+             else
+             {
+-                GuiOptionButton guioptionbutton = new GuiOptionButton(gamesettings$options.getOrdinal(), this.width / 2 - 155 + i % 2 * 160, this.height / 6 - 12 + 24 * (i >> 1), gamesettings$options, this.settings.getKeyBinding(gamesettings$options));
++            	GuiOptionButton guioptionbutton = new GuiOptionButton(gamesettings$options.getOrdinal(), this.width / 2 - 155 + i % 2 * 160, this.height / 6 - 12 + 24 * (i >> 1), gamesettings$options, this.settings.getKeyBinding(gamesettings$options));
+                 this.buttonList.add(guioptionbutton);
+             }
+ 
+@@ -199,6 +214,14 @@
                  this.mc.gameSettings.saveOptions();
                  this.mc.displayGuiScreen(new GuiScreenOptionsSounds(this, this.settings));
              }
