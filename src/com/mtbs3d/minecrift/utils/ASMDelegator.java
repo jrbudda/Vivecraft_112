@@ -5,7 +5,7 @@ import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Mouse;
 
 public class ASMDelegator {
-	public static boolean containerCreativeMouseDown() {
+	public static boolean containerCreativeMouseDown(int eatTheStack) {
 		return Mouse.isButtonDown(0) || GuiScreen.mouseDown;
 	}
 	

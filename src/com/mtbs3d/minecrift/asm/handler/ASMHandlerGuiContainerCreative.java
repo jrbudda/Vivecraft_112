@@ -46,7 +46,7 @@ public class ASMHandlerGuiContainerCreative extends ASMClassHandler {
 			MethodInsnNode insn = (MethodInsnNode)ASMUtil.findFirstInstruction(methodNode, Opcodes.INVOKESTATIC, "org/lwjgl/input/Mouse", "isButtonDown", "(I)Z", false);
 			insn.owner = "com/mtbs3d/minecrift/utils/ASMDelegator";
 			insn.name = "containerCreativeMouseDown";
-			insn.desc = "()Z";
+			insn.desc = "(I)Z";
 			System.out.println("Redirected method call to delegator");
 		}
 	}
