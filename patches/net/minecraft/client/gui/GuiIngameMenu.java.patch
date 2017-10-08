@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/GuiIngameMenu.java
 +++ b/net/minecraft/client/gui/GuiIngameMenu.java
-@@ -1,11 +1,20 @@
+@@ -1,11 +1,21 @@
  package net.minecraft.client.gui;
  
  import java.io.IOException;
@@ -14,6 +14,7 @@
  import net.minecraft.client.gui.advancements.GuiScreenAdvancements;
 +import net.minecraft.client.main.Main;
  import net.minecraft.client.multiplayer.WorldClient;
++import net.minecraft.client.renderer.EntityRenderer;
  import net.minecraft.client.resources.I18n;
 +import net.minecraft.client.settings.KeyBinding;
  import net.minecraft.realms.RealmsBridge;
@@ -21,7 +22,7 @@
  
  public class GuiIngameMenu extends GuiScreen
  {
-@@ -19,22 +28,41 @@
+@@ -19,22 +29,41 @@
      public void initGui()
      {
          this.saveStep = 0;
@@ -70,7 +71,7 @@
      }
  
      /**
-@@ -71,24 +99,65 @@
+@@ -71,24 +100,65 @@
  
              case 2:
              case 3:
@@ -83,17 +84,22 @@
                  break;
  
              case 5:
-+if (this.mc.player != null)
-                 this.mc.displayGuiScreen(new GuiScreenAdvancements(this.mc.player.connection.getAdvancementManager()));
-                 break;
+-                this.mc.displayGuiScreen(new GuiScreenAdvancements(this.mc.player.connection.getAdvancementManager()));
+-                break;
++            	if (this.mc.player != null)
++            		this.mc.displayGuiScreen(new GuiScreenAdvancements(this.mc.player.connection.getAdvancementManager()));
++            	break;
  
              case 6:
-+if (this.mc.player != null)
-                 this.mc.displayGuiScreen(new GuiStats(this, this.mc.player.getStatFileWriter()));
-                 break;
+-                this.mc.displayGuiScreen(new GuiStats(this, this.mc.player.getStatFileWriter()));
+-                break;
++            	if (this.mc.player != null)
++            		this.mc.displayGuiScreen(new GuiStats(this, this.mc.player.getStatFileWriter()));
++            	break;
  
              case 7:
-                 this.mc.displayGuiScreen(new GuiShareToLan(this));
+-                this.mc.displayGuiScreen(new GuiShareToLan(this));
++            	this.mc.displayGuiScreen(new GuiShareToLan(this));
 +            	break;
 +            case 12:
 +            	Reflector.call(Reflector.call(Reflector.FMLClientHandler_instance), Reflector.FMLClientHandler_showInGameModOptions,new Object[]{this});

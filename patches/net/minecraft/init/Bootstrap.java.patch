@@ -88,8 +88,8 @@
 +
 +            //
 +            if(Reflector.forgeExists()){
-+            	Reflector.call(Reflector.GameRegistry_addShapedRecipe, new ResourceLocation("vivecraftforgeextensions:jump_boots"), null, is, "B", "S", 'S', Blocks.SLIME_BLOCK, 'B', Items.LEATHER_BOOTS);
-+            	Reflector.call(Reflector.GameRegistry_addShapedRecipe, new ResourceLocation("vivecraftforgeextensions:climb_claws"), null, is2, "S S", "C C", 'S', Items.SPIDER_EYE, 'C', Items.SHEARS);
++            	Reflector.call(Reflector.GameRegistry_addShapedRecipe, new ResourceLocation("vivecraftforgeextensions:jump_boots"), (ResourceLocation) null, is, new Object[]{  "B", "S", 'S', Blocks.SLIME_BLOCK, 'B', Items.LEATHER_BOOTS});
++            	Reflector.call(Reflector.GameRegistry_addShapedRecipe, new ResourceLocation("vivecraftforgeextensions:climb_claws"), (ResourceLocation) null, is2, new Object[]{  "S S", "C C", 'S', Items.SPIDER_EYE, 'C', Items.SHEARS});
 +            }
 +            else
 +            {
