@@ -1,8 +1,13 @@
 --- a/net/minecraft/entity/projectile/EntityThrowable.java
 +++ b/net/minecraft/entity/projectile/EntityThrowable.java
-@@ -4,12 +4,14 @@
+@@ -3,13 +3,19 @@
+ import java.util.List;
  import java.util.UUID;
  import javax.annotation.Nullable;
++
++import com.mtbs3d.minecrift.api.NetworkHelper;
++import com.mtbs3d.minecrift.api.VivePlayer;
++
  import net.minecraft.block.Block;
 +import net.minecraft.client.Minecraft;
  import net.minecraft.entity.Entity;
@@ -15,39 +20,43 @@
  import net.minecraft.util.EnumParticleTypes;
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.datafix.DataFixer;
-@@ -56,7 +58,16 @@
+@@ -56,7 +62,17 @@
      public EntityThrowable(World worldIn, EntityLivingBase throwerIn)
      {
          this(worldIn, throwerIn.posX, throwerIn.posY + (double)throwerIn.getEyeHeight() - 0.10000000149011612D, throwerIn.posZ);
 +
          this.thrower = throwerIn;
 +        
-+    	//VIVE SET SPAWNPOS
-+        if (this.thrower.getEntityId() == Minecraft.getMinecraft().player.getEntityId())
++       	//VIVE SET SPAWNPOS
++        VivePlayer vp = NetworkHelper.vivePlayers.get(thrower.getUniqueID());
++        if (vp !=null)
 +        {
-+	        Vec3d aimSource = Minecraft.getMinecraft().roomScale.getControllerPos_World(0);
++	        Vec3d aimSource = vp.getControllerPos(0);
 +	        this.setPosition(aimSource.x, aimSource.y, aimSource.z);
 +        } 
 +        ///
      }
  
      protected void entityInit()
-@@ -84,6 +95,14 @@
+@@ -84,6 +100,17 @@
       */
      public void shoot(Entity entityThrower, float rotationPitchIn, float rotationYawIn, float pitchOffset, float velocity, float inaccuracy)
      {
 +    	//VIVE USE CONTROLLER
-+        if (entityThrower.getEntityId() == Minecraft.getMinecraft().player.getEntityId())
++        VivePlayer vp = NetworkHelper.vivePlayers.get(thrower.getUniqueID());
++        if (vp !=null)
 +        {
-+        	rotationYawIn = Minecraft.getMinecraft().roomScale.getControllerYaw_World(0);
-+        	rotationPitchIn = -Minecraft.getMinecraft().roomScale.getControllerPitch_World(0);
-+        }
++        	Vec3d aim = vp.getControllerDir(0);
++        	rotationPitchIn = -(float)Math.toDegrees(Math.asin(aim.y/aim.lengthVector()));
++			rotationYawIn = (float)Math.toDegrees(Math.atan2(-aim.x, aim.z));   		
++        	}
 +        //END VIVE
++
 +        
          float f = -MathHelper.sin(rotationYawIn * 0.017453292F) * MathHelper.cos(rotationPitchIn * 0.017453292F);
          float f1 = -MathHelper.sin((rotationPitchIn + pitchOffset) * 0.017453292F);
          float f2 = MathHelper.cos(rotationYawIn * 0.017453292F) * MathHelper.cos(rotationPitchIn * 0.017453292F);
-@@ -259,7 +278,8 @@
+@@ -259,7 +286,8 @@
              }
              else
              {

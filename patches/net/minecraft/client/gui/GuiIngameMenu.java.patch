@@ -133,7 +133,7 @@
 +		        this.mc.setIngameFocus();
 +		        break;
 +	        case 106:
-+	        	jkatvr.resetYaw(mc.vrPlayer.getHMDYaw_Room());
++	        	jkatvr.resetYaw(mc.vrPlayer.vrdata_room_pre.hmd.getYaw());
 +		        this.mc.displayGuiScreen((GuiScreen)null);
 +		        this.mc.setIngameFocus();
 +		        break;

@@ -1,6 +1,15 @@
 --- a/net/minecraft/entity/ai/EntityAICreeperSwell.java
 +++ b/net/minecraft/entity/ai/EntityAICreeperSwell.java
-@@ -19,13 +19,15 @@
+@@ -1,5 +1,8 @@
+ package net.minecraft.entity.ai;
+ 
++import com.mtbs3d.minecrift.api.NetworkHelper;
++import com.mtbs3d.minecrift.api.VivePlayer;
++
+ import net.minecraft.entity.EntityLivingBase;
+ import net.minecraft.entity.monster.EntityCreeper;
+ 
+@@ -19,13 +22,21 @@
          this.setMutexBits(1);
      }
  
@@ -13,7 +22,13 @@
      {
          EntityLivingBase entitylivingbase = this.swellingCreeper.getAttackTarget();
 -        return this.swellingCreeper.getCreeperState() > 0 || entitylivingbase != null && this.swellingCreeper.getDistanceSqToEntity(entitylivingbase) < 9.0D;
-+        return this.swellingCreeper.getCreeperState() > 0 || entitylivingbase != null && this.swellingCreeper.getDistanceSqToEntity(entitylivingbase) < (creeperBlowyUppyRadius*creeperBlowyUppyRadius);
++        float radius = 9.0f;
++        if (entitylivingbase != null){
++        	VivePlayer vp = NetworkHelper.vivePlayers.get(entitylivingbase.getUniqueID());
++        	if (vp != null && vp.isVR())
++        		radius = 3.0f;
++        }
++        return this.swellingCreeper.getCreeperState() > 0 || entitylivingbase != null && this.swellingCreeper.getDistanceSqToEntity(entitylivingbase) < radius;
      }
  
      /**

@@ -32,7 +32,7 @@
                          else
                          {
 -                            boolean flag2 = l != -999 && (Keyboard.isKeyDown(42) || Keyboard.isKeyDown(54));
-+                            boolean flag2 = l != -999 && (Keyboard.isKeyDown(42) || Keyboard.isKeyDown(54) || pressShiftFake);
++                            boolean flag2 = l != -999 && (Keyboard.isKeyDown(42) || Keyboard.isKeyDown(54) || isFakeShift());
                              ClickType clicktype = ClickType.PICKUP;
  
                              if (flag2)

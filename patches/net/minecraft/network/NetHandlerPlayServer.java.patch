@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/NetHandlerPlayServer.java
 +++ b/net/minecraft/network/NetHandlerPlayServer.java
-@@ -1,9 +1,13 @@
+@@ -1,12 +1,24 @@
  package net.minecraft.network;
  
 +import com.google.common.base.Charsets;
@@ -10,11 +10,22 @@
  import com.google.common.util.concurrent.Futures;
 +import com.mtbs3d.minecrift.api.NetworkHelper;
 +import com.mtbs3d.minecrift.api.NetworkHelper.PacketDiscriminators;
++import com.mtbs3d.minecrift.api.VivePlayer;
 +
++import io.netty.buffer.ByteBuf;
  import io.netty.util.concurrent.Future;
  import io.netty.util.concurrent.GenericFutureListener;
++
++import java.io.BufferedReader;
++import java.io.ByteArrayInputStream;
++import java.io.DataInputStream;
  import java.io.IOException;
-@@ -15,6 +19,7 @@
++import java.io.InputStreamReader;
++import java.util.Arrays;
+ import java.util.Collections;
+ import java.util.List;
+ import java.util.Set;
+@@ -15,6 +27,7 @@
  import net.minecraft.block.BlockCommandBlock;
  import net.minecraft.block.material.Material;
  import net.minecraft.block.state.IBlockState;
@@ -22,7 +33,7 @@
  import net.minecraft.crash.CrashReport;
  import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.crash.ICrashReportDetail;
-@@ -90,6 +95,7 @@
+@@ -90,6 +103,7 @@
  import net.minecraft.network.play.server.SPacketSetSlot;
  import net.minecraft.network.play.server.SPacketTabComplete;
  import net.minecraft.server.MinecraftServer;
@@ -30,7 +41,18 @@
  import net.minecraft.tileentity.CommandBlockBaseLogic;
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.tileentity.TileEntityCommandBlock;
-@@ -597,8 +603,8 @@
+@@ -274,6 +288,10 @@
+         {
+             this.disconnect(new TextComponentTranslation("multiplayer.disconnect.idling", new Object[0]));
+         }
++        
++        //VIVECRAFT
++        NetworkHelper.sendPosData(player); //has to go somewhere?
++        
+     }
+ 
+     private void captureCurrentPosition()
+@@ -597,8 +615,8 @@
  
                                  if (flag2 && (flag || !flag1))
                                  {
@@ -41,7 +63,7 @@
                                  }
                              }
  
-@@ -704,8 +710,14 @@
+@@ -704,8 +722,14 @@
                  double d1 = this.player.posY - ((double)blockpos.getY() + 0.5D) + 1.5D;
                  double d2 = this.player.posZ - ((double)blockpos.getZ() + 0.5D);
                  double d3 = d0 * d0 + d1 * d1 + d2 * d2;
@@ -57,26 +79,87 @@
                  {
                      return;
                  }
-@@ -1852,5 +1864,26 @@
+@@ -1852,5 +1876,87 @@
                  LOGGER.error("Couldn't pick item", (Throwable)exception);
              }
          }
 +        // VIVE START - client querying if server is running this mod too
 +        else if ("Vivecraft".equals(packetIn.getChannelName()))
 +        {
-+        	
-+        	PacketDiscriminators dis = PacketDiscriminators.values()[packetIn.getBufferData().getByte(0)];
-+        	
++        	int len = packetIn.getBufferData().readableBytes();
++        	PacketDiscriminators dis = PacketDiscriminators.values()[packetIn.getBufferData().readByte()];
++    		byte[] data = new byte[len-1];
++        	packetIn.getBufferData().readBytes(data);
++    		VivePlayer vp = NetworkHelper.vivePlayers.get(this.player.getUniqueID());
++    		if(vp == null && dis != PacketDiscriminators.VERSION) {
++    			//how?
++    			return;
++    		}
 +        	switch (dis){
 +        	case VERSION:
 +            	String ver = Minecraft.getMinecraft().minecriftVerString;
 +            	sendPacket(NetworkHelper.getVivecraftServerPacket(PacketDiscriminators.VERSION,ver));
 +            	sendPacket(NetworkHelper.getVivecraftServerPacket(PacketDiscriminators.REQUESTDATA, new byte[]{}));  
 +            	sendPacket(NetworkHelper.getVivecraftServerPacket(PacketDiscriminators.CLIMBING, new byte[]{}));
-+            	sendPacket(NetworkHelper.getVivecraftServerPacket(PacketDiscriminators.TELEPORT, new byte[]{}));  
-+
++            	sendPacket(NetworkHelper.getVivecraftServerPacket(PacketDiscriminators.TELEPORT, new byte[]{})); 
++    			vp = new VivePlayer(this.player);
++            	NetworkHelper.vivePlayers.put(this.player.getUniqueID(), vp);
++            	
++            	BufferedReader br = new BufferedReader(
++            			new InputStreamReader(
++            					new DataInputStream(
++            							new ByteArrayInputStream(data))));
++    			
++    			String v;
++				try {
++					v = br.readLine();
++					if(v.contains("NONVR")){
++						this.player.sendMessage(new TextComponentString("NONVR: " + this.player.getDisplayName().getFormattedText()));
++						vp.setVR(false);
++					}
++					else{
++						this.player.sendMessage(new TextComponentString("VR: " + this.player.getDisplayName().getFormattedText()));
++						vp.setVR(true);
++					}  
++				} catch (IOException e) {
++					// TODO Auto-generated catch block
++					e.printStackTrace();
++				}
++	
++        
 +        		break;
-+        		
++    		case CONTROLLER0DATA:
++    			vp.controller0data = data;
++    			break;
++    		case CONTROLLER1DATA:
++    			vp.controller1data = data;
++    			break;
++    		case DRAW:
++    			vp.draw = data;
++    			break;
++    		case HEADDATA:
++    			vp.hmdData = data;
++    			break;	
++    		case MOVEMODE:
++    			break;
++    		case REQUESTDATA:
++    			//only we can use that word.
++    			break;
++    		case WORLDSCALE:
++            	packetIn.getBufferData().resetReaderIndex();
++            	packetIn.getBufferData().readByte();
++    			vp.worldScale = packetIn.getBufferData().readFloat();
++    			break;
++    		case TELEPORT:
++            	packetIn.getBufferData().resetReaderIndex();
++            	packetIn.getBufferData().readByte();
++    			float x = packetIn.getBufferData().readFloat();
++				float y = packetIn.getBufferData().readFloat();
++				float z = packetIn.getBufferData().readFloat();
++				this.player.setPositionAndRotation(x, y, z, this.player.rotationYaw, this.player.rotationPitch);
++    			break;
++    		case CLIMBING:
++    			this.player.fallDistance = 0;
 +        	default:
 +        		break;
 +        	}

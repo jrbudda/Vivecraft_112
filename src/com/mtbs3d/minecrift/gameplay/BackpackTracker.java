@@ -1,7 +1,8 @@
 package com.mtbs3d.minecrift.gameplay;
 
-import com.mtbs3d.minecrift.api.IRoomscaleAdapter;
 import com.mtbs3d.minecrift.provider.MCOpenVR;
+import com.mtbs3d.minecrift.provider.OpenVRPlayer;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -34,15 +35,14 @@ public class BackpackTracker {
 		if(!isActive(player)) {
 			return;
 		}
-		IRoomscaleAdapter provider = minecraft.roomScale;
+		OpenVRPlayer provider = minecraft.vrPlayer;
 
-		Vec3d hmdPos=provider.getHMDPos_Room();
+		Vec3d hmdPos=provider.vrdata_room_pre.hmd.getPosition();
 
 		for(int c=0; c<2; c++) { //just main for 1710, no dual wielding
-			Vec3d controllerPos = provider.getControllerPos_Room(c);//.add(provider.getCustomControllerVector(c, new Vec3(0, 0, -0.1)));
-			Vec3d controllerDir = minecraft.roomScale.getControllerDir_World(c);
-			Vec3d hmddir = minecraft.vrPlayer.getHMDDir_Room();
-			Vec3d hmdpos = provider.getHMDPos_Room();
+			Vec3d controllerPos = provider.vrdata_room_pre.getController(c).getPosition();//.add(provider.getCustomControllerVector(c, new Vec3(0, 0, -0.1)));
+			Vec3d controllerDir = provider.vrdata_room_pre.getController(c).getDirection();
+			Vec3d hmddir = provider.vrdata_room_pre.hmd.getDirection();
 			Vec3d delta = hmdPos.subtract(controllerPos);
 			double dot = controllerDir.dotProduct(down);
 			double dotDelta = delta.dotProduct(hmddir);

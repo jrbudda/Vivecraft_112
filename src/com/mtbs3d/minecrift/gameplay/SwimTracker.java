@@ -40,8 +40,8 @@ public class SwimTracker {
 		}
 
 		{//float
-			Vec3d face = minecraft.roomScale.getHMDPos_World();
-			float height = (float) (minecraft.roomScale.getHMDPos_Room().y * 0.9);
+			Vec3d face = minecraft.vrPlayer.vrdata_world_pre.hmd.getPosition();
+			float height = (float) (minecraft.vrPlayer.vrdata_room_pre.hmd.getPosition().y * 0.9);
 			if(height > 1.6)height = 1.6f;
 			Vec3d feets = face.subtract(0,height, 0);
 			double waterLine=256;
@@ -83,18 +83,18 @@ public class SwimTracker {
 		}
 		{//swim
 
-			Vec3d controllerR= minecraft.roomScale.getControllerPos_World(0);
-			Vec3d controllerL= minecraft.roomScale.getControllerPos_World(1);
-
+			Vec3d controllerR= minecraft.vrPlayer.vrdata_world_pre.getController(0).getPosition();
+			Vec3d controllerL= minecraft.vrPlayer.vrdata_world_pre.getController(1).getPosition();
+			
 			Vec3d middle= controllerL.subtract(controllerR).scale(0.5).add(controllerR);
 
-			Vec3d hmdPos=minecraft.roomScale.getHMDPos_World().subtract(0,0.3,0);
+			Vec3d hmdPos=minecraft.vrPlayer.vrdata_world_pre.hmd.getPosition().subtract(0,0.3,0);
 
 			Vec3d movedir=middle.subtract(hmdPos).normalize().add(
-					minecraft.roomScale.getHMDDir_World()).scale(0.5);
+					minecraft.vrPlayer.vrdata_world_pre.hmd.getDirection()).scale(0.5);
 
-			Vec3d contollerDir= minecraft.roomScale.getCustomControllerVector(0,new Vec3d(0,0,-1)).add(
-					minecraft.roomScale.getCustomControllerVector(1,new Vec3d(0,0,-1))).scale(0.5);
+			Vec3d contollerDir= minecraft.vrPlayer.vrdata_world_pre.getController(0).getCustomVector(new Vec3d(0,0,-1)).add(
+					minecraft.vrPlayer.vrdata_world_pre.getController(1).getCustomVector(new Vec3d(0,0,-1))).scale(0.5);
 			double dirfactor=contollerDir.add(movedir).lengthVector()/2;
 
 			double distance= hmdPos.distanceTo(middle);

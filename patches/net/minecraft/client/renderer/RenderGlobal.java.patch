@@ -86,7 +86,7 @@
 -                    EnumFacing enumfacing = EnumFacing.getFacingFromVector(vector3f.x, vector3f.y, vector3f.z).getOpposite();
 +                	//VIVE
 +                    //Vector3f vector3f = this.getViewVector(viewEntity, partialTicks);
-+                	Vec3d dir = Minecraft.getMinecraft().roomScale.getHMDDir_World(); 
++                	Vec3d dir = Minecraft.getMinecraft().vrPlayer.vrdata_world_render.hmd.getDirection();
 +                    EnumFacing enumfacing = EnumFacing.getFacingFromVector((float)dir.x, (float)dir.y, (float)dir.z).getOpposite();
 +                    //VIVE END
                      set1.remove(enumfacing);

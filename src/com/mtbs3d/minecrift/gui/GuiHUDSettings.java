@@ -16,10 +16,10 @@ public class GuiHUDSettings extends BaseGuiSettings
 //            VRSettings.VrOptions.HUD_HIDE,
             VRSettings.VrOptions.HUD_LOCK_TO,
             VRSettings.VrOptions.HUD_OCCLUSION,
-            VRSettings.VrOptions.HUD_SCALE,
-            VRSettings.VrOptions.HUD_DISTANCE,
-            VRSettings.VrOptions.HUD_PITCH,
-            VRSettings.VrOptions.HUD_YAW,
+            //VRSettings.VrOptions.HUD_SCALE,
+            //VRSettings.VrOptions.HUD_DISTANCE,
+            //VRSettings.VrOptions.HUD_PITCH,
+            //VRSettings.VrOptions.HUD_YAW,
             VRSettings.VrOptions.HUD_OPACITY,
             VRSettings.VrOptions.RENDER_MENU_BACKGROUND,
             VRSettings.VrOptions.TOUCH_HOTBAR,
@@ -29,7 +29,7 @@ public class GuiHUDSettings extends BaseGuiSettings
 
     public GuiHUDSettings(GuiScreen guiScreen, VRSettings guivrSettings) {
         super( guiScreen, guivrSettings );
-        screenTitle = "HUD Settings";
+        screenTitle = "HUD and GUI Settings";
     }
 
     /**
@@ -123,11 +123,12 @@ public class GuiHUDSettings extends BaseGuiSettings
                 this.guivrSettings.hudPitchOffset = -2f;
                 this.guivrSettings.hudYawOffset = 0f;
                 this.guivrSettings.hideGui = false;
-                this.guivrSettings.hudOpacity = 0.95f;
+                this.guivrSettings.hudOpacity = 1f;
                 this.guivrSettings.menuBackground = false;
                 this.guivrSettings.vrHudLockMode = guivrSettings.HUD_LOCK_HAND;
-                this.guivrSettings.hudOcclusion = false;
+                this.guivrSettings.hudOcclusion = true;
                 this.guivrSettings.menuAlwaysFollowFace = false;
+                this.guivrSettings.autoOpenKeyboard = true;
 
                 Minecraft.getMinecraft().vrSettings.saveOptions();
                 this.reinit = true;

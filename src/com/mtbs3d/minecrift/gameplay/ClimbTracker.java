@@ -6,7 +6,6 @@ import java.util.Random;
 
 import javax.swing.LayoutStyle;
 
-import com.mtbs3d.minecrift.api.IRoomscaleAdapter;
 import com.mtbs3d.minecrift.api.NetworkHelper;
 import com.mtbs3d.minecrift.api.NetworkHelper.PacketDiscriminators;
 import com.mtbs3d.minecrift.control.VRControllerButtonMapping;
@@ -125,8 +124,6 @@ public class ClimbTracker {
 			return;
 		}
 
-		IRoomscaleAdapter provider = mc.roomScale;
-
 		boolean[] button = new boolean[2];
 		boolean[] inblock = new boolean[2];
 		boolean[] allowed = new boolean [2];
@@ -136,7 +133,7 @@ public class ClimbTracker {
 		boolean jump = false;
 		boolean ladder = false;
 		for(int c=0;c<2;c++){
-			Vec3d controllerPos=mc.roomScale.getControllerPos_World(c);
+			Vec3d controllerPos = mc.vrPlayer.vrdata_world_pre.getController(c).getPosition();
 			BlockPos bp = new BlockPos(controllerPos);
 			IBlockState bs = mc.world.getBlockState(bp);
 			Block b = bs.getBlock();
@@ -197,7 +194,7 @@ public class ClimbTracker {
 						(!wasbutton[c] && button[c] && inblock[c])){ //Grab
 					if(allowed[c]){
 						wantjump = false;
-						latchStart[c] = mc.roomScale.getControllerPos_World(c);
+						latchStart[c] = mc.vrPlayer.vrdata_world_pre.getController(c).getPosition();
 						latchStartBodyY[c] = player.posY;
 						latchStartController = c;
 						latchbox[c] = box[c];
@@ -209,6 +206,7 @@ public class ClimbTracker {
 						else 
 							latched[0] = false;
 						MCOpenVR.triggerHapticPulse(c, 2000);
+						mc.player.stepSound(bp, latchStart[c]);
 						mc.vrPlayer.blockDust(latchStart[c].x, latchStart[c].y, latchStart[c].z, 5, bs);
 
 					}
@@ -224,7 +222,7 @@ public class ClimbTracker {
 			//check in case they let go with one hand, and other hand should take over.
 			for(int c=0;c<2;c++){
 				if(inblock[c] && button[c] && allowed[c]){
-					latchStart[c] = mc.roomScale.getControllerPos_World(c);
+					latchStart[c] = mc.vrPlayer.vrdata_world_pre.getController(c).getPosition();
 					latchStartBodyY[c] = player.posY;
 					latchStartController = c;
 					latched[c] = true;
@@ -272,7 +270,7 @@ public class ClimbTracker {
 		}
 
 		
-		Vec3d now = mc.roomScale.getControllerPos_World(latchStartController);
+		Vec3d now = mc.vrPlayer.vrdata_world_pre.getController(latchStartController).getPosition();
 		Vec3d start = latchStart[latchStartController];
 		
 		Vec3d delta= now.subtract(start);
@@ -289,9 +287,9 @@ public class ClimbTracker {
 			BlockPos b = new BlockPos(latchStart[latchStartController]);
 			double yheight = latchStart[latchStartController].subtract(b.getX(), b.getY(), b.getZ()).y;
 			if(!wantjump && latchbox[latchStartController] != null && yheight > latchbox[latchStartController].maxY*.8 && canstand(b, player)){		
-				double hmd = mc.roomScale.getHMDPos_Room().y;
-				Vec3d dir = mc.roomScale.getHMDDir_World().scale(0.5f);
-				double con = mc.roomScale.getControllerPos_Room(latchStartController).y;
+				double hmd = mc.vrPlayer.vrdata_world_pre.hmd.getPosition().y;
+				Vec3d dir = mc.vrPlayer.vrdata_world_render.hmd.getDirection().scale(0.5f);
+				double con = now.y;
 				if(con <= hmd/2){
 					boolean ok=	mc.world.getCollisionBoxes(player, player.getEntityBoundingBox().offset(0,(latchbox[latchStartController].maxY + b.getY()) - player.posY ,0)).isEmpty();
 					if(ok){
@@ -299,7 +297,7 @@ public class ClimbTracker {
 							player.setPosition(player.posX+dir.x, latchbox[latchStartController].maxY + b.getY(), player.posZ + dir.z);
 						else
 							player.setPosition(player.posX, latchbox[latchStartController].maxY + b.getY(), player.posZ);
-						mc.vrPlayer.snapRoomOriginToPlayerEntity(player, false, false, 0);
+						mc.vrPlayer.snapRoomOriginToPlayerEntity(player, false);
 					}
 				}
 			}
@@ -327,7 +325,7 @@ public class ClimbTracker {
 			if (player.isPotionActive(MobEffects.JUMP_BOOST))
 				m=m.scale((player.getActivePotionEffect(MobEffects.JUMP_BOOST).getAmplifier() + 1.5));
 			
-			m=m.rotateYaw(mc.vrPlayer.worldRotationRadians);
+			m=m.rotateYaw(mc.vrPlayer.vrdata_world_pre.rotation);
 
 			player.motionX=-m.x;
 			player.motionY=-m.y;
@@ -338,7 +336,7 @@ public class ClimbTracker {
 			player.lastTickPosZ = pl.z;			
 			pl = pl.addVector(player.motionX, player.motionY, player.motionZ);					
 			player.setPosition(pl.x, pl.y, pl.z);
-			mc.vrPlayer.snapRoomOriginToPlayerEntity(player, false, false, 0);	
+			mc.vrPlayer.snapRoomOriginToPlayerEntity(player, false);	
 			mc.player.addExhaustion(.3f);    
 
 		}

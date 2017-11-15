@@ -38,7 +38,7 @@
 +    		String s = ((AbstractClientPlayer)entityIn).getSkinType();
 +    		RenderPlayer renderplayer = (RenderPlayer)this.skinMap.get(s);
 +
-+    		if(PlayerModelController.getInstance().isTracked(((AbstractClientPlayer) entityIn).getGameProfile().getId()))
++    		if(PlayerModelController.getInstance().isTracked(entityIn.getUniqueID()))
 +    		{
 +    			if(n==null) n = new RenderPlayerVR(this);
 +    			return (Render<T>) n;            	

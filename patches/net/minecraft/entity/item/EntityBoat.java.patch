@@ -80,7 +80,7 @@
 +    		}
 +    		if(!Minecraft.getMinecraft().rowTracker.isActive((EntityPlayerSP) this.getPassengers().get(0))){
 +    			//VIVE USE OFFHAND
-+    			float yaw = Minecraft.getMinecraft().roomScale.getControllerYaw_World(1);            
++    			float yaw = Minecraft.getMinecraft().vrPlayer.vrdata_world_pre.getController(1).getYaw();          
 +    			this.motionX += (double)(MathHelper.sin(-yaw* 0.017453292F) * f);
 +    			this.motionZ += (double)(MathHelper.cos(yaw * 0.017453292F) * f);
 +    			this.rotationYaw =yaw;

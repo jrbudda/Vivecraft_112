@@ -2,7 +2,6 @@ package com.mtbs3d.minecrift.gameplay;
 
 import java.nio.ByteBuffer;
 
-import com.mtbs3d.minecrift.api.IRoomscaleAdapter;
 import com.mtbs3d.minecrift.api.NetworkHelper;
 import com.mtbs3d.minecrift.api.NetworkHelper.PacketDiscriminators;
 import com.mtbs3d.minecrift.provider.MCOpenVR;
@@ -100,7 +99,7 @@ public class BowTracker {
 		}
 
 		if(minecraft.vrSettings.seated){
-			aim = provider.getCustomControllerVector(0, new Vec3d(0,0,1));
+			aim = minecraft.vrPlayer.vrdata_world_pre.getController(0).getCustomVector(new Vec3d(0,0,1));
 			return;
 		}
 		
@@ -113,22 +112,25 @@ public class BowTracker {
 		lastcanDraw = canDraw;
 		maxDraw = minecraft.player.height * 0.22;
 
-		Vec3d rightPos = provider.getControllerPos_World(0);
-		Vec3d leftPos = provider.getControllerPos_World(1);
+		//these are wrong since this is called every frame but should be fine so long as they're only compared to each other.
+		Vec3d rightPos = provider.vrdata_world_pre.getController(0).getPosition();
+		Vec3d leftPos = provider.vrdata_world_pre.getController(1).getPosition();
+		//
+			
 		controllersDist = leftPos.distanceTo(rightPos);
 
 		Vec3d forward = new Vec3d(0,1,0);
 
-		Vec3d stringPos=provider.getCustomHandVector(1,forward).scale(maxDraw*0.5).add(leftPos);
+		Vec3d stringPos=provider.vrdata_world_pre.getHand(1).getCustomVector(forward).scale(maxDraw*0.5).add(leftPos);
 		double notchDist=rightPos.distanceTo(stringPos);
 
 		aim = rightPos.subtract(leftPos).normalize();
 
-		Vec3d rightaim3 = provider.getCustomHandVector(0, new Vec3d(0,0,-1));
+		Vec3d rightaim3 = provider.vrdata_world_pre.getHand(0).getCustomVector(new Vec3d(0,0,-1));
 		
 		Vector3f rightAim = new Vector3f((float)rightaim3.x, (float) rightaim3.y, (float) rightaim3.z);
-		leftHandAim = provider.getCustomHandVector(1, new Vec3d(0, 0, -1));
-	 	Vec3d l4v3 = provider.getCustomHandVector(1, new Vec3d(0, -1, 0));
+		leftHandAim = provider.vrdata_world_pre.getHand(1).getCustomVector(new Vec3d(0, 0, -1));
+	 	Vec3d l4v3 = provider.vrdata_world_pre.getHand(1).getCustomVector(new Vec3d(0, -1, 0));
 		 
 		Vector3f leftforeward = new Vector3f((float)l4v3.x, (float) l4v3.y, (float) l4v3.z);
 
@@ -136,7 +138,7 @@ public class BowTracker {
 
 		pressed = minecraft.gameSettings.keyBindAttack.isKeyDown();
 
-		float notchDistThreshold = (float) (0.3 * minecraft.vrPlayer.worldScale);
+		float notchDistThreshold = (float) (0.3 * provider.vrdata_world_pre.scaleY);
 		
 		ItemStack ammo = findAmmoItemStack(player);
 		

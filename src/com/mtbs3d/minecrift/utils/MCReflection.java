@@ -7,8 +7,10 @@ import java.lang.reflect.Method;
 import com.google.common.base.Throwables;
 
 import net.minecraft.client.audio.SoundManager;
+import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
+import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.world.WorldProvider;
@@ -26,6 +28,7 @@ public class MCReflection {
 	public static Field WorldProvider_terrainType = getDeclaredField(WorldProvider.class, "terrainType", "h", "field_76577_b");
 	public static Field TileEntityRendererDispatcher_fontRenderer = getDeclaredField(TileEntityRendererDispatcher.class, "fontRenderer", "o", "field_147557_n");
 	public static Field KeyBinding_Category_Order = getDeclaredField(KeyBinding.class, "CATEGORY_ORDER", "d", "field_193627_d");
+	public static Method RenderPlayer_setModelVisibilities = getDeclaredMethod(RenderPlayer.class, "setModelVisibilities", "d", "func_177137_d", AbstractClientPlayer.class);
 
 	public static Object getField(Field field, Object obj) {
 		try {

@@ -1,6 +1,5 @@
 package com.mtbs3d.minecrift.gameplay;
 
-import com.mtbs3d.minecrift.api.IRoomscaleAdapter;
 import com.mtbs3d.minecrift.provider.MCOpenVR;
 
 import com.mtbs3d.minecrift.settings.AutoCalibration;

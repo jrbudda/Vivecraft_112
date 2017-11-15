@@ -4,7 +4,6 @@
  */
 package com.mtbs3d.minecrift.gui;
 
-import com.mtbs3d.minecrift.api.IStereoProvider;
 import com.mtbs3d.minecrift.gui.framework.BaseGuiSettings;
 import com.mtbs3d.minecrift.gui.framework.GuiButtonEx;
 import com.mtbs3d.minecrift.gui.framework.GuiEventEx;
@@ -12,6 +11,7 @@ import com.mtbs3d.minecrift.gui.framework.GuiSliderEx;
 import com.mtbs3d.minecrift.gui.framework.GuiSmallButtonEx;
 import com.mtbs3d.minecrift.gui.framework.VROption;
 import com.mtbs3d.minecrift.provider.MCOpenVR;
+import com.mtbs3d.minecrift.provider.OpenVRStereoRenderer;
 import com.mtbs3d.minecrift.settings.VRSettings;
 import com.mtbs3d.minecrift.settings.VRSettings.VrOptions;
 
@@ -29,10 +29,10 @@ public class GuiMinecriftSettings extends BaseGuiSettings implements GuiEventEx
 
     static VROption[] vrAlwaysOptions = new VROption[]
         {
-            new VROption(202,                                      VROption.Position.POS_RIGHT,  2,  VROption.ENABLED, "HUD Settings..."),
-            new VROption(206,                                      VROption.Position.POS_LEFT,   1f, VROption.ENABLED, "Stereo Rendering..."),
-            new VROption(207,								         VROption.Position.POS_RIGHT,  1f, VROption.ENABLED, "Quick Commands..."),
-            new VROption(210, 							           VROption.Position.POS_RIGHT,  3f, VROption.ENABLED, "Crosshair Settings..."),
+            new VROption(202,VROption.Position.POS_RIGHT,  2,  VROption.ENABLED, "HUD and GUI Settings..."),
+            new VROption(206,VROption.Position.POS_LEFT,   1f, VROption.ENABLED, "Stereo Rendering..."),
+            new VROption(207,VROption.Position.POS_RIGHT,  1f, VROption.ENABLED, "Quick Commands..."),
+            new VROption(210,VROption.Position.POS_RIGHT,  3f, VROption.ENABLED, "Crosshair Settings..."),
             new VROption(VRSettings.VrOptions.PLAY_MODE_SEATED,       VROption.Position.POS_LEFT,   4.5f, VROption.ENABLED, null),
             new VROption(VRSettings.VrOptions.WORLD_SCALE,       	VROption.Position.POS_LEFT,   6f, VROption.ENABLED, null),
             new VROption(VRSettings.VrOptions.WORLD_ROTATION,       VROption.Position.POS_RIGHT,   6f, VROption.ENABLED, null),
@@ -137,7 +137,7 @@ public class GuiMinecriftSettings extends BaseGuiSettings implements GuiEventEx
                      increment = Minecraft.getMinecraft().vrSettings.vrWorldRotationIncrement;
     			}
     			else if (o == VrOptions.WORLD_ROTATION_INCREMENT){
-                    minValue = 0f;
+                    minValue = -1f;
                     maxValue = 4f;
                     increment = 1f;
    			}
@@ -160,7 +160,7 @@ public class GuiMinecriftSettings extends BaseGuiSettings implements GuiEventEx
         {
             VRSettings vr = Minecraft.getMinecraft().vrSettings;
 //            IHMDInfo hmdInfo = Minecraft.getMinecraft().hmdInfo;
-            IStereoProvider stereoProvider = Minecraft.getMinecraft().stereoProvider;
+            OpenVRStereoRenderer stereoProvider = Minecraft.getMinecraft().stereoProvider;
 //            IOrientationProvider headTracker = Minecraft.getMinecraft().headTracker;
 //            IEyePositionProvider positionTracker = Minecraft.getMinecraft().positionTracker;
 
@@ -256,6 +256,7 @@ public class GuiMinecriftSettings extends BaseGuiSettings implements GuiEventEx
             {
                 mc.vrSettings.vrReverseHands = false;
                 mc.vrSettings.vrWorldRotation = 0;
+                MCOpenVR.seatedRot = 0;
                 mc.vrSettings.vrWorldScale = 1;
                 mc.vrSettings.vrWorldRotationIncrement = 45f;
                 mc.vrSettings.seated = false;
@@ -394,7 +395,8 @@ public class GuiMinecriftSettings extends BaseGuiSettings implements GuiEventEx
 	public boolean event(int id, VrOptions enumm) {
 		if(enumm == VrOptions.WORLD_ROTATION_INCREMENT){
 	        mc.vrSettings.vrWorldRotation = 0;
-	        rotationSlider.increment = mc.vrSettings.vrWorldRotationIncrement;
+	        MCOpenVR.seatedRot = 0;
+	        rotationSlider.increment = mc.vrSettings.vrWorldRotationIncrement == 0 ? 1: mc.vrSettings.vrWorldRotationIncrement;
 	        rotationSlider.setValue(0);			
 		}
 

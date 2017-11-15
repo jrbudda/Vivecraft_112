@@ -1,6 +1,16 @@
 --- a/net/minecraft/client/renderer/RenderItem.java
 +++ b/net/minecraft/client/renderer/RenderItem.java
-@@ -56,6 +56,7 @@
+@@ -2,6 +2,9 @@
+ 
+ import java.util.List;
+ import javax.annotation.Nullable;
++
++import org.lwjgl.opengl.GL14;
++
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockDirt;
+ import net.minecraft.block.BlockDoublePlant;
+@@ -56,6 +59,7 @@
  import net.minecraft.tileentity.TileEntityStructure;
  import net.minecraft.util.BlockRenderLayer;
  import net.minecraft.util.EnumFacing;
@@ -8,23 +18,17 @@
  import net.minecraft.util.ReportedException;
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.math.MathHelper;
-@@ -162,16 +163,50 @@
+@@ -162,16 +166,48 @@
          }
      }
  
--    public void renderItem(ItemStack stack, IBakedModel model)
 +    public static boolean ismainhand = false;
 +    public static boolean isfphand = false;
 +
-+    public void renderItem(ItemStack stack, IBakedModel model){
-+    	this.renderItem(0, stack, model);
-+    }
-+    
-+    
-+    public void renderItem(float par1, ItemStack stack, IBakedModel model)
+     public void renderItem(ItemStack stack, IBakedModel model)
      {
 -        if (!stack.isEmpty())
-+        if (stack != null)
++        if (stack != null && !stack.isEmpty())
          {
              GlStateManager.pushMatrix();
              GlStateManager.translate(-0.5F, -0.5F, -0.5F);
@@ -51,6 +55,9 @@
 +
 +                if(fade < 0.1) fade = 0.1f;
 +                if(fade > 1) fade = 1f;
++                GlStateManager.enableBlend();
++                GL14.glBlendColor(1, 1, 1, fade);
++                GlStateManager.blendFunc(GlStateManager.SourceFactor.CONSTANT_ALPHA, GlStateManager.DestFactor.ONE_MINUS_CONSTANT_ALPHA);
 +            }
 +                          
              if (model.isBuiltInRenderer())
@@ -62,7 +69,7 @@
                  GlStateManager.enableRescaleNormal();
                  TileEntityItemStackRenderer.instance.renderByItem(stack);
              }
-@@ -183,7 +218,21 @@
+@@ -183,13 +219,30 @@
                      this.modelLocation = null;
                  }
  
@@ -85,7 +92,16 @@
  
                  if (stack.hasEffect() && (!Config.isCustomItems() || !CustomItems.renderCustomEffect(this, stack, model)))
                  {
-@@ -299,7 +348,8 @@
+                     this.renderEffect(model);
+                 }
+             }
++            
++            GL14.glBlendColor(1, 1, 1, 1);
++            GlStateManager.blendFunc(GlStateManager.SourceFactor.CONSTANT_ALPHA, GlStateManager.DestFactor.ONE_MINUS_CONSTANT_ALPHA);
+ 
+             GlStateManager.popMatrix();
+         }
+@@ -299,7 +352,8 @@
                  k = k | -16777216;
              }
  
@@ -95,7 +111,7 @@
          }
      }
  
-@@ -314,7 +364,7 @@
+@@ -314,7 +368,7 @@
          if (!stack.isEmpty())
          {
              IBakedModel ibakedmodel = this.getItemModelWithOverrides(stack, (World)null, (EntityLivingBase)null);
@@ -104,7 +120,7 @@
          }
      }
  
-@@ -353,16 +403,16 @@
+@@ -353,16 +407,16 @@
          }
      }
  
@@ -124,16 +140,7 @@
      {
          if (!stack.isEmpty())
          {
-@@ -438,7 +488,7 @@
-             bakedmodel.getItemCameraTransforms().applyTransform(ItemCameraTransforms.TransformType.GUI);
-         }
- 
--        this.renderItem(stack, bakedmodel);
-+        this.renderItem(0,stack, bakedmodel);
-         GlStateManager.disableAlpha();
-         GlStateManager.disableRescaleNormal();
-         GlStateManager.disableLighting();
-@@ -1187,6 +1237,10 @@
+@@ -1187,6 +1241,10 @@
          this.registerItem(Items.DIAMOND_HORSE_ARMOR, "diamond_horse_armor");
          this.registerItem(Items.LEAD, "lead");
          this.registerItem(Items.NAME_TAG, "name_tag");

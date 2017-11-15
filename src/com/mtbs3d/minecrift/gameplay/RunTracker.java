@@ -1,6 +1,5 @@
 package com.mtbs3d.minecrift.gameplay;
 
-import com.mtbs3d.minecrift.api.IRoomscaleAdapter;
 import com.mtbs3d.minecrift.provider.MCOpenVR;
 import com.mtbs3d.minecrift.settings.VRSettings;
 
@@ -47,9 +46,9 @@ public class RunTracker {
 			return;
 		}
 
-		Vec3d controllerR= minecraft.roomScale.getControllerPos_World(0);
-		Vec3d controllerL= minecraft.roomScale.getControllerPos_World(1);
-
+		Vec3d controllerR= minecraft.vrPlayer.vrdata_world_pre.getController(0).getPosition();
+		Vec3d controllerL= minecraft.vrPlayer.vrdata_world_pre.getController(1).getPosition();
+		
 		//Vec3d middle= controllerL.subtract(controllerR).scale(0.5).add(controllerR);
 
 		double c0move = MCOpenVR.controllerHistory[0].averageSpeed(.33);
@@ -73,9 +72,9 @@ public class RunTracker {
 		} //2 hands plz.
 			
 		
-//		Vec3d hmdPos = minecraft.roomScale.getHMDPos_World();
+//		Vec3d hmdPos = minecraft.vrPlayer.getHMDPos_World();
 //
-//		Vec3d Hmddir = minecraft.roomScale.getHMDDir_World();
+//		Vec3d Hmddir = minecraft.vrPlayer.getHMDDir_World();
 //		Hmddir= new Vec3d(Hmddir.x,0, Hmddir.z).normalize();	
 //		
 //		if(speed < 0) Hmddir = movedir; //maybe?
@@ -108,7 +107,7 @@ public class RunTracker {
 //		
 		//double ltor = Math.toDegrees(Math.atan2(-diff.x, diff.z));   
 		
-		Vec3d v = minecraft.roomScale.getControllerDir_World(0).add(minecraft.roomScale.getControllerDir_World(1)).scale(0.5f);
+		Vec3d v = (minecraft.vrPlayer.vrdata_world_pre.getController(0).getDirection().add(minecraft.vrPlayer.vrdata_world_pre.getController(1).getDirection())).scale(0.5f);
 		direction =  (float)Math.toDegrees(Math.atan2(-v.x, v.z)); 
 		double spd = (c0move + c1move) / 2;	
 		this.speed = spd * 1 * 1.3;

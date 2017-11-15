@@ -28,10 +28,6 @@
 		"name": "de.fruitfly.ovr:JRift:0.8.0.0.1"
 	}, 
 	{
-		"url": "http://vivecraft.org/jar/", 
-		"name": "net.aib42.mumblelink:JMumble:1.11"
-	}, 
-	{
 		"name": "java3d:vecmath:1.3.1",
 		"downloads": {
 			"artifact": {

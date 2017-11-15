@@ -27,7 +27,21 @@
  import net.minecraft.util.text.TextFormatting;
  import net.optifine.entity.model.CustomEntityModels;
  import org.apache.logging.log4j.LogManager;
-@@ -42,6 +50,7 @@
+@@ -32,8 +40,13 @@
+     protected FloatBuffer brightnessBuffer = GLAllocation.createDirectFloatBuffer(4);
+     protected List<LayerRenderer<T>> layerRenderers = Lists.<LayerRenderer<T>>newArrayList();
+     protected boolean renderMarker;
++    
++    //Forge
+     public static float NAME_TAG_RANGE = 64.0F;
+     public static float NAME_TAG_RANGE_SNEAK = 32.0F;
++    //
++    
++    
+     public float renderLimbSwing;
+     public float renderLimbSwingAmount;
+     public float renderAgeInTicks;
+@@ -42,6 +55,7 @@
      public float renderScaleFactor;
      public static final boolean animateModelLiving = Boolean.getBoolean("animate.model.living");
  
@@ -35,7 +49,7 @@
      public RenderLivingBase(RenderManager renderManagerIn, ModelBase modelBaseIn, float shadowSizeIn)
      {
          super(renderManagerIn);
-@@ -49,6 +58,7 @@
+@@ -49,6 +63,7 @@
          this.shadowSize = shadowSizeIn;
      }
  
@@ -43,14 +57,14 @@
      public <V extends EntityLivingBase, U extends LayerRenderer<V>> boolean addLayer(U layer)
      {
          return this.layerRenderers.add((LayerRenderer<T>) layer);
-@@ -145,7 +155,29 @@
+@@ -145,7 +160,29 @@
                  float f7 = entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks;
                  this.renderLivingAt(entity, x, y, z);
                  float f8 = this.handleRotationFloat(entity, partialTicks);
 +                
 +                //VIVECRAFT
 +                if(this.mainModel instanceof ModelPlayerVR && entity instanceof EntityPlayer){
-+                    UUID uuid=((EntityPlayer) entity).getGameProfile().getId();
++                    UUID uuid = entity.getUniqueID();
 +                    ModelPlayerVR mp = (ModelPlayerVR) mainModel;
 +                    double d3 = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * (double)partialTicks;
 +                    double d4 = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * (double)partialTicks;

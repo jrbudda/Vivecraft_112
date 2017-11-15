@@ -4,6 +4,7 @@
 */
 package com.mtbs3d.minecrift.settings;
 
+import com.google.common.util.concurrent.Runnables;
 import com.mtbs3d.minecrift.provider.MCOpenVR;
 import com.mtbs3d.minecrift.provider.OpenVRPlayer;
 import com.mtbs3d.minecrift.settings.VRSettings;
@@ -211,7 +212,7 @@ public class VRHotkeys {
 			gotKey = true;
 		}
 		if(Keyboard.getEventKey() == Keyboard.KEY_F12){
-
+            mc.displayGuiScreen(new GuiWinGame(false, Runnables.doNothing()));
 			gotKey = true;
 		}
 
@@ -225,14 +226,12 @@ public class VRHotkeys {
 	}
 
 	public static void snapMRCam(Minecraft mc, int controller) {
-		
 		mc.vrSettings.vrFixedCamposX =(float) MCOpenVR.getAimSource(controller).x;
 		mc.vrSettings.vrFixedCamposY =(float) MCOpenVR.getAimSource(controller).y;
 		mc.vrSettings.vrFixedCamposZ =(float) MCOpenVR.getAimSource(controller).z;	
 		
-		mc.vrSettings.vrFixedCamrotPitch = mc.vrPlayer.getControllerPitch_Room(controller);
-		mc.vrSettings.vrFixedCamrotYaw = mc.vrPlayer.getControllerYaw_Room(controller);
-		mc.vrSettings.vrFixedCamrotRoll = mc.vrPlayer.getControllerRoll_World(controller);
-
+		mc.vrSettings.vrFixedCamrotPitch = mc.vrPlayer.vrdata_room_pre.getController(controller).getPitch();
+		mc.vrSettings.vrFixedCamrotYaw = mc.vrPlayer.vrdata_room_pre.getController(controller).getYaw();
+		mc.vrSettings.vrFixedCamrotRoll = mc.vrPlayer.vrdata_room_pre.getController(controller).getRoll();
 	}
 }

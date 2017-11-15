@@ -27,7 +27,7 @@
  
  public class LayerHeldItem implements LayerRenderer<EntityLivingBase>
  {
-@@ -45,19 +58,93 @@
+@@ -45,19 +58,92 @@
      {
          if (!p_188358_2_.isEmpty())
          {
@@ -38,9 +38,8 @@
 +            boolean vr =false;;
 +            RotInfo rotinfo = null;
 +            if(p_188358_1_ instanceof EntityPlayer){
-+            	UUID uuid=((EntityPlayer) p_188358_1_).getGameProfile().getId();
-+            	if(PlayerModelController.getInstance().isTracked(uuid)){
-+                	rotinfo = PlayerModelController.getInstance().getRotationsForPlayer(uuid);
++            	if(PlayerModelController.getInstance().isTracked(p_188358_1_.getUniqueID())){
++                	rotinfo = PlayerModelController.getInstance().getRotationsForPlayer(p_188358_1_.getUniqueID());
 +            		if(rotinfo.seated ==false){
 +            			vr = true;
 +            		}

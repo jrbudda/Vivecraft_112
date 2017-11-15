@@ -1,6 +1,5 @@
 package com.mtbs3d.minecrift.provider;
 
-import com.mtbs3d.minecrift.api.IStereoProvider;
 import com.mtbs3d.minecrift.render.RenderConfigException;
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
@@ -26,7 +25,7 @@ import org.lwjgl.opengl.GL11;
 /**
  * Created by jrbudda
  */
-public class OpenVRStereoRenderer implements IStereoProvider
+public class OpenVRStereoRenderer 
 {
 	// TextureIDs of framebuffers for each eye
 	private int LeftEyeTextureId, RightEyeTextureId;
@@ -34,7 +33,6 @@ public class OpenVRStereoRenderer implements IStereoProvider
 	private HiddenAreaMesh_t[] hiddenMeshes = new HiddenAreaMesh_t[2];
 	private float[][] hiddenMesheVertecies = new float[2][];
 
-	@Override
 	public RenderTextureInfo getRenderTextureSizes(float renderScaleFactor)
 	{
 		IntByReference rtx = new IntByReference();
@@ -79,7 +77,6 @@ public class OpenVRStereoRenderer implements IStereoProvider
 		return info;
 	}
 
-	@Override
 	public Matrix4f getProjectionMatrix(FovPort fov,
 			int eyeType,
 			float nearClip,
@@ -98,63 +95,40 @@ public class OpenVRStereoRenderer implements IStereoProvider
 	}
 
 
-	@Override
 	public EyeType eyeRenderOrder(int index)
 	{
 		return ( index == 1 ) ? EyeType.ovrEye_Right : EyeType.ovrEye_Left;
 	}
 
-	@Override
-	public boolean usesDistortion()
-	{
-		return true;
-	}
-
-	@Override
-	public boolean isStereo()
-	{
-		return true;
-	}
-
-	@Override
 	public double getFrameTiming() {
 		return getCurrentTimeSecs();
 	}
 
-	@Override
 	public void deleteRenderTextures() {
 		if (LeftEyeTextureId > 0)	GL11.glDeleteTextures(LeftEyeTextureId);
 	}
 
-	@Override
 	public String getLastError() { return ""; }
 
-	@Override
 	public boolean setCurrentRenderTextureInfo(int index, int textureIdx, int depthId, int depthWidth, int depthHeight)
 	{
 		return true;
 	}
 	
-	@Override
 	public double getCurrentTimeSecs()
 	{
 		return System.nanoTime() / 1000000000d;
 	}
 
 
-	@Override
 	public boolean providesMirrorTexture() { return false; }
 
-	@Override
 	public int createMirrorTexture(int width, int height) { return -1; }
 
-	@Override
 	public void deleteMirrorTexture() { }
 
-	@Override
 	public boolean providesRenderTextures() { return true; }
 
-	@Override
 	public RenderTextureSet createRenderTexture(int lwidth, int lheight)
 	{	
 		// generate left eye texture
@@ -193,16 +167,10 @@ public class OpenVRStereoRenderer implements IStereoProvider
 		return textureSet;
 	}
 
-	@Override
 	public void configureRenderer(GLConfig cfg) {
 
 	}
 
-	public void onGuiScreenChanged(GuiScreen previousScreen, GuiScreen newScreen) {
-		MCOpenVR.onGuiScreenChanged(previousScreen, newScreen);
-	}
-
-	@Override
 	public boolean endFrame(renderPass eye)
 	{
 		return true;
@@ -261,28 +229,23 @@ public class OpenVRStereoRenderer implements IStereoProvider
 	}
 
 	
-	@Override
 	public boolean providesStencilMask() {
 		return true;
 	}
 
-	@Override
 	public float[] getStencilMask(renderPass eye) {
 		if(hiddenMesheVertecies == null || eye == renderPass.Center || eye == renderPass.Third) return null;
 		return eye == renderPass.Left? hiddenMesheVertecies[0] : hiddenMesheVertecies[1];
 	}
 
-	@Override
 	public String getName() {
 		return "OpenVR";
 	}
 
-	@Override
 	public boolean isInitialized() {
 		return MCOpenVR.initSuccess;
 	}
 
-	@Override
 	public String getinitError() {
 		return MCOpenVR.initStatus;
 	}

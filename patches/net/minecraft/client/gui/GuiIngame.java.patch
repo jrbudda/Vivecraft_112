@@ -170,19 +170,16 @@
      {
          GlStateManager.disableDepth();
          GlStateManager.depthMask(false);
-@@ -1148,6 +1156,11 @@
+@@ -1148,6 +1156,8 @@
       */
      private void renderVignette(float lightLevel, ScaledResolution scaledRes)
      {
-+
-+        /** MINECRIFT **/
-+        if (this.mc.stereoProvider.isStereo())
-+            return;
-+        /** END MINECRIFT **/
++    	if(true) return;
++    	
          if (!Config.isVignetteEnabled())
          {
              GlStateManager.enableDepth();
-@@ -1201,38 +1214,9 @@
+@@ -1201,38 +1211,9 @@
          }
      }
  
@@ -223,7 +220,7 @@
      }
  
      private void renderHotbarItem(int p_184044_1_, int p_184044_2_, float p_184044_3_, EntityPlayer player, ItemStack stack)
-@@ -1422,4 +1406,43 @@
+@@ -1422,4 +1403,43 @@
      {
          return this.overlayBoss;
      }

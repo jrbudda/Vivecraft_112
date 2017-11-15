@@ -356,7 +356,39 @@ public class Utils
 	public static Vec3d convertToVec3d(Vector3 vector) {
 		return new Vec3d(vector.getX(), vector.getY(), vector.getZ());
 	}
+	public static Quaternion slerp(Quaternion start, Quaternion end, float alpha) {
+		final float d = start.x * end.x + start.y * end.y + start.z * end.z + start.w * end.w;
+		float absDot = d < 0.f ? -d : d;
+
+		// Set the first and second scale for the interpolation
+		float scale0 = 1f - alpha;
+		float scale1 = alpha;
+
+		// Check if the angle between the 2 quaternions was big enough to
+		// warrant such calculations
+		if ((1 - absDot) > 0.1) {// Get the angle between the 2 quaternions,
+			// and then store the sin() of that angle
+			final float angle = (float)Math.acos(absDot);		
+			final float invSinTheta = 1f / (float)Math.sin(angle);
+
+			// Calculate the scale for q1 and q2, according to the angle and
+			// it's sine value
+			scale0 = ((float)Math.sin((1f - alpha) * angle) * invSinTheta);
+			scale1 = ((float)Math.sin((alpha * angle)) * invSinTheta);
+		}
+
+		if (d < 0.f) scale1 = -scale1;
 	
+		// Calculate the x, y, z and w values for the quaternion by using a
+		// special form of linear interpolation for quaternions.
+		float x = (scale0 * start.x) + (scale1 * end.x);
+		float y = (scale0 * start.y) + (scale1 * end.y);
+		float z = (scale0 * start.z) + (scale1 * end.z);
+		float w = (scale0 * start.w) + (scale1 * end.w);
+
+		// Return the interpolated quaternion
+		return new Quaternion(w, x, y, z);
+	}
 	public static Vec3d vecLerp(Vec3d start, Vec3d end, double fraction) {
 		double x = start.x + (end.x - start.x) * fraction;
 		double y = start.y + (end.y - start.y) * fraction;

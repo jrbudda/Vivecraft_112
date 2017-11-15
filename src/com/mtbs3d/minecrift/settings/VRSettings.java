@@ -177,12 +177,12 @@ public class VRSettings
 	public boolean menuAlwaysFollowFace;
     public int vrHudLockMode = HUD_LOCK_HAND;
     public boolean hideGui = false;     // VIVE show gui
-    public boolean hudOcclusion = false;
+    public boolean hudOcclusion = true;
     public float crosshairScale = 1.0f;
 	public boolean crosshairScalesWithDistance = false;
     public int renderInGameCrosshairMode = RENDER_CROSSHAIR_MODE_ALWAYS;
     public int renderBlockOutlineMode = RENDER_BLOCK_OUTLINE_MODE_ALWAYS;
-    public float hudOpacity = 0.95f;
+    public float hudOpacity = 1f;
     public boolean menuBackground = false;
     public float   menuCrosshairScale = 1f;
     public boolean useCrosshairOcclusion = false;
@@ -889,7 +889,7 @@ public class VRSettings
             case WORLD_ROTATION:
 	            return var4 + String.format("%.0f", new Object[] { Float.valueOf(this.vrWorldRotation) });
             case WORLD_ROTATION_INCREMENT:
-	            return var4 + String.format("%.0f", new Object[] { Float.valueOf(this.vrWorldRotationIncrement) });
+	            return (var4 + (this.vrWorldRotationIncrement == 0 ? "SMOOTH" : String.format("%.0f", new Object[] { Float.valueOf(this.vrWorldRotationIncrement) })));
             case TOUCH_HOTBAR:
             	return this.vrTouchHotbar ? var4 + "ON" : var4 + "OFF";
             case PLAY_MODE_SEATED:
@@ -992,6 +992,7 @@ public class VRSettings
             case WORLD_ROTATION:
                 return vrWorldRotation;
             case WORLD_ROTATION_INCREMENT:
+            	if(vrWorldRotationIncrement == 0) return -1;
             	if(vrWorldRotationIncrement == 10f) return 0;
             	if(vrWorldRotationIncrement == 36f) return 1;            	
             	if(vrWorldRotationIncrement == 45f) return 2;
@@ -1185,7 +1186,7 @@ public class VRSettings
                 if(seated) {
                     MCOpenVR.resetPosition();
                 }
-                playerEyeHeight = (float) Minecraft.getMinecraft().roomScale.getHMDPos_Room().y;
+                playerEyeHeight = (float) Minecraft.getMinecraft().vrPlayer.vrdata_room_pre.hmd.getPosition().y;
                 break;
             case FREEMOVE_MODE:
                 switch (this.vrFreeMoveMode) {
@@ -1270,8 +1271,10 @@ public class VRSettings
                 break;
             case WORLD_ROTATION:
                 this.vrWorldRotation = par2;
+                MCOpenVR.seatedRot = par2;
                 break;
             case WORLD_ROTATION_INCREMENT:
+            	if(par2 == -1f) this.vrWorldRotationIncrement =  0f;
             	if(par2 == 0f) this.vrWorldRotationIncrement =  10f;
             	if(par2 == 1f) this.vrWorldRotationIncrement =  36f;            	
             	if(par2 == 2f) this.vrWorldRotationIncrement =  45f;
@@ -1522,7 +1525,7 @@ public class VRSettings
         RENDER_OWN_HEADWEAR("Render Own Headwear", false, true),
         RENDER_FULL_FIRST_PERSON_MODEL_MODE("First Person Model", false, true),
         RENDER_PLAYER_OFFSET("View Body Offset", true, false),
-        AUTO_OPEN_KEYBOARD("Auto Open Keyboard", false, true),
+        AUTO_OPEN_KEYBOARD("Always Open Keyboard", false, true),
 
 
         //HMD/render

@@ -1,6 +1,9 @@
 package com.mtbs3d.minecrift.render;
 
 import com.mojang.authlib.GameProfile;
+import com.mtbs3d.minecrift.utils.MCReflection;
+
+import java.lang.reflect.Method;
 import java.util.UUID;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -39,7 +42,6 @@ public class RenderVRPlayer extends RenderPlayer
 
 	public RenderVRPlayer(RenderManager renderManager) {
 		super(renderManager);
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
@@ -50,8 +52,9 @@ public class RenderVRPlayer extends RenderPlayer
         GlStateManager.color(1.0F, 1.0F, 1.0F, f);
         float f1 = 0.0625F;
         ModelPlayer modelplayer = this.getMainModel();
-        this.setModelVisibilities(clientPlayer);
+        MCReflection.invokeMethod(MCReflection.RenderPlayer_setModelVisibilities, this, clientPlayer);
         GlStateManager.enableBlend();
+        GlStateManager.enableCull();
         modelplayer.swingProgress = 0.0F;
         modelplayer.isSneak = false;
         modelplayer.bipedRightArm.rotateAngleX = 0;
@@ -80,11 +83,13 @@ public class RenderVRPlayer extends RenderPlayer
     public void renderLeftArm(AbstractClientPlayer clientPlayer)
     {
         float f = 1.0F;
-        GlStateManager.color(1.0F, 1.0F, 1.0F);
+        if(Minecraft.getMinecraft().player.isSneaking()) f= 0.75f;
+        GlStateManager.color(1.0F, 1.0F, 1.0f, f);
         float f1 = 0.0625F;
         ModelPlayer modelplayer = this.getMainModel();
-        this.setModelVisibilities(clientPlayer);
+        MCReflection.invokeMethod(MCReflection.RenderPlayer_setModelVisibilities, this, clientPlayer);
         GlStateManager.enableBlend();
+        GlStateManager.enableCull();
         modelplayer.isSneak = false;
         modelplayer.swingProgress = 0.0F;
         modelplayer.bipedLeftArm.rotateAngleX = 0;

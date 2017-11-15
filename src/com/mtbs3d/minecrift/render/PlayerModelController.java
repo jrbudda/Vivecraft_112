@@ -175,7 +175,7 @@ public class PlayerModelController {
 					);     
 		}
 		
-		if (!uuid.equals(Minecraft.getMinecraft().player.getGameProfile().getId()) || debug) {
+		if (!uuid.equals(Minecraft.getMinecraft().player.getUniqueID()) || debug) {
 			vivePlayersReceived.put(uuid, out);
 		}
 
@@ -206,20 +206,20 @@ public class PlayerModelController {
 		if (rot != null && vivePlayersLast.containsKey(uuid)) {
 			RotInfo rotLast = vivePlayersLast.get(uuid);
 			RotInfo rotLerp = new RotInfo();
-			float pt = Minecraft.getMinecraft().getRenderPartialTicks();
+			float pt = Minecraft.getMinecraft().timer.renderPartialTicks;
 			rotLerp.reverse = rot.reverse;
 			rotLerp.seated = rot.seated;
 			rotLerp.hmd = rot.hmd;
 			rotLerp.leftArmPos = Utils.vecLerp(rotLast.leftArmPos, rot.leftArmPos, pt);
 			rotLerp.rightArmPos = Utils.vecLerp(rotLast.rightArmPos, rot.rightArmPos, pt);
 			rotLerp.Headpos = Utils.vecLerp(rotLast.Headpos, rot.Headpos, pt);
-			rotLerp.leftArmQuat = Utils.quatLerp(rotLast.leftArmQuat, rot.leftArmQuat, pt);
-			rotLerp.rightArmQuat = Utils.quatLerp(rotLast.rightArmQuat, rot.rightArmQuat, pt);
-			rotLerp.headQuat = Utils.quatLerp(rotLast.headQuat, rot.headQuat, pt);
+			rotLerp.leftArmQuat = rot.leftArmQuat;//Utils.slerp(rotLast.leftArmQuat, rot.leftArmQuat, pt);
+			rotLerp.rightArmQuat =rot.rightArmQuat;//Utils.slerp(rotLast.rightArmQuat, rot.rightArmQuat, pt);
+			rotLerp.headQuat = rot.headQuat;//Utils.slerp(rotLast.headQuat, rot.headQuat, pt);
 			Vector3 forward = new Vector3(0,0,-1);
-			rotLerp.leftArmRot = Utils.convertToVec3d(rotLerp.leftArmQuat.multiply(forward));
-			rotLerp.rightArmRot = Utils.convertToVec3d(rotLerp.rightArmQuat.multiply(forward));
-			rotLerp.headRot = Utils.convertToVec3d(rotLerp.headQuat.multiply(forward));
+			rotLerp.leftArmRot = Utils.vecLerp(rotLast.leftArmRot,Utils.convertToVec3d(rotLerp.leftArmQuat.multiply(forward)), pt);
+			rotLerp.rightArmRot = Utils.vecLerp(rotLast.rightArmRot, Utils.convertToVec3d(rotLerp.rightArmQuat.multiply(forward)), pt);
+			rotLerp.headRot = Utils.vecLerp(rotLast.headRot,Utils.convertToVec3d(rotLerp.headQuat.multiply(forward)), pt);
 			return rotLerp;
 		}
 		return rot;

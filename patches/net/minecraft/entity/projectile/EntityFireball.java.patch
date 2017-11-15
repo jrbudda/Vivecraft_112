@@ -1,8 +1,11 @@
 --- a/net/minecraft/entity/projectile/EntityFireball.java
 +++ b/net/minecraft/entity/projectile/EntityFireball.java
-@@ -1,7 +1,9 @@
+@@ -1,7 +1,12 @@
  package net.minecraft.entity.projectile;
  
++import com.mtbs3d.minecrift.api.NetworkHelper;
++import com.mtbs3d.minecrift.api.VivePlayer;
++
 +import net.minecraft.client.Minecraft;
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityLivingBase;
@@ -10,19 +13,21 @@
  import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.nbt.NBTTagList;
  import net.minecraft.util.DamageSource;
-@@ -65,7 +67,18 @@
+@@ -65,7 +70,20 @@
          super(worldIn);
          this.shootingEntity = shooter;
          this.setSize(1.0F, 1.0F);
 -        this.setLocationAndAngles(shooter.posX, shooter.posY, shooter.posZ, shooter.rotationYaw, shooter.rotationPitch);
 +        
 +        //VIVE USE CONTROLLER
-+        if(shooter.getEntityId() == Minecraft.getMinecraft().player.getEntityId()){
-+        	float yaw = Minecraft.getMinecraft().roomScale.getControllerYaw_World(0);
-+        	float pitch = -Minecraft.getMinecraft().roomScale.getControllerPitch_World(0);
-+        	Vec3d aimSource = Minecraft.getMinecraft().roomScale.getControllerPos_World(0);
-+        	this.setLocationAndAngles(aimSource.x	,aimSource.y, aimSource.z, yaw, pitch);
-+        	//END VIVE
++    	VivePlayer vp = NetworkHelper.vivePlayers.get(shooter.getUniqueID());
++    	if (vp !=null)
++    	{
++    		Vec3d aim = vp.getControllerDir(0);
++    		Vec3d aimSource = vp.getControllerPos(0);
++    		float pitch = (float)Math.toDegrees(Math.asin(aim.y/aim.lengthVector()));
++    		float yaw = (float)Math.toDegrees(Math.atan2(aim.x, -aim.z));   
++    		this.setLocationAndAngles(aimSource.x, aimSource.y, aimSource.z, yaw, pitch);
 +        } else {
 +        	this.setLocationAndAngles(shooter.posX, shooter.posY, shooter.posZ, shooter.rotationYaw, shooter.rotationPitch);
 +        }

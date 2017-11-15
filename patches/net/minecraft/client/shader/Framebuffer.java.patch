@@ -32,13 +32,10 @@
  
      public Framebuffer(int width, int height, boolean useDepthIn)
      {
-@@ -32,10 +41,43 @@
-         this.framebufferColor[1] = 1.0F;
-         this.framebufferColor[2] = 1.0F;
+@@ -34,8 +43,41 @@
          this.framebufferColor[3] = 0.0F;
--        this.createBindFramebuffer(width, height);
-+        this.createBindFramebuffer(width, height, NO_TEXTURE_ID);
-+    }
+         this.createBindFramebuffer(width, height);
+     }
 +    
 +    public Framebuffer(String name, int width, int height, boolean useDepth, boolean generateMipMaps)
 +    {
@@ -67,11 +64,11 @@
 +//        }
 +
 +        this.createBindFramebuffer(width, height, textureID);
-     }
++    }
  
 -    public void createBindFramebuffer(int width, int height)
 +    public void createBindFramebuffer(int width, int height){
-+    	this.createBindFramebuffer(-width, height, -1);
++    	this.createBindFramebuffer(width, height, NO_TEXTURE_ID);
 +    }
 +    
 +    public void createBindFramebuffer(int width, int height, int textureId)

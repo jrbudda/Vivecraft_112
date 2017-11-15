@@ -2,8 +2,8 @@ package com.mtbs3d.minecrift.gameplay;
 
 import java.util.Random;
 
-import com.mtbs3d.minecrift.api.IRoomscaleAdapter;
 import com.mtbs3d.minecrift.provider.MCOpenVR;
+import com.mtbs3d.minecrift.provider.OpenVRPlayer;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -54,22 +54,22 @@ private Random r = new Random();
 			eating[1]=false;
 			return;
 		}
-		IRoomscaleAdapter provider = minecraft.roomScale;
+		OpenVRPlayer provider = minecraft.vrPlayer;
 		
-		Vec3d hmdPos=provider.getHMDPos_Room();
-		Vec3d mouthPos=provider.getCustomHMDVector(new Vec3d(0,-mouthtoEyeDistance,0)).add(hmdPos);
+		Vec3d hmdPos=provider.vrdata_room_pre.hmd.getPosition();
+		Vec3d mouthPos=provider.vrdata_room_pre.getController(0).getCustomVector(new Vec3d(0,-mouthtoEyeDistance,0)).add(hmdPos);
 
 		for(int c=0;c<2;c++){
 
-			Vec3d controllerPos=MCOpenVR.controllerHistory[c].averagePosition(0.333).add(provider.getCustomControllerVector(c,new Vec3d(0,0,-0.1)));
-			controllerPos = controllerPos.add(minecraft.roomScale.getControllerDir_Room(c).scale(0.1));
+			Vec3d controllerPos = MCOpenVR.controllerHistory[c].averagePosition(0.333).add(provider.vrdata_room_pre.getController(c).getCustomVector(new Vec3d(0,0,-0.1)));
+			controllerPos = controllerPos.add(minecraft.vrPlayer.vrdata_room_pre.getController(c).getDirection().scale(0.1));
 			
 			if(mouthPos.distanceTo(controllerPos)<threshold){
 				ItemStack is = c==0?player.getHeldItemMainhand():player.getHeldItemOffhand();
 				if(is == null) continue;
 
 				if(is.getItemUseAction() == EnumAction.DRINK){ //thats how liquid works.
-					if(minecraft.roomScale.getCustomControllerVector(c, new Vec3d(0,1,0)).y > 0) continue;
+					if(provider.vrdata_room_pre.getController(c).getCustomVector(new Vec3d(0,1,0)).y > 0) continue;
 				}
 
 				if(!eating[c]){

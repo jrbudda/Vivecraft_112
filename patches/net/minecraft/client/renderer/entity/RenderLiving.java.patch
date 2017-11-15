@@ -34,10 +34,10 @@
 +                // VIVE START 
 +                if (entity == Minecraft.getMinecraft().player)
 +                {
-+                        Vec3d aimSource = Minecraft.getMinecraft().entityRenderer.getControllerRenderPos(0);
-+                        d6 = aimSource.x;
-+                        d7 = aimSource.y; 
-+                        d8 = aimSource.z;             		         
++                	Vec3d aimSource = Minecraft.getMinecraft().vrPlayer.vrdata_world_render.getController(0).getPosition();
++                	d6 = aimSource.x;
++                	d7 = aimSource.y; 
++                	d8 = aimSource.z;             		         
 +                }
 +                // VIVE END 
 +

@@ -46,17 +46,21 @@
  
      /**
       * Holds a instance of RenderItem, used to draw the achievement icons on screen (is based on ItemStack)
-@@ -77,6 +84,9 @@
+@@ -77,6 +84,13 @@
      private URI clickedLinkURI;
      private boolean focused;
  
 +    protected boolean keyHandled, mouseHandled; // Forge: allow canceling key and mouse Post events from handleMouseInput and handleKeyboardInput
-+	public static boolean pressShiftFake;
-+
++	
++    public boolean pressShiftFake;
++	public static boolean isFakeShift(){
++		return Minecraft.getMinecraft().currentScreen != null ? Minecraft.getMinecraft().currentScreen.pressShiftFake : false;
++	}
++	
      /**
       * Draws the screen and all the components in it.
       */
-@@ -101,6 +111,10 @@
+@@ -101,6 +115,10 @@
      {
          if (keyCode == 1)
          {
@@ -67,7 +71,7 @@
              this.mc.displayGuiScreen((GuiScreen)null);
  
              if (this.mc.currentScreen == null)
-@@ -109,6 +123,10 @@
+@@ -109,6 +127,10 @@
              }
          }
      }
@@ -78,7 +82,7 @@
  
      protected <T extends GuiButton> T addButton(T buttonIn)
      {
-@@ -204,7 +222,16 @@
+@@ -204,7 +226,16 @@
       */
      public void drawHoveringText(List<String> textLines, int x, int y)
      {
@@ -96,7 +100,7 @@
          {
              GlStateManager.disableRescaleNormal();
              RenderHelper.disableStandardItemLighting();
-@@ -449,10 +476,17 @@
+@@ -449,10 +480,17 @@
  
      public void sendChatMessage(String msg, boolean addToChat)
      {
@@ -114,7 +118,7 @@
  
          this.mc.player.sendChatMessage(msg);
      }
-@@ -470,9 +504,19 @@
+@@ -470,9 +508,19 @@
  
                  if (guibutton.mousePressed(this.mc, mouseX, mouseY))
                  {
@@ -134,17 +138,27 @@
                  }
              }
          }
-@@ -546,7 +590,18 @@
+@@ -516,8 +564,11 @@
+         this.fontRenderer = mc.fontRenderer;
+         this.width = width;
+         this.height = height;
++    	if (!Reflector.forgeExists() || !Reflector.postForgeBusEvent(Reflector.GuiScreenEvent_InitGuiEvent_Pre_Constructor, this, this.buttonList)) {
+         this.buttonList.clear();
+         this.initGui();
++    		if (Reflector.forgeExists()) Reflector.postForgeBusEvent(Reflector.GuiScreenEvent_InitGuiEvent_Post_Constructor, this, this.buttonList);
++    	}
+     }
+ 
+     /**
+@@ -546,7 +597,16 @@
          {
              while (Mouse.next())
              {
-+            	if (mc.stereoProvider.isStereo()) {
-+            		if (!MCOpenVR.controllerMouseValid) {
-+            			MCOpenVR.controllerMouseValid = true;
-+            			MCOpenVR.controllerMouseTicks = 20;
-+            		}
++            	if (!MCOpenVR.controllerMouseValid) {
++            		MCOpenVR.controllerMouseValid = true;
++            		MCOpenVR.controllerMouseTicks = 20;
 +            	}
-+            	
++
 +            	this.mouseHandled = false;
 +            	if (Reflector.forgeExists() && Reflector.postForgeBusEvent(Reflector.GuiScreenEvent_MouseInputEvent_Pre_Constructor, this)) continue;
                  this.handleMouseInput();
@@ -153,7 +167,7 @@
              }
          }
  
-@@ -554,7 +609,10 @@
+@@ -554,7 +614,10 @@
          {
              while (Keyboard.next())
              {
@@ -164,23 +178,21 @@
              }
          }
      }
-@@ -568,6 +626,15 @@
+@@ -568,6 +631,13 @@
          int j = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
          int k = Mouse.getEventButton();
  
-+		/** MINECRIFT */
-+    	if (mc.stereoProvider.isStereo()){
-+    		if(!MCOpenVR.controllerMouseValid){
-+				if (mc.mouseHelper.deltaX > 0 || mc.mouseHelper.deltaY> 0 )
-+        			MCOpenVR.controllerMouseValid = true;
-+				}
-+			}  	      
-+		/** END MINECRIFT */
-+        
++        /** MINECRIFT */
++        if(!MCOpenVR.controllerMouseValid){
++        	if (mc.mouseHelper.deltaX > 0 || mc.mouseHelper.deltaY> 0 )
++        		MCOpenVR.controllerMouseValid = true;
++        }
++        /** END MINECRIFT */
++
          if (Mouse.getEventButtonState())
          {
              if (this.mc.gameSettings.touchscreen && this.touchValue++ > 0)
-@@ -601,6 +668,11 @@
+@@ -601,6 +671,11 @@
       */
      public void handleKeyboardInput() throws IOException
      {
@@ -192,7 +204,7 @@
          char c0 = Keyboard.getEventCharacter();
  
          if (Keyboard.getEventKey() == 0 && c0 >= ' ' || Keyboard.getEventKeyState())
-@@ -631,13 +703,23 @@
+@@ -631,13 +706,23 @@
      public void drawDefaultBackground()
      {
          this.drawWorldBackground(0);
@@ -217,16 +229,16 @@
          }
          else
          {
-@@ -722,7 +804,7 @@
+@@ -722,7 +807,7 @@
       */
      public static boolean isShiftKeyDown()
      {
 -        return Keyboard.isKeyDown(42) || Keyboard.isKeyDown(54);
-+        return Keyboard.isKeyDown(42) || Keyboard.isKeyDown(54) || pressShiftFake;
++        return Keyboard.isKeyDown(42) || Keyboard.isKeyDown(54) || isFakeShift();
      }
  
      /**
-@@ -760,4 +842,74 @@
+@@ -760,4 +845,74 @@
      {
          this.setWorldAndResolution(mcIn, w, h);
      }

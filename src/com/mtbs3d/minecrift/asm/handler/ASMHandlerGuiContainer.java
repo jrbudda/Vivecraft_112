@@ -47,7 +47,7 @@ public class ASMHandlerGuiContainer extends ASMClassHandler {
 			JumpInsnNode jumpInsn = (JumpInsnNode)methodNode.instructions.get(methodNode.instructions.indexOf(insn) - 2);
 			InsnList insnList = new InsnList();
 			insnList.add(new JumpInsnNode(Opcodes.IFNE, jumpInsn.label));
-			insnList.add(new FieldInsnNode(Opcodes.GETSTATIC, obfuscated ? ObfNames.GUICONTAINER : "net/minecraft/client/gui/inventory/GuiContainer", "pressShiftFake", "Z"));
+			insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, obfuscated ? ObfNames.GUICONTAINER : "net/minecraft/client/gui/inventory/GuiContainer", "isFakeShift", "()Z", false));
 			methodNode.instructions.insert(insn, insnList);
 			System.out.println("Inserted pressShiftFake check");
 		}
