@@ -912,15 +912,20 @@ public class Installer extends JPanel  implements PropertyChangeListener
                 else
                     profileCreated = true;
             }
-			
+
+            String profileName = getMinecraftProfileName(useForge.isSelected(), useShadersMod.isSelected());
+			if(chkCustomProfileName.isSelected() && txtCustomProfileName.getText().trim() != ""){
+				profileName = txtCustomProfileName.getText();
+			}
+
             if (!downloadedOptifine) {
                 finalMessage = "Installed (but failed to download OptiFine). Restart Minecraft" +
-                        (profileCreated == false ? " and Edit Profile->Use Version " + minecriftVersionName : " and select the '" + getMinecraftProfileName(useForge.isSelected(), useShadersMod.isSelected()) + "' profile.") +
+                        (profileCreated == false ? " and Edit Profile->Use Version " + minecriftVersionName : " and select the '" + profileName + "' profile.") +
                         "\nPlease download and install Optifine " + OF_FILE_NAME + " from https://optifine.net/downloads before attempting to play.";
             }
             else {
                 finalMessage = "Installed successfully! Restart Minecraft" +
-                        (profileCreated == false ? " and Edit Profile->Use Version " + minecriftVersionName : " and select the '" + getMinecraftProfileName(useForge.isSelected(), useShadersMod.isSelected()) + "' profile.");
+                        (profileCreated == false ? " and Edit Profile->Use Version " + minecriftVersionName : " and select the '" + profileName + "' profile.");
             }
 			
             monitor.setProgress(100);
