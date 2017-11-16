@@ -212,7 +212,7 @@ public class VRHotkeys {
 			gotKey = true;
 		}
 		if(Keyboard.getEventKey() == Keyboard.KEY_F12){
-            mc.displayGuiScreen(new GuiWinGame(false, Runnables.doNothing()));
+            //mc.displayGuiScreen(new GuiWinGame(false, Runnables.doNothing()));
 			gotKey = true;
 		}
 

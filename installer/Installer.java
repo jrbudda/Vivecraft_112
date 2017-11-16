@@ -602,43 +602,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
         
         // VIVE START - install openVR dlls
         private boolean InstallOpenVR() {
-		
-			String osname = System.getProperty("os.name").toLowerCase();
-			String osarch= System.getProperty("os.arch").toLowerCase();
-
-			String osFolder = "win32";		
-			String resource = "win32/openvr_api.dll";
-				
-			if (osname.contains("windows")){	
-				installFile(osFolder, resource);
-
-				osFolder = "win64";
-				resource = "win64/openvr_api.dll";
-				installFile(osFolder, resource);
-
-				if(katvr.isSelected()){
-				installFile("katvr", "katvr/WalkerBase.dll");
-				installFile("katvr", "katvr/msvcp120d.dll");
-				installFile("katvr", "katvr/msvcp140d.dll");
-				installFile("katvr", "katvr/msvcr120d.dll");
-				installFile("katvr", "katvr/vcruntime140d.dll");
-				installFile("katvr", "katvr/ucrtbased.dll");
-				}
-			}
-			else if( osname.contains("linux")){
-				osFolder = "linux32";
-				resource = "linux32/libopenvr_api.so";
-					installFile(osFolder, resource);
-					osFolder = "linux64";
-					resource = "linux64/libopenvr_api.so";
-					installFile(osFolder, resource);
-			}
-			else if( osname.contains("mac")){
-				osFolder = "osx32";
-				resource = "osx32/libopenvr_api.dylib";			
-				installFile(osFolder, resource);
-			}	
-		return true;
+		//nope.
         }
 		
 		private boolean installFile(String osFolder, String resource){

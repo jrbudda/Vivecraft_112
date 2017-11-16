@@ -55,6 +55,8 @@ public class RenderVRPlayer extends RenderPlayer
         MCReflection.invokeMethod(MCReflection.RenderPlayer_setModelVisibilities, this, clientPlayer);
         GlStateManager.enableBlend();
         GlStateManager.enableCull();
+        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+
         modelplayer.swingProgress = 0.0F;
         modelplayer.isSneak = false;
         modelplayer.bipedRightArm.rotateAngleX = 0;
@@ -90,6 +92,8 @@ public class RenderVRPlayer extends RenderPlayer
         MCReflection.invokeMethod(MCReflection.RenderPlayer_setModelVisibilities, this, clientPlayer);
         GlStateManager.enableBlend();
         GlStateManager.enableCull();
+        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+
         modelplayer.isSneak = false;
         modelplayer.swingProgress = 0.0F;
         modelplayer.bipedLeftArm.rotateAngleX = 0;

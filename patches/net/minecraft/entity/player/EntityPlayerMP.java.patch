@@ -303,7 +303,7 @@
      /**
       * this function is called when a players inventory is sent to him, lastHealth is updated on any dimension
       * transitions, then reset.
-@@ -1611,4 +1715,158 @@
+@@ -1611,4 +1715,155 @@
      {
          return this.enteredNetherPosition;
      }
@@ -328,8 +328,8 @@
 +
 +    			//VIVE use controller
 +    			Vec3d pos = vp.getControllerPos(0);
-+    			entityitem = new EntityItem(this.world, pos.x, pos.y, pos.z, droppedItem);
-+
++    			entityitem = new EntityItem(this.world, pos.x, pos.y-0.2f, pos.z, droppedItem);
++    			    			
 +    			entityitem.setPickupDelay(40);
 +
 +    			if (traceItem)
@@ -351,20 +351,17 @@
 +    				float f2 = 0.3F;
 +
 +    				Vec3d aim = vp.getControllerDir(0);
-+    	    		float pitch = (float)Math.toDegrees(Math.asin(aim.y/aim.lengthVector()));
-+    	    		float yaw = (float)Math.toDegrees(Math.atan2(aim.x, -aim.z));   
++//    	    		float pitch = (float)Math.toDegrees(Math.asin(aim.y/aim.lengthVector()));
++//    	    		float yaw = (float)Math.toDegrees(Math.atan2(-aim.x, aim.z));   
 +    				
 +    	    		//vive use controller
-+    	    		entityitem.motionX = (double)(-MathHelper.sin(yaw * 0.017453292F) * MathHelper.cos(this.rotationPitch * 0.017453292F) * f2);
-+    	    		entityitem.motionZ = (double)(MathHelper.cos(yaw * 0.017453292F) * MathHelper.cos(this.rotationPitch * 0.017453292F) * f2);
-+    	    		entityitem.motionY = (double)(-MathHelper.sin(pitch * 0.017453292F) * f2 + 0.1F);
++    	    		entityitem.motionX = aim.x * f2;
++    	    		entityitem.motionZ = aim.z * f2;
++    	    		entityitem.motionY = aim.y * f2;
++   				
++        			entityitem.setPosition(entityitem.posX + entityitem.motionX, entityitem.posY+entityitem.motionY, entityitem.posZ + entityitem.motionZ);
 +
-+
-+    				float f3 = this.rand.nextFloat() * ((float)Math.PI * 2F);
-+    				f2 = 0.02F * this.rand.nextFloat();
-+    				entityitem.motionX += Math.cos((double)f3) * (double)f2;
-+    				entityitem.motionY += (double)((this.rand.nextFloat() - this.rand.nextFloat()) * 0.1F);
-+    				entityitem.motionZ += Math.sin((double)f3) * (double)f2;
++    				
 +    			}
 +
 +    			ItemStack itemstack = this.dropItemAndGetStack(entityitem);

@@ -52,7 +52,17 @@
      }
  
      private void captureCurrentPosition()
-@@ -597,8 +615,8 @@
+@@ -296,6 +314,9 @@
+      */
+     public void disconnect(final ITextComponent textComponent)
+     {
++    	//VIVECRAFT
++    	NetworkHelper.vivePlayers.remove(this.player.getUniqueID());
++    	//
+         this.netManager.sendPacket(new SPacketDisconnect(textComponent), new GenericFutureListener < Future <? super Void >> ()
+         {
+             public void operationComplete(Future <? super Void > p_operationComplete_1_) throws Exception
+@@ -597,8 +618,8 @@
  
                                  if (flag2 && (flag || !flag1))
                                  {
@@ -63,7 +73,7 @@
                                  }
                              }
  
-@@ -704,8 +722,14 @@
+@@ -704,8 +725,14 @@
                  double d1 = this.player.posY - ((double)blockpos.getY() + 0.5D) + 1.5D;
                  double d2 = this.player.posZ - ((double)blockpos.getZ() + 0.5D);
                  double d3 = d0 * d0 + d1 * d1 + d2 * d2;
@@ -79,7 +89,7 @@
                  {
                      return;
                  }
-@@ -1852,5 +1876,87 @@
+@@ -1852,5 +1879,87 @@
                  LOGGER.error("Couldn't pick item", (Throwable)exception);
              }
          }

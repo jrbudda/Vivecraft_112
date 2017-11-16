@@ -246,7 +246,7 @@
          this.renderMapFirstPerson(this.itemStackMainHand);
      }
  
-@@ -242,76 +297,104 @@
+@@ -242,76 +297,103 @@
          GlStateManager.enableLighting();
      }
  
@@ -313,7 +313,6 @@
 +        	GlStateManager.scale(0.4f, 0.4F, 0.4F);
 +        	GlStateManager.translate(0.375*-f, 0, .75);
 +	        GlStateManager.rotate(-90, 1, 0,0);
-+	        GlStateManager.disableCull();
 +	        
 +	        GlStateManager.rotate(180, 0, 1, 0);	
 +	        
@@ -406,7 +405,7 @@
      }
  
      /**
-@@ -370,8 +453,330 @@
+@@ -370,8 +452,330 @@
          RenderHelper.disableStandardItemLighting();
      }
  
@@ -738,7 +737,7 @@
      }
  
      /**
-@@ -379,84 +784,212 @@
+@@ -379,84 +783,212 @@
       */
      public void renderOverlays(float partialTicks)
      {

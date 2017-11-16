@@ -867,7 +867,7 @@ public class MCOpenVR
 
 
 			// adjust vertical for aspect ratio
-			v = ( (v - 0.5f) * ((float)mc.displayWidth / (float)mc.displayHeight) ) + 0.5f;
+			v = ( (v - 0.5f) * ((float)1280 / (float)720) ) + 0.5f;
 
 			// TODO: Figure out where this magic 0.68f comes from. Probably related to Minecraft window size.
 			//JRBUDDA: It's probbably 1/defaulthudscale (1.5)
@@ -2445,17 +2445,13 @@ public class MCOpenVR
 				float hRange = 110;
 				float vRange = 180;
 				double h = Mouse.getX() / (double) mc.displayWidth * hRange - (hRange / 2);
-				double v = Mouse.getY() / (double) mc.displayHeight * vRange - (vRange / 2);
+				
+				double hei  = mc.displayHeight;
+				if(mc.displayHeight % 2 != 0)
+					hei-=1; //fix drifting vertical mouse.
 
+				double v = Mouse.getY() / (double) hei * vRange - (vRange / 2);				
 				double nPitch=-v;
-
-//				float con = mc.vrPlayer.getControllerYaw_World(0);
-//				float hmd = mc.vrPlayer.getHMDYaw_World();
-//				
-//				float diff = con - hmd;
-//				if(diff > 180 ) diff -= 360;
-//				if(diff < -180 ) diff += 360;
-					
 				
 				if(Display.isActive()){
 					float rotStart = mc.vrSettings.keyholeX;
@@ -2484,9 +2480,8 @@ public class MCOpenVR
 					nPitch=aimPitch+(v)*ySpeed;
 					nPitch=MathHelper.clamp(nPitch,-89.9,89.9);
 					Mouse.setCursorPosition(Mouse.getX(),mc.displayHeight/2);
-
 				}
-				
+
 				temp.rotate((float) Math.toRadians(-nPitch), new org.lwjgl.util.vector.Vector3f(1,0,0));
 
 				temp.rotate((float) Math.toRadians(-180 + h - hmdForwardYaw), new org.lwjgl.util.vector.Vector3f(0,1,0));

@@ -182,6 +182,10 @@ public class OpenVRPlayer
 		
 		this.vrdata_world_render = new VRData(interPolatedRoomOrigin, interpolatedWorldScale * mc.vrSettings.walkMultiplier, interpolatedWorldScale, interpolatedWorldRotation_Radians);
 		
+		//handle special items
+		mc.bowTracker.doProcess(mc, mc.player);
+	
+		
 	}
 	
 	public void postRender(float par1){
