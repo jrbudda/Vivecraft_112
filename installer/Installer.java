@@ -602,7 +602,8 @@ public class Installer extends JPanel  implements PropertyChangeListener
         
         // VIVE START - install openVR dlls
         private boolean InstallOpenVR() {
-		//nope.
+			//nope.
+			return true;
         }
 		
 		private boolean installFile(String osFolder, String resource){
