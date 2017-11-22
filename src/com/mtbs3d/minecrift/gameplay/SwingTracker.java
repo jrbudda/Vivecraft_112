@@ -6,6 +6,7 @@ import com.mtbs3d.minecrift.provider.MCOpenVR;
 import com.mtbs3d.minecrift.utils.MCReflection;
 
 import net.minecraft.block.BlockLadder;
+import net.minecraft.block.BlockVine;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -178,8 +179,9 @@ public class SwingTracker {
         	{
         		Entity hitEntity = (Entity) entities.get(e);
         		if (hitEntity.canBeCollidedWith() && !(hitEntity == mc.getRenderViewEntity().getRidingEntity()) )			{
-        			if(mc.vrSettings.animaltouching && hitEntity instanceof EntityAnimal && !tool && !lastWeaponSolid[c]){
+        			if(mc.vrSettings.animaltouching && hitEntity instanceof EntityAnimal && !tool && !lastWeaponSolid[c] && !player.isInWater()){
         				mc.playerController.interactWithEntity(player, hitEntity, c==0?EnumHand.MAIN_HAND:EnumHand.OFF_HAND);
+        				disableSwing = 3;
         				MCOpenVR.triggerHapticPulse(c, 250);
         				lastWeaponSolid[c] = true;
         				inAnEntity = true;
@@ -229,7 +231,7 @@ public class SwingTracker {
         						}
         					}
         				} else {
-        					if(canact && (!mc.vrSettings.realisticClimbEnabled || !(block.getBlock() instanceof BlockLadder))) { 
+        					if(canact && (!mc.vrSettings.realisticClimbEnabled || (!(block.getBlock() instanceof BlockLadder) && !(block.getBlock() instanceof BlockVine)))) { 
         						int p = 3;
         						if(item instanceof ItemHoe){
         							Minecraft.getMinecraft().playerController.

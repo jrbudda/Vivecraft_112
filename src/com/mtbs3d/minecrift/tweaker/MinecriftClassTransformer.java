@@ -15,6 +15,9 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import com.mtbs3d.minecrift.provider.MCOpenVR;
+import com.mtbs3d.minecrift.utils.Utils;
+
 import net.minecraft.launchwrapper.IClassTransformer;
 
 // With apologies to Optifine. Copyright sp614x, this is built on his work.
@@ -27,6 +30,7 @@ public class MinecriftClassTransformer implements IClassTransformer
 	private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("legacy.debugClassLoading", "false"));
 	
     private ZipFile mcZipFile = null;
+    private static URL mcZipURL = null;
     private final Stage stage;
     
     private final Map<String, byte[]> cache;
@@ -43,23 +47,7 @@ public class MinecriftClassTransformer implements IClassTransformer
     	if (stage == Stage.MAIN) {
 	        try
 	        {
-	            URLClassLoader e = (URLClassLoader)MinecriftClassTransformer.class.getClassLoader();
-	            URL[] urls = e.getURLs();
-	
-	            for (int i = 0; i < urls.length; ++i)
-	            {
-	                URL url = urls[i];
-	                ZipFile zipFile = getMinecriftZipFile(url);
-	
-	                if (zipFile != null)
-	                {
-	                    this.mcZipFile = zipFile;
-	                    debug("Minecrift ClassTransformer");
-	                    debug("Minecrift URL: " + url);
-	                    debug("Minecrift ZIP file: " + zipFile);
-	                    break;
-	                }
-	            }
+	            this.mcZipFile = findMinecriftZipFile();
 	        }
 	        catch (Exception var6)
 	        {
@@ -98,6 +86,36 @@ public class MinecriftClassTransformer implements IClassTransformer
         {
             return null;
         }
+    }
+    
+    public static ZipFile findMinecriftZipFile() {
+    	if (mcZipURL != null) {
+    		try {
+    			return new ZipFile(new File(mcZipURL.toURI()));
+    		} catch (Exception e) {
+    			e.printStackTrace();
+    			return null;
+    		}
+    	}
+    	
+    	URLClassLoader e = (URLClassLoader)MinecriftClassTransformer.class.getClassLoader();
+        URL[] urls = e.getURLs();
+
+        for (int i = 0; i < urls.length; ++i)
+        {
+            URL url = urls[i];
+            ZipFile zipFile = getMinecriftZipFile(url);
+
+            if (zipFile != null)
+            {
+                debug("Minecrift ClassTransformer");
+                debug("Minecrift URL: " + url);
+                debug("Minecrift ZIP file: " + zipFile);
+                mcZipURL = url;
+                return zipFile;
+            }
+        }
+        return null;
     }
    
     

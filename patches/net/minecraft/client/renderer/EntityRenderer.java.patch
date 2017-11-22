@@ -2512,7 +2512,7 @@
          if (this.itemActivationItem != null && this.itemActivationTicks > 0)
          {
              int i = 40 - this.itemActivationTicks;
-@@ -2999,26 +3065,2164 @@
+@@ -2999,26 +3065,2103 @@
              float f2 = f * f1;
              float f3 = 10.25F * f2 * f1 + -24.95F * f1 * f1 + 25.5F * f2 + -13.8F * f1 + 4.0F * f;
              float f4 = f3 * (float)Math.PI;
@@ -2620,82 +2620,6 @@
 +		}
 +	}
 +
-+	
-+	public void doLookOverride(){
-+		float PIOVER180 = (float)(Math.PI/180);
-+		EntityPlayer entity = this.mc.player;
-+			if(entity == null)return;
-+			//This is used for all sorts of things both client and server side.
-+
-+			if(false){  //hmm, to use HMD? literally never.
-+				//set model view direction to camera
-+				//entity.rotationYawHead = entity.rotationYaw = (float)mc.vrPlayer.getHMDYaw_World();
-+				//entity.rotationPitch = (float)mc.vrPlayer.getHMDPitch_World();
-+			} else { //default to looking 'at' the crosshair position.
-+				if(crossVec != null){
-+					Vec3d playerToCrosshair = entity.getPositionEyes(1).subtract(crossVec); //backwards
-+					double what = playerToCrosshair.y/playerToCrosshair.lengthVector();
-+					if(what > 1) what = 1;
-+					if(what < -1) what = -1;
-+					float pitch = (float)Math.toDegrees(Math.asin(what));
-+					float yaw = (float)Math.toDegrees(Math.atan2(playerToCrosshair.x, -playerToCrosshair.z));    
-+					entity.rotationYaw = yaw;
-+					entity.rotationYawHead = yaw;
-+					entity.rotationPitch = pitch;
-+				}
-+			}
-+
-+			if(entity.isElytraFlying() || (entity.isRiding() && entity.moveForward > 0)){
-+				//us needed for server side movement.
-+				if(mc.vrSettings.vrFreeMoveMode == mc.vrSettings.FREEMOVE_HMD){
-+					entity.rotationYawHead = entity.rotationYaw = mc.vrPlayer.vrdata_world_pre.hmd.getYaw();
-+					entity.rotationPitch = -mc.vrPlayer.vrdata_world_render.hmd.getPitch();
-+				}else{
-+					entity.rotationYawHead = entity.rotationYaw = mc.vrPlayer.vrdata_world_pre.getController(1).getYaw();
-+					entity.rotationPitch = -mc.vrPlayer.vrdata_world_pre.getController(1).getPitch();
-+				}
-+			} else {
-+				ItemStack i = ((EntityPlayerSP) entity).inventory.getCurrentItem();
-+				if(i !=null){
-+					if(BowTracker.isBow(i) && mc.bowTracker.isNotched()){
-+						//use bow aim
-+						Vec3d aim = mc.bowTracker.getAimVector();
-+						if (aim != null && aim.lengthSquared() > 0) {
-+							//backwards in 1.10 
-+							float pitch = (float)Math.toDegrees(Math.asin(aim.y/aim.lengthVector()));
-+							float yaw = (float)Math.toDegrees(Math.atan2(aim.x, -aim.z));   		
-+
-+							entity.rotationYaw =  (float)yaw;
-+							entity.rotationPitch = (float)pitch;
-+							entity.rotationYawHead = yaw;							
-+						}
-+					}	 
-+					else if(i.getItem() == Items.SNOWBALL ||
-+							i.getItem() == Items.EGG  ||
-+							i.getItem() == Items.SPAWN_EGG  ||
-+							i.getItem() == Items.POTIONITEM  
-+							) {
-+						//use r_hand aim
-+						entity.rotationYawHead =	entity.rotationYaw =  mc.vrPlayer.vrdata_world_pre.getController(0).getYaw();
-+						entity.rotationPitch = -mc.vrPlayer.vrdata_world_pre.getController(0).getPitch();
-+					}
-+					else if(mc.swingTracker.shouldIlookatMyHand[0]){
-+						Vec3d playerToMain = entity.getPositionEyes(1).subtract(mc.vrPlayer.vrdata_world_pre.getController(0).getPosition()); //backwards
-+						float pitch =(float)Math.toDegrees(Math.asin(playerToMain.y/playerToMain.lengthVector()));
-+						float yaw = (float)Math.toDegrees(Math.atan2(playerToMain.x,-playerToMain.z));    
-+						entity.rotationYawHead  = entity.rotationYaw = yaw;
-+						entity.rotationPitch = pitch;
-+					}
-+					else if(mc.swingTracker.shouldIlookatMyHand[1]){
-+						Vec3d playerToMain = entity.getPositionEyes(1).subtract(mc.vrPlayer.vrdata_world_pre.getController(1).getPosition()); //backwards
-+						float pitch = (float)Math.toDegrees(Math.asin(playerToMain.y/playerToMain.lengthVector()));
-+						float yaw = (float)Math.toDegrees(Math.atan2(playerToMain.x, -playerToMain.z));    
-+						entity.rotationYawHead  = entity.rotationYaw = yaw;
-+						entity.rotationPitch = pitch;
-+					}
-+				}
-+			}
-+		}
 +
 +		
 +	
@@ -3157,7 +3081,11 @@
 +
 +			        Vec3d pos = mc.vrPlayer.vrdata_world_render.getEye(mc.currentPass).getPosition();
 +
-+					if (inMenuRoom || mc.currentScreen != null || !this.mc.vrSettings.hudOcclusion || itemRenderer.isInsideOpaqueBlock(pos, false)){
++			        boolean iamlazy = mc.vrSettings.vrHudLockMode == mc.vrSettings.HUD_LOCK_WRIST && MCOpenVR.hudPopup;
++			        
++					if (inMenuRoom || mc.currentScreen != null || iamlazy ||
++							!this.mc.vrSettings.hudOcclusion 
++							|| itemRenderer.isInsideOpaqueBlock(pos, false)){
 +						// Never use depth test for in game menu - so you can always see it!
 +						GlStateManager.disableDepth();
 +						guiOccluded = false; 
@@ -4038,7 +3966,12 @@
 +			renderCrosshair = false;
 +		}
 +		
-+		if (mc.climbTracker.isGrabbingLadder() && (mc.objectMouseOver == null || mc.objectMouseOver.entityHit==null))
++		if (mc.climbTracker.isGrabbingLadder() && mc.climbTracker.latchStartController == 0)
++		{
++			renderCrosshair = false;
++		}
++		
++		if (mc.climbTracker.isClimbeyClimb() && mc.climbTracker.isGrabbingLadder() && (mc.objectMouseOver==null || mc.objectMouseOver.entityHit == null))
 +		{
 +			renderCrosshair = false;
 +		}
@@ -4223,6 +4156,12 @@
 +//					eye = new Vec3d(mc.vrSettings.vrFixedCamposX, mc.vrSettings.vrFixedCamposY, mc.vrSettings.vrFixedCamposZ);
 +//				}
 +			}
++			
++			if(mc.currentScreen != null && mc.vrPlayer.guiPos_room == null){
++				//naughty mods!
++				mc.vrPlayer.onGuiScreenChanged(null, mc.currentScreen, false);			
++			}
++			
 +			Vec3d guipos = mc.vrPlayer.guiPos_room;
 +			Matrix4f guirot = mc.vrPlayer.guiRotation_room;
 +			Vec3d guiLocal = new Vec3d(0, 0, 0);		

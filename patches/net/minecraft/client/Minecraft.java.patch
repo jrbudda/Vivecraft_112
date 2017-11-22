@@ -292,7 +292,7 @@
 +	 * The minecriftVerString will be automatically updated by the build scripts, do not modify here.
 +	 * Modify minecriftversion.py in root minecrift dir.
 +	 */
-+    public final String minecriftVerString = "Vivecraft 1.12.2 jrbudda-5b2";
++    public final String minecriftVerString = "Vivecraft 1.12.2 jrbudda-5b5";
 +	/* end version */
 +	/** END MINECRIFT */
 +    
@@ -777,15 +777,12 @@
          this.mcProfiler.startSection("scheduledExecutables");
  
          synchronized (this.scheduledTasks)
-@@ -1200,67 +1570,193 @@
+@@ -1200,67 +1570,191 @@
          }
  
          this.mcProfiler.endSection();
 +        		
 +	
-+		//Vivecraft - setup the player entity with the correct view for the logic tick.
-+		this.entityRenderer.doLookOverride();
-+        ////
 +        
          long l = System.nanoTime();
          this.mcProfiler.startSection("tick");
@@ -804,6 +801,7 @@
 +            //
 +        }
 +       
++        
 +        //VIVECRAFT
 +		try {
 +			setupRenderConfiguration();
@@ -989,14 +987,14 @@
 +		
  
 -        this.mcProfiler.endSection();
- 
+-
 -        if (this.gameSettings.showDebugInfo && this.gameSettings.showDebugProfilerChart && !this.gameSettings.hideGUI)
 -        {
 -            if (!this.mcProfiler.profilingEnabled)
 -            {
 -                this.mcProfiler.clearProfiling();
 -            }
--
+ 
 -            this.mcProfiler.profilingEnabled = true;
 -            this.displayDebugInfo(i1);
 -        }
@@ -1021,7 +1019,7 @@
          ++this.fpsCounter;
          boolean flag = this.isSingleplayer() && this.currentScreen != null && this.currentScreen.doesGuiPauseGame() && !this.integratedServer.getPublic();
  
-@@ -1297,12 +1793,12 @@
+@@ -1297,12 +1791,12 @@
              }
          }
  
@@ -1040,7 +1038,7 @@
  
          this.mcProfiler.endSection();
      }
-@@ -1422,7 +1918,7 @@
+@@ -1422,7 +1916,7 @@
      /**
       * Parameter appears to be unused
       */
@@ -1049,7 +1047,7 @@
      {
          if (this.mcProfiler.profilingEnabled)
          {
-@@ -1559,7 +2055,8 @@
+@@ -1559,7 +2053,8 @@
                  }
  
                  this.inGameHasFocus = true;
@@ -1059,7 +1057,7 @@
                  this.displayGuiScreen((GuiScreen)null);
                  this.leftClickCounter = 10000;
              }
-@@ -1594,43 +2091,56 @@
+@@ -1594,43 +2089,56 @@
          }
      }
  
@@ -1130,7 +1128,7 @@
                  }
              }
              else if (!this.player.isRowingBoat())
-@@ -1644,42 +2154,47 @@
+@@ -1644,42 +2152,47 @@
                      case BLOCK:
                          BlockPos blockpos = this.objectMouseOver.getBlockPos();
  
@@ -1193,7 +1191,7 @@
                  }
  
                  for (EnumHand enumhand : EnumHand.values())
-@@ -1706,7 +2221,7 @@
+@@ -1706,7 +2219,7 @@
                              case BLOCK:
                                  BlockPos blockpos = this.objectMouseOver.getBlockPos();
  
@@ -1202,7 +1200,7 @@
                                  {
                                      int i = itemstack.getCount();
                                      EnumActionResult enumactionresult = this.playerController.processRightClickBlock(this.player, this.world, blockpos, this.objectMouseOver.sideHit, this.objectMouseOver.hitVec, enumhand);
-@@ -1714,10 +2229,14 @@
+@@ -1714,10 +2227,14 @@
                                      if (enumactionresult == EnumActionResult.SUCCESS)
                                      {
                                          this.player.swingArm(enumhand);
@@ -1218,7 +1216,7 @@
                                          }
  
                                          return;
-@@ -1801,29 +2320,14 @@
+@@ -1801,29 +2318,14 @@
      /**
       * Called to resize the current screen.
       */
@@ -1251,7 +1249,7 @@
      }
  
      /**
-@@ -1839,11 +2343,21 @@
+@@ -1839,11 +2341,21 @@
       */
      public void runTick() throws IOException
      {
@@ -1274,7 +1272,22 @@
          this.mcProfiler.startSection("gui");
  
          if (!this.isGamePaused)
-@@ -1930,7 +2444,7 @@
+@@ -1863,10 +2375,11 @@
+ 
+         this.mcProfiler.endStartSection("textures");
+ 
+-        if (this.world != null)
+-        {
++        // VIVE: nah we wanna tick textures on the main menu too
++        //if (this.world != null)
++        //{
+             this.renderEngine.tick();
+-        }
++        //}
+ 
+         if (this.currentScreen == null && this.player != null)
+         {
+@@ -1930,7 +2443,7 @@
                  }
              }
          }
@@ -1283,7 +1296,7 @@
          if (this.currentScreen == null || this.currentScreen.allowUserInput)
          {
              this.mcProfiler.endStartSection("mouse");
-@@ -1943,12 +2457,21 @@
+@@ -1943,12 +2456,21 @@
  
              this.mcProfiler.endStartSection("keyboard");
              this.runTickKeyboard();
@@ -1305,7 +1318,7 @@
                  ++this.joinPlayerCounter;
  
                  if (this.joinPlayerCounter == 30)
-@@ -1956,10 +2479,16 @@
+@@ -1956,10 +2478,16 @@
                      this.joinPlayerCounter = 0;
                      this.world.joinEntityInSurroundings(this.player);
                  }
@@ -1323,7 +1336,7 @@
              if (!this.isGamePaused)
              {
                  this.entityRenderer.updateRenderer();
-@@ -1989,6 +2518,9 @@
+@@ -1989,6 +2517,9 @@
              this.entityRenderer.stopUseShader();
          }
  
@@ -1333,7 +1346,7 @@
          if (!this.isGamePaused)
          {
              this.mcMusicTicker.update();
-@@ -2043,8 +2575,12 @@
+@@ -2043,8 +2574,12 @@
              this.mcProfiler.endStartSection("pendingConnection");
              this.myNetworkManager.processReceivedPackets();
          }
@@ -1347,7 +1360,7 @@
          this.systemTime = getSystemTime();
      }
  
-@@ -2079,6 +2615,14 @@
+@@ -2079,6 +2614,14 @@
                  this.currentScreen.handleKeyboardInput();
              }
  
@@ -1362,7 +1375,7 @@
              boolean flag = Keyboard.getEventKeyState();
  
              if (flag)
-@@ -2088,6 +2632,8 @@
+@@ -2088,6 +2631,8 @@
                      this.entityRenderer.switchUseShader();
                  }
  
@@ -1371,7 +1384,7 @@
                  boolean flag1 = false;
  
                  if (this.currentScreen == null)
-@@ -2095,6 +2641,7 @@
+@@ -2095,6 +2640,7 @@
                      if (i == 1)
                      {
                          this.displayInGameMenu();
@@ -1379,7 +1392,7 @@
                      }
  
                      flag1 = Keyboard.isKeyDown(61) && this.processKeyF3(i);
-@@ -2102,7 +2649,9 @@
+@@ -2102,7 +2648,9 @@
  
                      if (i == 59)
                      {
@@ -1390,7 +1403,7 @@
                      }
                  }
  
-@@ -2150,6 +2699,11 @@
+@@ -2150,6 +2698,11 @@
                      }
                  }
              }
@@ -1402,7 +1415,7 @@
          }
  
          this.processKeyBinds();
-@@ -2254,20 +2808,37 @@
+@@ -2254,20 +2807,37 @@
      {
          for (; this.gameSettings.keyBindTogglePerspective.isPressed(); this.renderGlobal.setDisplayListEntitiesDirty())
          {
@@ -1454,7 +1467,7 @@
              }
          }
  
-@@ -2336,22 +2907,41 @@
+@@ -2336,22 +2906,41 @@
  
          if (flag2)
          {
@@ -1503,7 +1516,7 @@
              }
  
              label109:
-@@ -2377,17 +2967,27 @@
+@@ -2377,17 +2966,27 @@
                  }
              }
          }
@@ -1539,7 +1552,7 @@
  
              while (this.gameSettings.keyBindPickBlock.isPressed())
              {
-@@ -2395,18 +2995,23 @@
+@@ -2395,18 +2994,23 @@
              }
          }
  
@@ -1566,7 +1579,7 @@
              int i = Mouse.getEventButton();
              KeyBinding.setKeyBindState(i - 100, Mouse.getEventButtonState());
  
-@@ -2421,6 +3026,11 @@
+@@ -2421,6 +3025,11 @@
                      KeyBinding.onTick(i - 100);
                  }
              }
@@ -1578,7 +1591,7 @@
  
              long j = getSystemTime() - this.systemTime;
  
-@@ -2475,6 +3085,15 @@
+@@ -2475,6 +3084,15 @@
       */
      public void launchIntegratedServer(String folderName, String worldName, @Nullable WorldSettings worldSettingsIn)
      {
@@ -1594,7 +1607,7 @@
          this.loadWorld((WorldClient)null);
          System.gc();
          ISaveHandler isavehandler = this.saveLoader.getSaveLoader(folderName, false);
-@@ -2517,6 +3136,16 @@
+@@ -2517,6 +3135,16 @@
  
          while (!this.integratedServer.serverIsInRunLoop())
          {
@@ -1611,7 +1624,7 @@
              String s = this.integratedServer.getUserMessage();
  
              if (s != null)
-@@ -2537,12 +3166,20 @@
+@@ -2537,12 +3165,20 @@
                  ;
              }
          }
@@ -1634,7 +1647,7 @@
          networkmanager.sendPacket(new CPacketLoginStart(this.getSession().getProfile()));
          this.myNetworkManager = networkmanager;
      }
-@@ -2552,6 +3189,9 @@
+@@ -2552,6 +3188,9 @@
       */
      public void loadWorld(@Nullable WorldClient worldClientIn)
      {
@@ -1644,7 +1657,7 @@
          this.loadWorld(worldClientIn, "");
      }
  
-@@ -2560,6 +3200,11 @@
+@@ -2560,6 +3199,11 @@
       */
      public void loadWorld(@Nullable WorldClient worldClientIn, String loadingMessage)
      {
@@ -1656,7 +1669,7 @@
          if (worldClientIn == null)
          {
              NetHandlerPlayClient nethandlerplayclient = this.getConnection();
-@@ -2572,6 +3217,22 @@
+@@ -2572,6 +3216,22 @@
              if (this.integratedServer != null && this.integratedServer.isAnvilFileSet())
              {
                  this.integratedServer.initiateShutdown();
@@ -1679,7 +1692,7 @@
              }
  
              this.integratedServer = null;
-@@ -2595,6 +3256,11 @@
+@@ -2595,6 +3255,11 @@
              this.ingameGUI.resetPlayersOverlayFooterHeader();
              this.setServerData((ServerData)null);
              this.integratedServerIsRunning = false;
@@ -1691,7 +1704,7 @@
          }
  
          this.mcSoundHandler.stopSounds();
-@@ -2701,6 +3367,7 @@
+@@ -2701,6 +3366,7 @@
          return instance == null || !instance.gameSettings.hideGUI;
      }
  
@@ -1699,7 +1712,7 @@
      public static boolean isFancyGraphicsEnabled()
      {
          return instance != null && instance.gameSettings.fancyGraphics;
-@@ -2717,8 +3384,14 @@
+@@ -2717,8 +3383,14 @@
      /**
       * Called when user clicked he's mouse middle button (pick block)
       */
@@ -1715,7 +1728,7 @@
          if (this.objectMouseOver != null && this.objectMouseOver.typeOfHit != RayTraceResult.Type.MISS)
          {
              boolean flag = this.player.capabilities.isCreativeMode;
-@@ -2882,7 +3555,8 @@
+@@ -2882,7 +3554,8 @@
          }
      }
  
@@ -1725,7 +1738,7 @@
      {
          NBTTagCompound nbttagcompound = te.writeToNBT(new NBTTagCompound());
  
-@@ -3212,6 +3886,11 @@
+@@ -3212,6 +3885,11 @@
       */
      public static int getGLMaximumTextureSize()
      {
@@ -1737,7 +1750,7 @@
          for (int i = 16384; i > 0; i >>= 1)
          {
              GlStateManager.glTexImage2D(32868, 0, 6408, i, i, 0, 6408, 5121, (IntBuffer)null);
-@@ -3400,7 +4079,7 @@
+@@ -3400,7 +4078,7 @@
      }
  
      public void dispatchKeypresses()
@@ -1746,7 +1759,7 @@
          int i = Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey();
  
          if (i != 0 && !Keyboard.isRepeatEvent())
-@@ -3582,4 +4261,1189 @@
+@@ -3582,4 +4260,1189 @@
      {
          return this.tutorial;
      }
@@ -2865,7 +2878,7 @@
 +					}
 +					
 +					if (MCOpenVR.isWalkingAbout){
-+						if(k<0.8)k=.8f;
++						if(k<0.8)k=.5f;
 +					}
 +						
 +				} else {

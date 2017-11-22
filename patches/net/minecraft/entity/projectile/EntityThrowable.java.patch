@@ -20,7 +20,7 @@
  import net.minecraft.util.EnumParticleTypes;
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.datafix.DataFixer;
-@@ -56,7 +62,17 @@
+@@ -56,7 +62,18 @@
      public EntityThrowable(World worldIn, EntityLivingBase throwerIn)
      {
          this(worldIn, throwerIn.posX, throwerIn.posY + (double)throwerIn.getEyeHeight() - 0.10000000149011612D, throwerIn.posZ);
@@ -32,13 +32,14 @@
 +        if (vp !=null)
 +        {
 +	        Vec3d aimSource = vp.getControllerPos(0);
-+	        this.setPosition(aimSource.x, aimSource.y, aimSource.z);
++	        Vec3d aimDir = vp.getControllerDir(0).scale(0.6f);
++    		this.setPosition(aimSource.x + aimDir.x ,aimSource.y + aimDir.y ,aimSource.z+aimDir.z );
 +        } 
 +        ///
      }
  
      protected void entityInit()
-@@ -84,6 +100,17 @@
+@@ -84,6 +101,17 @@
       */
      public void shoot(Entity entityThrower, float rotationPitchIn, float rotationYawIn, float pitchOffset, float velocity, float inaccuracy)
      {
@@ -56,7 +57,7 @@
          float f = -MathHelper.sin(rotationYawIn * 0.017453292F) * MathHelper.cos(rotationPitchIn * 0.017453292F);
          float f1 = -MathHelper.sin((rotationPitchIn + pitchOffset) * 0.017453292F);
          float f2 = MathHelper.cos(rotationYawIn * 0.017453292F) * MathHelper.cos(rotationPitchIn * 0.017453292F);
-@@ -259,7 +286,8 @@
+@@ -259,7 +287,8 @@
              }
              else
              {

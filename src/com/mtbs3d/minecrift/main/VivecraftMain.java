@@ -117,7 +117,8 @@ public class VivecraftMain
          	mainMethod.invoke(null, (Object) p_main_0_);
 		} catch (Exception e) {
 	    	System.out.println("************** Vivecraft critical error ***************");
-			Throwables.propagate(e);
+			Throwables.throwIfUnchecked(e);
+			throw new RuntimeException(e);
 		}
     	
     }

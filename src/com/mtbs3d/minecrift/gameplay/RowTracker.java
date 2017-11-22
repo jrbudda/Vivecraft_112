@@ -26,25 +26,38 @@ public class RowTracker {
 			return false;
 		if(!(p.getRidingEntity() instanceof EntityBoat))
 			return false;
+		if(Minecraft.getMinecraft().bowTracker.isNotched())
+			return false;
 		return true;
 	}
 
-	public boolean LOar, ROar, Foar;
+	public float LOar, ROar, Foar;
+	
+	public boolean isRowing(){
+		return ROar + LOar + Foar > 0;
+	}
 	
 	public void doProcess(Minecraft minecraft, EntityPlayerSP player){
 		if(!isActive(player)) {
-			LOar = false;
-			ROar = false;
+			LOar = 0;
+			ROar = 0;
+			Foar = 0;
 			return;
 		}
 
 		double c0move = MCOpenVR.controllerHistory[0].averageSpeed(0.5);
 		double c1move = MCOpenVR.controllerHistory[1].averageSpeed(0.5);
 
-		ROar = c0move > 0.9f;
-		LOar = c1move > 0.9f;
-		Foar = c0move > 0.4f && c1move > 0.4f;
+		float minspeed = 0.5f;
+		float maxspeed = 2;
 		
+		ROar = (float) Math.max(c0move - minspeed,0);
+		LOar = (float) Math.max(c1move - minspeed,0);
+		Foar = ROar > 0 && LOar > 0 ? (ROar + LOar) / 2 : 0;
+		if(Foar > maxspeed) Foar = maxspeed;
+		if(ROar > maxspeed) ROar = maxspeed;
+		if(LOar > maxspeed) LOar = maxspeed;
+
 		//TODO: Backwards paddlin'
 		
 	}

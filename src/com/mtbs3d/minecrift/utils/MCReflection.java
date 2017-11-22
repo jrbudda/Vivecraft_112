@@ -34,16 +34,15 @@ public class MCReflection {
 		try {
 			return field.get(obj);
 		} catch (ReflectiveOperationException e) {
-			Throwables.propagate(e);
+			throw new RuntimeException(e);
 		}
-		return null; // shut up compiler
 	}
 	
 	public static void setField(Field field, Object obj, Object value) {
 		try {
 			field.set(obj, value);
 		} catch (ReflectiveOperationException e) {
-			Throwables.propagate(e);
+			throw new RuntimeException(e);
 		}
 	}
 	
@@ -51,18 +50,16 @@ public class MCReflection {
 		try {
 			return method.invoke(obj, args);
 		} catch (ReflectiveOperationException e) {
-			Throwables.propagate(e);
+			throw new RuntimeException(e);
 		}
-		return null; // shut up compiler
 	}
 	
 	public static Object invokeConstructor(Constructor constructor, Object... args) {
 		try {
 			return constructor.newInstance(args);
 		} catch (ReflectiveOperationException e) {
-			Throwables.propagate(e);
+			throw new RuntimeException(e);
 		}
-		return null; // shut up compiler
 	}
 	
 	public static Class<?> getClassForName(String name) {
@@ -103,7 +100,7 @@ public class MCReflection {
 				catch (NoSuchFieldException e2)
 				{
 					System.out.println("[Vivecraft] WARNING: could not reflect field " + unObfuscatedName + "," + srgName + "," + obfuscatedName + " in " + clazz.toString());
-					Throwables.propagate(e);
+					throw new RuntimeException(e);
 				};
 			};
 		}
@@ -136,7 +133,7 @@ public class MCReflection {
 				catch (NoSuchMethodException e2)
 				{
 					System.out.println("[Vivecraft] WARNING: could not reflect method " + unObfuscatedName + "," + srgName + "," + obfuscatedName + " in " + clazz.toString());
-					Throwables.propagate(e);
+					throw new RuntimeException(e);
 				};
 			};
 		}

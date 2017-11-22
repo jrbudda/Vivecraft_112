@@ -44,16 +44,21 @@ def zipmerge( target_file, source_file ):
     #os.remove( target_file )
     shutil.copy( out_filename, target_file )
 
-def process_json( addon, version ):
+def process_json(addon, version, mcversion, forgeversion, ofversion):
     json_id = "vivecraft-"+version+addon
     lib_id = "com.mtbs3d:minecrift:"+version
     time = datetime.datetime(1979,6,1).strftime("%Y-%m-%dT%H:%M:%S-05:00")
     with  open(os.path.join("installer","vivecraft-" + mc_version + addon + ".json"),"rb") as f:
-        json_obj = json.load(f)
+        s=f.read()
+        s=s.replace("$MCVERSION", mcversion)
+        s=s.replace("$FORGEVERSION", forgeversion)
+        s=s.replace("$OFVERSION", ofversion)
+        s=s.replace("$VERSION", version+addon)
+        json_obj = json.loads(s)
         json_obj["id"] = json_id
         json_obj["time"] = time
         json_obj["releaseTime"] = time
-        json_obj["libraries"].insert(0,{"name":lib_id}) #Insert at beginning
+        json_obj["libraries"].insert(0,{"name":lib_id, "MMC-hint":"local"}) #Insert at beginning
         #json_obj["libraries"].append({"name":"net.minecraft:Minecraft:"+mc_version}) #Insert at end
         return json.dumps( json_obj, indent=1 )
 
@@ -150,8 +155,8 @@ def create_install(mcp_dir):
                     install_out.write(os.path.join(dirName,afile), os.path.join(relpath,afile))
             
         # Add json files
-        install_out.writestr("version.json", process_json("", version))
-        install_out.writestr( "version-forge.json", process_json("-forge", version))
+        install_out.writestr("version.json", process_json("", version,minecrift_version_num,"",of_file_name ))
+        install_out.writestr( "version-forge.json", process_json("-forge", version,minecrift_version_num,forge_version,of_file_name ))
         
         # Add release notes
         install_out.write("CHANGES.md", "release_notes.txt")

@@ -19,7 +19,8 @@ public class GuiSeatedOptions extends BaseGuiSettings implements GuiEventEx
 			VRSettings.VrOptions.X_SENSITIVITY,
 			VRSettings.VrOptions.Y_SENSITIVITY,
 			VRSettings.VrOptions.KEYHOLE,
-            VRSettings.VrOptions.SEATED_HUD_XHAIR
+            VRSettings.VrOptions.SEATED_HUD_XHAIR,
+            VRSettings.VrOptions.WORLD_ROTATION_INCREMENT        
 	};
 	
 	
@@ -59,9 +60,9 @@ public class GuiSeatedOptions extends BaseGuiSettings implements GuiEventEx
 		addButtons(buttons, 0);
 		
         if(mc.vrPlayer.getFreeMove())
-        	addButtons(freeMoveSettings,105);
+        	addButtons(freeMoveSettings,104);
         else
-        	addButtons(teleportSettings,105); 
+        	addButtons(teleportSettings,104); 
         
 	}
 
@@ -99,8 +100,14 @@ public class GuiSeatedOptions extends BaseGuiSettings implements GuiEventEx
 					maxValue = 40f;
 					increment = 5f;
 				}
-
-				this.buttonList.add(new GuiSliderEx(var8.returnEnumOrdinal(), width, height, var8, this.guivrSettings.getKeyBinding(var8), minValue, maxValue, increment, this.guivrSettings.getOptionFloatValue(var8)));
+                else if (var8 == VrOptions.WORLD_ROTATION_INCREMENT){
+                    minValue = -1f;
+                    maxValue = 4f;
+                    increment = 1f;
+                }
+                GuiSliderEx slider = new GuiSliderEx(var8.returnEnumOrdinal(), width, height - 20, var8, this.guivrSettings.getKeyBinding(var8), minValue, maxValue, increment, this.guivrSettings.getOptionFloatValue(var8));
+                slider.setEventHandler(this);
+                this.buttonList.add(slider);
 			}
 			else
 			{
@@ -108,6 +115,7 @@ public class GuiSeatedOptions extends BaseGuiSettings implements GuiEventEx
 			}
 		}
 	}
+	
 
 	/**
 	 * Fired when a control is clicked. This is the equivalent of ActionListener.actionPerformed(ActionEvent e).
@@ -201,6 +209,12 @@ public class GuiSeatedOptions extends BaseGuiSettings implements GuiEventEx
                         "Shrinks the field of view while moving. Can help with",
                         "motion sickness."
                 } ;
+            case WORLD_ROTATION_INCREMENT:
+                return new String[] {
+                        "How many degrees to rotate when",
+                        "rotating the world."
+                        
+                };
             default:
                 return null;
             }

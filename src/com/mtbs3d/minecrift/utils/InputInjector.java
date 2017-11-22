@@ -35,45 +35,37 @@ public class InputInjector {
 		}
 	}
 	
-	private static boolean loadObjects() {
+	private static boolean loadObjects() throws ReflectiveOperationException {
 		checkSupported();
 		if (supported) { // They need to be loaded every time because apparently they can be recreated without warning
 			if (displayClass == null) loadClasses();
-			try {
-				Object displayImpl = getFieldValue(Display.class, "display_impl", null);
-				switch (LWJGLUtil.getPlatform()) {
-					case LWJGLUtil.PLATFORM_WINDOWS:
-						keyboard = getFieldValue(displayClass, "keyboard", displayImpl);
-						mouse = getFieldValue(displayClass, "mouse", displayImpl);
-						break;
-					case LWJGLUtil.PLATFORM_LINUX:
-						keyboard = getFieldValue(displayClass, "keyboard", displayImpl);
-						mouse = getFieldValue(displayClass, "mouse", displayImpl);
-						break;
-				}
-			} catch (Exception e) {
-				Throwables.propagate(e);
+			Object displayImpl = getFieldValue(Display.class, "display_impl", null);
+			switch (LWJGLUtil.getPlatform()) {
+				case LWJGLUtil.PLATFORM_WINDOWS:
+					keyboard = getFieldValue(displayClass, "keyboard", displayImpl);
+					mouse = getFieldValue(displayClass, "mouse", displayImpl);
+					break;
+				case LWJGLUtil.PLATFORM_LINUX:
+					keyboard = getFieldValue(displayClass, "keyboard", displayImpl);
+					mouse = getFieldValue(displayClass, "mouse", displayImpl);
+					break;
 			}
 		}
 		return supported;
 	}
 	
-	private static void loadClasses() {
-		try {
-			switch (LWJGLUtil.getPlatform()) {
-				case LWJGLUtil.PLATFORM_WINDOWS:
-					displayClass = Class.forName("org.lwjgl.opengl.WindowsDisplay");
-					keyboardClass = Class.forName("org.lwjgl.opengl.WindowsKeyboard");
-					mouseClass = Class.forName("org.lwjgl.opengl.WindowsMouse");
-					break;
-				case LWJGLUtil.PLATFORM_LINUX:
-					displayClass = Class.forName("org.lwjgl.opengl.LinuxDisplay");
-					keyboardClass = Class.forName("org.lwjgl.opengl.LinuxKeyboard");
-					mouseClass = Class.forName("org.lwjgl.opengl.LinuxMouse");
-					break;
-			}
-		} catch (Exception e) {
-			Throwables.propagate(e);
+	private static void loadClasses() throws ReflectiveOperationException {
+		switch (LWJGLUtil.getPlatform()) {
+			case LWJGLUtil.PLATFORM_WINDOWS:
+				displayClass = Class.forName("org.lwjgl.opengl.WindowsDisplay");
+				keyboardClass = Class.forName("org.lwjgl.opengl.WindowsKeyboard");
+				mouseClass = Class.forName("org.lwjgl.opengl.WindowsMouse");
+				break;
+			case LWJGLUtil.PLATFORM_LINUX:
+				displayClass = Class.forName("org.lwjgl.opengl.LinuxDisplay");
+				keyboardClass = Class.forName("org.lwjgl.opengl.LinuxKeyboard");
+				mouseClass = Class.forName("org.lwjgl.opengl.LinuxMouse");
+				break;
 		}
 	}
 	
@@ -105,16 +97,16 @@ public class InputInjector {
 	public static void pressKey(int code, char ch) {
 		try {
 			putKeyboardEvent(code, true, ch);
-		} catch (Exception e) {
-			Throwables.propagate(e);
+		} catch (ReflectiveOperationException e) {
+			throw new RuntimeException(e);
 		}
 	}
 	
 	public static void releaseKey(int code, char ch) {
 		try {
 			putKeyboardEvent(code, false, ch);
-		} catch (Exception e) {
-			Throwables.propagate(e);
+		} catch (ReflectiveOperationException e) {
+			throw new RuntimeException(e);
 		}
 	}
 	
@@ -135,8 +127,8 @@ public class InputInjector {
 					putMouseEventWithCoords(-1, false, x, y, 0, nanos);
 				}
 			}
-		} catch (Exception e) {
-			Throwables.propagate(e);
+		} catch (ReflectiveOperationException e) {
+			throw new RuntimeException(e);
 		}
 	}
 	

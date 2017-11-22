@@ -129,10 +129,11 @@ public class VRSettings
     public boolean realisticClimbEnabled=true;
     public boolean realisticSwimEnabled=true;
     public boolean realisticRowEnabled=true;
+    public boolean backpackSwitching = true;
     public float walkMultiplier=1;
     public boolean vrAllowCrawling = false; //unused
     public boolean vrShowBlueCircleBuddy = true;
-    public boolean vehicleRotation = false; //unused
+    public boolean vehicleRotation = true; 
     public boolean animaltouching = true;
     //
     
@@ -632,6 +633,10 @@ public class VRSettings
                     if(optionTokens[0].equals("forceHardwareDetection")){
                         this.forceHardwareDetection=Integer.parseInt(optionTokens[1]);
                     }
+                    
+                    if(optionTokens[0].equals("backpackSwitching")){
+                        this.backpackSwitching=optionTokens[1].equals("true");
+                    }
 
                     if (optionTokens[0].startsWith("BUTTON_") || optionTokens[0].startsWith("OCULUS_"))
                     {
@@ -939,6 +944,9 @@ public class VRSettings
                 return this.useFOVReduction ? var4 + "ON" : var4 + "OFF";
             case AUTO_OPEN_KEYBOARD:
                 return this.autoOpenKeyboard ? var4 + "YES" : var4 + "NO";
+            case BACKPACK_SWITCH:
+                return this.backpackSwitching ? var4 + "YES" : var4 + "NO";
+
  	        default:
 	        	return "";
         }
@@ -1179,6 +1187,9 @@ public class VRSettings
             case REALISTIC_SNEAK:
                 realisticSneakEnabled = !realisticSneakEnabled;
                 break;
+            case BACKPACK_SWITCH:
+                backpackSwitching = !backpackSwitching;
+                break;
             case VEHICLE_ROTATION:
                 vehicleRotation = !vehicleRotation;
                 break;
@@ -1274,6 +1285,7 @@ public class VRSettings
                 MCOpenVR.seatedRot = par2;
                 break;
             case WORLD_ROTATION_INCREMENT:
+            	this.vrWorldRotation = 0;
             	if(par2 == -1f) this.vrWorldRotationIncrement =  0f;
             	if(par2 == 0f) this.vrWorldRotationIncrement =  10f;
             	if(par2 == 1f) this.vrWorldRotationIncrement =  36f;            	
@@ -1418,6 +1430,7 @@ public class VRSettings
             var5.println("alwaysSimulateKeyboard:" + this.alwaysSimulateKeyboard);
             var5.println("autoOpenKeyboard:" + this.autoOpenKeyboard);
             var5.println("forceHardwareDetection:" + this.forceHardwareDetection);
+            var5.println("backpackSwitching:" + this.backpackSwitching);
 
             if (vrQuickCommands == null) vrQuickCommands = getQuickCommandsDefaults(); //defaults
             
@@ -1596,7 +1609,8 @@ public class VRSettings
         OTHER_RENDER_SETTINGS("IPD / FOV...", false, true),
         LOCOMOTION_SETTINGS("Locomotion Settings...", false, true), 
         SEATED_HMD("Forward Direction",false,true),
-        SEATED_HUD_XHAIR("HUD Follows",false,true); 
+        SEATED_HUD_XHAIR("HUD Follows",false,true), 
+        BACKPACK_SWITCH("Backpack Switching",false,true); 
 
 //        ANISOTROPIC_FILTERING("options.anisotropicFiltering", true, false, 1.0F, 16.0F, 0.0F)
 //                {

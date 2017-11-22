@@ -15,17 +15,27 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Formatter;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
+
+import com.google.common.io.Files;
+import com.mtbs3d.minecrift.provider.MCOpenVR;
+import com.mtbs3d.minecrift.tweaker.MinecriftClassTransformer;
 
 import jopenvr.HmdMatrix34_t;
 import net.minecraft.util.math.Vec3d;
@@ -231,6 +241,58 @@ public class Utils
 		mat.m21 = matrix.m21;
 		mat.m22 = matrix.m22;
 		return mat;
+	}
+	
+	public static void unpackNatives(String directory) {
+		try {
+			new File("openvr/" + directory).mkdirs();
+				
+			// dev environment
+			Path dir = Paths.get(System.getProperty("user.dir")); // ..\mcpxxx\jars\
+			Path path = dir.getParent().resolve("src/assets/natives/" + directory);
+			if (!path.toFile().exists()) {
+				path = dir.getParent().getParent().resolve("assets/vivecraft/natives/" + directory);
+			}
+			if (path.toFile().exists()) { 
+				System.out.println("Copying " + directory + " natives...");
+				for (File file : path.toFile().listFiles()) {
+					System.out.println(file.getName());
+					Files.copy(file, new File("openvr/" + directory + "/" + file.getName()));
+				}
+				return;
+			}
+			//
+			
+			//Live
+			System.out.println("Unpacking " + directory + " natives...");
+			ZipFile zip = MinecriftClassTransformer.findMinecriftZipFile();
+			Enumeration<? extends ZipEntry> entries = zip.entries();
+			while (entries.hasMoreElements()) {
+				ZipEntry entry = entries.nextElement();
+				if (entry.getName().startsWith("assets/vivecraft/natives/" + directory)) {
+					String name = Paths.get(entry.getName()).getFileName().toString();
+					System.out.println(name);
+					writeStreamToFile(zip.getInputStream(entry), new File("openvr/" + directory + "/" + name));
+				}
+			}
+			zip.close();
+			//
+		} catch (Exception e) {
+			System.out.println("Failed to unpack natives");
+			e.printStackTrace();
+		}
+	}
+	
+	public static void writeStreamToFile(InputStream is, File file) throws IOException {
+		FileOutputStream fos = new FileOutputStream(file);
+		byte[] buffer = new byte[4096];
+		int count;
+		while ((count = is.read(buffer, 0, buffer.length)) != -1) {
+			fos.write(buffer, 0, count);
+		}
+		fos.flush();
+		fos.close();
+		is.close();
 	}
 
 	public static String httpReadLine(String url) throws IOException {

@@ -441,7 +441,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
             try {
 				File mc_jar = null;
 				String minecriftVersionName = "vivecraft-" + version + mod;
-				s+=		minecriftVersionName;
+				s+=	minecriftVersionName;
 				File tar = new File(targetDir, "versions" + File.separator + minecriftVersionName + File.separator +  minecriftVersionName + ".jar");
 				s+=MC_MD5 + " " + GetMd5(tar);
 				if(checkMD5(tar, MC_MD5)) return true;
@@ -535,6 +535,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 								int jsonIndentSpaces = 2;
 								File fileJson = ver_json_file;
 								String json = readAsciiFile(fileJson);
+								json = json.replace("$FILE",jar_id);
 								JSONObject root = new JSONObject(json);
 								String args = (String)root.get("minecraftArguments");
 								if(katvr.isSelected()) args += " --katvr";
@@ -603,6 +604,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
         // VIVE START - install openVR dlls
         private boolean InstallOpenVR() {
 		//nope.
+			return true;
         }
 		
 		private boolean installFile(String osFolder, String resource){
@@ -852,7 +854,8 @@ public class Installer extends JPanel  implements PropertyChangeListener
             monitor.setProgress(50);
             monitor.setNote("Checking for base game...");
 			
-     
+			if (useForge.isSelected() ) mod = "-forge";
+
             if(!SetupMinecraftAsLibrary())
             {
             JOptionPane.showMessageDialog(null,
@@ -1518,6 +1521,24 @@ public class Installer extends JPanel  implements PropertyChangeListener
                         }
                     }
                 }
+
+				if(forgeVersionInstalled){
+					forgeVersionInstalled = false;
+					ForgeDir = new File( targetDir, "versions" + File.separator + MC_VERSION + "-forge" + MC_VERSION + "-" + FORGE_VERSION);
+					if( ForgeDir.isDirectory() ) {
+						forgeVersions = ForgeDir.list();
+						if (forgeVersions != null && forgeVersions.length > 0) {
+							// Check for the currently required json
+							for (String forgeVersion : forgeVersions) {
+								if (forgeVersion.contains("json")) {
+									forgeVersionInstalled = true;
+									break;
+								}
+							}
+						}
+					}
+				}
+
             }
             selectedDirText.setText(targetDir.getPath());
             selectedDirText.setForeground(Color.BLACK);

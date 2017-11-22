@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/projectile/EntityArrow.java
 +++ b/net/minecraft/entity/projectile/EntityArrow.java
-@@ -2,11 +2,15 @@
+@@ -2,11 +2,18 @@
  
  import com.google.common.base.Predicate;
  import com.google.common.base.Predicates;
@@ -9,6 +9,9 @@
 +
  import java.util.List;
  import javax.annotation.Nullable;
++
++import org.apache.http.impl.client.AIMDBackoffManager;
++
  import net.minecraft.block.Block;
  import net.minecraft.block.material.Material;
  import net.minecraft.block.state.IBlockState;
@@ -16,7 +19,7 @@
  import net.minecraft.enchantment.EnchantmentHelper;
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityLivingBase;
-@@ -92,6 +96,15 @@
+@@ -92,6 +99,16 @@
  
          if (shooter instanceof EntityPlayer)
          {
@@ -25,28 +28,38 @@
 +        	{
 +        		//VIVE SET SPAWNPOS - Aim is handled by LookOverride.
 +    	        Vec3d aimSource = vp.getControllerPos(1);
-+        		this.setPosition(aimSource.x ,aimSource.y ,aimSource.z );
++    	        Vec3d aimDir = shooter.getLookVec().scale(0.6f);
++        		this.setPosition(aimSource.x + aimDir.x ,aimSource.y + aimDir.y ,aimSource.z+aimDir.z );
 +        		///
 +        	}
 +            
              this.pickupStatus = EntityArrow.PickupStatus.ALLOWED;
          }
      }
-@@ -122,6 +135,18 @@
-         float f = -MathHelper.sin(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F);
-         float f1 = -MathHelper.sin(pitch * 0.017453292F);
-         float f2 = MathHelper.cos(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F);
-+        
-+        //VIVE SET VELOCITY
-+        if(shooter.getEntityId() == Minecraft.getMinecraft().player.getEntityId()){
-+        	VivePlayer vp = NetworkHelper.vivePlayers.get(shooter.getUniqueID());
-+        	if (vp !=null && !vp.isSeated())
-+        	{        		
+@@ -119,9 +136,27 @@
+ 
+     public void shoot(Entity shooter, float pitch, float yaw, float p_184547_4_, float velocity, float inaccuracy)
+     {
++    	
++    	//VIVE SET AIM AND SPEED
++        VivePlayer vp = NetworkHelper.vivePlayers.get(shooter.getUniqueID());
++        if (vp !=null )
++        { 
++    		Vec3d aim = vp.getControllerDir(0);
++        	if(!vp.isSeated()){
++        		aim = vp.getControllerPos(0).subtract(vp.getControllerPos(1)).normalize();
 +        		velocity = velocity * vp.getDraw();  
 +        		this.damage *= 2;
 +        	}
++			pitch = (float)Math.toDegrees(Math.asin(aim.y/aim.lengthVector()));
++			yaw = (float)Math.toDegrees(Math.atan2(aim.x, -aim.z));   		
 +        }
 +        ///
++        
+         float f = -MathHelper.sin(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F);
+         float f1 = -MathHelper.sin(pitch * 0.017453292F);
+         float f2 = MathHelper.cos(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F);
++ 
 +
          this.shoot((double)f, (double)f1, (double)f2, velocity, inaccuracy);
          this.motionX += shooter.motionX;

@@ -22,41 +22,36 @@ import net.minecraft.client.settings.GameSettings;
 
 
 public class GuiMinecriftSettings extends BaseGuiSettings implements GuiEventEx
-{
-    public static final int PROFILES_ID = 915;
-
-    
-
+{    
     static VROption[] vrAlwaysOptions = new VROption[]
         {
-            new VROption(202,VROption.Position.POS_RIGHT,  2,  VROption.ENABLED, "HUD and GUI Settings..."),
-            new VROption(206,VROption.Position.POS_LEFT,   1f, VROption.ENABLED, "Stereo Rendering..."),
-            new VROption(207,VROption.Position.POS_RIGHT,  1f, VROption.ENABLED, "Quick Commands..."),
-            new VROption(210,VROption.Position.POS_RIGHT,  3f, VROption.ENABLED, "Crosshair Settings..."),
-            new VROption(VRSettings.VrOptions.PLAY_MODE_SEATED,       VROption.Position.POS_LEFT,   4.5f, VROption.ENABLED, null),
+            new VROption(202,VROption.Position.POS_LEFT,  1,  VROption.ENABLED, "HUD and GUI Settings..."),
+            new VROption(206,VROption.Position.POS_LEFT,   0, VROption.ENABLED, "Stereo Rendering..."),
+            new VROption(207,VROption.Position.POS_RIGHT,  0, VROption.ENABLED, "Quick Commands..."),
+            new VROption(210,VROption.Position.POS_RIGHT,  1, VROption.ENABLED, "Crosshair Settings..."),
             new VROption(VRSettings.VrOptions.WORLD_SCALE,       	VROption.Position.POS_LEFT,   6f, VROption.ENABLED, null),
             new VROption(VRSettings.VrOptions.WORLD_ROTATION,       VROption.Position.POS_RIGHT,   6f, VROption.ENABLED, null),
-            new VROption(VRSettings.VrOptions.RESET_ORIGIN,       VROption.Position.POS_LEFT,   7f, VROption.ENABLED, null),
  
         };
     
     static VROption[] vrStandingOptions = new VROption[]
             {
-                new VROption(209,                                      VROption.Position.POS_LEFT,   2f, VROption.ENABLED, "Locomotion Settings..."),
-                new VROption(220, 							           VROption.Position.POS_LEFT,   3f, VROption.ENABLED, "Controller Buttons..."),
-                new VROption(VRSettings.VrOptions.REVERSE_HANDS,       VROption.Position.POS_RIGHT,   4.5f, VROption.ENABLED, null),
-                new VROption(VRSettings.VrOptions.WORLD_ROTATION_INCREMENT,VROption.Position.POS_RIGHT,   7f, VROption.ENABLED, null)
+                new VROption(209,VROption.Position.POS_LEFT,   4f, VROption.ENABLED, "Locomotion Settings..."),
+                new VROption(221,VROption.Position.POS_RIGHT,   4f, VROption.ENABLED, "Interaction Settings..."),
+                new VROption(220,VROption.Position.POS_LEFT,   5f, VROption.ENABLED, "Controller Buttons..."),
+                new VROption(VRSettings.VrOptions.REVERSE_HANDS,   VROption.Position.POS_RIGHT,   5f, VROption.ENABLED, null),
             };
     
     static VROption[] vrSeatedOptions = new VROption[]
             {
-                    new VROption(211,                                      VROption.Position.POS_LEFT,   3f, VROption.ENABLED, "Seated Settings..."),
+                    new VROption(211, VROption.Position.POS_LEFT, 4f, VROption.ENABLED, "Seated Settings..."),
+                    new VROption(VRSettings.VrOptions.RESET_ORIGIN, VROption.Position.POS_RIGHT,   4f, VROption.ENABLED, null),
             };
     
     static VROption[] vrConfirm = new VROption[]
             {
-                    new VROption(222,                                      VROption.Position.POS_RIGHT,  2,  VROption.ENABLED, "Cancel"),
-                    new VROption(223,                                      VROption.Position.POS_LEFT,   2, VROption.ENABLED, "OK"),	
+                    new VROption(222, VROption.Position.POS_RIGHT,  2,  VROption.ENABLED, "Cancel"),
+                    new VROption(223, VROption.Position.POS_LEFT,   2, VROption.ENABLED, "OK"),	
             };
     
     boolean isConfirm = false;
@@ -72,8 +67,6 @@ public class GuiMinecriftSettings extends BaseGuiSettings implements GuiEventEx
     	screenTitle = "VR Settings";
         settings = gameSettings;
     }
-
-    private GuiSliderEx rotationSlider;
     
     /**
      * Adds the buttons (and other controls) to the screen in question.
@@ -81,11 +74,13 @@ public class GuiMinecriftSettings extends BaseGuiSettings implements GuiEventEx
     public void initGui()
     {
     	this.buttonList.clear();
-    	int profileButtonWidth = 240;
+    	int profileButtonWidth = 120;
 
     	if(!isConfirm){
         	screenTitle = "VR Settings";
-    		GuiSmallButtonEx profilesButton = new GuiSmallButtonEx(PROFILES_ID, (this.width / 2 - 155 + 1 * 160 / 2) - ((profileButtonWidth - 150) / 2), this.height / 6 - 14, profileButtonWidth, 20, "Profile: " + VRSettings.getCurrentProfile());
+            VROption mode = new VROption(VRSettings.VrOptions.PLAY_MODE_SEATED,VROption.Position.POS_RIGHT,  2,  VROption.ENABLED, null);
+            GuiSmallButtonEx profilesButton = new GuiSmallButtonEx(mode.getOrdinal(), (this.width / 2 - profileButtonWidth/2 ) , this.height / 4 + 24 , mode._e, mode.getButtonText());
+            profilesButton.setWidth(profileButtonWidth);
     		this.buttonList.add(profilesButton);
     		this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, "Reset To Defaults"));
     		this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, "Done"));
@@ -113,9 +108,7 @@ public class GuiMinecriftSettings extends BaseGuiSettings implements GuiEventEx
     		int width = var8.getWidth(this.width);
     		int height = var8.getHeight(this.height);
     		VrOptions o = VrOptions.getEnumOptions(var8.getOrdinal());
-    		
-    		if(o==VrOptions.RESET_ORIGIN && (!guivrSettings.seated && MCOpenVR.isVive())) continue;
-    		
+    		    		
     		if(o==null || o.getEnumBoolean() ){
       			GuiSmallButtonEx button = new GuiSmallButtonEx(var8.getOrdinal(), width, height, var8._e, var8.getButtonText());
     			button.enabled = var8._enabled;
@@ -136,20 +129,15 @@ public class GuiMinecriftSettings extends BaseGuiSettings implements GuiEventEx
                      maxValue = 360f;
                      increment = Minecraft.getMinecraft().vrSettings.vrWorldRotationIncrement;
     			}
-    			else if (o == VrOptions.WORLD_ROTATION_INCREMENT){
-                    minValue = -1f;
-                    maxValue = 4f;
-                    increment = 1f;
-   			}
+
     	        GuiSliderEx slider = new GuiSliderEx(o.returnEnumOrdinal(), width, height, o, this.guivrSettings.getKeyBinding(o), minValue, maxValue, increment, this.guivrSettings.getOptionFloatValue(o));
     	        slider.setEventHandler(this);
     	        slider.enabled = true;
-    	        
     	        this.buttonList.add(slider);
-    	        if (o == VrOptions.WORLD_ROTATION)rotationSlider = slider;
     		}
 	   	}
 	}
+	
 
     /**
      * Fired when a control is clicked. This is the equivalent of ActionListener.actionPerformed(ActionEvent e).
@@ -221,7 +209,7 @@ public class GuiMinecriftSettings extends BaseGuiSettings implements GuiEventEx
             else if (par1GuiButton.id == 209)
             {
                 this.guivrSettings.saveOptions();
-                this.mc.displayGuiScreen(new GuiLocomotionSettings(this, this.guivrSettings));
+                this.mc.displayGuiScreen(new GuiStandingSettings(this, this.guivrSettings));
             }
             else if (par1GuiButton.id == 210)
             {
@@ -237,6 +225,11 @@ public class GuiMinecriftSettings extends BaseGuiSettings implements GuiEventEx
             {
                 this.guivrSettings.saveOptions();
                 this.mc.displayGuiScreen(new GuiVRControls(this, this.guivrSettings));
+            }
+            else if (par1GuiButton.id == 221)
+            {
+                this.guivrSettings.saveOptions();
+                this.mc.displayGuiScreen(new GuiRoomscaleSettings(this, this.guivrSettings));
             }
             else if (par1GuiButton.id == 222)
             {
@@ -263,12 +256,7 @@ public class GuiMinecriftSettings extends BaseGuiSettings implements GuiEventEx
 				MCOpenVR.clearOffset();
                 this.guivrSettings.saveOptions();
             	this.reinit = true;
-            }
-            else if (par1GuiButton.id == PROFILES_ID)
-            {
-                Minecraft.getMinecraft().vrSettings.saveOptions();
-                this.mc.displayGuiScreen(new GuiSelectSettingsProfile(this, this.guivrSettings));
-            }        	
+            }   	
         }
     }
 
@@ -381,11 +369,6 @@ public class GuiMinecriftSettings extends BaseGuiSettings implements GuiEventEx
                         "Rebind the VR motion controller buttons to in-game",
                         "actions"
                 } ;
-            case PROFILES_ID:
-                return new String[] {
-                        "Open this configuration screen to manage",
-                        "configuration profiles."
-                };
     		default:
     			return null;
     	}
@@ -393,15 +376,6 @@ public class GuiMinecriftSettings extends BaseGuiSettings implements GuiEventEx
 
 	@Override
 	public boolean event(int id, VrOptions enumm) {
-		if(enumm == VrOptions.WORLD_ROTATION_INCREMENT){
-	        mc.vrSettings.vrWorldRotation = 0;
-	        MCOpenVR.seatedRot = 0;
-	        rotationSlider.increment = mc.vrSettings.vrWorldRotationIncrement == 0 ? 1: mc.vrSettings.vrWorldRotationIncrement;
-	        rotationSlider.setValue(0);			
-		}
-
-		
-		// TODO Auto-generated method stub
 		return false;
 	}
 

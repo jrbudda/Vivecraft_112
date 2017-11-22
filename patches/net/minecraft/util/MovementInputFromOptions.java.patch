@@ -38,7 +38,7 @@
 -        this.jump = this.gameSettings.keyBindJump.isKeyDown();
 -        this.sneak = this.gameSettings.keyBindSneak.isKeyDown();
 +
-+        if(mc.vrSettings.vrFreeMoveMode == mc.vrSettings.FREEMOVE_JOYPAD){
++        if(mc.vrPlayer.getFreeMove() && mc.vrSettings.vrFreeMoveMode == mc.vrSettings.FREEMOVE_JOYPAD){
 +        	//override everything
 +        	this.moveForward = MCOpenVR.joyPadZ;
 +        	this.moveStrafe = MCOpenVR.joyPadX;

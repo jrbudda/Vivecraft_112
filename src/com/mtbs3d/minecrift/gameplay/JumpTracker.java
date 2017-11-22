@@ -152,11 +152,11 @@ public class JumpTracker {
 					player.lastTickPosZ = pl.z;			
 					pl = pl.addVector(player.motionX, player.motionY, player.motionZ);					
 					player.setPosition(pl.x, pl.y, pl.z);
-					mc.vrPlayer.snapRoomOriginToPlayerEntity(player, false);
+					mc.vrPlayer.snapRoomOriginToPlayerEntity(player, false, true);
 					mc.player.addExhaustion(.3f);    
 					mc.player.onGround = false;
 				} else {
-					mc.vrPlayer.snapRoomOriginToPlayerEntity(player, false);
+					mc.vrPlayer.snapRoomOriginToPlayerEntity(player, false, true);
 				}
 			}else if(isjumping()){
 				Vec3d thing = latchStartOrigin[0].subtract(latchStartPlayer[0]).add(mc.player.getPositionVector()).subtract(delta);

@@ -1,31 +1,29 @@
 package com.mtbs3d.minecrift.gui;
 
 import com.mtbs3d.minecrift.gui.framework.*;
+import com.mtbs3d.minecrift.provider.MCOpenVR;
 import com.mtbs3d.minecrift.settings.VRSettings;
+import com.mtbs3d.minecrift.settings.VRSettings.VrOptions;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 
-public class GuiLocomotionSettings extends BaseGuiSettings implements GuiEventEx
+public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
 {
     static VRSettings.VrOptions[] locomotionSettings = new VRSettings.VrOptions[]
     {
-            VRSettings.VrOptions.WEAPON_COLLISION,
-            VRSettings.VrOptions.REALISTIC_JUMP,
-            VRSettings.VrOptions.ANIMAL_TOUCHING,
-            VRSettings.VrOptions.REALISTIC_SNEAK,
+            VRSettings.VrOptions.WALK_UP_BLOCKS,
+            VRSettings.VrOptions.VEHICLE_ROTATION,
             VRSettings.VrOptions.BCB_ON,
-            VRSettings.VrOptions.REALISTIC_CLIMB,
             VRSettings.VrOptions.WALK_MULTIPLIER,
-            VRSettings.VrOptions.REALISTIC_ROW,
             VRSettings.VrOptions.ALLOW_MODE_SWITCH,
-            VRSettings.VrOptions.REALISTIC_SWIM
+            VRSettings.VrOptions.WORLD_ROTATION_INCREMENT
+
     };
 
     static VRSettings.VrOptions[] teleportSettings = new VRSettings.VrOptions[]
     {
-            VRSettings.VrOptions.WALK_UP_BLOCKS,
             VRSettings.VrOptions.LIMIT_TELEPORT,
             VRSettings.VrOptions.SIMULATE_FALLING
 
@@ -39,9 +37,9 @@ public class GuiLocomotionSettings extends BaseGuiSettings implements GuiEventEx
 
     };
     
-    public GuiLocomotionSettings(GuiScreen guiScreen, VRSettings guivrSettings) {
+    public GuiStandingSettings(GuiScreen guiScreen, VRSettings guivrSettings) {
         super( guiScreen, guivrSettings );
-        screenTitle = "Locomotion Settings";
+        screenTitle = "Standing Locomotion Settings";
     }
 
     /**
@@ -55,13 +53,13 @@ public class GuiLocomotionSettings extends BaseGuiSettings implements GuiEventEx
         VRSettings.VrOptions[] buttons = locomotionSettings;
         addButtons(buttons,0);
         mc.vrSettings.vrFreeMove = mc.vrPlayer.getFreeMove();
-        GuiSmallButtonEx mode = new GuiSmallButtonEx(VRSettings.VrOptions.MOVE_MODE.returnEnumOrdinal(), this.width / 2 - 68, this.height / 6 + 102,VRSettings.VrOptions.MOVE_MODE, this.guivrSettings.getKeyBinding(VRSettings.VrOptions.MOVE_MODE));
+        GuiSmallButtonEx mode = new GuiSmallButtonEx(VRSettings.VrOptions.MOVE_MODE.returnEnumOrdinal(), this.width / 2 - 68, this.height / 6 + 80,VRSettings.VrOptions.MOVE_MODE, this.guivrSettings.getKeyBinding(VRSettings.VrOptions.MOVE_MODE));
         mode.setEventHandler(this);
         this.buttonList.add(mode);
         if(mc.vrPlayer.getFreeMove())
-        	addButtons(freeMoveSettings,134);
+        	addButtons(freeMoveSettings,124);
         else
-        	addButtons(teleportSettings,134);        
+        	addButtons(teleportSettings,124);        
     }
 
 	private void addButtons(VRSettings.VrOptions[] buttons, int startY) {
@@ -102,35 +100,26 @@ public class GuiLocomotionSettings extends BaseGuiSettings implements GuiEventEx
                     minValue=1f;
                     maxValue=10f;
                     increment=0.1f;
-                }
+                }  		
+                else if (var8 == VrOptions.WORLD_ROTATION_INCREMENT){
+                    minValue = -1f;
+                    maxValue = 4f;
+                    increment = 1f;
+   			}
                 // VIVE START - new options
                 GuiSliderEx slider = new GuiSliderEx(var8.returnEnumOrdinal(), width, height - 20, var8, this.guivrSettings.getKeyBinding(var8), minValue, maxValue, increment, this.guivrSettings.getOptionFloatValue(var8));
                 slider.setEventHandler(this);
-                slider.enabled = getEnabledState(var8);
                 this.buttonList.add(slider);
+                
             }
             else
             {
                 GuiSmallButtonEx smallButton = new GuiSmallButtonEx(var8.returnEnumOrdinal(), width, height - 20, var8, this.guivrSettings.getKeyBinding(var8));
                 smallButton.setEventHandler(this);
-                smallButton.enabled = getEnabledState(var8);
                 this.buttonList.add(smallButton);
             }
         }
 	}
-
-    private boolean getEnabledState(VRSettings.VrOptions var8)
-    {
-        String s = var8.getEnumString();
-
-        if(s==VRSettings.VrOptions.ALLOW_CRAWLING.getEnumString()) return false;
-        if(s.equals(VRSettings.VrOptions.REALISTIC_JUMP.getEnumString()) ||
-                s.equals(VRSettings.VrOptions.REALISTIC_SNEAK.getEnumString()))
-            return !Minecraft.getMinecraft().vrSettings.seated;
-        
-
-        return true;
-    }
 
     /**
      * Draws the screen and all the components in it.
@@ -166,8 +155,6 @@ public class GuiLocomotionSettings extends BaseGuiSettings implements GuiEventEx
                 vr.movementSpeedMultiplier = 1f;
                 vr.simulateFalling = true;
                 //jrbudda//
-                vr.weaponCollision = true;
-                vr.animaltouching = true;
                 vr.vrAllowCrawling = false;
                 vr.vrAllowLocoModeSwotch = true;
                 vr.vrFreeMove = false;
@@ -175,12 +162,7 @@ public class GuiLocomotionSettings extends BaseGuiSettings implements GuiEventEx
                 vr.vrShowBlueCircleBuddy = true;
                 vr.walkMultiplier=1;
                 vr.vrFreeMoveMode = vr.FREEMOVE_CONTROLLER;
-                vr.realisticClimbEnabled = true;
-                vr.realisticJumpEnabled = true;
-                vr.realisticSneakEnabled = true;
-                vr.realisticSwimEnabled = true;
-                vr.realisticRowEnabled = true;
-                vr.vehicleRotation = false;
+                vr.vehicleRotation = true;
                 vr.useFOVReduction = false;
                 vr.walkUpBlocks = true;
                 //end jrbudda
@@ -208,7 +190,7 @@ public class GuiLocomotionSettings extends BaseGuiSettings implements GuiEventEx
     @Override
     public boolean event(int id, VRSettings.VrOptions enumm)
     {
-        return true;
+		return false;
     }
 
     @Override
@@ -271,19 +253,6 @@ public class GuiLocomotionSettings extends BaseGuiSettings implements GuiEventEx
                             "If enabled the player will falls to the ground in TP mode",
                             "when standing above empty space. Also allows jumping"
                     } ;
-                case WEAPON_COLLISION:
-                    return new String[] {
-                            "If enabled, you can swing your pickaxe at blocks to",
-                            "mine them, or your sword at enemies to hit them."
-                    } ;
-                case ANIMAL_TOUCHING:
-                    return new String[] {
-                            "If enabled, touching a passive mob (animal) without a",
-                            "weapon will right-click (interact) instead of attacking.",
-                            "Turn off for Piggy Slapping, Josh.",
-                    } ;
-                // VIVE END - new options
-                    //JRBUDDA
                 case ALLOW_MODE_SWITCH:
                     return new String[] {
                             "Allows the use of the Pick Block button to switch between",
@@ -309,31 +278,6 @@ public class GuiLocomotionSettings extends BaseGuiSettings implements GuiEventEx
                             "Shows your body position as a square shadow on the ground.",
                             "This is your Square Shadow Buddy (tm).",
                             "Do not lose your Square Shadow Buddy."
-                    };
-                case REALISTIC_JUMP:
-                    return new String[]{
-                            "If turned on, once you jump in real life",
-                            "Your player will also jump. Also enables",
-                            "Jump Boots."
-                    };
-                case REALISTIC_SNEAK:
-                    return new String[]{
-                            "If turned on, once you duck in real life",
-                            "Your player will also sneak"
-                    };
-                case REALISTIC_CLIMB:
-                    return new String[]{
-                            "If turned on, allow climbing ladders and vines",
-                            "by touching them. Also enables Climb Claws."
-                    };
-                case REALISTIC_SWIM:
-                    return new String[]{
-                            "If turned on, allow swimming by doing the breaststoke",
-                            "with the controllers."
-                    };
-                case REALISTIC_ROW:
-                    return new String[]{
-                            "Row, row, row your boat... by flapping your arms like mad."
                     };
                 case WALK_MULTIPLIER:
                     return new String[]{
@@ -363,6 +307,12 @@ public class GuiLocomotionSettings extends BaseGuiSettings implements GuiEventEx
                             "Shrinks the field of view while moving. Can help with",
                             "motion sickness."
                     } ;
+                case WORLD_ROTATION_INCREMENT:
+                    return new String[] {
+                            "How many degrees to rotate when",
+                            "rotating the world."
+                            
+                    };
                 default:
                     return null;
             }
@@ -379,4 +329,5 @@ public class GuiLocomotionSettings extends BaseGuiSettings implements GuiEventEx
                     return null;
             }
     }
+    
 }

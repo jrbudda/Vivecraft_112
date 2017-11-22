@@ -48,7 +48,7 @@
 +    		Vec3d aimSource = vp.getControllerPos(0);
 +    		float pitch = (float)Math.toDegrees(Math.asin(aim.y/aim.lengthVector()));
 +    		float yaw = (float)Math.toDegrees(Math.atan2(aim.x, -aim.z));   
-+    		this.setLocationAndAngles(aimSource.x, aimSource.y, aimSource.z, yaw, pitch);
++    		this.setLocationAndAngles(aimSource.x + aim.x*0.6f, aimSource.y+aim.y*0.6f, aimSource.z+aim.z*0.6f, yaw, pitch);
 +    		f = pitch;
 +    		f1 = yaw;
 +    	}else {

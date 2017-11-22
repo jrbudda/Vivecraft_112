@@ -9,6 +9,9 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.client.CPacketPlayerDigging;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.Random;
@@ -19,12 +22,13 @@ public class BackpackTracker {
 	public int previousSlot = 0;
 	
 	public boolean isActive(EntityPlayerSP p){
-		if(Minecraft.getMinecraft().vrSettings.seated)
-			return false;
+		Minecraft mc = Minecraft.getMinecraft();
+		if(mc.vrSettings.seated) return false;
+		if(!mc.vrSettings.backpackSwitching) return false;
 		if(p == null) return false;
 		if(p.isDead) return false;
 		if(p.isPlayerSleeping()) return false;
-		if(Minecraft.getMinecraft().bowTracker.isDrawing) return false;
+		if(mc.bowTracker.isDrawing) return false;
 		return true;
 	}
 
@@ -48,10 +52,13 @@ public class BackpackTracker {
 			double dotDelta = delta.dotProduct(hmddir);
 			boolean zone = ((Math.abs(hmdPos.y - controllerPos.y)) < 0.25) && //controller below hmd
 					(dotDelta > 0); // behind head
-			
+			Minecraft mc = Minecraft.getMinecraft();
 			if (zone){
 				if(!wasIn[c] && (dot > .6)){
 					if(c==0){ //mainhand
+						if((mc.climbTracker.isGrabbingLadder() && 
+								mc.climbTracker.isClaws(mc.player.getHeldItemMainhand()))){}
+						else{
 						if(player.inventory.currentItem != 0){
 							previousSlot = player.inventory.currentItem;
 							player.inventory.currentItem = 0;	
@@ -59,11 +66,12 @@ public class BackpackTracker {
 							player.inventory.currentItem = previousSlot;
 							previousSlot = 0;
 						}}
+					}
 					else { //offhand
-						ItemStack of = player.getHeldItemOffhand();
-						ItemStack two = player.inventory.getStackInSlot(1);
-						player.setItemStackToSlot(EntityEquipmentSlot.OFFHAND, two);
-						player.inventory.setInventorySlotContents(1, of);
+						if((mc.climbTracker.isGrabbingLadder() && 
+								mc.climbTracker.isClaws(mc.player.getHeldItemOffhand()))){}
+						else
+							player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.SWAP_HELD_ITEMS, BlockPos.ORIGIN, EnumFacing.DOWN));
 					}
 					MCOpenVR.triggerHapticPulse(c, 1500);
 					wasIn[c] = true;

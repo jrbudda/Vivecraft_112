@@ -7,6 +7,7 @@ import com.mtbs3d.minecrift.provider.MCOpenVR;
 
 import de.fruitfly.ovr.structs.Matrix4f;
 import de.fruitfly.ovr.structs.Vector3f;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.Minecraft.renderPass;
 import net.minecraft.util.math.Vec3d;
 
@@ -111,6 +112,21 @@ public class VRData{
 	public VRDevicePose getHand(int c){
 		return (c == 0 ? h0: h1);
 	}
+	
+	public float getBodyYaw(){
+		
+		if(Minecraft.getMinecraft().vrSettings.seated)
+			return hmd.getYaw();
+		
+		Vec3d v = (c1.getPosition().subtract(c0.getPosition())).normalize().rotateYaw((float) (-Math.PI/2));
+	
+		if(Minecraft.getMinecraft().vrSettings.vrReverseHands)
+			return(float) Math.toDegrees(Math.atan2(v.x, -v.z)); 
+		else
+			return(float) Math.toDegrees(Math.atan2(-v.x, v.z)); 
+		
+	}
+	
 	
 	public VRDevicePose getEye(renderPass pass){
 		switch(pass){

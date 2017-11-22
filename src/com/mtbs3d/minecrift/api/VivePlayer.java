@@ -54,6 +54,7 @@ public class VivePlayer {
 	public Vec3d getControllerDir(int controller){
 		byte[] data = controller0data;
 		if(controller == 1) data = controller1data;
+		if(this.isSeated) controller = 0;
 		if(data != null){
 
 			ByteArrayInputStream byin = new ByteArrayInputStream(data);
@@ -159,9 +160,8 @@ public class VivePlayer {
 				
 				da.close(); //needed?
 				
-				Vec3d dir = this.getHMDDir();
-
 				if (this.isSeated){
+					Vec3d dir = this.getHMDDir();
 					dir = dir.rotateYaw((float) Math.toRadians(c==0?-35:35));
 					dir = new Vec3d(dir.x, 0, dir.z);
 					dir = dir.normalize();

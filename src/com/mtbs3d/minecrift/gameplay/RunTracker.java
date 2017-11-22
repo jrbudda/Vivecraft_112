@@ -26,6 +26,8 @@ public class RunTracker {
 			return false;
 		if(p.isOnLadder()) 
 			return false;
+		if(Minecraft.getMinecraft().bowTracker.isNotched())
+			return false;
 		return true;
 	}
 

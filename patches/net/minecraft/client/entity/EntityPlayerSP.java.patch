@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/entity/EntityPlayerSP.java
 +++ b/net/minecraft/client/entity/EntityPlayerSP.java
-@@ -1,7 +1,22 @@
+@@ -1,7 +1,23 @@
  package net.minecraft.client.entity;
  
 +import java.lang.reflect.Field;
@@ -8,6 +8,7 @@
  import javax.annotation.Nullable;
 +
 +import com.mtbs3d.minecrift.api.NetworkHelper;
++import com.mtbs3d.minecrift.api.VRData;
 +import com.mtbs3d.minecrift.api.NetworkHelper.PacketDiscriminators;
 +import com.mtbs3d.minecrift.provider.MCOpenVR;
 +import com.mtbs3d.minecrift.provider.OpenVRPlayer;
@@ -23,7 +24,7 @@
  import net.minecraft.block.state.IBlockState;
  import net.minecraft.client.Minecraft;
  import net.minecraft.client.audio.ElytraSound;
-@@ -26,6 +41,7 @@
+@@ -26,6 +42,7 @@
  import net.minecraft.client.gui.inventory.GuiFurnace;
  import net.minecraft.client.gui.inventory.GuiScreenHorseInventory;
  import net.minecraft.client.gui.inventory.GuiShulkerBox;
@@ -31,7 +32,7 @@
  import net.minecraft.client.network.NetHandlerPlayClient;
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.IJumpingMount;
-@@ -35,11 +51,15 @@
+@@ -35,11 +52,15 @@
  import net.minecraft.entity.item.EntityItem;
  import net.minecraft.entity.item.EntityMinecart;
  import net.minecraft.entity.passive.AbstractHorse;
@@ -47,7 +48,7 @@
  import net.minecraft.item.Item;
  import net.minecraft.item.ItemElytra;
  import net.minecraft.item.ItemStack;
-@@ -49,6 +69,7 @@
+@@ -49,6 +70,7 @@
  import net.minecraft.network.play.client.CPacketChatMessage;
  import net.minecraft.network.play.client.CPacketClientStatus;
  import net.minecraft.network.play.client.CPacketCloseWindow;
@@ -55,7 +56,7 @@
  import net.minecraft.network.play.client.CPacketEntityAction;
  import net.minecraft.network.play.client.CPacketInput;
  import net.minecraft.network.play.client.CPacketPlayer;
-@@ -58,6 +79,7 @@
+@@ -58,6 +80,7 @@
  import net.minecraft.network.play.client.CPacketVehicleMove;
  import net.minecraft.potion.Potion;
  import net.minecraft.potion.PotionEffect;
@@ -63,7 +64,7 @@
  import net.minecraft.stats.RecipeBook;
  import net.minecraft.stats.StatBase;
  import net.minecraft.stats.StatisticsManager;
-@@ -70,6 +92,7 @@
+@@ -70,6 +93,7 @@
  import net.minecraft.util.EnumHand;
  import net.minecraft.util.EnumParticleTypes;
  import net.minecraft.util.MovementInput;
@@ -71,7 +72,7 @@
  import net.minecraft.util.SoundEvent;
  import net.minecraft.util.math.AxisAlignedBB;
  import net.minecraft.util.math.BlockPos;
-@@ -141,6 +164,20 @@
+@@ -141,6 +165,20 @@
       */
      protected int sprintToggleTimer;
  
@@ -92,7 +93,7 @@
      /** Ticks left before sprinting is disabled. */
      public int sprintingTicksLeft;
      public float renderArmYaw;
-@@ -170,13 +207,43 @@
+@@ -170,13 +208,43 @@
          this.recipeBook = p_i47378_5_;
          this.mc = p_i47378_1_;
          this.dimension = 0;
@@ -136,20 +137,40 @@
          return false;
      }
  
-@@ -205,21 +272,35 @@
+@@ -187,6 +255,8 @@
+     {
+     }
+ 
++    private boolean snapReq = false;
++    
+     public boolean startRiding(Entity entityIn, boolean force)
+     {
+         if (!super.startRiding(entityIn, force))
+@@ -204,22 +274,47 @@
+             {
                  this.prevRotationYaw = entityIn.rotationYaw;
                  this.rotationYaw = entityIn.rotationYaw;
-                 this.setRotationYawHead(entityIn.rotationYaw);
-+                
-+                //Vivecraft
-+    			entityIn.rotationYaw = 180 - Minecraft.getMinecraft().vrPlayer.vrdata_world_pre.hmd.getYaw();
-+    			//
+-                this.setRotationYawHead(entityIn.rotationYaw);
++                this.setRotationYawHead(entityIn.rotationYaw);               
              }
  
 +            //Vivecraft
-+            mc.vrPlayer.vrot = entityIn.rotationYaw;
 +    		startmountrotate = Minecraft.getMinecraft().vrSettings.vrWorldRotation;
-+    		mc.vrPlayer.snapRoomOriginToPlayerEntity(this, false);
++    		//mc.vrPlayer.snapRoomOriginToPlayerEntity(this, false);
++    		if(mc.vrSettings.vehicleRotation){
++    			float end = mc.vrPlayer.vrdata_world_pre.hmd.getYaw();
++    			float start = entityIn.rotationYaw % 360;
++ 			
++    			if(entityIn instanceof EntityMinecart)start-=90;
++    			
++				float difference = mc.vrPlayer.rotDiff_Degrees(start, end);
++
++            	mc.vrSettings.vrWorldRotation += difference;
++            	mc.vrSettings.vrWorldRotation %= 360;
++            	MCOpenVR.seatedRot = mc.vrPlayer.vrot = mc.vrSettings.vrWorldRotation;
++        		mc.vrPlayer.checkandUpdateRotateScale();
++        		snapReq = true;
++            }
 +    		//
 +            
              return true;
@@ -166,9 +187,11 @@
      {
          super.dismountRidingEntity();
          this.rowingBoat = false;
++        mc.swingTracker.disableSwing = 10;
 +        if(Minecraft.getMinecraft().vrSettings.vehicleRotation){
 +        	mc.vrSettings.vrWorldRotation = startmountrotate;
 +        	MCOpenVR.seatedRot = startmountrotate;
++        	mc.vrPlayer.checkandUpdateRotateScale();
 +        }
      }
 -
@@ -176,7 +199,7 @@
      /**
       * interpolated look vector
       */
-@@ -292,6 +373,7 @@
+@@ -292,6 +387,7 @@
              this.serverSneakState = flag1;
          }
  
@@ -184,7 +207,7 @@
          if (this.isCurrentViewEntity())
          {
              AxisAlignedBB axisalignedbb = this.getEntityBoundingBox();
-@@ -304,26 +386,39 @@
+@@ -304,26 +400,39 @@
              boolean flag2 = d0 * d0 + d1 * d1 + d2 * d2 > 9.0E-4D || this.positionUpdateTicks >= 20;
              boolean flag3 = d3 != 0.0D || d4 != 0.0D;
  
@@ -244,7 +267,7 @@
              }
  
              if (flag2)
-@@ -342,9 +437,15 @@
+@@ -342,9 +451,15 @@
  
              this.prevOnGround = this.onGround;
              this.autoJumpEnabled = this.mc.gameSettings.autoJump;
@@ -260,7 +283,7 @@
      @Nullable
  
      /**
-@@ -358,11 +459,23 @@
+@@ -358,11 +473,23 @@
          return null;
      }
  
@@ -286,7 +309,7 @@
      /**
       * Sends a chat message from the player.
       */
-@@ -545,72 +658,129 @@
+@@ -545,72 +672,129 @@
          }
      }
  
@@ -480,7 +503,7 @@
      }
  
      /**
-@@ -618,7 +788,11 @@
+@@ -618,7 +802,11 @@
       */
      private boolean isOpenBlockSpace(BlockPos pos)
      {
@@ -493,7 +516,7 @@
      }
  
      /**
-@@ -682,7 +856,19 @@
+@@ -682,7 +870,19 @@
  
      public void playSound(SoundEvent soundIn, float volume, float pitch)
      {
@@ -514,7 +537,7 @@
      }
  
      /**
-@@ -1032,7 +1218,7 @@
+@@ -1032,7 +1232,7 @@
                      this.sendPlayerAbilities();
                  }
              }
@@ -523,32 +546,27 @@
              {
                  if (this.flyToggleTimer == 0)
                  {
-@@ -1120,6 +1306,10 @@
+@@ -1120,6 +1320,10 @@
  
          super.onLivingUpdate();
  
 +        // VIVE START - teleport movement
 +        mc.vrPlayer.onLivingUpdate(this, this.mc, this.rand);
 +        // VIVE END - teleport movement
-+
++        
          if (this.onGround && this.capabilities.isFlying && !this.mc.playerController.isSpectatorMode())
          {
              this.capabilities.isFlying = false;
-@@ -1138,8 +1328,11 @@
-         if (this.getRidingEntity() instanceof EntityBoat)
+@@ -1139,7 +1343,7 @@
          {
              EntityBoat entityboat = (EntityBoat)this.getRidingEntity();
--            entityboat.updateInputs(this.movementInput.leftKeyDown, this.movementInput.rightKeyDown, this.movementInput.forwardKeyDown, this.movementInput.backKeyDown);
+             entityboat.updateInputs(this.movementInput.leftKeyDown, this.movementInput.rightKeyDown, this.movementInput.forwardKeyDown, this.movementInput.backKeyDown);
 -            this.rowingBoat |= this.movementInput.leftKeyDown || this.movementInput.rightKeyDown || this.movementInput.forwardKeyDown || this.movementInput.backKeyDown;
-+            entityboat.updateInputs(this.movementInput.leftKeyDown || (mc.rowTracker.LOar && !mc.rowTracker.Foar),
-+            		this.movementInput.rightKeyDown||(mc.rowTracker.ROar&& !mc.rowTracker.Foar), 
-+            		this.movementInput.forwardKeyDown || (mc.rowTracker.Foar),
-+            		this.movementInput.backKeyDown);
-+            this.rowingBoat |=  mc.rowTracker.LOar || mc.rowTracker.ROar || mc.rowTracker.Foar || this.movementInput.leftKeyDown || this.movementInput.rightKeyDown || this.movementInput.forwardKeyDown || this.movementInput.backKeyDown;
++            this.rowingBoat |=  mc.rowTracker.isRowing()|| this.movementInput.leftKeyDown || this.movementInput.rightKeyDown || this.movementInput.forwardKeyDown || this.movementInput.backKeyDown;
          }
      }
  
-@@ -1170,10 +1363,40 @@
+@@ -1170,10 +1374,40 @@
       */
      public void move(MoverType type, double x, double y, double z)
      {
@@ -593,7 +611,7 @@
      }
  
      public boolean isAutoJumpEnabled()
-@@ -1199,12 +1422,16 @@
+@@ -1199,12 +1433,16 @@
                      float f = this.getAIMoveSpeed();
                      float f1 = (float)vec3d2.lengthSquared();
  
@@ -612,7 +630,7 @@
                          vec3d2 = new Vec3d((double)(f2 * f5 - f3 * f4), vec3d2.y, (double)(f3 * f5 + f2 * f4));
                          f1 = (float)vec3d2.lengthSquared();
  
-@@ -1324,4 +1551,368 @@
+@@ -1324,4 +1562,381 @@
              }
          }
      }
@@ -636,7 +654,7 @@
 +    	
 +    	if(!initFromServer) return;
 +    	else { //still init.
-+            mc.vrPlayer.snapRoomOriginToPlayerEntity(this, false);
++            mc.vrPlayer.snapRoomOriginToPlayerEntity(this, false, false);
 +            
 +//    		OpenVRPlayer.get().setRoomOrigin(
 +//    				posX + ox, 
@@ -650,7 +668,7 @@
 +    {
 +        super.setPositionAndRotation(x, y, z, yaw, pitch);
 +		
-+        OpenVRPlayer.get().snapRoomOriginToPlayerEntity(this, false);
++        OpenVRPlayer.get().snapRoomOriginToPlayerEntity(this, false, false);
 +      
 +		if(initFromServer == false){
 +			this.setLocationAndAngles(x, y, z, yaw, pitch);
@@ -662,10 +680,19 @@
 +    @Override
 +    public void setPosition(double x, double y, double z)
 +    { //this is also called when riding to move this around.
-+		super.setPosition(x, y, z);
++		
++    	double bx = this.posX;
++    	double by = this.posY;
++    	double bz = this.posZ;
 +
-+    	if(this.isRiding()){   			
-+    		Vec3d roomOrigin = Minecraft.getMinecraft().vrPlayer.vrdata_world_pre.origin;
++    	super.setPosition(x, y, z);
++
++    	double ax = this.posX;
++    	double ay = this.posY;
++    	double az = this.posZ;
++    	
++    	//if(this.isRiding()){   			
++    		Vec3d roomOrigin = Minecraft.getMinecraft().vrPlayer.roomOrigin;
 +//    		Vec3d me = OpenVRPlayer.get().getHMDPos_World();
 +//    		double ox = roomOrigin.x - me.x;
 +//    		double oy = roomOrigin.y - me.y;
@@ -677,16 +704,20 @@
 +//    				this.getRidingEntity().posX + ox, 
 +//    				this.getRidingEntity().posY + this.getRidingEntity().getMountedYOffset(),
 +//    				this.getRidingEntity().posZ + oz, false); 		    
-+//    		
-+    		
++//    		    	
 +      		OpenVRPlayer.get().setRoomOrigin(
-+      				roomOrigin.x + (mount.posX +- mount.lastTickPosX),
-+      				roomOrigin.y + (mount.posY +- mount.lastTickPosY),
-+      				roomOrigin.z + (mount.posZ +- mount.lastTickPosZ),
++      				roomOrigin.x + (ax - bx),
++      				roomOrigin.y + (ay - by),
++      				roomOrigin.z + (az - bz),
 +      				false
 +      				);
-+    		
-+    	} 
++      		
++            if (snapReq){
++            	mc.vrPlayer.snapRoomOriginToPlayerEntity(this, false,true);
++            	snapReq = false;
++            }
++            
++   // 	} 
 +    }
 +        
 +    
@@ -739,8 +770,7 @@
 +            return orig;
 +        }
 +    }
-+    
-+    
++           
 +    /**
 +     * Used in both water and by flying objects
 +     */
@@ -831,7 +861,8 @@
 +    		mX = directionVec.x;
 +    		mY = directionVec.y;
 +    		mZ = directionVec.z;
-+
++    		
++    		
 +    		// Modify acceleration sequence (each tick)
 +    		if(!this.capabilities.isFlying && !this.inWater) addFactor = VRSettings.getInertiaAddFactor(inertiaFactor);
 +
@@ -844,7 +875,7 @@
 +
 +    		this.additionX = mX;
 +    		this.additionZ = mZ;
-+    	}
++    	} 
 +
 +    	//if (this instanceof EntityPlayerSP) {
 +    	//    System.out.println(String.format("FLYING: %B, forward: %.4f, strafe: %.4f, pitch: %.4f, yaw: %.4f, mx: %.4f, mz: %.4f, my: %.4f", allowYAdjust, forward, strafe, this.headPitch, this.rotationYaw, mX, mZ, mY));

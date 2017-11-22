@@ -284,9 +284,7 @@ public class MCOpenVR
 
 		mc = Minecraft.getMinecraft();
 		// look in .minecraft first for openvr_api.dll
-		File minecraftDir = optifine.Utils.getWorkingDirectory(); // misleading name, actually the .minecraft directory
-		File workingDir = new File(System.getProperty("user.dir"));
-		
+	
 		String osname = System.getProperty("os.name").toLowerCase();
 		String osarch= System.getProperty("os.arch").toLowerCase();
 
@@ -306,16 +304,14 @@ public class MCOpenVR
 			}
 		}
 		else if( osname.contains("mac")){
-			osFolder = "osx32";
+			osFolder = "osx";
 		}
 		
-		String openVRPath = new File(minecraftDir, osFolder).getPath();
+		Utils.unpackNatives(osFolder);
+
+		String openVRPath = new File("openvr/" + osFolder).getAbsolutePath();
 		System.out.println("Adding OpenVR search path: " + openVRPath);
 		NativeLibrary.addSearchPath("openvr_api", openVRPath);
-
-		String openVRPath2 = new File(workingDir, osFolder).getPath();
-		System.out.println("Adding OpenVR search path: " + openVRPath2);
-		NativeLibrary.addSearchPath("openvr_api", openVRPath2);
 			
 		if(jopenvr.JOpenVRLibrary.VR_IsHmdPresent() == 0){
 			initStatus =  "VR Headset not detected.";
@@ -369,7 +365,8 @@ public class MCOpenVR
 		if(Main.katvr){
 			try {
 				System.out.println( "Waiting for KATVR...." );
-				NativeLibrary.addSearchPath(jkatvr.KATVR_LIBRARY_NAME, new File( minecraftDir, "katvr" ).getPath());		
+				Utils.unpackNatives("katvr");
+				NativeLibrary.addSearchPath(jkatvr.KATVR_LIBRARY_NAME, new File("openvr/katvr").getAbsolutePath());
 				jkatvr.Init(1);
 				jkatvr.Launch();
 				if(jkatvr.CheckForLaunch()){
@@ -971,8 +968,10 @@ public class MCOpenVR
 					KeyboardSimulator.robot.keyPress(KeyEvent.VK_ESCAPE); //window focus... yadda yadda
 					KeyboardSimulator.robot.keyRelease(KeyEvent.VK_ESCAPE); //window focus... yadda yadda
 				}
-				else 
-					mc.player.closeScreen();
+				else {
+					if (mc.player != null) mc.player.closeScreen();
+					else mc.displayGuiScreen((GuiScreen)null);
+				}
 
 				setKeyboardOverlayShowing(false, null);	
 			}
@@ -1910,15 +1909,15 @@ public class MCOpenVR
 		
 		
 		if(hotbarNext.isPressed()) {
-			changeHotbar(-1);
-			MCOpenVR.triggerHapticPulse(0, 250);
-			MCOpenVR.triggerHapticPulse(1, 250);
+				changeHotbar(-1);
+				MCOpenVR.triggerHapticPulse(0, 250);
+				MCOpenVR.triggerHapticPulse(1, 250);
 		}
-		
+
 		if(hotbarPrev.isPressed()){
-			changeHotbar(1);
-			MCOpenVR.triggerHapticPulse(0, 250);
-			MCOpenVR.triggerHapticPulse(1, 250);
+				changeHotbar(1);
+				MCOpenVR.triggerHapticPulse(0, 250);
+				MCOpenVR.triggerHapticPulse(1, 250);
 		}
 		
 		if(quickTorch.isPressed() && mc.player != null){
@@ -1958,10 +1957,15 @@ public class MCOpenVR
 
 	
 	private static void changeHotbar(int dir){
-		if (Reflector.forgeExists() && mc.currentScreen == null && Display.isActive())
-			KeyboardSimulator.robot.mouseWheel(-dir * 120);
-		else
-			mc.player.inventory.changeCurrentItem(dir);
+		if(mc.player == null || (mc.climbTracker.isGrabbingLadder() && 
+				mc.climbTracker.isClaws(mc.player.getHeldItemMainhand()))) //never let go, jack.
+		{}
+		else{
+			if (Reflector.forgeExists() && mc.currentScreen == null && Display.isActive())
+				KeyboardSimulator.robot.mouseWheel(-dir * 120);
+			else
+				mc.player.inventory.changeCurrentItem(dir);
+		}
 	}
 		
 	//jrbuda:: oh hello there you are.
