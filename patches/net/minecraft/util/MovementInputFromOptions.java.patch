@@ -3,7 +3,7 @@
 @@ -1,5 +1,12 @@
  package net.minecraft.util;
  
-+import com.mtbs3d.minecrift.control.VRControllerButtonMapping;
++import com.mtbs3d.minecrift.control.VRButtonMapping;
 +import com.mtbs3d.minecrift.provider.MCOpenVR;
 +import com.mtbs3d.minecrift.settings.VRSettings;
 +import com.mtbs3d.minecrift.utils.jkatvr;
@@ -48,10 +48,10 @@
 +        	this.backKeyDown = this.moveForward < 0;
 +        	this.leftKeyDown = this.moveStrafe < 0 ;
 +        	this.rightKeyDown = this.moveStrafe > 0;
-+        	VRControllerButtonMapping.setKeyBindState(this.gameSettings.keyBindForward, this.forwardKeyDown);
-+        	VRControllerButtonMapping.setKeyBindState(this.gameSettings.keyBindBack, this.backKeyDown);
-+        	VRControllerButtonMapping.setKeyBindState(this.gameSettings.keyBindLeft, this.leftKeyDown);
-+        	VRControllerButtonMapping.setKeyBindState(this.gameSettings.keyBindRight, this.rightKeyDown);
++        	VRButtonMapping.setKeyBindState(this.gameSettings.keyBindForward, this.forwardKeyDown);
++        	VRButtonMapping.setKeyBindState(this.gameSettings.keyBindBack, this.backKeyDown);
++        	VRButtonMapping.setKeyBindState(this.gameSettings.keyBindLeft, this.leftKeyDown);
++        	VRButtonMapping.setKeyBindState(this.gameSettings.keyBindRight, this.rightKeyDown);
 +        }
 +        
 +        

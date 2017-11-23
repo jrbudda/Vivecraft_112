@@ -12,7 +12,7 @@ import com.google.common.math.Quantiles.Scale;
 import com.mtbs3d.minecrift.api.NetworkHelper;
 import com.mtbs3d.minecrift.api.NetworkHelper.PacketDiscriminators;
 import com.mtbs3d.minecrift.api.VRData;
-import com.mtbs3d.minecrift.control.VRControllerButtonMapping;
+import com.mtbs3d.minecrift.control.VRButtonMapping;
 import com.mtbs3d.minecrift.gameplay.BowTracker;
 import com.mtbs3d.minecrift.settings.AutoCalibration;
 import com.mtbs3d.minecrift.settings.VRSettings;
@@ -752,7 +752,7 @@ public class OpenVRPlayer
 				KeyboardSimulator.robot.mouseRelease(InputEvent.BUTTON2_DOWN_MASK);
 				KeyboardSimulator.robot.mouseRelease(InputEvent.BUTTON3_DOWN_MASK);
 				KeyboardSimulator.robot.keyRelease(KeyEvent.VK_SHIFT);		
-				for (VRControllerButtonMapping mapping : MCOpenVR.mc.vrSettings.buttonMappings) {
+				for (VRButtonMapping mapping : MCOpenVR.mc.vrSettings.buttonMappings.values()) {
 					mapping.actuallyUnpress();
 				}
 			}

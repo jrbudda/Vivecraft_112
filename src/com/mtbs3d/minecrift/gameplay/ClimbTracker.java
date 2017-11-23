@@ -8,7 +8,7 @@ import javax.swing.LayoutStyle;
 
 import com.mtbs3d.minecrift.api.NetworkHelper;
 import com.mtbs3d.minecrift.api.NetworkHelper.PacketDiscriminators;
-import com.mtbs3d.minecrift.control.VRControllerButtonMapping;
+import com.mtbs3d.minecrift.control.VRButtonMapping;
 import com.mtbs3d.minecrift.provider.MCOpenVR;
 import com.mtbs3d.minecrift.render.PlayerModelController;
 import com.mtbs3d.minecrift.utils.BlockWithData;
@@ -117,7 +117,7 @@ public class ClimbTracker {
 		return true;
 	}
 
-
+	
 	public void doProcess(EntityPlayerSP player){
 		if(!isActive(player)) {
 			latchStartController = -1;
@@ -175,19 +175,28 @@ public class ClimbTracker {
 				}
 
 				if(ok){
-					
+
 					meta[c] = b.getMetaFromState(bs);
 
 					if (b instanceof BlockVine){ //todo: handle multi-side vines
 						box[c] = new AxisAlignedBB(0, 0, 0, 1, 1, 1);
-						if((meta[c] & 1) == 1)
+						if((meta[c] & 1) == 1){
+							ok = mc.world.getBlockState(bp.south()).isFullBlock();
 							meta[c] = 2;
-						else if((meta[c] & 2) == 2)
+						}
+						else if((meta[c] & 2) == 2){
+							ok = mc.world.getBlockState(bp.west()).isFullBlock();
 							meta[c] = 5;
-						else if((meta[c] & 4) == 4)
+
+						}
+						else if((meta[c] & 4) == 4){
+							ok = mc.world.getBlockState(bp.north()).isFullBlock();
 							meta[c] = 3;
-						else if((meta[c] & 8) == 8)
+						}
+						else if((meta[c] & 8) == 8){
+							ok = mc.world.getBlockState(bp.east()).isFullBlock();
 							meta[c] = 4;
+						}
 					}
 
 					//						2: Ladder facing north
@@ -200,25 +209,27 @@ public class ClimbTracker {
 					//					2: west
 					//					4: north
 					//					8: east
-					if(meta[c] == 2){
-						AxisAlignedBB lBB= new AxisAlignedBB(.1, 0, .9,
-								.9, 1, 1.1).offset(bp);
-						inblock[c] = conBB.intersects(lBB);
-					} else if (meta[c] == 3){
-						AxisAlignedBB lBB= new AxisAlignedBB(.1, 0, -.1,
-								.9, 1, .1).offset(bp);
-						inblock[c] = conBB.intersects(lBB);
-					} else if (meta[c] == 4){
-						AxisAlignedBB lBB= new AxisAlignedBB(.9, 0, .1,
-								1.1, 1, .9).offset(bp);
-						inblock[c] = conBB.intersects(lBB);
+					if(ok){
+						if(meta[c] == 2){
+							AxisAlignedBB lBB= new AxisAlignedBB(.1, 0, .9,
+									.9, 1, 1.1).offset(bp);
+							inblock[c] = conBB.intersects(lBB);
+						} else if (meta[c] == 3){
+							AxisAlignedBB lBB= new AxisAlignedBB(.1, 0, -.1,
+									.9, 1, .1).offset(bp);
+							inblock[c] = conBB.intersects(lBB);
+						} else if (meta[c] == 4){
+							AxisAlignedBB lBB= new AxisAlignedBB(.9, 0, .1,
+									1.1, 1, .9).offset(bp);
+							inblock[c] = conBB.intersects(lBB);
 
-					} else if (meta[c] == 5){
-						AxisAlignedBB lBB= new AxisAlignedBB(-.1, 0, .1,
-								.1, 1, .9).offset(bp);
-						inblock[c] = conBB.intersects(lBB);
-					}	
-
+						} else if (meta[c] == 5){
+							AxisAlignedBB lBB= new AxisAlignedBB(-.1, 0, .1,
+									.1, 1, .9).offset(bp);
+							inblock[c] = conBB.intersects(lBB);
+						}	
+					} else
+						inblock[c] = false;
 				} 
 				else {
 					Vec3d hdel = latchStart[c].subtract(cpos[c] );
@@ -261,9 +272,9 @@ public class ClimbTracker {
 			if(!button[c] && latched[c]){ //let go 
 				latched[c] = false;
 				if(c == 0)
-					VRControllerButtonMapping.unpressKey(mc.gameSettings.keyBindAttack);
+					VRButtonMapping.unpressKey(mc.gameSettings.keyBindAttack);
 				else 
-					VRControllerButtonMapping.unpressKey(mc.gameSettings.keyBindForward);
+					VRButtonMapping.unpressKey(mc.gameSettings.keyBindForward);
 
 				jump = true;
 			} 
@@ -337,7 +348,7 @@ public class ClimbTracker {
 		if(!latched[0] && !latched[1] && !jump){
 			if(player.onGround && unsetflag){
 				unsetflag = false;
-				VRControllerButtonMapping.unpressKey(mc.gameSettings.keyBindForward);
+				VRButtonMapping.unpressKey(mc.gameSettings.keyBindForward);
 			}
 			latchStartController = -1;
 			return; //fly u fools

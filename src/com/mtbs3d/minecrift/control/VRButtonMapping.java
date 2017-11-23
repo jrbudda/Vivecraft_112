@@ -1,11 +1,17 @@
 package com.mtbs3d.minecrift.control;
 
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 
+import com.google.common.base.Joiner;
 import com.mtbs3d.minecrift.provider.MCOpenVR;
+import com.mtbs3d.minecrift.provider.TrackedController;
 import com.mtbs3d.minecrift.utils.KeyboardSimulator;
 import com.mtbs3d.minecrift.utils.MCReflection;
 
@@ -13,23 +19,54 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.src.Reflector;
 
-public class VRControllerButtonMapping {
-
-	public ViveButtons Button;
-	public String FunctionDesc = "none";
-	public char FunctionExt = 0;
-	public KeyBinding key;
-	private boolean unpress;
+public class VRButtonMapping implements Comparable<VRButtonMapping> {
+	public final String functionId;
+	public final String functionDesc;
+	public final char functionExt;
+	public KeyBinding keyBinding;
+	public Set<ButtonTuple> buttons;
+	protected boolean unpress;
+	protected boolean pressed;
 	
-	public VRControllerButtonMapping(ViveButtons button, String function) {
-		this.Button = button;
-		this.FunctionDesc = function;		
+	public VRButtonMapping(String functionId, ButtonTuple... buttons) {
+		this.functionId = functionId;
+		String[] split = functionId.split("_");
+		if (split.length == 1 || !functionId.startsWith("keyboard")) {
+			this.functionDesc = functionId;
+            this.functionExt = 0;
+        } else {
+        	this.functionDesc = split[0];
+            this.functionExt = (char)split[1].getBytes()[0];
+        }
+		this.buttons = new HashSet<>(Arrays.asList(buttons));
+	}
+	
+	public VRButtonMapping(String functionDesc, char functionExt, ButtonTuple... buttons) {
+		this.functionId = functionDesc + (functionExt != 0 ? "_" + functionExt : "");
+		this.functionDesc = functionDesc;
+		this.functionExt = functionExt;
+		this.buttons = new HashSet<>(Arrays.asList(buttons));
 	}
 	
 	@Override
 	public String toString() {
-		return Button.toString() + ":" + FunctionDesc + ( FunctionExt !=0  ? "_" + FunctionExt:"");
-	};
+		return "vrmapping_" + functionId + ":" + (!buttons.isEmpty() ? Joiner.on(',').join(buttons) : "none");
+	}
+
+	@Override
+	public int compareTo(VRButtonMapping other) {
+		if (keyBinding != null && other.keyBinding != null)
+			return keyBinding.compareTo(other.keyBinding);
+		if (functionId.startsWith("keyboard") && !other.functionId.startsWith("keyboard"))
+			return 1;
+		if (!functionId.startsWith("keyboard") && other.functionId.startsWith("keyboard"))
+			return -1;
+		return functionId.compareTo(other.functionId);
+	}
+	
+	public boolean isGUIBinding() {
+		return keyBinding != null && keyBinding.getKeyCategory().startsWith("Vivecraft") && keyBinding.getKeyDescription().startsWith("GUI");
+	}
 	
 	public void tick() {
 		if (this.unpress) {
@@ -37,32 +74,40 @@ public class VRControllerButtonMapping {
 			this.unpress = false;
 		}
 	}
+	
+	public boolean isPressed() {
+		return this.pressed;
+	}
 
 	public void press(){	
 		this.unpress = false;
-		if(this.FunctionDesc.equals("none")) return;
-		if(key!=null){
-			pressKey(key);
+		if(keyBinding != null){
+			pressKey(keyBinding);
+			this.pressed = true;
 			return;
 		}
-		if(FunctionExt!=0){
-			if(FunctionDesc.contains("(hold)")){
-				KeyboardSimulator.press(FunctionExt);
+		if(functionExt != 0){
+			if(functionDesc.contains("(hold)")){
+				KeyboardSimulator.press(functionExt);
 			} else {
-				KeyboardSimulator.type(FunctionExt);	
+				KeyboardSimulator.type(functionExt);	
 			}		
+			this.pressed = true;
 			return;
 		}	
-		if(FunctionDesc.equals("keyboard-shift")){
+		if(functionDesc.equals("keyboard-shift")){
 			KeyboardSimulator.robot.keyPress(KeyEvent.VK_SHIFT);
+			this.pressed = true;
 			return;
 		}
-		if(FunctionDesc.equals("keyboard-ctrl")){
+		if(functionDesc.equals("keyboard-ctrl")){
 			KeyboardSimulator.robot.keyPress(KeyEvent.VK_CONTROL);
+			this.pressed = true;
 			return;
 		}
-		if(FunctionDesc.equals("keyboard-alt")){
+		if(functionDesc.equals("keyboard-alt")){
 			KeyboardSimulator.robot.keyPress(KeyEvent.VK_ALT);
+			this.pressed = true;
 			return;
 		}
 	}
@@ -72,33 +117,33 @@ public class VRControllerButtonMapping {
 	}
 	
 	public void actuallyUnpress() {
-		if(this.FunctionDesc.equals("none")) return;
-		if(key!=null) {
-			 unpressKey(key);
-			return ;
+		if (!this.pressed) return;
+		this.pressed = false;
+		if(keyBinding != null) {
+			unpressKey(keyBinding);
+			return;
 		}
-		if(FunctionExt!=0){
-			if(FunctionDesc.contains("(hold)")){
-				KeyboardSimulator.unpress(FunctionExt);
+		if(functionExt != 0){
+			if(functionDesc.contains("(hold)")){
+				KeyboardSimulator.unpress(functionExt);
 			} else {
 				//nothing
 			}		
 			return;
 		}	
-		if(FunctionDesc.equals("keyboard-shift")){
+		if(functionDesc.equals("keyboard-shift")){
 			KeyboardSimulator.robot.keyRelease(KeyEvent.VK_SHIFT);
 			return;
 		}
-		if(FunctionDesc.equals("keyboard-ctrl")){
+		if(functionDesc.equals("keyboard-ctrl")){
 			KeyboardSimulator.robot.keyRelease(KeyEvent.VK_CONTROL);
 			return;
 		}
-		if(FunctionDesc.equals("keyboard-alt")){
+		if(functionDesc.equals("keyboard-alt")){
 			KeyboardSimulator.robot.keyRelease(KeyEvent.VK_ALT);
 			return;
 		}
 	}
-	
 
     public static void setKeyBindState(KeyBinding kb, boolean pressed) {
         if (kb != null) {

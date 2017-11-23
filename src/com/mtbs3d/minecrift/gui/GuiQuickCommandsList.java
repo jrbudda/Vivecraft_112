@@ -14,8 +14,7 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.gui.GuiScreen;
 import org.apache.commons.lang3.ArrayUtils;
 
-import com.mtbs3d.minecrift.control.VRControllerButtonMapping;
-import com.mtbs3d.minecrift.control.ViveButtons;
+import com.mtbs3d.minecrift.control.VRButtonMapping;
 import com.mtbs3d.minecrift.gui.framework.GuiEnterText;
 import com.mtbs3d.minecrift.settings.VRSettings;
 

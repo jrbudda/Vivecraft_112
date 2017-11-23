@@ -1,5 +1,6 @@
 package com.mtbs3d.minecrift.gui;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -9,6 +10,12 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.text.TextFormatting;
 import org.apache.commons.lang3.ArrayUtils;
+
+import com.mtbs3d.minecrift.control.ButtonTuple;
+import com.mtbs3d.minecrift.control.ButtonType;
+import com.mtbs3d.minecrift.control.ControllerType;
+import com.mtbs3d.minecrift.control.VRButtonMapping;
+import com.mtbs3d.minecrift.provider.MCOpenVR;
 
 public class GuiKeyBindingSelection extends GuiListExtended
 {
@@ -22,39 +29,28 @@ public class GuiKeyBindingSelection extends GuiListExtended
         super(mcIn, controls.width + 45, controls.height, 63, controls.height - 32, 20);
         this.controlsScreen = controls;
         this.mc = mcIn;
-        KeyBinding[] akeybinding = (KeyBinding[])ArrayUtils.clone(mcIn.gameSettings.keyBindings);
-        this.listEntries = new GuiListExtended.IGuiListEntry[akeybinding.length + KeyBinding.getKeybinds().size()+7];
-        Arrays.sort((Object[])akeybinding);
-        int i = 0;
-        String s = null;
 
-        this.listEntries[i++] = new GuiKeyBindingSelection.KeyEntry("None");
+        ArrayList<GuiListExtended.IGuiListEntry> entries = new ArrayList<>();
         
-        for (KeyBinding keybinding : akeybinding)
+        for (int i = 0; i < 2; i++)
         {
-            String s1 = keybinding.getKeyCategory();
-
-            if (!s1.equals(s))
-            {
-                s = s1;
-                this.listEntries[i++] = new GuiKeyBindingSelection.CategoryEntry(s1);
-            }
-
-            int j = mcIn.fontRenderer.getStringWidth(I18n.format(keybinding.getKeyDescription()));
-
-            if (j > this.maxListLabelWidth)
-            {
-                this.maxListLabelWidth = j;
-            }
-
-            this.listEntries[i++] = new GuiKeyBindingSelection.KeyEntry(keybinding);
+        	ControllerType controller = ControllerType.values()[i];
+	        for (ButtonType button : MCOpenVR.controllers[i].getActiveButtons())
+	        {
+	        	String buttonName = new ButtonTuple(button, controller).toReadableString();
+	
+	            int j = mcIn.fontRenderer.getStringWidth(buttonName);
+	
+	            if (j > this.maxListLabelWidth)
+	            {
+	                this.maxListLabelWidth = j;
+	            }
+	
+	            entries.add(new GuiKeyBindingSelection.ButtonEntry(new ButtonTuple(button, controller), buttonName));
+	        }
         }
-        this.listEntries[i++] = new GuiKeyBindingSelection.CategoryEntry("Keyboard Emulation");
-        this.listEntries[i++] = new GuiKeyBindingSelection.KeyEntry("keyboard (press)");
-        this.listEntries[i++] = new GuiKeyBindingSelection.KeyEntry("keyboard (hold)");
-        this.listEntries[i++] = new GuiKeyBindingSelection.KeyEntry("keyboard-shift");
-        this.listEntries[i++] = new GuiKeyBindingSelection.KeyEntry("keyboard-ctrl");
-        this.listEntries[i++] = new GuiKeyBindingSelection.KeyEntry("keyboard-alt");
+        
+        this.listEntries = entries.toArray(new GuiListExtended.IGuiListEntry[0]);
                 
     }
 
@@ -114,42 +110,39 @@ public class GuiKeyBindingSelection extends GuiListExtended
         }
     }
 
-    public class KeyEntry implements GuiListExtended.IGuiListEntry
+    public class ButtonEntry implements GuiListExtended.IGuiListEntry
     {
-        private final String keyDesc;
-        private final String keyPrettyDesc;
+        private final ButtonTuple button;
+        private final String buttonName;
 
-        private KeyEntry(String keydesc)
+        private ButtonEntry(ButtonTuple button, String buttonName)
         {
-            this.keyDesc = keydesc;
-        	this.keyPrettyDesc= I18n.format(keydesc);
+            this.button = button;
+            this.buttonName = buttonName;
         }
-
-        
-        public KeyEntry(KeyBinding keybinding) {
-            this.keyDesc = keybinding.getKeyDescription();
-        	this.keyPrettyDesc= I18n.format(this.keyDesc);
-		}
 
 
 		public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partialTicks)
         {
+            TextFormatting formatting = TextFormatting.WHITE;
             boolean flag = (mouseX <= GuiKeyBindingSelection.this.width * .6) && mouseY < y + slotHeight && mouseY > y;
-            if(flag)
-                GuiKeyBindingSelection.this.mc.fontRenderer.drawString(TextFormatting.GREEN + this.keyPrettyDesc, x + 190 - GuiKeyBindingSelection.this.maxListLabelWidth, y + slotHeight / 2 - GuiKeyBindingSelection.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
-            else
-                GuiKeyBindingSelection.this.mc.fontRenderer.drawString(TextFormatting.WHITE + this.keyPrettyDesc, x + 190 - GuiKeyBindingSelection.this.maxListLabelWidth, y + slotHeight / 2 - GuiKeyBindingSelection.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
+            boolean flag2 = GuiKeyBindingSelection.this.controlsScreen.mappingButtons.contains(this.button);
+            boolean flag3 = checkMappingConflict();
+            if (flag) formatting = TextFormatting.GREEN;
+            else if (flag3) formatting = TextFormatting.RED;
+            GuiKeyBindingSelection.this.mc.fontRenderer.drawString(formatting + this.buttonName, x + 190 - GuiKeyBindingSelection.this.maxListLabelWidth, y + slotHeight / 2 - GuiKeyBindingSelection.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
+            if (flag2) GuiKeyBindingSelection.this.mc.fontRenderer.drawString("->", x + 175 - GuiKeyBindingSelection.this.maxListLabelWidth, y + slotHeight / 2 - GuiKeyBindingSelection.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
            
         }
 
         public boolean mousePressed(int slotIndex, int mouseX, int mouseY, int mouseEvent, int relativeX, int relativeY)
         {
         	if(mouseX > GuiKeyBindingSelection.this.width * .6) return false;
-        	if(GuiKeyBindingSelection.this.controlsScreen.buttonId == null) return false; //how did u get here?
-        	GuiKeyBindingSelection.this.controlsScreen.selectionMode = false;
-        	GuiKeyBindingSelection.this.controlsScreen.buttonId.FunctionDesc = this.keyDesc;
-        	GuiKeyBindingSelection.this.controlsScreen.bindKey(GuiKeyBindingSelection.this.controlsScreen.buttonId);
-        	if(this.keyDesc.startsWith("keyboard")) GuiKeyBindingSelection.this.controlsScreen.waitingForKey = true;
+        	if(GuiKeyBindingSelection.this.controlsScreen.mapping == null) return false; //how did u get here?
+        	if (GuiKeyBindingSelection.this.controlsScreen.mappingButtons.contains(this.button))
+        		GuiKeyBindingSelection.this.controlsScreen.mappingButtons.remove(this.button);
+        	else
+        		GuiKeyBindingSelection.this.controlsScreen.mappingButtons.add(this.button);
         	return true;
         }
 
@@ -159,6 +152,16 @@ public class GuiKeyBindingSelection extends GuiListExtended
 
         public void updatePosition(int p_192633_1_, int p_192633_2_, int p_192633_3_, float p_192633_4_)
         {
+        }
+        
+        private boolean checkMappingConflict() {
+        	if (GuiKeyBindingSelection.this.controlsScreen.mapping == null) return false;
+        	for (VRButtonMapping mapping : mc.vrSettings.buttonMappings.values()) {
+        		if (mapping == GuiKeyBindingSelection.this.controlsScreen.mapping) continue;
+        		if (mapping.isGUIBinding() != GuiKeyBindingSelection.this.controlsScreen.mapping.isGUIBinding()) continue;
+        		if (mapping.buttons.contains(this.button)) return true;
+        	}
+        	return false;
         }
     }
 }

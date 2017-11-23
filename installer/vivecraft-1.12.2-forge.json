@@ -11,7 +11,7 @@
 	"mainClass": "net.minecraft.launchwrapper.Launch",
 	"type": "release",
 	"minecraftArguments": "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} --assetsDir ${assets_root} --assetIndex ${assets_index_name} --uuid ${auth_uuid} --accessToken ${auth_access_token} --userType ${user_type} --tweakClass com.mtbs3d.minecrift.tweaker.MinecriftForgeTweaker --tweakClass net.minecraftforge.fml.common.launcher.FMLTweaker --tweakClass optifine.OptiFineForgeTweaker  --versionType Forge",
-	"order": "6",
+	"order": 6,
 	"libraries": [
 	{
 		"name": "net.minecraftforge:forge:$MCVERSION-$FORGEVERSION",

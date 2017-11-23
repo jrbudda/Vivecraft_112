@@ -6,7 +6,7 @@ package com.mtbs3d.minecrift.gui;
 
 import java.io.IOException;
 
-import com.mtbs3d.minecrift.control.VRControllerButtonMapping;
+import com.mtbs3d.minecrift.control.VRButtonMapping;
 import com.mtbs3d.minecrift.gui.framework.BaseGuiSettings;
 import com.mtbs3d.minecrift.gui.framework.GuiButtonEx;
 import com.mtbs3d.minecrift.settings.VRSettings;
