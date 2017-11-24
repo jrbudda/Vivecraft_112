@@ -1542,7 +1542,7 @@ public class VRSettings
         HUD_YAW("HUD Horiz. Offset", true, false),
         HUD_LOCK_TO("HUD Orientation Lock", false, true),
         HUD_OPACITY("HUD Opacity", true, false),
-        RENDER_MENU_BACKGROUND("Menu Background", false, true),
+        RENDER_MENU_BACKGROUND("HUD/GUI Background", false, true),
         HUD_HIDE("Hide HUD (F1)", false, true),
         HUD_OCCLUSION("HUD Occlusion", false, true),
         MENU_ALWAYS_FOLLOW_FACE("Main Menu Follow", false, true),
@@ -1906,22 +1906,40 @@ public class VRSettings
     	
     }
 
-    private Map<String, VRButtonMapping> getBindingsDefaults() {
+    public Map<String, VRButtonMapping> getBindingsDefaults() {
     	Map<String, VRButtonMapping> out = new HashMap<>();
     	
     	// fill in with unbound
         for (KeyBinding keyBinding : mc.gameSettings.keyBindings) {	
 			out.put(keyBinding.getKeyDescription(), new VRButtonMapping(keyBinding.getKeyDescription()));
 		}
+        
+        // touchpad buttons for less duplication
+        List<ButtonTuple> rightTouchpadButtons = new ArrayList<>();
+        rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD, ControllerType.RIGHT));
+        rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_C, ControllerType.RIGHT));
+        rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_U, ControllerType.RIGHT));
+        rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_D, ControllerType.RIGHT));
+        rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_L, ControllerType.RIGHT));
+		rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_R, ControllerType.RIGHT));
+		rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_UL, ControllerType.RIGHT));
+		rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_UR, ControllerType.RIGHT));
+		rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_LL, ControllerType.RIGHT));
+		rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_LR, ControllerType.RIGHT));
+		rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_S1, ControllerType.RIGHT));
+		rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_S2, ControllerType.RIGHT));
+		rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_S3, ControllerType.RIGHT));
+		rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_S4, ControllerType.RIGHT));
+		rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_S5, ControllerType.RIGHT));
+		rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_S6, ControllerType.RIGHT));
+		rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_S7, ControllerType.RIGHT));
+		rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_S8, ControllerType.RIGHT));
 		
 		// vive
 		out.get("key.attack").buttons.add(new ButtonTuple(ButtonType.VIVE_TRIGGER, ControllerType.RIGHT));
 		out.get("key.pickItem").buttons.add(new ButtonTuple(ButtonType.VIVE_GRIP, ControllerType.RIGHT));
 		out.get("key.drop").buttons.add(new ButtonTuple(ButtonType.VIVE_APPMENU, ControllerType.RIGHT));
-		out.get("key.use").buttons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_UL, ControllerType.RIGHT));
-		out.get("key.use").buttons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_UR, ControllerType.RIGHT));
-		out.get("key.use").buttons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_LL, ControllerType.RIGHT));
-		out.get("key.use").buttons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_LR, ControllerType.RIGHT));
+		out.get("key.use").buttons.addAll(rightTouchpadButtons);
 		out.get("Hotbar Prev").buttons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_SWIPE_LEFT, ControllerType.RIGHT));
 		out.get("Hotbar Next").buttons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_SWIPE_RIGHT, ControllerType.RIGHT));
 		out.get("key.forward").buttons.add(new ButtonTuple(ButtonType.VIVE_TRIGGER, ControllerType.LEFT));
@@ -1929,17 +1947,16 @@ public class VRSettings
 		out.get("key.sneak").buttons.add(new ButtonTuple(ButtonType.VIVE_GRIP, ControllerType.LEFT));
 		out.get("key.inventory").buttons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_UL, ControllerType.LEFT));
 		out.get("key.inventory").buttons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_UR, ControllerType.LEFT));
+		out.get("key.inventory").buttons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_U, ControllerType.LEFT));
 		out.get("key.jump").buttons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_LL, ControllerType.LEFT));
 		out.get("key.jump").buttons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_LR, ControllerType.LEFT));
+		out.get("key.jump").buttons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_D, ControllerType.LEFT));
 		out.get("Hotbar Prev").buttons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_SWIPE_LEFT, ControllerType.LEFT));
 		out.get("Hotbar Next").buttons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_SWIPE_RIGHT, ControllerType.LEFT));
 		out.get("In-Game Menu Button").buttons.add(new ButtonTuple(ButtonType.VIVE_APPMENU, ControllerType.LEFT));
 		out.get("GUI Menu Button").buttons.add(new ButtonTuple(ButtonType.VIVE_APPMENU, ControllerType.LEFT));
 		out.get("GUI Left Click").buttons.add(new ButtonTuple(ButtonType.VIVE_TRIGGER, ControllerType.RIGHT));
-		out.get("GUI Right Click").buttons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_UL, ControllerType.RIGHT));
-		out.get("GUI Right Click").buttons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_UR, ControllerType.RIGHT));
-		out.get("GUI Right Click").buttons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_LL, ControllerType.RIGHT));
-		out.get("GUI Right Click").buttons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_LR, ControllerType.RIGHT));
+		out.get("GUI Right Click").buttons.addAll(rightTouchpadButtons);
 		out.get("GUI Middle Click").buttons.add(new ButtonTuple(ButtonType.VIVE_GRIP, ControllerType.RIGHT));
 		out.get("GUI Shift").buttons.add(new ButtonTuple(ButtonType.VIVE_GRIP, ControllerType.LEFT));
 		out.get("GUI Scroll Up").buttons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_SWIPE_UP, ControllerType.RIGHT));

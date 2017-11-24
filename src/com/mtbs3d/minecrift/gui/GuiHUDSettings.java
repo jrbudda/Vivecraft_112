@@ -41,12 +41,13 @@ public class GuiHUDSettings extends BaseGuiSettings
         this.buttonList.add(new GuiSmallButtonEx(VRSettings.VrOptions.HUD_HIDE.returnEnumOrdinal(), this.width / 2 - 78, this.height / 6 - 14, VRSettings.VrOptions.HUD_HIDE, this.guivrSettings.getKeyBinding(VRSettings.VrOptions.HUD_HIDE)));
         this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, "Reset To Defaults"));
         this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, "Done"));
-        this.buttonList.add(new GuiButtonEx(300, this.width / 2 - 155 , this.height / 6 + 11,150,20, "GUI Buttons"));
+      if(!mc.vrSettings.seated)
+        this.buttonList.add(new GuiButtonEx(300, this.width / 2 + 5 , this.height / 6 + 74,150,20, "GUI Buttons..."));
         VRSettings.VrOptions[] buttons = hudOptions;
 
-        for (int var12 = 3; var12 < buttons.length + 3; ++var12)
+        for (int var12 = 2; var12 < buttons.length + 2; ++var12)
         {
-            VRSettings.VrOptions var8 = buttons[var12 - 3];
+            VRSettings.VrOptions var8 = buttons[var12 - 2];
             int width = this.width / 2 - 155 + var12 % 2 * 160;
             int height = this.height / 6 + 21 * (var12 / 2) - 10;
 
@@ -238,12 +239,12 @@ public class GuiHUDSettings extends BaseGuiSettings
         else
             switch(buttonId)
             {
-//                case 201:
-//                    return new String[] {
-//                            "Open this configuration screen to adjust the Head",
-//                            "  Tracker orientation (direction) settings. ",
-//                            "  Ex: Head Tracking Selection (Hydra/Oculus), Prediction"
-//                    };
+                case 300:
+                    return new String[] {
+                            "Configure which controller buttons perform",
+                            "  which mouse or keyboard function while ",
+                            "  a GUI is visible."
+                    };
                 default:
                     return null;
             }

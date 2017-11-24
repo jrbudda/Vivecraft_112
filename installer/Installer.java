@@ -12,6 +12,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -61,7 +62,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
     private static final String OF_JSON_NAME      = "1.12.2_HD_U_C5";
     private static final String OF_MD5            = "e67fa3489563f55329d1d88ccffa9c9d";
     private static final String OF_VERSION_EXT    = ".jar";
-    private static final String FORGE_VERSION     = "14.23.0.2538";
+    private static final String FORGE_VERSION     = "14.23.0.2552";
 	/* END OF DO NOT RENAME */
 
 	private static final String DEFAULT_PROFILE_NAME = "ViveCraft " + MINECRAFT_VERSION;
@@ -642,18 +643,20 @@ public class Installer extends JPanel  implements PropertyChangeListener
 			// VIVE END - install openVR
 
 			// Setup forge if necessary
-			if (useForge.isSelected() && !forgeVersionInstalled) {
+			if (useForge.isSelected() && !forgeVersionInstalled && !isMultiMC) {
 				monitor.setProgress(55);
 				monitor.setNote("Downloading Forge " + FULL_FORGE_VERSION + "...");
 				downloadedForge = downloadFile(forge_url, forgeInstaller);
 				if(!downloadedForge)
 					JOptionPane.showMessageDialog(null, "Could not download Forge. Please exit this installer and download it manually", "Forge Installation", JOptionPane.WARNING_MESSAGE);
 			}
+			
 			if (downloadedForge && useForge.isSelected() && !forgeVersionInstalled) {
 				monitor.setProgress(65);
 				monitor.setNote("Installing Forge " + FULL_FORGE_VERSION + "...");
 				installedForge = installForge(forgeInstaller);
 			}
+			
 			monitor.setProgress(75);
 			monitor.setNote("Extracting correct Minecrift version...");
 			finalMessage = "Failed: Couldn't extract Minecrift. Try redownloading this installer.";
@@ -1302,7 +1305,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				if(!cfg.exists()) return result;
 
 				BufferedReader r = new BufferedReader(new FileReader(cfg));
-				ArrayList<String> lines = new ArrayList<String>();
+				java.util.List<String> lines = new ArrayList<String>();
 				String l;
 				while((l = r.readLine()) != null){
 					
@@ -1314,19 +1317,29 @@ public class Installer extends JPanel  implements PropertyChangeListener
 
 					if(l.startsWith("MinMemAlloc"))
 						continue;
-
+					
+					if(l.startsWith("OverrideJavaArgs"))
+						continue;
+					
+					if(l.startsWith("OverrideMemory"))
+						continue;
 					lines.add(l);
 				}
 
 				lines.add("MinMemAlloc=" + ((Integer)ramAllocation.getSelectedItem())*1024);
 				lines.add("MaxMemAlloc=" + ((Integer)ramAllocation.getSelectedItem())*1024);
+				lines.add("OverrideJavaArgs=true");
+				lines.add("OverrideMemory=true");
 				lines.add("JvmArgs=-Dfml.ignoreInvalidMinecraftCertificates=true -Dfml.ignorePatchDiscrepancies=true");
 
 				r.close();
 
+			    String[] arr = lines.toArray(new String[lines.size()]);
+				Arrays.sort(arr);
+			    
 				BufferedWriter w = new BufferedWriter(new FileWriter(cfg,false));
-
-				for (String string : lines) {
+				
+				for (String string : arr) {
 					w.write(string);
 					w.newLine();
 				}

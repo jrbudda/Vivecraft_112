@@ -15,6 +15,7 @@ import com.mtbs3d.minecrift.gui.framework.BaseGuiSettings;
 import com.mtbs3d.minecrift.gui.framework.GuiButtonEx;
 import com.mtbs3d.minecrift.provider.MCOpenVR;
 import com.mtbs3d.minecrift.provider.TrackedControllerVive;
+import com.mtbs3d.minecrift.provider.TrackedControllerVive.TouchpadMode;
 import com.mtbs3d.minecrift.settings.VRSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -172,8 +173,10 @@ public class GuiVRControls extends BaseGuiSettings {
     			btnAddKey.visible = true;
         		btnKeyboardPress.visible = false;
         		btnKeyboardHold.visible = false;
-        		btnLeftTouchpadMode.visible = false;
-        		btnRightTouchpadMode.visible = false;
+        		btnLeftTouchpadMode.visible = true;
+        		btnRightTouchpadMode.visible = true;
+        		btnLeftTouchpadMode.y = 33;
+        		btnRightTouchpadMode.y = 33;
     			btnDefaults.displayString = "Defaults";
     			if (MCOpenVR.isVive()) {
     				btnLeftTouchpadMode.displayString = "Left TP: " + ((TrackedControllerVive)MCOpenVR.controllers[ControllerType.LEFT.ordinal()]).getTouchpadMode();
@@ -189,8 +192,8 @@ public class GuiVRControls extends BaseGuiSettings {
     			if (this.guiFilter) {
         			screenTitle = "VR GUI Control Remapping";
         			btnAddKey.visible = false;
-            		btnLeftTouchpadMode.visible = true;
-            		btnRightTouchpadMode.visible = true;
+            		btnLeftTouchpadMode.y = 41;
+            		btnRightTouchpadMode.y = 41;
         			btnDefaults.x = this.width / 2 - 155;
         			btnDefaults.setWidth(150);
         			btnDone.x = this.width / 2 + 5;
@@ -237,8 +240,13 @@ public class GuiVRControls extends BaseGuiSettings {
 					}
 				}
         	} else {
-	        	mc.vrSettings.resetBindings();
-	        	guiList.buildList();
+        		this.guivrSettings.leftTouchpadMode = TouchpadMode.SPLIT_QUAD;
+        		this.guivrSettings.rightTouchpadMode = TouchpadMode.SPLIT_QUAD;
+        		((TrackedControllerVive)MCOpenVR.controllers[ControllerType.LEFT.ordinal()]).setTouchpadMode(TouchpadMode.SPLIT_QUAD);
+        		((TrackedControllerVive)MCOpenVR.controllers[ControllerType.RIGHT.ordinal()]).setTouchpadMode(TouchpadMode.SPLIT_QUAD);
+        		this.guivrSettings.resetBindings();
+	        	this.guiList.buildList();
+	        	this.guiSelection = new GuiKeyBindingSelection(this, mc);
         	}
         }   else if (par1GuiButton.id == 99){ //selection cancel
         	this.selectionMode = false;
@@ -258,10 +266,10 @@ public class GuiVRControls extends BaseGuiSettings {
         } else if (par1GuiButton.id == 103){
         	if (MCOpenVR.isVive()) {
         		TrackedControllerVive controller = ((TrackedControllerVive)MCOpenVR.controllers[ControllerType.LEFT.ordinal()]);
-        		TrackedControllerVive.TouchpadMode mode = controller.getTouchpadMode();
-        		if (mode.ordinal() == TrackedControllerVive.TouchpadMode.values().length - 1)
-        			mode = TrackedControllerVive.TouchpadMode.values()[0];
-        		else mode = TrackedControllerVive.TouchpadMode.values()[mode.ordinal() + 1];
+        		TouchpadMode mode = controller.getTouchpadMode();
+        		if (mode.ordinal() == TouchpadMode.values().length - 1)
+        			mode = TouchpadMode.values()[0];
+        		else mode = TouchpadMode.values()[mode.ordinal() + 1];
         		controller.setTouchpadMode(mode);
         		this.guivrSettings.leftTouchpadMode = mode;
         		this.guivrSettings.saveOptions();
@@ -270,10 +278,10 @@ public class GuiVRControls extends BaseGuiSettings {
         } else if (par1GuiButton.id == 104){
         	if (MCOpenVR.isVive()) {
         		TrackedControllerVive controller = ((TrackedControllerVive)MCOpenVR.controllers[ControllerType.RIGHT.ordinal()]);
-        		TrackedControllerVive.TouchpadMode mode = controller.getTouchpadMode();
-        		if (mode.ordinal() == TrackedControllerVive.TouchpadMode.values().length - 1)
-        			mode = TrackedControllerVive.TouchpadMode.values()[0];
-        		else mode = TrackedControllerVive.TouchpadMode.values()[mode.ordinal() + 1];
+        		TouchpadMode mode = controller.getTouchpadMode();
+        		if (mode.ordinal() == TouchpadMode.values().length - 1)
+        			mode = TouchpadMode.values()[0];
+        		else mode = TouchpadMode.values()[mode.ordinal() + 1];
         		controller.setTouchpadMode(mode);
         		this.guivrSettings.rightTouchpadMode = mode;
         		this.guivrSettings.saveOptions();

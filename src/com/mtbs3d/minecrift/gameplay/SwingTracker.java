@@ -198,7 +198,7 @@ public class SwingTracker {
         		}
         	}
 
-        	if(!inAnEntity){
+        	if(!inAnEntity && !sword){
         		if(mc.climbTracker.isClimbeyClimb()){
         			if(c == 0 && mc.gameSettings.keyBindAttack.isKeyDown() || !tool ) continue;
         			if(c == 1 && mc.gameSettings.keyBindForward.isKeyDown() || !tool ) continue;

@@ -498,3 +498,10 @@
      public static void glDisableWrapper(int cap)
      {
          GL11.glDisable(cap);
+@@ -5101,4 +5121,4 @@
+         drawBuffersNone.limit(0);
+         drawBuffersColorAtt0.put(36064).position(0).limit(1);
+     }
+-}
++}
+\ No newline at end of file

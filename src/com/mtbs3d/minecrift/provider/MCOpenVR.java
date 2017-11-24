@@ -127,7 +127,7 @@ public class MCOpenVR
 	/**
 	 * Do not make this public and reference it! Call the {@link #isVive()} method instead!
 	 */
-	private static boolean isVive = true;
+	private static boolean isViveDetected = true;
 
 	// TextureIDs of framebuffers for each eye
 	private int LeftEyeTextureId;
@@ -329,7 +329,7 @@ public class MCOpenVR
 
 		System.out.println( "OpenVR initialized & VR connected." );
 		
-		if (isVive) {
+		if (isVive()) {
 			controllers[RIGHT_CONTROLLER] = new TrackedControllerVive(ControllerType.RIGHT);
 			controllers[LEFT_CONTROLLER] = new TrackedControllerVive(ControllerType.LEFT);
 			((TrackedControllerVive)controllers[RIGHT_CONTROLLER]).setTouchpadMode(mc.vrSettings.rightTouchpadMode);
@@ -596,12 +596,12 @@ public class MCOpenVR
 				System.out.println("Device manufacturer is: "+id);
 			
 				if(!id.equals("HTC")) {
-					isVive=false;
+					isViveDetected=false;
 					mc.vrSettings.loadOptions();
 				}
 				
 				//TODO: detect tracking system
-				if(mc.vrSettings.seated && !isVive)
+				if(mc.vrSettings.seated && !isViveDetected)
 					resetPosition();
 				else
 					clearOffset();
@@ -687,7 +687,7 @@ public class MCOpenVR
 
 			updateControllerButtonState(); // Still used by tip transforms
 			
-			boolean flag = mc.vrSettings.vrFreeMoveMode != mc.vrSettings.FREEMOVE_JOYPAD;
+			boolean flag = !mc.vrPlayer.getFreeMove() || mc.vrSettings.vrFreeMoveMode != mc.vrSettings.FREEMOVE_JOYPAD;
 			if (isVive()) {
 				((TrackedControllerVive)controllers[LEFT_CONTROLLER]).setSwipeEnabled(flag);
 			} else {
@@ -2083,7 +2083,7 @@ public class MCOpenVR
 	}
 	
 	public static boolean isVive() {
-		return mc.vrSettings.forceHardwareDetection == 0 ? isVive : mc.vrSettings.forceHardwareDetection == 1;
+		return mc.vrSettings.forceHardwareDetection == 0 ? isViveDetected : mc.vrSettings.forceHardwareDetection == 1;
 	}
 
 	public static void resetPosition() {
