@@ -14,6 +14,7 @@ import com.mtbs3d.minecrift.control.VRButtonMapping;
 import com.mtbs3d.minecrift.gui.framework.BaseGuiSettings;
 import com.mtbs3d.minecrift.gui.framework.GuiButtonEx;
 import com.mtbs3d.minecrift.provider.MCOpenVR;
+import com.mtbs3d.minecrift.provider.TrackedControllerVive;
 import com.mtbs3d.minecrift.settings.VRSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -23,12 +24,14 @@ import net.minecraft.client.gui.GuiSlot;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.util.text.TextFormatting;
 
 public class GuiVRControls extends BaseGuiSettings {
 
 	public VRButtonMapping mapping; 
 	public Set<ButtonTuple> mappingButtons;
 	public boolean selectionMode = false;
+	public boolean guiFilter = false;
 	private boolean waitingForKey = false;
 	private boolean keyboardHoldSelect = false;
 	private boolean keyboardHold = false;
@@ -41,6 +44,8 @@ public class GuiVRControls extends BaseGuiSettings {
     private GuiButton btnAddKey;
     private GuiButton btnKeyboardPress;
     private GuiButton btnKeyboardHold;
+    private GuiButton btnLeftTouchpadMode;
+    private GuiButton btnRightTouchpadMode;
 
 	public GuiVRControls(GuiScreen par1GuiScreen, VRSettings par2vrSettings) {
 		super(par1GuiScreen, par2vrSettings);
@@ -92,12 +97,18 @@ public class GuiVRControls extends BaseGuiSettings {
         btnAddKey = (new GuiButtonEx(100, this.width / 2 - 50, this.height -25,100,20, "Add Key"));
         btnKeyboardPress = (new GuiButtonEx(101, this.width / 2 - 155, this.height -25,100,20, "Press"));
         btnKeyboardHold = (new GuiButtonEx(102, this.width / 2 - 50, this.height -25,100,20, "Hold"));
+        btnLeftTouchpadMode = (new GuiButtonEx(103, this.width / 2 - 155, 41,150,20, ""));
+        btnRightTouchpadMode = (new GuiButtonEx(104, this.width / 2 + 5, 41,150,20, ""));
         this.buttonList.add(btnDefaults);
         this.buttonList.add(btnDone);
         this.buttonList.add(btnCancel);
         this.buttonList.add(btnAddKey);
         this.buttonList.add(btnKeyboardPress);
         this.buttonList.add(btnKeyboardHold);
+        if (MCOpenVR.isVive()) {
+            this.buttonList.add(btnLeftTouchpadMode);
+            this.buttonList.add(btnRightTouchpadMode);
+        }
     }
 
     /**
@@ -117,6 +128,8 @@ public class GuiVRControls extends BaseGuiSettings {
     		btnAddKey.visible = false;
     		btnKeyboardPress.visible = false;
     		btnKeyboardHold.visible = false;
+    		btnLeftTouchpadMode.visible = false;
+    		btnRightTouchpadMode.visible = false;
 			btnCancel.x = this.width / 2 - 155 + 80;
 			btnCancel.setWidth(150);
     	}else {
@@ -127,9 +140,15 @@ public class GuiVRControls extends BaseGuiSettings {
     			btnAddKey.visible = false;
         		btnKeyboardPress.visible = false;
         		btnKeyboardHold.visible = false;
+        		btnLeftTouchpadMode.visible = false;
+        		btnRightTouchpadMode.visible = false;
     			btnCancel.x = this.width / 2 - 50;
     			btnCancel.setWidth(100);
     			btnDefaults.displayString = "Clear All";
+    			btnDefaults.x = this.width / 2 - 155;
+    			btnDefaults.setWidth(100);
+    			btnDone.x = this.width / 2 + 55;
+    			btnDone.setWidth(100);
     			screenTitle = "Choose buttons for " + I18n.format(this.mapping.functionId);
     			this.guiSelection.drawScreen(par1, par2, par3);
     		}
@@ -140,6 +159,8 @@ public class GuiVRControls extends BaseGuiSettings {
     			btnAddKey.visible = false;
         		btnKeyboardPress.visible = true;
         		btnKeyboardHold.visible = true;
+        		btnLeftTouchpadMode.visible = false;
+        		btnRightTouchpadMode.visible = false;
     			btnCancel.x = this.width / 2 + 55;
     			btnCancel.setWidth(100);
     			screenTitle = "Choose keyboard key mode";
@@ -151,10 +172,31 @@ public class GuiVRControls extends BaseGuiSettings {
     			btnAddKey.visible = true;
         		btnKeyboardPress.visible = false;
         		btnKeyboardHold.visible = false;
+        		btnLeftTouchpadMode.visible = false;
+        		btnRightTouchpadMode.visible = false;
     			btnDefaults.displayString = "Defaults";
+    			if (MCOpenVR.isVive()) {
+    				btnLeftTouchpadMode.displayString = "Left TP: " + ((TrackedControllerVive)MCOpenVR.controllers[ControllerType.LEFT.ordinal()]).getTouchpadMode();
+    				btnRightTouchpadMode.displayString = "Right TP: " + ((TrackedControllerVive)MCOpenVR.controllers[ControllerType.RIGHT.ordinal()]).getTouchpadMode();
+    			}
+    			btnDefaults.x = this.width / 2 - 155;
+    			btnDefaults.setWidth(100);
+    			btnDone.x = this.width / 2 + 55;
+    			btnDone.setWidth(100);
     			this.selectionMode = false;
     			screenTitle = "VR Control Remapping";
-    			this.guiList.drawScreen(par1, par2, par3);       
+    			this.guiList.drawScreen(par1, par2, par3);  
+    			if (this.guiFilter) {
+        			screenTitle = "VR GUI Control Remapping";
+        			btnAddKey.visible = false;
+            		btnLeftTouchpadMode.visible = true;
+            		btnRightTouchpadMode.visible = true;
+        			btnDefaults.x = this.width / 2 - 155;
+        			btnDefaults.setWidth(150);
+        			btnDone.x = this.width / 2 + 5;
+        			btnDone.setWidth(150);
+    				this.drawCenteredString(this.fontRenderer, TextFormatting.RED + "Changing these wrongly can break GUI controller input. Tread carefully.", this.width / 2, 28, 16777215);
+    			}
     		}
     	}
     	super.drawScreen(par1,par2,par3,false);
@@ -213,6 +255,30 @@ public class GuiVRControls extends BaseGuiSettings {
         	this.keyboardHold = true;
         	this.waitingForKey = true;
         	this.keyboardHoldSelect = false;
+        } else if (par1GuiButton.id == 103){
+        	if (MCOpenVR.isVive()) {
+        		TrackedControllerVive controller = ((TrackedControllerVive)MCOpenVR.controllers[ControllerType.LEFT.ordinal()]);
+        		TrackedControllerVive.TouchpadMode mode = controller.getTouchpadMode();
+        		if (mode.ordinal() == TrackedControllerVive.TouchpadMode.values().length - 1)
+        			mode = TrackedControllerVive.TouchpadMode.values()[0];
+        		else mode = TrackedControllerVive.TouchpadMode.values()[mode.ordinal() + 1];
+        		controller.setTouchpadMode(mode);
+        		this.guivrSettings.leftTouchpadMode = mode;
+        		this.guivrSettings.saveOptions();
+        		this.guiSelection = new GuiKeyBindingSelection(this, mc);
+        	}
+        } else if (par1GuiButton.id == 104){
+        	if (MCOpenVR.isVive()) {
+        		TrackedControllerVive controller = ((TrackedControllerVive)MCOpenVR.controllers[ControllerType.RIGHT.ordinal()]);
+        		TrackedControllerVive.TouchpadMode mode = controller.getTouchpadMode();
+        		if (mode.ordinal() == TrackedControllerVive.TouchpadMode.values().length - 1)
+        			mode = TrackedControllerVive.TouchpadMode.values()[0];
+        		else mode = TrackedControllerVive.TouchpadMode.values()[mode.ordinal() + 1];
+        		controller.setTouchpadMode(mode);
+        		this.guivrSettings.rightTouchpadMode = mode;
+        		this.guivrSettings.saveOptions();
+        		this.guiSelection = new GuiKeyBindingSelection(this, mc);
+        	}
         }
     }
     

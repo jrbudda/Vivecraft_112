@@ -56,6 +56,7 @@ public class GuiVRControlsList extends GuiListExtended
         {
         	VRButtonMapping kb = bindings.get(i);
         	
+        	if (parent.guiFilter != kb.isGUIBinding()) continue;
         	String s = kb.keyBinding != null ? kb.keyBinding.getKeyCategory() : (kb.functionDesc.startsWith("keyboard") ? "Keyboard Emulation" : null);
         	if (s == null) continue;
         	if (s != null && !s.equals(cat)) {
@@ -170,13 +171,12 @@ public class GuiVRControlsList extends GuiListExtended
         }
         
         private void updateButtonList() {
-            List<ButtonType> activeButtons = new ArrayList<>();
-            activeButtons.addAll(MCOpenVR.controllers[0].getActiveButtons());
-            activeButtons.addAll(MCOpenVR.controllers[1].getActiveButtons());
+            List<ButtonType> activeButtonsLeft = MCOpenVR.controllers[ControllerType.LEFT.ordinal()].getActiveButtons();
+            List<ButtonType> activeButtonsRight = MCOpenVR.controllers[ControllerType.RIGHT.ordinal()].getActiveButtons();
 
             ArrayList<String> buttonList = new ArrayList<>();
             for (ButtonTuple tuple : myKey.buttons) {
-            	if (activeButtons.contains(tuple.button))
+            	if ((tuple.controller == ControllerType.LEFT && activeButtonsLeft.contains(tuple.button)) || (tuple.controller == ControllerType.RIGHT && activeButtonsRight.contains(tuple.button)))
             		buttonList.add(tuple.toReadableString());
             }
             String str = Joiner.on(',').join(buttonList);

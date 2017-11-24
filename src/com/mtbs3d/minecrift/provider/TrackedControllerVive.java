@@ -256,6 +256,7 @@ public class TrackedControllerVive extends TrackedController {
 			case SPLIT_LR:
 				list.add(ButtonType.VIVE_TOUCHPAD_L);
 				list.add(ButtonType.VIVE_TOUCHPAD_R);
+				break;
 			case SPLIT_QUAD_CENTER:
 				list.add(ButtonType.VIVE_TOUCHPAD_C);
 				// fall-through case
