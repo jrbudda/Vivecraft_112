@@ -71,7 +71,7 @@
      }
  
      /**
-@@ -71,24 +100,65 @@
+@@ -71,24 +100,66 @@
  
              case 2:
              case 3:
@@ -121,6 +121,7 @@
 +            case 103:
 +            	mc.gameSettings.showDebugProfilerChart = !mc.gameSettings.showDebugProfilerChart;
 +            	mc.gameSettings.showDebugInfo = mc.gameSettings.showDebugProfilerChart;
++            	this.mc.displayGuiScreen((GuiScreen)null);
 +            	break;
 +            case 104:
 +            	this.mc.displayGuiScreen((GuiScreen)null);

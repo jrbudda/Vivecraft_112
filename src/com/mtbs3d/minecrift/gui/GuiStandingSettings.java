@@ -1,9 +1,14 @@
 package com.mtbs3d.minecrift.gui;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import com.mtbs3d.minecrift.gui.framework.*;
 import com.mtbs3d.minecrift.provider.MCOpenVR;
 import com.mtbs3d.minecrift.settings.VRSettings;
 import com.mtbs3d.minecrift.settings.VRSettings.VrOptions;
+import com.mtbs3d.minecrift.utils.HardwareType;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -31,10 +36,19 @@ public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
     static VRSettings.VrOptions[] freeMoveSettings = new VRSettings.VrOptions[]
     {
     		VRSettings.VrOptions.FREEMOVE_MODE,
-            VRSettings.VrOptions.MOVEMENT_MULTIPLIER,
             VRSettings.VrOptions.INERTIA_FACTOR,
+            VRSettings.VrOptions.MOVEMENT_MULTIPLIER,
             VRSettings.VrOptions.FOV_REDUCTION,
-
+    };
+    static VRSettings.VrOptions[] freeMoveSettingsJP = new VRSettings.VrOptions[]
+    {
+            VRSettings.VrOptions.ANALOG_DEADZONE,
+    		VRSettings.VrOptions.FREEMOVE_WMR_STICK
+    };
+    static VRSettings.VrOptions[] freeMoveSettingsNJP = new VRSettings.VrOptions[]
+    {
+    		VRSettings.VrOptions.ANALOG_DEADZONE,
+            VRSettings.VrOptions.ANALOG_MOVEMENT
     };
     
     public GuiStandingSettings(GuiScreen guiScreen, VRSettings guivrSettings) {
@@ -53,13 +67,21 @@ public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
         VRSettings.VrOptions[] buttons = locomotionSettings;
         addButtons(buttons,0);
         mc.vrSettings.vrFreeMove = mc.vrPlayer.getFreeMove();
-        GuiSmallButtonEx mode = new GuiSmallButtonEx(VRSettings.VrOptions.MOVE_MODE.returnEnumOrdinal(), this.width / 2 - 68, this.height / 6 + 80,VRSettings.VrOptions.MOVE_MODE, this.guivrSettings.getKeyBinding(VRSettings.VrOptions.MOVE_MODE));
+        GuiSmallButtonEx mode = new GuiSmallButtonEx(VRSettings.VrOptions.MOVE_MODE.returnEnumOrdinal(), this.width / 2 - 75, this.height / 6 + 80,VRSettings.VrOptions.MOVE_MODE, this.guivrSettings.getKeyBinding(VRSettings.VrOptions.MOVE_MODE));
         mode.setEventHandler(this);
         this.buttonList.add(mode);
-        if(mc.vrPlayer.getFreeMove())
-        	addButtons(freeMoveSettings,124);
+  
+		if(mc.vrPlayer.getFreeMove()){
+			List<VrOptions> fm = new ArrayList<VRSettings.VrOptions>();
+			Collections.addAll(fm, freeMoveSettings);
+	    	if(guivrSettings.vrFreeMoveMode == guivrSettings.FREEMOVE_JOYPAD) 
+				Collections.addAll(fm, freeMoveSettingsJP);
+	    	else if (guivrSettings.vrFreeMoveMode != guivrSettings.FREEMOVE_RUNINPLACE) 
+				Collections.addAll(fm, freeMoveSettingsNJP);
+        	addButtons((VrOptions[]) fm.toArray(new VrOptions[fm.size()]),115);
+		}
         else
-        	addButtons(teleportSettings,124);        
+        	addButtons(teleportSettings,115);        
     }
 
 	private void addButtons(VRSettings.VrOptions[] buttons, int startY) {
@@ -77,7 +99,11 @@ public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
                 extra += 5;
                 continue;
             }
-
+            
+            HardwareType hw = MCOpenVR.getHardwareType();
+            if (var8 == VRSettings.VrOptions.FREEMOVE_WMR_STICK) 
+            	if(!(hw.hasTouchpad && hw.hasStick)) continue;
+           
             if (var8.getEnumFloat())
             {
                 float minValue = 0.0f;
@@ -101,11 +127,16 @@ public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
                     maxValue=10f;
                     increment=0.1f;
                 }  		
-                else if (var8 == VrOptions.WORLD_ROTATION_INCREMENT){
+                else if (var8 == VRSettings.VrOptions.WORLD_ROTATION_INCREMENT){
                     minValue = -1f;
                     maxValue = 4f;
                     increment = 1f;
-   			}
+                }
+                else if (var8 == VRSettings.VrOptions.ANALOG_DEADZONE) {
+                    minValue = 0f;
+                    maxValue = 0.5f;
+                    increment = 0.01f;
+                }
                 // VIVE START - new options
                 GuiSliderEx slider = new GuiSliderEx(var8.returnEnumOrdinal(), width, height - 20, var8, this.guivrSettings.getKeyBinding(var8), minValue, maxValue, increment, this.guivrSettings.getOptionFloatValue(var8));
                 slider.setEventHandler(this);
@@ -165,6 +196,8 @@ public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
                 vr.vehicleRotation = true;
                 vr.useFOVReduction = false;
                 vr.walkUpBlocks = true;
+                vr.analogMovement = true;
+
                 //end jrbudda
                 
                 Minecraft.getMinecraft().gameSettings.viewBobbing = true;
@@ -179,7 +212,7 @@ public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
                     this.guivrSettings.setOptionValue(((GuiSmallButtonEx)par1GuiButton).returnVrEnumOptions(), 1);
                     par1GuiButton.displayString = this.guivrSettings.getKeyBinding(VRSettings.VrOptions.getEnumOptions(par1GuiButton.id));
                     
-                    if(num == VRSettings.VrOptions.MOVE_MODE){
+                    if(num == VRSettings.VrOptions.MOVE_MODE || num == VRSettings.VrOptions.FREEMOVE_MODE){
                     	this.reinit = true;
                     }
                     
@@ -287,15 +320,24 @@ public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
                     };
                 case FREEMOVE_MODE:
                     return new String[] {
-                            "The source for freemove direction. Options are",
-                            "Controller: Uses left controller direction, max speed",
-                            "HMD: Uses head direction, max speed",
-                            "Run In Place: Use average controllers direction. Speed based",
-                            "on controller motion.",
-                            "Joy/Pad: Uses the left touchpad or joystick for all motion.",
-                            "Overrides all 4 movement direction keybinds."
-                            
+                            "The source for freemove direction.","",
+                            "Controller: Offhand controller pointing direction",
+                            "HMD: Headset look direction",
+                            "Run In Place:",
+                            "    Direction is based on how controllers are swinging.",
+                            "Joy/Pad: ",
+                            "    Uses the offhand touchpad or joystick for all motion.",
                     } ;
+                case FREEMOVE_WMR_STICK:
+                	return new String[] {
+                			"Whether to use touchpad or stick for Joy/Pad movement."	
+                	};
+                case ANALOG_DEADZONE:
+                	return new String[] {
+                			"How far an axis must be pushed before movement is",
+                			"registered for Joy/Pad or Analog movement. Adjust this",
+                			"if you are drifting while not touching the axis."
+                	};
                 case VEHICLE_ROTATION:
                     return new String[] {
                             "Riding in a vehicle will rotate the world",
@@ -312,6 +354,12 @@ public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
                             "How many degrees to rotate when",
                             "rotating the world."
                             
+                    };
+                case ANALOG_MOVEMENT:
+                    return new String[] {
+                            "Walking speed will be determined by the controller button",
+                            "axis, if the bound button has a variable axis."    ,"",
+                            "For full analog control it is better to use 'Joy/Pad mode"                      
                     };
                 default:
                     return null;

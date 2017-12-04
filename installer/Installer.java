@@ -62,7 +62,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
     private static final String OF_JSON_NAME      = "1.12.2_HD_U_C5";
     private static final String OF_MD5            = "e67fa3489563f55329d1d88ccffa9c9d";
     private static final String OF_VERSION_EXT    = ".jar";
-    private static final String FORGE_VERSION     = "14.23.0.2552";
+    private static final String FORGE_VERSION     = "14.23.1.2559";
 	/* END OF DO NOT RENAME */
 
 	private static final String DEFAULT_PROFILE_NAME = "ViveCraft " + MINECRAFT_VERSION;
@@ -1273,7 +1273,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				}
 
 				prof.put("lastVersionId", minecriftVer + mod);
-				prof.put("javaArgs", "-Xmx" + ramAllocation.getSelectedItem() + "G -Xms" + ramAllocation.getSelectedItem() + "G -XX:+UseG1GC -Dfml.ignoreInvalidMinecraftCertificates=true -Dfml.ignorePatchDiscrepancies=true");
+				prof.put("javaArgs", "-Xmx" + ramAllocation.getSelectedItem() + "G -Xms" + ramAllocation.getSelectedItem() + "G -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:-UseAdaptiveSizePolicy -Xmn256M -Dfml.ignoreInvalidMinecraftCertificates=true -Dfml.ignorePatchDiscrepancies=true");
 				root.put("selectedProfile", profileName);
 				prof.put("lastUsed", dateFormat.format(new java.util.Date()));
 				if(chkCustomGameDir.isSelected() && txtCustomGameDir.getText().trim() != ""){
@@ -1330,7 +1330,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				lines.add("MaxMemAlloc=" + ((Integer)ramAllocation.getSelectedItem())*1024);
 				lines.add("OverrideJavaArgs=true");
 				lines.add("OverrideMemory=true");
-				lines.add("JvmArgs=-Dfml.ignoreInvalidMinecraftCertificates=true -Dfml.ignorePatchDiscrepancies=true");
+				lines.add("JvmArgs=-XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:-UseAdaptiveSizePolicy -Xmn256M -Dfml.ignoreInvalidMinecraftCertificates=true -Dfml.ignorePatchDiscrepancies=true");
 
 				r.close();
 
@@ -1349,8 +1349,9 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				result = true;
 			}
 			catch (Exception e) {
-				e.printStackTrace();
-			}
+					JOptionPane.showMessageDialog(null,
+							e.toString(),"",JOptionPane.WARNING_MESSAGE);
+		}
 
 			return result;
 		}

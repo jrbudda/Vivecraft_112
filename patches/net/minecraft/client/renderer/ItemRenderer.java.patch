@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/ItemRenderer.java
 +++ b/net/minecraft/client/renderer/ItemRenderer.java
-@@ -2,12 +2,22 @@
+@@ -2,12 +2,23 @@
  
  import com.google.common.base.MoreObjects;
  import java.util.Objects;
@@ -20,10 +20,11 @@
  import net.minecraft.client.entity.AbstractClientPlayer;
  import net.minecraft.client.entity.EntityPlayerSP;
 +import net.minecraft.client.gui.ScaledResolution;
++import net.minecraft.client.main.Main;
  import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
  import net.minecraft.client.renderer.entity.Render;
  import net.minecraft.client.renderer.entity.RenderManager;
-@@ -16,11 +26,26 @@
+@@ -16,11 +27,26 @@
  import net.minecraft.client.renderer.texture.TextureMap;
  import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
  import net.minecraft.entity.EntityLivingBase;
@@ -50,7 +51,7 @@
  import net.minecraft.src.Config;
  import net.minecraft.src.DynamicLights;
  import net.minecraft.src.Reflector;
-@@ -31,9 +56,17 @@
+@@ -31,9 +57,17 @@
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.MathHelper;
@@ -68,7 +69,7 @@
  public class ItemRenderer
  {
      private static final ResourceLocation RES_MAP_BACKGROUND = new ResourceLocation("textures/map/map_background.png");
-@@ -49,20 +82,34 @@
+@@ -49,20 +83,34 @@
      private float prevEquippedProgressOffHand;
      private final RenderManager renderManager;
      private final RenderItem itemRenderer;
@@ -106,7 +107,7 @@
      {
          if (!heldStack.isEmpty())
          {
-@@ -71,17 +118,17 @@
+@@ -71,17 +119,17 @@
              GlStateManager.pushMatrix();
              boolean flag = this.itemRenderer.shouldRenderItemIn3D(heldStack) && block.getBlockLayer() == BlockRenderLayer.TRANSLUCENT;
  
@@ -135,7 +136,7 @@
  
              GlStateManager.popMatrix();
          }
-@@ -99,7 +146,7 @@
+@@ -99,7 +147,7 @@
          GlStateManager.popMatrix();
      }
  
@@ -144,7 +145,7 @@
      {
          AbstractClientPlayer abstractclientplayer = this.mc.player;
          int i = this.mc.world.getCombinedLight(new BlockPos(abstractclientplayer.posX, abstractclientplayer.posY + (double)abstractclientplayer.getEyeHeight(), abstractclientplayer.posZ), 0);
-@@ -114,6 +161,7 @@
+@@ -114,6 +162,7 @@
          OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, f, f1);
      }
  
@@ -152,7 +153,7 @@
      private void rotateArm(float p_187458_1_)
      {
          EntityPlayerSP entityplayersp = this.mc.player;
-@@ -134,6 +182,7 @@
+@@ -134,6 +183,7 @@
          return f;
      }
  
@@ -160,7 +161,7 @@
      private void renderArms()
      {
          if (!this.mc.player.isInvisible())
-@@ -148,6 +197,7 @@
+@@ -148,6 +198,7 @@
          }
      }
  
@@ -168,7 +169,7 @@
      private void renderArm(EnumHandSide p_187455_1_)
      {
          this.mc.getTextureManager().bindTexture(this.mc.player.getLocationSkin());
-@@ -174,29 +224,31 @@
+@@ -174,29 +225,31 @@
  
      private void renderMapFirstPersonSide(float p_187465_1_, EnumHandSide hand, float p_187465_3_, ItemStack stack)
      {
@@ -222,7 +223,7 @@
      }
  
      private void renderMapFirstPerson(float p_187463_1_, float p_187463_2_, float p_187463_3_)
-@@ -204,14 +256,17 @@
+@@ -204,14 +257,17 @@
          float f = MathHelper.sqrt(p_187463_3_);
          float f1 = -0.2F * MathHelper.sin(p_187463_3_ * (float)Math.PI);
          float f2 = -0.4F * MathHelper.sin(f * (float)Math.PI);
@@ -246,7 +247,7 @@
          this.renderMapFirstPerson(this.itemStackMainHand);
      }
  
-@@ -242,76 +297,103 @@
+@@ -242,76 +298,103 @@
          GlStateManager.enableLighting();
      }
  
@@ -405,13 +406,14 @@
      }
  
      /**
-@@ -370,8 +452,330 @@
+@@ -370,8 +453,331 @@
          RenderHelper.disableStandardItemLighting();
      }
  
 -    public void renderItemInFirstPerson(AbstractClientPlayer player, float p_187457_2_, float p_187457_3_, EnumHand hand, float p_187457_5_, ItemStack stack, float p_187457_7_)
 +    public void renderItemInFirstPerson(AbstractClientPlayer player, float partialTicks, float bodyPitch, EnumHand hand, float swingProgress, @Nullable ItemStack itemstack, float equippingprogress)
      {
++    	if(Main.viewonly) return;
 +    	boolean mainHand = hand == EnumHand.MAIN_HAND;
 +    	EnumHandSide enumhandside = mainHand ? player.getPrimaryHand() : player.getPrimaryHand().opposite();
 +    	equippingprogress = getEquipProgress(hand, partialTicks);
@@ -737,7 +739,7 @@
      }
  
      /**
-@@ -379,84 +783,212 @@
+@@ -379,84 +785,215 @@
       */
      public void renderOverlays(float partialTicks)
      {
@@ -757,6 +759,9 @@
 -            EntityPlayer entityplayer = this.mc.player;
 +                this.renderBlockInHand();
 +            	inblock = true;
++            	
++    			if(!mc.bowTracker.isDrawing)				
++    				mc.entityRenderer.renderGuiLayer(partialTicks);  
 +        }
  
 -            for (int i = 0; i < 8; ++i)

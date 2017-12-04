@@ -8,6 +8,7 @@ import java.util.List;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 
+import com.mtbs3d.minecrift.control.AxisInfo;
 import com.mtbs3d.minecrift.control.AxisType;
 import com.mtbs3d.minecrift.control.ButtonType;
 import com.mtbs3d.minecrift.control.ControllerType;
@@ -152,7 +153,7 @@ public class TrackedControllerVive extends TrackedController {
 		}
 	}
 
-	private ButtonType getTouchpadButton() {
+	protected ButtonType getTouchpadButton() {
 		float centerThreshold = 0.3F;
 		Vector2 axis = getAxis(AxisType.VIVE_TOUCHPAD);
 		switch (touchpadMode) {
@@ -375,7 +376,9 @@ public class TrackedControllerVive extends TrackedController {
 
 	@Override
 	public boolean canButtonBeTouched(ButtonType button) {
-		switch (button) {
+		return false;
+		// nah
+		/*switch (button) {
 			case VIVE_TOUCHPAD:
 			case VIVE_TOUCHPAD_U:
 			case VIVE_TOUCHPAD_D:
@@ -397,7 +400,7 @@ public class TrackedControllerVive extends TrackedController {
 				return true;
 			default:
 				return false;
-		}
+		}*/
 	}
 
 	@Override
@@ -417,15 +420,19 @@ public class TrackedControllerVive extends TrackedController {
 	}
 	
 	@Override
-	public AxisType getButtonAxis(ButtonType button) {
+	public AxisInfo getButtonAxis(ButtonType button) {
 		switch (button) {
-			case VIVE_TOUCHPAD_SWIPE_UP:
+			// Technically not wrong, but doesn't make much sense, so removed
+			/*case VIVE_TOUCHPAD_SWIPE_UP:
+				return new AxisInfo(AxisType.VIVE_TOUCHPAD, true, false);
 			case VIVE_TOUCHPAD_SWIPE_DOWN:
+				return new AxisInfo(AxisType.VIVE_TOUCHPAD, true, true);
 			case VIVE_TOUCHPAD_SWIPE_LEFT:
+				return new AxisInfo(AxisType.VIVE_TOUCHPAD, false, true);
 			case VIVE_TOUCHPAD_SWIPE_RIGHT:
-				return AxisType.VIVE_TOUCHPAD;
+				return new AxisInfo(AxisType.VIVE_TOUCHPAD, false, false);*/
 			case VIVE_TRIGGER:
-				return AxisType.VIVE_TRIGGER;
+				return new AxisInfo(AxisType.VIVE_TRIGGER, false, false);
 			default:
 				return null;
 		}

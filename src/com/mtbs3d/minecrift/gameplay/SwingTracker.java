@@ -128,7 +128,7 @@ public class SwingTracker {
             	entityReachAdd = 0.3f;
             }
 
-        	weaponLength *= mc.vrPlayer.vrdata_world_pre.scaleY;
+        	weaponLength *= mc.vrPlayer.vrdata_world_pre.worldScale;
 
         	weaponEnd[c] = new Vec3d(
         			handPos.x + handDirection.x * weaponLength,

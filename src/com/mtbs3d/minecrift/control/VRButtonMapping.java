@@ -16,6 +16,7 @@ import com.mtbs3d.minecrift.utils.KeyboardSimulator;
 import com.mtbs3d.minecrift.utils.MCReflection;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.src.Reflector;
 
@@ -65,7 +66,13 @@ public class VRButtonMapping implements Comparable<VRButtonMapping> {
 	}
 	
 	public boolean isGUIBinding() {
+		if (keyBinding == Minecraft.getMinecraft().gameSettings.keyBindInventory)
+			return Minecraft.getMinecraft().currentScreen instanceof GuiContainer; // dirty hack
 		return keyBinding != null && keyBinding.getKeyCategory().startsWith("Vivecraft") && keyBinding.getKeyDescription().startsWith("GUI");
+	}
+	
+	public boolean isKeyboardBinding() {
+		return functionDesc.startsWith("keyboard") && keyBinding == null;
 	}
 	
 	public void tick() {

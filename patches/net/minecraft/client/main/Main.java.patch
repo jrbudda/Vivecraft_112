@@ -1,10 +1,11 @@
 --- a/net/minecraft/client/main/Main.java
 +++ b/net/minecraft/client/main/Main.java
-@@ -20,11 +20,15 @@
+@@ -20,11 +20,17 @@
  
  public class Main
  {
 +	public static boolean kiosk;
++	public static boolean viewonly;
 +	public static boolean katvr;
      public static void main(String[] p_main_0_)
      {
@@ -12,15 +13,17 @@
          optionparser.allowsUnrecognizedOptions();
          optionparser.accepts("demo");
 +        optionparser.accepts("kiosk");
++        optionparser.accepts("viewonly");
 +        optionparser.accepts("katvr");
          optionparser.accepts("fullscreen");
          optionparser.accepts("checkGlErrors");
          OptionSpec<String> optionspec = optionparser.accepts("server").withRequiredArg();
-@@ -90,6 +94,8 @@
+@@ -90,6 +96,9 @@
          boolean flag = optionset.has("fullscreen");
          boolean flag1 = optionset.has("checkGlErrors");
          boolean flag2 = optionset.has("demo");
 +        kiosk = optionset.has("kiosk");
++        if (kiosk) viewonly = optionset.has("viewonly");
 +        katvr = optionset.has("katvr");
          String s3 = (String)optionset.valueOf(optionspec12);
          Gson gson = (new GsonBuilder()).registerTypeAdapter(PropertyMap.class, new Serializer()).create();

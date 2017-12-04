@@ -2,6 +2,7 @@ package com.mtbs3d.minecrift.provider;
 
 import java.util.List;
 
+import com.mtbs3d.minecrift.control.AxisInfo;
 import com.mtbs3d.minecrift.control.AxisType;
 import com.mtbs3d.minecrift.control.ButtonType;
 import com.mtbs3d.minecrift.control.ControllerType;
@@ -69,6 +70,25 @@ public abstract class TrackedController {
 		if (duration > 3999) duration = 3999;
 		MCOpenVR.vrsystem.TriggerHapticPulse.apply(deviceIndex, 0, (short)duration);
 	}
+	
+	public boolean isActiveButton(ButtonType button) {
+		return getActiveButtons().contains(button);
+	}
+
+	public float getButtonAxisValue(ButtonType button) {
+		AxisInfo ai = getButtonAxis(button);
+		if (ai == null) return isButtonPressed(button) ? 1 : 0;
+		Vector2 axis = this.getAxis(ai.getAxis());
+		float x = axis.getX();
+		float y = axis.getY();
+		if (ai.isX()) {
+			if (ai.isNegative()) return x < 0 ? -x : 0;
+			else return x > 0 ? x : 0;
+		} else {
+			if (ai.isNegative()) return y < 0 ? -y : 0;
+			else return y > 0 ? y : 0;
+		}
+	}
 
 	abstract void processInput();
 	abstract void processButtonEvent(int button, boolean state, boolean press);
@@ -77,5 +97,5 @@ public abstract class TrackedController {
 	public abstract boolean isButtonPressed(ButtonType button);
 	public abstract boolean canButtonBeTouched(ButtonType button);
 	public abstract Vector2 getAxis(AxisType axis);
-	public abstract AxisType getButtonAxis(ButtonType button);
+	public abstract AxisInfo getButtonAxis(ButtonType button);
 }

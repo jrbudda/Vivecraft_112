@@ -138,7 +138,7 @@ public class BowTracker {
 
 		pressed = minecraft.gameSettings.keyBindAttack.isKeyDown();
 
-		float notchDistThreshold = (float) (0.3 * provider.vrdata_world_render.scaleY);
+		float notchDistThreshold = (float) (0.3 * provider.vrdata_world_render.worldScale);
 		
 		ItemStack ammo = findAmmoItemStack(player);
 		

@@ -9,6 +9,15 @@
      public boolean useVbo = true;
      public boolean reducedDebugInfo;
      public boolean hideServerAddress;
+@@ -140,7 +140,7 @@
+     public boolean enableWeakAttacks;
+     public boolean showSubtitles;
+     public boolean realmsNotifications = true;
+-    public boolean autoJump = true;
++    public boolean autoJump = false;
+     public TutorialSteps tutorialStep = TutorialSteps.MOVEMENT;
+     public KeyBinding keyBindForward = new KeyBinding("key.forward", 17, "key.categories.movement");
+     public KeyBinding keyBindLeft = new KeyBinding("key.left", 30, "key.categories.movement");
 @@ -224,7 +224,7 @@
      public boolean ofStars = true;
      public boolean ofSunMoon = true;

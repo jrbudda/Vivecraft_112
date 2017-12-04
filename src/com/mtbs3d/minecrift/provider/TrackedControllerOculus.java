@@ -9,6 +9,7 @@ import java.util.List;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 
+import com.mtbs3d.minecrift.control.AxisInfo;
 import com.mtbs3d.minecrift.control.AxisType;
 import com.mtbs3d.minecrift.control.ButtonType;
 import com.mtbs3d.minecrift.control.ControllerType;
@@ -180,17 +181,20 @@ public class TrackedControllerOculus extends TrackedController {
 	}
 	
 	@Override
-	public AxisType getButtonAxis(ButtonType button) {
+	public AxisInfo getButtonAxis(ButtonType button) {
 		switch (button) {
 			case OCULUS_STICK_UP:
+				return new AxisInfo(AxisType.OCULUS_STICK, true, false);
 			case OCULUS_STICK_DOWN:
+				return new AxisInfo(AxisType.OCULUS_STICK, true, true);
 			case OCULUS_STICK_LEFT:
+				return new AxisInfo(AxisType.OCULUS_STICK, false, true);
 			case OCULUS_STICK_RIGHT:
-				return AxisType.OCULUS_STICK;
+				return new AxisInfo(AxisType.OCULUS_STICK, false, false);
 			case OCULUS_INDEX_TRIGGER:
-				return AxisType.OCULUS_INDEX_TRIGGER;
+				return new AxisInfo(AxisType.OCULUS_INDEX_TRIGGER, false, false);
 			case OCULUS_HAND_TRIGGER:
-				return AxisType.OCULUS_HAND_TRIGGER;
+				return new AxisInfo(AxisType.OCULUS_HAND_TRIGGER, false, false);
 			default:
 				return null;
 		}

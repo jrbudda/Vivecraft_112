@@ -226,9 +226,10 @@ public class VRHotkeys {
 	}
 
 	public static void snapMRCam(Minecraft mc, int controller) {
-		mc.vrSettings.vrFixedCamposX =(float) MCOpenVR.getAimSource(controller).x;
-		mc.vrSettings.vrFixedCamposY =(float) MCOpenVR.getAimSource(controller).y;
-		mc.vrSettings.vrFixedCamposZ =(float) MCOpenVR.getAimSource(controller).z;	
+		Vec3d c = mc.vrPlayer.vrdata_room_pre.getController(controller).getPosition();
+		mc.vrSettings.vrFixedCamposX =(float) c.x;
+		mc.vrSettings.vrFixedCamposY =(float) c.y;
+		mc.vrSettings.vrFixedCamposZ =(float) c.z;	
 		
 		mc.vrSettings.vrFixedCamrotPitch = mc.vrPlayer.vrdata_room_pre.getController(controller).getPitch();
 		mc.vrSettings.vrFixedCamrotYaw = mc.vrPlayer.vrdata_room_pre.getController(controller).getYaw();

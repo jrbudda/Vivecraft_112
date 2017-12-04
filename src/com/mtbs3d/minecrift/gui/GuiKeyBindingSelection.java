@@ -38,15 +38,19 @@ public class GuiKeyBindingSelection extends GuiListExtended
 	        for (ButtonType button : MCOpenVR.controllers[i].getActiveButtons())
 	        {
 	        	String buttonName = new ButtonTuple(button, controller).toReadableString();
-	
 	            int j = mcIn.fontRenderer.getStringWidth(buttonName);
-	
-	            if (j > this.maxListLabelWidth)
-	            {
+	            if (j > this.maxListLabelWidth) {
 	                this.maxListLabelWidth = j;
 	            }
-	
 	            entries.add(new GuiKeyBindingSelection.ButtonEntry(new ButtonTuple(button, controller), buttonName));
+	            if (MCOpenVR.controllers[i].canButtonBeTouched(button)) {
+	            	String buttonName2 = new ButtonTuple(button, controller, true).toReadableString();
+		            int k = mcIn.fontRenderer.getStringWidth(buttonName2);
+		            if (k > this.maxListLabelWidth) {
+		                this.maxListLabelWidth = k;
+		            }
+		            entries.add(new GuiKeyBindingSelection.ButtonEntry(new ButtonTuple(button, controller, true), buttonName2));
+	            }
 	        }
         }
         

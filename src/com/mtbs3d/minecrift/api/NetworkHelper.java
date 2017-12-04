@@ -78,7 +78,7 @@ public class NetworkHelper {
 	public static void sendVRPlayerPositions(OpenVRPlayer player) {
 		if(!serverWantsData) return;
 		if(Minecraft.getMinecraft().getConnection() == null) return;
-		float worldScale = Minecraft.getMinecraft().vrPlayer.vrdata_world_post.scaleY;
+		float worldScale = Minecraft.getMinecraft().vrPlayer.vrdata_world_post.worldScale;
 	
 		if (worldScale != worldScallast) {
 			ByteBuf payload = Unpooled.buffer();

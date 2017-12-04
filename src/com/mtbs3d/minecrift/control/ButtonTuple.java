@@ -5,21 +5,32 @@ import java.util.Collection;
 public class ButtonTuple {
 	public final ButtonType button;
 	public final ControllerType controller;
+	public final boolean isTouch;
 
-	public ButtonTuple(ButtonType button, ControllerType controller) {
+	public ButtonTuple(ButtonType button, ControllerType controller, boolean isTouch) {
 		this.button = button;
 		this.controller = controller;
+		this.isTouch = isTouch;
+	}
+
+	public ButtonTuple(ButtonType button, ControllerType controller) {
+		this(button, controller, false);
 	}
 	
 	public static ButtonTuple parse(String str) {
+		boolean touch = false;
+		if (str.endsWith("_TOUCH")) {
+			touch = true;
+			str = str.substring(0, str.lastIndexOf('_'));
+		}
 		ButtonType button = Enum.valueOf(ButtonType.class, str.substring(str.indexOf('_') + 1));
 		ControllerType controller = Enum.valueOf(ControllerType.class, str.substring(0, str.indexOf('_')));
-		return new ButtonTuple(button, controller);
+		return new ButtonTuple(button, controller, touch);
 	}
 	
-	public boolean isInCollection(Collection<? extends ButtonTuple> collection, boolean button, boolean controller) {
+	public boolean isInCollection(Collection<? extends ButtonTuple> collection, boolean matchButton, boolean matchController, boolean matchTouch) {
 		for (ButtonTuple tuple : collection) {
-			if ((!controller || tuple.controller == this.controller) && (!button || tuple.button == this.button))
+			if ((!matchController || tuple.controller == this.controller) && (!matchButton || tuple.button == this.button) && (!matchTouch || tuple.isTouch == this.isTouch))
 				return true;
 		}
 		return false;
@@ -30,12 +41,12 @@ public class ButtonTuple {
 		String buttonName = button.toString().substring(button.toString().indexOf('_') + 1);
 		if (buttonName.equals("AX")) buttonName = controller == ControllerType.LEFT ? "X" : "A";
 		if (buttonName.equals("BY")) buttonName = controller == ControllerType.LEFT ? "Y" : "B";
-		return controller.toString() + "_" + buttonName;
+		return controller.toString() + "_" + buttonName + (isTouch ? "_TOUCH" : "");
 	}
 
 	@Override
 	public String toString() {
-		return controller.name() + "_" + button.name();
+		return controller.name() + "_" + button.name() + (isTouch ? "_TOUCH" : "");
 	}
 
 	@Override
@@ -44,6 +55,7 @@ public class ButtonTuple {
 		int result = 1;
 		result = prime * result + ((button == null) ? 0 : button.hashCode());
 		result = prime * result + ((controller == null) ? 0 : controller.hashCode());
+		result = prime * result + (isTouch ? 1231 : 1237);
 		return result;
 	}
 
@@ -59,6 +71,8 @@ public class ButtonTuple {
 		if (button != other.button)
 			return false;
 		if (controller != other.controller)
+			return false;
+		if (isTouch != other.isTouch)
 			return false;
 		return true;
 	}

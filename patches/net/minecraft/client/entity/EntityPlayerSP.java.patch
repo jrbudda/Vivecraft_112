@@ -826,14 +826,14 @@
 +    				switch (mc.vrSettings.vrFreeMoveMode){
 +    				case VRSettings.FREEMOVE_CONTROLLER:
 +    				case VRSettings.FREEMOVE_JOYPAD:
-+    					directionVec= directionVec.rotatePitch(con.vrdata_world_pre.getController(1).getPitch()  * PIOVER180);		   
++    					directionVec = directionVec.rotatePitch(con.vrdata_world_pre.getController(1).getPitch()  * PIOVER180);		   
 +    					break;
 +    				case VRSettings.FREEMOVE_HMD:
-+    					directionVec=directionVec.rotatePitch(con.vrdata_world_pre.hmd.getPitch() * PIOVER180);				
++    					directionVec = directionVec.rotatePitch(con.vrdata_world_pre.hmd.getPitch() * PIOVER180);				
 +    					break;
 +    				case VRSettings.FREEMOVE_RUNINPLACE:
 +    					//hmd pitch
-+    						directionVec=directionVec.rotatePitch(con.vrdata_world_pre.hmd.getPitch()* PIOVER180);	
++    						directionVec = directionVec.rotatePitch(con.vrdata_world_pre.hmd.getPitch()* PIOVER180);	
 +    						break;
 +    					}
 +    				}
@@ -844,13 +844,13 @@
 +    				switch (mc.vrSettings.vrFreeMoveMode){
 +    				case VRSettings.FREEMOVE_CONTROLLER:
 +    				case VRSettings.FREEMOVE_JOYPAD:
-+    					directionVec=directionVec.rotateYaw(-con.vrdata_world_pre.getController(1).getYaw() * PIOVER180);	
++    					directionVec = directionVec.rotateYaw(-con.vrdata_world_pre.getController(1).getYaw() * PIOVER180);	
 +    					break;
 +    				case VRSettings.FREEMOVE_HMD:
-+    					directionVec=directionVec.rotateYaw(-con.vrdata_world_pre.hmd.getYaw() * PIOVER180);	
++    					directionVec = directionVec.rotateYaw(-con.vrdata_world_pre.hmd.getYaw() * PIOVER180);	
 +    					break;
 +    				case VRSettings.FREEMOVE_RUNINPLACE:
-+    					directionVec=directionVec.rotateYaw((float) (-mc.runTracker.getYaw() * PIOVER180));
++    					directionVec = directionVec.rotateYaw((float) (-mc.runTracker.getYaw() * PIOVER180));
 +    					directionVec = directionVec.scale(mc.runTracker.getSpeed());
 +    					break;
 +    				}

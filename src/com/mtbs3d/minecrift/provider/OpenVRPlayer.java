@@ -128,14 +128,14 @@ public class OpenVRPlayer
 	}
 
 	public Vec3d room_to_world_pos(Vec3d pos, VRData data){
-		Vec3d out = new Vec3d(pos.x*data.scaleXZ, pos.y*data.scaleY, pos.z*data.scaleXZ);
+		Vec3d out = new Vec3d(pos.x*data.worldScale, pos.y*data.worldScale, pos.z*worldScale);
 		out =out.rotateYaw(data.rotation);
 		return out.addVector(data.origin.x, data.origin.y, data.origin.z);
 	}
 
 	public Vec3d world_to_room_pos(Vec3d pos, VRData data){
 		Vec3d out = pos.addVector(-data.origin.x, -data.origin.y, -data.origin.z);
-		out = new Vec3d(out.x/data.scaleXZ, out.y/data.scaleY, out.z/data.scaleXZ);
+		out = new Vec3d(out.x/data.worldScale, out.y/data.worldScale, out.z/data.worldScale);
 		return out.rotateYaw(-data.rotation);
 	}
 
@@ -146,7 +146,7 @@ public class OpenVRPlayer
 
 	public void preTick(){
 
-		this.vrdata_world_pre = new VRData(this.roomOrigin, worldScale * mc.vrSettings.walkMultiplier, worldScale, (float) Math.toRadians(mc.vrSettings.vrWorldRotation));
+		this.vrdata_world_pre = new VRData(this.roomOrigin, mc.vrSettings.walkMultiplier, worldScale, (float) Math.toRadians(mc.vrSettings.vrWorldRotation));
 
 		if(mc.vrSettings.seated)
 			mc.vrSettings.vrWorldRotation = MCOpenVR.seatedRot;
@@ -160,7 +160,7 @@ public class OpenVRPlayer
 	public void postTick(){
 		Minecraft mc = Minecraft.getMinecraft();
 		this.vrdata_room_post = new VRData(new Vec3d(0, 0, 0), mc.vrSettings.walkMultiplier, 1, 0);
-		this.vrdata_world_post = new VRData(this.roomOrigin, worldScale * mc.vrSettings.walkMultiplier, worldScale, (float) Math.toRadians(mc.vrSettings.vrWorldRotation));
+		this.vrdata_world_post = new VRData(this.roomOrigin, mc.vrSettings.walkMultiplier, worldScale, (float) Math.toRadians(mc.vrSettings.vrWorldRotation));
 
 		//Vivecraft - setup the player entity with the correct view for the logic tick.
 		doLookOverride(vrdata_world_post);
@@ -175,7 +175,7 @@ public class OpenVRPlayer
 
 		//do some interpolatin'
 
-		float interpolatedWorldScale = vrdata_world_post.scaleY*par1 + vrdata_world_pre.scaleY*(1-par1);
+		float interpolatedWorldScale = vrdata_world_post.worldScale*par1 + vrdata_world_pre.worldScale*(1-par1);
 
 		float end = vrdata_world_post.rotation;
 		float start = vrdata_world_pre.rotation;
@@ -198,7 +198,7 @@ public class OpenVRPlayer
 
 		//System.out.println(vrdata_world_post.origin.x + " " + vrdata_world_pre.origin.x + " = " + interPolatedRoomOrigin.x);
 
-		this.vrdata_world_render = new VRData(interPolatedRoomOrigin, interpolatedWorldScale * mc.vrSettings.walkMultiplier, interpolatedWorldScale, interpolatedWorldRotation_Radians);
+		this.vrdata_world_render = new VRData(interPolatedRoomOrigin, mc.vrSettings.walkMultiplier, interpolatedWorldScale, interpolatedWorldRotation_Radians);
 
 		//handle special items
 		mc.bowTracker.doProcess(mc, mc.player);
@@ -241,7 +241,7 @@ public class OpenVRPlayer
 
 		VRData temp = vrdata_world_pre;
 
-		if(instant) temp = new VRData(roomOrigin, mc.vrSettings.walkMultiplier * this.worldScale, this.worldScale, (float) Math.toRadians(mc.vrSettings.vrWorldRotation));
+		if(instant) temp = new VRData(roomOrigin, mc.vrSettings.walkMultiplier, this.worldScale, (float) Math.toRadians(mc.vrSettings.vrWorldRotation));
 
 		Vec3d campos = temp.hmd.getPosition().subtract(temp.origin);
 
@@ -296,7 +296,7 @@ public class OpenVRPlayer
 			this.worldScale =  mc.vrSettings.vrWorldScale;
 
 		//handle changes up to this point (menu, buttons, seated)
-		VRData testbefore = new VRData(roomOrigin, mc.vrSettings.walkMultiplier * worldScale, this.worldScale, vrdata_world_pre.rotation);		
+		VRData testbefore = new VRData(roomOrigin, mc.vrSettings.walkMultiplier, this.worldScale, vrdata_world_pre.rotation);		
 		float end = mc.vrSettings.vrWorldRotation;
 		float start = (float) Math.toDegrees(vrdata_world_pre.rotation);	
 		rotateOriginAround(-end+start, testbefore.hmd.getPosition());
@@ -304,7 +304,6 @@ public class OpenVRPlayer
 
 		if(!mc.isGamePaused())
 		{ //do vehicle rotation, which rotates around a different point.
-			mc.vrSettings.vehicleRotation = true;
 			if(mc.vrSettings.vehicleRotation && mc.player.isRiding() && wasRiding){
 				Entity e = mc.player.getRidingEntity();		
 				end = e.rotationYaw;
@@ -373,7 +372,7 @@ public class OpenVRPlayer
 					Math.sin(rads) * (pt.x-o.x) + Math.cos(rads) * (pt.z-o.z) + o.z
 					,false);
 
-		VRData test = new VRData(roomOrigin, mc.vrSettings.walkMultiplier * worldScale, this.worldScale, (float) Math.toRadians(mc.vrSettings.vrWorldRotation));
+		VRData test = new VRData(roomOrigin, mc.vrSettings.walkMultiplier, this.worldScale, (float) Math.toRadians(mc.vrSettings.vrWorldRotation));
 
 		Vec3d b = vrdata_world_pre.hmd.getPosition();
 		Vec3d a = test.hmd.getPosition();
@@ -507,7 +506,7 @@ public class OpenVRPlayer
 
 		// move player's X/Z coords as the HMD moves around the room
 
-		VRData temp = new VRData(this.roomOrigin, worldScale * mc.vrSettings.walkMultiplier, worldScale, (float) Math.toRadians(mc.vrSettings.vrWorldRotation));
+		VRData temp = new VRData(this.roomOrigin, mc.vrSettings.walkMultiplier, worldScale, (float) Math.toRadians(mc.vrSettings.vrWorldRotation));
 		//OK this is the first place I've found where we reallly need to update the VR data before doing this calculation.
 
 		Vec3d eyePos = temp.hmd.getPosition();

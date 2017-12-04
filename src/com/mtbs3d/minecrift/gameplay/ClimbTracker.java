@@ -362,8 +362,8 @@ public class ClimbTracker {
 		}
 
 		
-		Vec3d now = mc.vrPlayer.room_to_world_pos(mc.vrPlayer.vrdata_room_pre.getController(latchStartController).getPosition(), mc.vrPlayer.vrdata_world_pre);
-		Vec3d start =mc.vrPlayer.room_to_world_pos(latchStart_room[latchStartController], mc.vrPlayer.vrdata_world_pre);
+		Vec3d now = mc.vrPlayer.vrdata_world_pre.getController(latchStartController).getPosition();
+		Vec3d start = mc.vrPlayer.room_to_world_pos(latchStart_room[latchStartController], mc.vrPlayer.vrdata_world_pre);
 		
 		Vec3d delta= now.subtract(start);
 		

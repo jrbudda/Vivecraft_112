@@ -4,40 +4,33 @@
  */
 package com.mtbs3d.minecrift.settings;
 
-import java.io.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 
-import com.mtbs3d.minecrift.provider.MCOpenVR;
-import com.mtbs3d.minecrift.provider.TrackedControllerVive.TouchpadMode;
-import com.mtbs3d.minecrift.settings.profile.ProfileReader;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.json.JSONObject;
+import org.lwjgl.util.Color;
+
 import com.mtbs3d.minecrift.control.ButtonTuple;
 import com.mtbs3d.minecrift.control.ButtonType;
 import com.mtbs3d.minecrift.control.ControllerType;
 import com.mtbs3d.minecrift.control.LegacyButton;
 import com.mtbs3d.minecrift.control.VRButtonMapping;
+import com.mtbs3d.minecrift.provider.MCOpenVR;
+import com.mtbs3d.minecrift.provider.TrackedControllerVive.TouchpadMode;
 import com.mtbs3d.minecrift.settings.profile.ProfileManager;
+import com.mtbs3d.minecrift.settings.profile.ProfileReader;
 import com.mtbs3d.minecrift.settings.profile.ProfileWriter;
 import com.mtbs3d.minecrift.utils.HardwareType;
-import com.mtbs3d.minecrift.utils.KeyboardSimulator;
 
-import de.fruitfly.ovr.IOculusRift;
-import de.fruitfly.ovr.enums.EyeType;
-import jopenvr.VR_IVRSystem_FnTable.GetTrackedDeviceIndexForControllerRole_callback;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.init.Items;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.util.math.Vec3d;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.json.JSONObject;
-import org.lwjgl.util.Color;
 
 public class VRSettings
 {
@@ -106,6 +99,8 @@ public class VRSettings
     public Map<String, VRButtonMapping> buttonMappings = new HashMap<>();
 	public TouchpadMode leftTouchpadMode = TouchpadMode.SPLIT_QUAD;
 	public TouchpadMode rightTouchpadMode = TouchpadMode.SPLIT_QUAD;
+	public boolean freemoveWMRStick = true;
+	public float analogDeadzone = 0.05F;
     public float vrWorldScale = 1.0f;
     public float vrWorldRotation = 0f;
 	public float vrWorldRotationCached;
@@ -145,6 +140,7 @@ public class VRSettings
     public boolean vrShowBlueCircleBuddy = true;
     public boolean vehicleRotation = true; 
     public boolean animaltouching = true;
+    public boolean analogMovement = true;
     //
     
     //Rendering
@@ -655,37 +651,51 @@ public class VRSettings
                     if(optionTokens[0].equals("rightTouchpadMode")){
                         this.rightTouchpadMode = Enum.valueOf(TouchpadMode.class, optionTokens[1]);
                     }
+                    
+                    if(optionTokens[0].equals("freemoveWMRStick")){
+                        this.freemoveWMRStick=optionTokens[1].equals("true");
+                    }
+                    
+                    if(optionTokens[0].equals("analogDeadzone")){
+                        this.analogDeadzone=parseFloat(optionTokens[1]);
+                    }
+                    
+                    if(optionTokens[0].equals("analogMovement")){
+                        this.analogMovement = optionTokens[1].equals("true");
+                    }
 
                     if (optionTokens[0].startsWith("BUTTON_") || optionTokens[0].startsWith("OCULUS_"))
                     {
                     	try { // conversion of old bindings
                     		LegacyButton legacyButton = Enum.valueOf(LegacyButton.class, optionTokens[0]);
                     		if (legacyButton.button != null && !optionTokens[1].equals("none")) {
-		                    	VRButtonMapping vb = new VRButtonMapping(optionTokens[1], new ButtonTuple(legacyButton.button, legacyButton.controller));
+		                    	VRButtonMapping vb = new VRButtonMapping(optionTokens[1], new ButtonTuple(legacyButton.button, legacyButton.controller, legacyButton.isTouch));
 		                        this.buttonMappings.put(optionTokens[1], vb);
+                    		} else {
+                    			System.out.println("Skipping legacy binding: " + optionTokens[0]);
                     		}
                     	} catch (IllegalArgumentException ex) {
-                    		// invalid binding
+                    		System.out.println("Ignoring invalid legacy binding: " + optionTokens[0]);
                     	}
                     }
 
                     if (optionTokens[0].startsWith("vrmapping_"))
                     {
-                    	try {
-                    		String functionId = optionTokens[0].substring(optionTokens[0].indexOf('_') + 1);
-	                    	VRButtonMapping vb = new VRButtonMapping(functionId);
+                		String functionId = optionTokens[0].substring(optionTokens[0].indexOf('_') + 1);
+                    	VRButtonMapping vb = new VRButtonMapping(functionId);
 
-	                    	if (!optionTokens[1].equals("none")) {
-	                    		String[] split = optionTokens[1].split(",");
-	                    		for (int i = 0; i < split.length; i++) {
-	                    			vb.buttons.add(ButtonTuple.parse(split[i]));
-	                    		}
-	                    	}
-
-	                        this.buttonMappings.put(functionId, vb);
-                    	} catch (IllegalArgumentException ex) {
-                    		// invalid binding
+                    	if (!optionTokens[1].equals("none")) {
+                    		String[] split = optionTokens[1].split(",");
+                    		for (int i = 0; i < split.length; i++) {
+                    			try {
+                    				vb.buttons.add(ButtonTuple.parse(split[i]));
+                            	} catch (IllegalArgumentException ex) {
+                            		System.out.println("Ignoring invalid button: " + split[i]);
+                            	}
+                    		}
                     	}
+
+                        this.buttonMappings.put(functionId, vb);
                     }
 
                     if(optionTokens[0].startsWith("QUICKCOMMAND_")){
@@ -763,11 +773,11 @@ public class VRSettings
             case LOCOMOTION_SETTINGS:
                 return var2;
 	        case MOVEMENT_MULTIPLIER:
-	            return var4 + String.format("%.2f", new Object[] { Float.valueOf(this.movementSpeedMultiplier) });
+	            return var4 + String.format("%.2f", this.movementSpeedMultiplier);
 	        case HUD_OPACITY:
 	        	if( this.hudOpacity > 0.99)
 	        		return var4 + "Opaque";
-	            return var4 + String.format("%.2f", new Object[] { Float.valueOf(this.hudOpacity) });
+	            return var4 + String.format("%.2f", this.hudOpacity);
             case RENDER_MENU_BACKGROUND:
                 return this.menuBackground ? var4 + "ON" : var4 + "OFF";
 	        case HUD_HIDE:
@@ -785,33 +795,33 @@ public class VRSettings
                     default:
                         return var4 + "OFF";
                     case MIRROR_ON_ONE_THIRD_FRAME_RATE:
-                        return var4 + "DUAL (1/3)";
+                        return var4 + "Dual (1/3)";
                     case MIRROR_ON_FULL_FRAME_RATE:
-                        return var4 + "DUAL (Full)";
+                        return var4 + "Dual (Full)";
                     case MIRROR_ON_ONE_THIRD_FRAME_RATE_SINGLE_VIEW:
-                        return var4 + "SINGLE (1/3)";
+                        return var4 + "Single (1/3)";
                     case MIRROR_ON_FULL_FRAME_RATE_SINGLE_VIEW:
-                        return var4 + "SINGLE (Full)";
+                        return var4 + "Ssingle (Full)";
                     case MIRROR_MIXED_REALITY:
-                        return var4 + "MIXED REALITY";
+                        return var4 + "Mixed Reality";
                     case MIRROR_FIRST_PERSON:
-                        return var4 + "UNDISTORTED";
+                        return var4 + "Undistorted";
                 }
             case MIXED_REALITY_KEY_COLOR:
                 if (this.mixedRealityKeyColor.equals(new Color(0, 0, 0))) {
-                	return var4 + "BLACK";
+                	return var4 + "Black";
                 } else if (this.mixedRealityKeyColor.equals(new Color(255, 0, 0))) {
-                	return var4 + "RED";
+                	return var4 + "Red";
                 } else if (this.mixedRealityKeyColor.equals(new Color(255, 255, 0))) {
-                	return var4 + "YELLOW";
+                	return var4 + "Yellow";
                 } else if (this.mixedRealityKeyColor.equals(new Color(0, 255, 0))) {
-                	return var4 + "GREEN";
+                	return var4 + "Green";
                 } else if (this.mixedRealityKeyColor.equals(new Color(0, 255, 255))) {
-                	return var4 + "CYAN";
+                	return var4 + "Cyan";
                 } else if (this.mixedRealityKeyColor.equals(new Color(0, 0, 255))) {
-                	return var4 + "BLUE";
+                	return var4 + "Blue";
                 } else if (this.mixedRealityKeyColor.equals(new Color(255, 0, 255))) {
-                	return var4 + "MAGENTA";
+                	return var4 + "Magenta";
                 }
                 return var4 + this.mixedRealityKeyColor.getRed() + " " + this.mixedRealityKeyColor.getGreen() + " " + this.mixedRealityKeyColor.getBlue();
              case MIXED_REALITY_RENDER_HANDS:
@@ -823,39 +833,39 @@ public class VRSettings
             case MIXED_REALITY_ALPHA_MASK:
                 return this.mixedRealityAlphaMask ? var4 + "YES" : var4 + "NO";
             case MIXED_REALITY_FOV:
-            	return var4 + String.format("%.0f\u00B0", new Object[] { Float.valueOf(this.mc.vrSettings.mixedRealityFov) });
+            	return var4 + String.format("%.0f\u00B0", this.mc.vrSettings.mixedRealityFov);
             case INSIDE_BLOCK_SOLID_COLOR:
-            	return this.insideBlockSolidColor ? var4 + "SOLID COLOR" : var4 + "TEXTURE";
+            	return this.insideBlockSolidColor ? var4 + "Solid Color" : var4 + "Texture";
             case WALK_UP_BLOCKS:
                 return this.walkUpBlocks ? var4 + "YES" : var4 + "NO";
  	        case HUD_SCALE:
-	            return var4 + String.format("%.2f", new Object[] { Float.valueOf(this.hudScale) });
+	            return var4 + String.format("%.2f", this.hudScale);
             case HUD_LOCK_TO:
                 switch (this.vrHudLockMode) {
                 // VIVE - lock to hand instead of body
                 case HUD_LOCK_HAND:
-                	return var4 + " hand";
+                	return var4 + "Hand";
                 case HUD_LOCK_HEAD:
-                	return var4 + " head";
+                	return var4 + "Head";
                 case HUD_LOCK_WRIST:
-                	return var4 + " wrist";
+                	return var4 + "Wrist";
                 case HUD_LOCK_BODY:
-                    return var4 + " body";
+                    return var4 + "Body";
                 }
 	        case HUD_DISTANCE:
-	            return var4 + String.format("%.2f", new Object[] { Float.valueOf(this.hudDistance) });
+	            return var4 + String.format("%.2f", this.hudDistance);
 	        case HUD_PITCH:
-	            return var4 + String.format("%.0f", new Object[] { Float.valueOf(this.hudPitchOffset) });
+	            return var4 + String.format("%.0f", this.hudPitchOffset);
             case HUD_YAW:
-            	return var4 + String.format("%.0f", new Object[] { Float.valueOf(this.hudYawOffset) });
+            	return var4 + String.format("%.0f", this.hudYawOffset);
             case RENDER_SCALEFACTOR:
-            	return var4 + String.format("%.1f", new Object[] { Float.valueOf(this.renderScaleFactor) });
+            	return var4 + String.format("%.1f", this.renderScaleFactor);
             case FSAA:
             	return this.useFsaa ? var4 + "ON" : var4 + "OFF";
             case CROSSHAIR_SCALE:
-	            return var4 + String.format("%.2f", new Object[] { Float.valueOf(this.crosshairScale) });
+	            return var4 + String.format("%.2f", this.crosshairScale);
             case MENU_CROSSHAIR_SCALE:
-                return var4 + String.format("%.2f", new Object[] { Float.valueOf(this.menuCrosshairScale) });
+                return var4 + String.format("%.2f", this.menuCrosshairScale);
             case CROSSHAIR_SCALES_WITH_DISTANCE:
 	        	return this.crosshairScalesWithDistance ? var4 + "ON" : var4 + "OFF";
 	        case RENDER_CROSSHAIR_MODE:
@@ -875,20 +885,20 @@ public class VRSettings
 	        case HUD_OCCLUSION:
 	        	return this.hudOcclusion ? var4 + "ON" : var4 + "OFF";
 	        case MENU_ALWAYS_FOLLOW_FACE:
-	        	return this.menuAlwaysFollowFace ? var4 + "ALWAYS" : var4 + "SEATED";
+	        	return this.menuAlwaysFollowFace ? var4 + "Always" : var4 + "Seated";
 	        case CROSSHAIR_OCCLUSION:
 	        	return this.useCrosshairOcclusion ? var4 + "ON" : var4 + "OFF";
 	        case MONO_FOV:
-	        	return var4 + String.format("%.0f\u00B0", new Object[] { Float.valueOf(this.mc.gameSettings.fovSetting) });
+	        	return var4 + String.format("%.0f\u00B0", this.mc.gameSettings.fovSetting);
 	        case INERTIA_FACTOR:
 	        	if (this.inertiaFactor == INERTIA_NONE)
 	        		return var4 + "Automan";
 	        	else if (this.inertiaFactor == INERTIA_NORMAL)
 	        		return var4 + "Normal";
                 else if (this.inertiaFactor == INERTIA_LARGE)
-                    return var4 + "A lot";
+                    return var4 + "A Lot";
                 else if (this.inertiaFactor == INERTIA_MASSIVE)
-                    return var4 + "Even more";
+                    return var4 + "Even More";
                 // VIVE START - new options
             case SIMULATE_FALLING:
                 return this.simulateFalling ? var4 + "ON" : var4 + "OFF";
@@ -915,22 +925,22 @@ public class VRSettings
             case BCB_ON:
             	return this.vrShowBlueCircleBuddy ? var4 + "ON" : var4 + "OFF";
             case WORLD_SCALE:
-	            return var4 + String.format("%.2f", new Object[] { Float.valueOf(this.vrWorldScale)})+ "x" ;
+	            return var4 + String.format("%.2f", this.vrWorldScale)+ "x" ;
             case WORLD_ROTATION:
-	            return var4 + String.format("%.0f", new Object[] { Float.valueOf(this.vrWorldRotation) });
+	            return var4 + String.format("%.0f", this.vrWorldRotation);
             case WORLD_ROTATION_INCREMENT:
-	            return (var4 + (this.vrWorldRotationIncrement == 0 ? "SMOOTH" : String.format("%.0f", new Object[] { Float.valueOf(this.vrWorldRotationIncrement) })));
+	            return var4 + (this.vrWorldRotationIncrement == 0 ? "Smooth" : String.format("%.0f", this.vrWorldRotationIncrement));
             case TOUCH_HOTBAR:
             	return this.vrTouchHotbar ? var4 + "ON" : var4 + "OFF";
             case PLAY_MODE_SEATED:
-            	return this.seated ? var4 + "SEATED" : var4 + "STANDING";
+            	return this.seated ? var4 + "Seated" : var4 + "Standing";
                 //END JRBUDDA
             case REALISTIC_JUMP:
                 return this.realisticJumpEnabled ? var4 + "ON" : var4 + "OFF";
             case SEATED_HMD:
-                return this.seatedUseHMD ? var4 + "HMD" : var4 + "CROSSHAIR";
+                return this.seatedUseHMD ? var4 + "HMD" : var4 + "Crosshair";
             case SEATED_HUD_XHAIR:
-                return this.seatedHudAltMode ? var4 + "CROSSHAIR" : var4 + "HMD";
+                return this.seatedHudAltMode ? var4 + "Crosshair" : var4 + "HMD";
             case REALISTIC_SNEAK:
                 return this.realisticSneakEnabled ? var4 + "ON" : var4 + "OFF";
             case REALISTIC_CLIMB:
@@ -957,20 +967,27 @@ public class VRSettings
                 switch (this.vrFreeMoveMode) {
                 // VIVE - lock to hand instead of body
                 case FREEMOVE_CONTROLLER:
-                	return var4 + " Controller";
+                	return var4 + "Controller";
                 case FREEMOVE_HMD:
-                	return var4 + " HMD";
+                	return var4 + "HMD";
                 case FREEMOVE_RUNINPLACE:
-                	return var4 + " RunInPlace";
+                	return var4 + "RunInPlace";
                 case FREEMOVE_JOYPAD:
-                	return var4 + " Joy/Pad";
+                	return var4 + "Joy/Pad";
                 }
+            case FREEMOVE_WMR_STICK:
+            	return this.freemoveWMRStick ? var4 + "Stick" : var4 + "Touchpad";
+            case ANALOG_DEADZONE:
+            	return var4 + String.format("%.2f", this.analogDeadzone);
             case FOV_REDUCTION:
                 return this.useFOVReduction ? var4 + "ON" : var4 + "OFF";
             case AUTO_OPEN_KEYBOARD:
                 return this.autoOpenKeyboard ? var4 + "YES" : var4 + "NO";
             case BACKPACK_SWITCH:
                 return this.backpackSwitching ? var4 + "YES" : var4 + "NO";
+            case ANALOG_MOVEMENT:
+                return this.analogMovement ? var4 + "YES" : var4 + "NO";
+
 
  	        default:
 	        	return "";
@@ -1038,6 +1055,8 @@ public class VRSettings
 				return this.mixedRealityFov;
             case RENDER_SCALEFACTOR:
             	return this.renderScaleFactor;
+            case ANALOG_DEADZONE:
+            	return this.analogDeadzone;
             // VIVE END - new options
             default:
                 return 0.0f;
@@ -1240,6 +1259,8 @@ public class VRSettings
                 	break;
                 }
                 break;
+            case FREEMOVE_WMR_STICK:
+            	freemoveWMRStick = !freemoveWMRStick;
             case FOV_REDUCTION:
             	useFOVReduction = !useFOVReduction;
             	break;     
@@ -1248,6 +1269,9 @@ public class VRSettings
             	break;
             case AUTO_OPEN_KEYBOARD:
             	autoOpenKeyboard = !autoOpenKeyboard;
+            	break;
+            case ANALOG_MOVEMENT:
+            	analogMovement = !analogMovement;
             	break;
             default:
             	break;
@@ -1336,6 +1360,9 @@ public class VRSettings
             case RENDER_SCALEFACTOR:
             	this.renderScaleFactor = par2;
             	break;
+            case ANALOG_DEADZONE:
+            	this.analogDeadzone = par2;
+            	break;
             	// VIVE END - new options
             default:
             	break;
@@ -1418,7 +1445,7 @@ public class VRSettings
             var5.println("bcbOn:" + this.vrShowBlueCircleBuddy);
             var5.println("worldScale:" + this.vrWorldScale);
             var5.println("worldRotation:" + this.vrWorldRotation);
-            var5.println("worldRotationIncrement:" + this.vrWorldRotationIncrement);
+            var5.println("vrWorldRotationIncrement:" + this.vrWorldRotationIncrement);
             var5.println("vrFixedCamposX:" + this.vrFixedCamposX);
             var5.println("vrFixedCamposY:" + this.vrFixedCamposY);
             var5.println("vrFixedCamposZ:" + this.vrFixedCamposZ);
@@ -1458,6 +1485,10 @@ public class VRSettings
             var5.println("backpackSwitching:" + this.backpackSwitching);
             var5.println("leftTouchpadMode:" + this.leftTouchpadMode);
             var5.println("rightTouchpadMode:" + this.rightTouchpadMode);
+            var5.println("freemoveWMRStick:" + this.freemoveWMRStick);
+            var5.println("analogDeadzone:" + this.analogDeadzone);
+            var5.println("analogMovement:" + this.analogMovement);
+
 
             if (vrQuickCommands == null) vrQuickCommands = getQuickCommandsDefaults(); //defaults
             
@@ -1623,7 +1654,9 @@ public class VRSettings
         CALIBRATE_HEIGHT("Calibrate Height",false,true),
         WALK_MULTIPLIER("Walking Multipier",true,false),
         FREEMOVE_MODE("Free Move Type", false, true),
-        VEHICLE_ROTATION("Vechile Rotation",false,true),
+        FREEMOVE_WMR_STICK("Freemove Control", false, true),
+        ANALOG_DEADZONE("Analog Deadzone", true, false),
+        VEHICLE_ROTATION("Vehicle Rotation",false,true),
         //SEATED
         RESET_ORIGIN("Reset Origin",false,true),
         X_SENSITIVITY("Rotation Speed",true,false),
@@ -1636,7 +1669,8 @@ public class VRSettings
         LOCOMOTION_SETTINGS("Locomotion Settings...", false, true), 
         SEATED_HMD("Forward Direction",false,true),
         SEATED_HUD_XHAIR("HUD Follows",false,true), 
-        BACKPACK_SWITCH("Backpack Switching",false,true); 
+        BACKPACK_SWITCH("Backpack Switching",false,true),
+        ANALOG_MOVEMENT("Analog Movement",false,true); 
 
 //        ANISOTROPIC_FILTERING("options.anisotropicFiltering", true, false, 1.0F, 16.0F, 0.0F)
 //                {
@@ -1908,19 +1942,19 @@ public class VRSettings
 
     public Map<String, VRButtonMapping> getBindingsDefaults() {
     	Map<String, VRButtonMapping> out = new HashMap<>();
-    	
+
     	// fill in with unbound
-        for (KeyBinding keyBinding : mc.gameSettings.keyBindings) {	
-			out.put(keyBinding.getKeyDescription(), new VRButtonMapping(keyBinding.getKeyDescription()));
-		}
-        
-        // touchpad buttons for less duplication
-        List<ButtonTuple> rightTouchpadButtons = new ArrayList<>();
-        rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD, ControllerType.RIGHT));
-        rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_C, ControllerType.RIGHT));
-        rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_U, ControllerType.RIGHT));
-        rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_D, ControllerType.RIGHT));
-        rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_L, ControllerType.RIGHT));
+    	for (KeyBinding keyBinding : mc.gameSettings.keyBindings) {	
+    		out.put(keyBinding.getKeyDescription(), new VRButtonMapping(keyBinding.getKeyDescription()));
+    	}
+
+		// touchpad buttons for less duplication
+		List<ButtonTuple> rightTouchpadButtons = new ArrayList<>();
+		rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD, ControllerType.RIGHT));
+		rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_C, ControllerType.RIGHT));
+		rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_U, ControllerType.RIGHT));
+		rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_D, ControllerType.RIGHT));
+		rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_L, ControllerType.RIGHT));
 		rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_R, ControllerType.RIGHT));
 		rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_UL, ControllerType.RIGHT));
 		rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_UR, ControllerType.RIGHT));
@@ -1934,7 +1968,7 @@ public class VRSettings
 		rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_S6, ControllerType.RIGHT));
 		rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_S7, ControllerType.RIGHT));
 		rightTouchpadButtons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_S8, ControllerType.RIGHT));
-		
+
 		// vive
 		out.get("key.attack").buttons.add(new ButtonTuple(ButtonType.VIVE_TRIGGER, ControllerType.RIGHT));
 		out.get("key.pickItem").buttons.add(new ButtonTuple(ButtonType.VIVE_GRIP, ControllerType.RIGHT));
@@ -1961,7 +1995,7 @@ public class VRSettings
 		out.get("GUI Shift").buttons.add(new ButtonTuple(ButtonType.VIVE_GRIP, ControllerType.LEFT));
 		out.get("GUI Scroll Up").buttons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_SWIPE_UP, ControllerType.RIGHT));
 		out.get("GUI Scroll Down").buttons.add(new ButtonTuple(ButtonType.VIVE_TOUCHPAD_SWIPE_DOWN, ControllerType.RIGHT));
-		
+
 		// touch
 		out.get("key.attack").buttons.add(new ButtonTuple(ButtonType.OCULUS_INDEX_TRIGGER, ControllerType.RIGHT));
 		out.get("key.use").buttons.add(new ButtonTuple(ButtonType.OCULUS_AX, ControllerType.RIGHT));
@@ -1986,8 +2020,8 @@ public class VRSettings
 		out.get("GUI Shift").buttons.add(new ButtonTuple(ButtonType.OCULUS_HAND_TRIGGER, ControllerType.LEFT));
 		out.get("GUI Scroll Up").buttons.add(new ButtonTuple(ButtonType.OCULUS_STICK_UP, ControllerType.RIGHT));
 		out.get("GUI Scroll Down").buttons.add(new ButtonTuple(ButtonType.OCULUS_STICK_DOWN, ControllerType.RIGHT));
-		
-		return out;
+
+    	return out;
     }
 }
 

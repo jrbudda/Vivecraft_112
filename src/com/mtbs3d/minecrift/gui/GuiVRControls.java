@@ -242,8 +242,10 @@ public class GuiVRControls extends BaseGuiSettings {
         	} else {
         		this.guivrSettings.leftTouchpadMode = TouchpadMode.SPLIT_QUAD;
         		this.guivrSettings.rightTouchpadMode = TouchpadMode.SPLIT_QUAD;
-        		((TrackedControllerVive)MCOpenVR.controllers[ControllerType.LEFT.ordinal()]).setTouchpadMode(TouchpadMode.SPLIT_QUAD);
-        		((TrackedControllerVive)MCOpenVR.controllers[ControllerType.RIGHT.ordinal()]).setTouchpadMode(TouchpadMode.SPLIT_QUAD);
+        		if (MCOpenVR.isVive()) {
+        			((TrackedControllerVive)MCOpenVR.controllers[ControllerType.LEFT.ordinal()]).setTouchpadMode(TouchpadMode.SPLIT_QUAD);
+        			((TrackedControllerVive)MCOpenVR.controllers[ControllerType.RIGHT.ordinal()]).setTouchpadMode(TouchpadMode.SPLIT_QUAD);
+        		}
         		this.guivrSettings.resetBindings();
 	        	this.guiList.buildList();
 	        	this.guiSelection = new GuiKeyBindingSelection(this, mc);
@@ -321,7 +323,15 @@ public class GuiVRControls extends BaseGuiSettings {
      */
     protected void mouseReleased(int mouseX, int mouseY, int state)
     {
-        if (state != 0 || !this.guiList.mouseReleased(mouseX, mouseY, state))
+        boolean flag = false;
+
+    	if(this.selectionMode){
+    		flag = this.guiSelection.mouseReleased(mouseX, mouseY, state);
+    	}else if (!this.keyboardHoldSelect && !this.waitingForKey){
+    		flag = this.guiList.mouseReleased(mouseX, mouseY, state);
+    	}
+    	
+        if (state != 0 || !flag)
         {
             super.mouseReleased(mouseX, mouseY, state);
         }

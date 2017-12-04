@@ -1,8 +1,5 @@
 package com.mtbs3d.minecrift.api;
 
-import java.nio.FloatBuffer;
-
-import com.mtbs3d.minecrift.api.VRData.VRDevicePose;
 import com.mtbs3d.minecrift.provider.MCOpenVR;
 
 import de.fruitfly.ovr.structs.Matrix4f;
@@ -25,13 +22,10 @@ public class VRData{
 			this.dir = new Vec3d(dir.x, dir.y, dir.z);
 		}	
 		
-		private Vec3d vecMult(Vec3d in, float factor){
-			return new Vec3d(in.x * factor,	in.y * factor, in.z*factor);
-		}
 		
 		public Vec3d getPosition(){
-			Vec3d out = new Vec3d(pos.x*data.scaleXZ, pos.y*data.scaleY, pos.z*data.scaleXZ);
-			out =out.rotateYaw(data.rotation);
+			Vec3d out = pos.scale(worldScale);
+			out = out.rotateYaw(data.rotation);
 			return out.addVector(data.origin.x, data.origin.y, data.origin.z);
 		}
 	
@@ -83,30 +77,33 @@ public class VRData{
 		
 	public Vec3d origin;
 	public float rotation;
-	public float scaleXZ;
-	public float scaleY;
+	public float worldScale;
 	
-	public VRData(Vec3d origin, float scaleXZ,float scaleY, float rotation) {
+	public VRData(Vec3d origin, float walkMul,float worldScale, float rotation) {
 		//ok this is where it gets ugly, gonna go straight to mcopenvr and grab shit for copying.
 		
 		this.origin = origin;
-		this.scaleXZ =scaleXZ;
-		this.scaleY =scaleY;
+		this.worldScale =worldScale;
 		this.rotation = rotation;
 		
-		hmd = new VRDevicePose(this, MCOpenVR.hmdRotation, MCOpenVR.getCenterEyePosition(),MCOpenVR.getHmdVector()); 
-		eye0 = new VRDevicePose(this, MCOpenVR.hmdRotation, MCOpenVR.getEyePosition(renderPass.Left),MCOpenVR.getHmdVector());
-		eye1 = new VRDevicePose(this, MCOpenVR.hmdRotation, MCOpenVR.getEyePosition(renderPass.Right),MCOpenVR.getHmdVector());
-		c0 = new VRDevicePose(this, MCOpenVR.getAimRotation(0),MCOpenVR.getAimSource(0), MCOpenVR.getAimVector(0));
-		c1 = new VRDevicePose(this, MCOpenVR.getAimRotation(1),MCOpenVR.getAimSource(1), MCOpenVR.getAimVector(1));
-		h0 = new VRDevicePose(this, MCOpenVR.getHandRotation(0),MCOpenVR.getAimSource(0), MCOpenVR.getHandVector(0));
-		h1 = new VRDevicePose(this, MCOpenVR.getHandRotation(1),MCOpenVR.getAimSource(1), MCOpenVR.getHandVector(1));
-		c2 = new VRDevicePose(this, MCOpenVR.getAimRotation(2),MCOpenVR.getAimSource(2), MCOpenVR.getAimVector(2));
+		Vec3d hmd_raw = MCOpenVR.getCenterEyePosition();
+		Vec3d scaledPos = new Vec3d(hmd_raw.x * walkMul, hmd_raw.y, hmd_raw.z * walkMul);
+		
+		hmd = new VRDevicePose(this, MCOpenVR.hmdRotation, scaledPos, MCOpenVR.getHmdVector()); 
+		
+		eye0 = new VRDevicePose(this, MCOpenVR.hmdRotation, MCOpenVR.getEyePosition(renderPass.Left).subtract(hmd_raw).add(scaledPos), MCOpenVR.getHmdVector());
+		eye1 = new VRDevicePose(this, MCOpenVR.hmdRotation, MCOpenVR.getEyePosition(renderPass.Right).subtract(hmd_raw).add(scaledPos), MCOpenVR.getHmdVector());
+		
+		c0 = new VRDevicePose(this, MCOpenVR.getAimRotation(0),MCOpenVR.getAimSource(0).subtract(hmd_raw).add(scaledPos), MCOpenVR.getAimVector(0));
+		c1 = new VRDevicePose(this, MCOpenVR.getAimRotation(1),MCOpenVR.getAimSource(1).subtract(hmd_raw).add(scaledPos), MCOpenVR.getAimVector(1));
+		h0 = new VRDevicePose(this, MCOpenVR.getHandRotation(0),MCOpenVR.getAimSource(0).subtract(hmd_raw).add(scaledPos), MCOpenVR.getHandVector(0));
+		h1 = new VRDevicePose(this, MCOpenVR.getHandRotation(1),MCOpenVR.getAimSource(1).subtract(hmd_raw).add(scaledPos), MCOpenVR.getHandVector(1));
+		c2 = new VRDevicePose(this, MCOpenVR.getAimRotation(2),MCOpenVR.getAimSource(2).subtract(hmd_raw).add(scaledPos), MCOpenVR.getAimVector(2));
 	
 	}
 	
 	public VRDevicePose getController(int c){
-		return (c == 0 ? c0: c1);
+		return (c == 1 ? c1: (c == 2 ? c2 : c0));
 	}
 	
 	public VRDevicePose getHand(int c){
@@ -148,11 +145,15 @@ public class VRData{
 		return "data:" + 
 				"\r\n \t\t origin: " + this.origin +
 				"\r\n \t\t rotation: " + String.format("%.2f", this.rotation) +
-				"\r\n \t\t scale: " + String.format("%.2f", this.scaleY) + 
+				"\r\n \t\t scale: " + String.format("%.2f", this.worldScale) + 
 				"\r\n \t\t hmd " + this.hmd + 
 				"\r\n \t\t c0 " + this.c0 + 
 				"\r\n \t\t c1 " + this.c1 + 
 				"\r\n \t\t c2 " + this.c2 ;	
+	}
+	
+	protected Vec3d vecMult(Vec3d in, float factor){
+		return new Vec3d(in.x * factor,	in.y * factor, in.z*factor);
 	}
 	
 }

@@ -33,7 +33,7 @@ void main(void) {
 			}
 		}
 		out_Color = color;
-		//out_Color = vec4(vec3( (distance(fragPos.xz,hmdViewPosition.xz)) / 3), 1); // Draw depth buffer
+		//out_Color = vec4(vec3((distance(fragPos.xz,hmdViewPosition.xz)) / 3), 1); // Draw depth buffer
 	} else {
 		discard; // Throw out the fragment to save some GPU processing
 		//out_Color = vec4(1, 0, 1, 1);
