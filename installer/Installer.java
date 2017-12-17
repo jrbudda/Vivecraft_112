@@ -1273,7 +1273,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				}
 
 				prof.put("lastVersionId", minecriftVer + mod);
-				prof.put("javaArgs", "-Xmx" + ramAllocation.getSelectedItem() + "G -Xms" + ramAllocation.getSelectedItem() + "G -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:-UseAdaptiveSizePolicy -Xmn256M -Dfml.ignoreInvalidMinecraftCertificates=true -Dfml.ignorePatchDiscrepancies=true");
+				prof.put("javaArgs", "-Xmx" + ramAllocation.getSelectedItem() + "G -Xms" + ramAllocation.getSelectedItem() + "G -XX:+UseParallelGC -XX:ParallelGCThreads=3 -XX:MaxGCPauseMillis=3 -Xmn256M -Dfml.ignoreInvalidMinecraftCertificates=true -Dfml.ignorePatchDiscrepancies=true");
 				root.put("selectedProfile", profileName);
 				prof.put("lastUsed", dateFormat.format(new java.util.Date()));
 				if(chkCustomGameDir.isSelected() && txtCustomGameDir.getText().trim() != ""){
@@ -1330,7 +1330,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				lines.add("MaxMemAlloc=" + ((Integer)ramAllocation.getSelectedItem())*1024);
 				lines.add("OverrideJavaArgs=true");
 				lines.add("OverrideMemory=true");
-				lines.add("JvmArgs=-XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:-UseAdaptiveSizePolicy -Xmn256M -Dfml.ignoreInvalidMinecraftCertificates=true -Dfml.ignorePatchDiscrepancies=true");
+				lines.add("JvmArgs=-XX:+UseParallelGC -XX:ParallelGCThreads=3 -XX:MaxGCPauseMillis=3 -Xmn256M -Dfml.ignoreInvalidMinecraftCertificates=true -Dfml.ignorePatchDiscrepancies=true");
 
 				r.close();
 
