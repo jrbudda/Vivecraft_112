@@ -145,6 +145,7 @@ public class OpenVRPlayer
 	}
 
 	public void preTick(){
+		
 
 		this.vrdata_world_pre = new VRData(this.roomOrigin, mc.vrSettings.walkMultiplier, worldScale, (float) Math.toRadians(mc.vrSettings.vrWorldRotation));
 

@@ -292,7 +292,7 @@
 +	 * The minecriftVerString will be automatically updated by the build scripts, do not modify here.
 +	 * Modify minecriftversion.py in root minecrift dir.
 +	 */
-+    public final String minecriftVerString = "Vivecraft 1.12.2 jrbudda-5-final-r2";
++    public final String minecriftVerString = "Vivecraft 1.12.2 jrbudda-5-final-r3";
 +	/* end version */
 +	/** END MINECRIFT */
 +    
@@ -1003,14 +1003,14 @@
 +		
  
 -        this.mcProfiler.endSection();
- 
+-
 -        if (this.gameSettings.showDebugInfo && this.gameSettings.showDebugProfilerChart && !this.gameSettings.hideGUI)
 -        {
 -            if (!this.mcProfiler.profilingEnabled)
 -            {
 -                this.mcProfiler.clearProfiling();
 -            }
--
+ 
 -            this.mcProfiler.profilingEnabled = true;
 -            this.displayDebugInfo(i1);
 -        }
@@ -1501,34 +1501,28 @@
              }
          }
  
-@@ -2336,22 +2930,41 @@
+@@ -2335,23 +2929,34 @@
+         boolean flag2 = this.gameSettings.chatVisibility != EntityPlayer.EnumChatVisibility.HIDDEN;
  
          if (flag2)
-         {
+-        {
 -            while (this.gameSettings.keyBindChat.isPressed())
 -            {
 -                this.displayGuiScreen(new GuiChat());
 -            }
 -
-+        	if(Keyboard.isKeyDown(this.gameSettings.keyBindChat.getKeyCode()))
-+        	{      		
-+        		while (this.gameSettings.keyBindChat.isPressed())
-+        		{
-+        			this.displayGuiScreen(new GuiChat());
-+        		}	
-+        	} else {		
-+        		if(this.currentScreen instanceof GuiChat){
-+        			while (this.gameSettings.keyBindChat.isPressed())
-+        			{
-+        				this.displayGuiScreen(null);
-+        			}
-+        		} else {
-+        			while (this.gameSettings.keyBindChat.isPressed())
-+        			{
-+        				this.displayGuiScreen(new GuiChat());
-+        			}
-+        		}
-+        	}
++        {		
++    		if(this.currentScreen instanceof GuiChat){
++    			while (this.gameSettings.keyBindChat.isPressed())
++    			{
++    				this.displayGuiScreen(null);
++    			}
++    		} else {
++    			while (this.gameSettings.keyBindChat.isPressed())
++    			{
++    				this.displayGuiScreen(new GuiChat());
++    			}
++    		}
 +        	
              if (this.currentScreen == null && this.gameSettings.keyBindCommand.isPressed())
              {
@@ -1550,7 +1544,7 @@
              }
  
              label109:
-@@ -2377,17 +2990,27 @@
+@@ -2377,17 +2982,27 @@
                  }
              }
          }
@@ -1586,7 +1580,7 @@
  
              while (this.gameSettings.keyBindPickBlock.isPressed())
              {
-@@ -2395,18 +3018,23 @@
+@@ -2395,18 +3010,23 @@
              }
          }
  
@@ -1613,7 +1607,7 @@
              int i = Mouse.getEventButton();
              KeyBinding.setKeyBindState(i - 100, Mouse.getEventButtonState());
  
-@@ -2421,6 +3049,11 @@
+@@ -2421,6 +3041,11 @@
                      KeyBinding.onTick(i - 100);
                  }
              }
@@ -1625,7 +1619,7 @@
  
              long j = getSystemTime() - this.systemTime;
  
-@@ -2456,6 +3089,10 @@
+@@ -2456,6 +3081,10 @@
                      {
                          this.setIngameFocus();
                      }
@@ -1636,7 +1630,7 @@
                  }
                  else if (this.currentScreen != null)
                  {
-@@ -2475,6 +3112,15 @@
+@@ -2475,6 +3104,15 @@
       */
      public void launchIntegratedServer(String folderName, String worldName, @Nullable WorldSettings worldSettingsIn)
      {
@@ -1652,7 +1646,7 @@
          this.loadWorld((WorldClient)null);
          System.gc();
          ISaveHandler isavehandler = this.saveLoader.getSaveLoader(folderName, false);
-@@ -2517,6 +3163,16 @@
+@@ -2517,6 +3155,16 @@
  
          while (!this.integratedServer.serverIsInRunLoop())
          {
@@ -1669,7 +1663,7 @@
              String s = this.integratedServer.getUserMessage();
  
              if (s != null)
-@@ -2537,12 +3193,20 @@
+@@ -2537,12 +3185,20 @@
                  ;
              }
          }
@@ -1692,7 +1686,7 @@
          networkmanager.sendPacket(new CPacketLoginStart(this.getSession().getProfile()));
          this.myNetworkManager = networkmanager;
      }
-@@ -2552,6 +3216,9 @@
+@@ -2552,6 +3208,9 @@
       */
      public void loadWorld(@Nullable WorldClient worldClientIn)
      {
@@ -1702,7 +1696,7 @@
          this.loadWorld(worldClientIn, "");
      }
  
-@@ -2560,6 +3227,11 @@
+@@ -2560,6 +3219,11 @@
       */
      public void loadWorld(@Nullable WorldClient worldClientIn, String loadingMessage)
      {
@@ -1714,7 +1708,7 @@
          if (worldClientIn == null)
          {
              NetHandlerPlayClient nethandlerplayclient = this.getConnection();
-@@ -2572,6 +3244,22 @@
+@@ -2572,6 +3236,22 @@
              if (this.integratedServer != null && this.integratedServer.isAnvilFileSet())
              {
                  this.integratedServer.initiateShutdown();
@@ -1737,7 +1731,7 @@
              }
  
              this.integratedServer = null;
-@@ -2595,6 +3283,11 @@
+@@ -2595,6 +3275,11 @@
              this.ingameGUI.resetPlayersOverlayFooterHeader();
              this.setServerData((ServerData)null);
              this.integratedServerIsRunning = false;
@@ -1749,7 +1743,7 @@
          }
  
          this.mcSoundHandler.stopSounds();
-@@ -2701,6 +3394,7 @@
+@@ -2701,6 +3386,7 @@
          return instance == null || !instance.gameSettings.hideGUI;
      }
  
@@ -1757,7 +1751,7 @@
      public static boolean isFancyGraphicsEnabled()
      {
          return instance != null && instance.gameSettings.fancyGraphics;
-@@ -2717,8 +3411,14 @@
+@@ -2717,8 +3403,14 @@
      /**
       * Called when user clicked he's mouse middle button (pick block)
       */
@@ -1773,7 +1767,7 @@
          if (this.objectMouseOver != null && this.objectMouseOver.typeOfHit != RayTraceResult.Type.MISS)
          {
              boolean flag = this.player.capabilities.isCreativeMode;
-@@ -2882,7 +3582,8 @@
+@@ -2882,7 +3574,8 @@
          }
      }
  
@@ -1783,7 +1777,7 @@
      {
          NBTTagCompound nbttagcompound = te.writeToNBT(new NBTTagCompound());
  
-@@ -3212,6 +3913,11 @@
+@@ -3212,6 +3905,11 @@
       */
      public static int getGLMaximumTextureSize()
      {
@@ -1795,7 +1789,7 @@
          for (int i = 16384; i > 0; i >>= 1)
          {
              GlStateManager.glTexImage2D(32868, 0, 6408, i, i, 0, 6408, 5121, (IntBuffer)null);
-@@ -3400,7 +4106,7 @@
+@@ -3400,7 +4098,7 @@
      }
  
      public void dispatchKeypresses()
@@ -1804,7 +1798,7 @@
          int i = Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey();
  
          if (i != 0 && !Keyboard.isRepeatEvent())
-@@ -3582,4 +4288,1205 @@
+@@ -3582,4 +4280,1205 @@
      {
          return this.tutorial;
      }

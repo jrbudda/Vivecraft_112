@@ -739,7 +739,7 @@
      }
  
      /**
-@@ -379,84 +785,215 @@
+@@ -379,84 +785,216 @@
       */
      public void renderOverlays(float partialTicks)
      {
@@ -757,29 +757,30 @@
 -            IBlockState iblockstate = this.mc.world.getBlockState(new BlockPos(this.mc.player));
 -            BlockPos blockpos = new BlockPos(this.mc.player);
 -            EntityPlayer entityplayer = this.mc.player;
-+                this.renderBlockInHand();
-+            	inblock = true;
-+            	
-+    			if(!mc.bowTracker.isDrawing)				
-+    				mc.entityRenderer.renderGuiLayer(partialTicks);  
-+        }
++        	this.renderBlockInHand();
++        	inblock = true;
  
 -            for (int i = 0; i < 8; ++i)
-+        if (!this.mc.player.isSpectator())
-+        {
-+            if (isInsideOfMaterial(pos, Material.WATER) )
-             {
+-            {
 -                double d0 = entityplayer.posX + (double)(((float)((i >> 0) % 2) - 0.5F) * entityplayer.width * 0.8F);
 -                double d1 = entityplayer.posY + (double)(((float)((i >> 1) % 2) - 0.5F) * 0.1F);
 -                double d2 = entityplayer.posZ + (double)(((float)((i >> 2) % 2) - 0.5F) * entityplayer.width * 0.8F);
 -                BlockPos blockpos1 = new BlockPos(d0, d1 + (double)entityplayer.getEyeHeight(), d2);
 -                IBlockState iblockstate1 = this.mc.world.getBlockState(blockpos1);
--
++		
++        	mc.entityRenderer.renderGuiLayer(partialTicks);
++        	
++        }
+ 
 -                if (iblockstate1.causesSuffocation())
 -                {
 -                    iblockstate = iblockstate1;
 -                    blockpos = blockpos1;
 -                }
++        if (!this.mc.player.isSpectator())
++        {
++            if (isInsideOfMaterial(pos, Material.WATER) )
++            {
 +            	inwater = true;
 +              //  this.renderWaterOverlayTexture(partialTicks);
              }

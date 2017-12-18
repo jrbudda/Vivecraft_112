@@ -5,6 +5,7 @@ import com.mtbs3d.minecrift.gui.framework.GuiButtonEx;
 import com.mtbs3d.minecrift.gui.framework.GuiSliderEx;
 import com.mtbs3d.minecrift.gui.framework.GuiSmallButtonEx;
 import com.mtbs3d.minecrift.settings.VRSettings;
+import com.mtbs3d.minecrift.settings.VRSettings.VrOptions;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -112,6 +113,8 @@ public class GuiHUDSettings extends BaseGuiSettings
                 VRSettings.VrOptions num = VRSettings.VrOptions.getEnumOptions(par1GuiButton.id);
                 this.guivrSettings.setOptionValue(((GuiSmallButtonEx)par1GuiButton).returnVrEnumOptions(), 1);
                 par1GuiButton.displayString = this.guivrSettings.getKeyBinding(VRSettings.VrOptions.getEnumOptions(par1GuiButton.id));
+                if(par1GuiButton.id == VrOptions.MENU_ALWAYS_FOLLOW_FACE.ordinal())
+                	mc.vrPlayer.onGuiScreenChanged(mc.currentScreen, mc.currentScreen, false);
             }
             else if (par1GuiButton.id == ID_GENERIC_DONE)
             {

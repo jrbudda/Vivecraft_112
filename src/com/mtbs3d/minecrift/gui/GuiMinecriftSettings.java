@@ -163,6 +163,7 @@ public class GuiMinecriftSettings extends BaseGuiSettings implements GuiEventEx
                     	this.isConfirm = true;
                     	return;
                     }
+            		
                 }
     			else if(num== VRSettings.VrOptions.RESET_ORIGIN){
     				MCOpenVR.resetPosition();
@@ -173,6 +174,9 @@ public class GuiMinecriftSettings extends BaseGuiSettings implements GuiEventEx
 
                 this.guivrSettings.setOptionValue(((GuiSmallButtonEx)par1GuiButton).returnVrEnumOptions(), 1);
                 par1GuiButton.displayString = this.guivrSettings.getKeyBinding(VRSettings.VrOptions.getEnumOptions(par1GuiButton.id));
+
+            	if (num == VRSettings.VrOptions.PLAY_MODE_SEATED)
+            		mc.vrPlayer.onGuiScreenChanged(mc.currentScreen, mc.currentScreen, false);
 
             }
             else if (par1GuiButton.id == 201)
