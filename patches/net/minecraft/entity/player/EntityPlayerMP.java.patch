@@ -312,7 +312,7 @@
 +    public EntityItem dropItem(ItemStack droppedItem, boolean dropAround, boolean traceItem)
 +    {
 +    	VivePlayer vp = NetworkHelper.vivePlayers.get(this.getUniqueID());
-+    	if(vp==null){
++    	if(vp == null || vp.isVR() == false){
 +    		return super.dropItem(droppedItem, dropAround, traceItem);
 +    	} else {
 +
@@ -386,7 +386,7 @@
 +    public void spawnSweepParticles()
 +    {
 +    	VivePlayer vp = NetworkHelper.vivePlayers.get(this.getUniqueID());
-+    	if(vp==null){
++    	if(vp==null || vp.isVR() == false){
 +    		super.spawnSweepParticles();
 +    	} else {
 +    		//VIVECRAFT USE CONTROLLER - which controller? have to assume 0.
@@ -411,7 +411,7 @@
 +    protected void updateItemUse(ItemStack stack, int eatingParticleCount)
 +    {
 +    	VivePlayer vp = NetworkHelper.vivePlayers.get(this.getUniqueID());
-+    	if(vp==null){
++    	if(vp==null || vp.isVR() == false){
 +    		super.updateItemUse(stack, eatingParticleCount);;
 +    	} else {
 +    		if (!stack.isEmpty() && this.isHandActive())

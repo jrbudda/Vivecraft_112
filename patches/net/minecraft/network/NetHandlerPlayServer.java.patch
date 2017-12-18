@@ -73,15 +73,16 @@
                                  }
                              }
  
-@@ -704,8 +725,14 @@
+@@ -704,8 +725,15 @@
                  double d1 = this.player.posY - ((double)blockpos.getY() + 0.5D) + 1.5D;
                  double d2 = this.player.posZ - ((double)blockpos.getZ() + 0.5D);
                  double d3 = d0 * d0 + d1 * d1 + d2 * d2;
 +                
 +                double dist = 262144.0D;
 +                if (Reflector.forgeExists()) {
-+	                dist = Reflector.callDouble(this.player.interactionManager, Reflector.PlayerInteractionManager_getBlockReachDistance) + 1;
-+	                dist *= dist;
++	                double newDist = Reflector.callDouble(this.player.interactionManager, Reflector.PlayerInteractionManager_getBlockReachDistance) + 1;
++	                newDist *= newDist;
++	                if (newDist > dist) dist = newDist;
 +                }
  
 -                if (d3 > 36.0D)
@@ -89,21 +90,22 @@
                  {
                      return;
                  }
-@@ -763,7 +790,12 @@
+@@ -763,7 +791,13 @@
  
          if (blockpos.getY() < this.serverController.getBuildLimit() - 1 || enumfacing != EnumFacing.UP && blockpos.getY() < this.serverController.getBuildLimit())
          {
 -            if (this.targetPos == null && this.player.getDistanceSq((double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.5D, (double)blockpos.getZ() + 0.5D) < 64.0D && !this.serverController.isBlockProtected(worldserver, blockpos, this.player) && worldserver.getWorldBorder().contains(blockpos))
-+            double dist = 64.0D;
++            double dist = 262144.0D;
 +            if (Reflector.forgeExists()) {
-+                dist = Reflector.callDouble(this.player.interactionManager, Reflector.PlayerInteractionManager_getBlockReachDistance) + 3;
-+                dist *= dist;
++                double newDist = Reflector.callDouble(this.player.interactionManager, Reflector.PlayerInteractionManager_getBlockReachDistance) + 3;
++                newDist *= newDist;
++                if (newDist > dist) dist = newDist;
 +            }
 +            if (this.targetPos == null && this.player.getDistanceSq((double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.5D, (double)blockpos.getZ() + 0.5D) < dist && !this.serverController.isBlockProtected(worldserver, blockpos, this.player) && worldserver.getWorldBorder().contains(blockpos))
              {
                  this.player.interactionManager.processRightClickBlock(this.player, worldserver, itemstack, enumhand, blockpos, enumfacing, packetIn.getFacingX(), packetIn.getFacingY(), packetIn.getFacingZ());
              }
-@@ -1852,5 +1884,87 @@
+@@ -1852,5 +1886,87 @@
                  LOGGER.error("Couldn't pick item", (Throwable)exception);
              }
          }

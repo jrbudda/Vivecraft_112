@@ -21,7 +21,7 @@
 +        
 +        //VIVE USE CONTROLLER
 +    	VivePlayer vp = NetworkHelper.vivePlayers.get(shooter.getUniqueID());
-+    	if (vp !=null)
++    	if (vp !=null && vp.isVR())
 +    	{
 +    		Vec3d aim = vp.getControllerDir(0);
 +    		Vec3d aimSource = vp.getControllerPos(0);

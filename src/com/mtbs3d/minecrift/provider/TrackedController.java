@@ -71,7 +71,7 @@ public abstract class TrackedController {
 		MCOpenVR.vrsystem.TriggerHapticPulse.apply(deviceIndex, 0, (short)duration);
 	}
 	
-	public boolean isActiveButton(ButtonType button) {
+	public boolean isButtonActive(ButtonType button) {
 		return getActiveButtons().contains(button);
 	}
 

@@ -157,7 +157,7 @@ public class NetworkHelper {
 	public static void sendPosData(EntityPlayerMP from) {
 
 		VivePlayer v = vivePlayers.get(from.getUniqueID());
-		if (v==null || v.player == null || v.player.hasDisconnected()) return;
+		if (v==null || v.isVR() == false || v.player == null || v.player.hasDisconnected()) return;
 
 		for (VivePlayer sendTo : vivePlayers.values()) {
 

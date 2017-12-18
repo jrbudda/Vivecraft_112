@@ -82,8 +82,10 @@ public class GuiVRControlsList extends GuiListExtended
     		if (vb == mapping) continue;
     		if (vb.isGUIBinding() != mapping.isGUIBinding()) continue;
     		for (ButtonTuple button : vb.buttons) {
-    			for (ButtonTuple button2 : mapping.buttons) {
-    				if (button.equals(button2)) return true;
+    			if (button.controller.getController().isButtonActive(button.button)) {
+	    			for (ButtonTuple button2 : mapping.buttons) {
+	    				if (button.equals(button2)) return true;
+	    			}
     			}
     		}
     	}
@@ -156,6 +158,7 @@ public class GuiVRControlsList extends GuiListExtended
     {
         private final VRButtonMapping myKey;
         private final GuiButton btnChangeKeyBinding;
+        private final GuiButton btnChangeKeyBindingList;
         private final GuiButton btnDeleteKeyBinding;
         private static final String __OBFID = "CL_00000735";
         private GuiEnterText guiEnterText;
@@ -165,27 +168,32 @@ public class GuiVRControlsList extends GuiListExtended
         {
             this.myKey = key;
             this.btnChangeKeyBinding = new GuiButton(0, 0, 0, 120, 18, "");
+            this.btnChangeKeyBindingList = new GuiButton(0, 0, 0, 18, 18, "M");
             this.btnDeleteKeyBinding = new GuiButton(0, 0, 0, 18, 18, TextFormatting.RED + "X");
             this.parentScreen = parent;
-            updateButtonList();
+            updateButtonText();
         }
         
-        private void updateButtonList() {
-            List<ButtonType> activeButtonsLeft = MCOpenVR.controllers[ControllerType.LEFT.ordinal()].getActiveButtons();
-            List<ButtonType> activeButtonsRight = MCOpenVR.controllers[ControllerType.RIGHT.ordinal()].getActiveButtons();
-
-            ArrayList<String> buttonList = new ArrayList<>();
+        private void updateButtonText() {
+            String str = "";
             for (ButtonTuple tuple : myKey.buttons) {
-            	if ((tuple.controller == ControllerType.LEFT && activeButtonsLeft.contains(tuple.button)) || (tuple.controller == ControllerType.RIGHT && activeButtonsRight.contains(tuple.button)))
-            		buttonList.add(tuple.toReadableString());
+            	if (tuple.controller.getController().isButtonActive(tuple.button)) {
+            		if (!str.isEmpty()) {
+            			str = "Multiple";
+            			break;
+            		}
+            		str = tuple.toReadableString();
+            	}
             }
-            String str = Joiner.on(',').join(buttonList);
+            if (str.isEmpty()) str = "None";
+            else str = str.substring(0, Math.min(18, str.length()));
 
-            this.btnChangeKeyBinding.displayString = str.substring(0, Math.min(19, str.length()));
-            if (this.btnChangeKeyBinding.displayString.isEmpty()) {
-            	this.btnChangeKeyBinding.displayString = "None";
-            } else if (checkMappingConflict(myKey)) {
-            	this.btnChangeKeyBinding.displayString = TextFormatting.RED + this.btnChangeKeyBinding.displayString;
+            if (parent.pressMode && parent.mapping == myKey) {
+            	this.btnChangeKeyBinding.displayString = "> " + TextFormatting.YELLOW + str + TextFormatting.RESET + " <";
+            } else if (!str.equals("None") && checkMappingConflict(myKey)) {
+            	this.btnChangeKeyBinding.displayString = TextFormatting.RED + str;
+            } else {
+            	this.btnChangeKeyBinding.displayString = str;
             }
         }
         
@@ -194,15 +202,19 @@ public class GuiVRControlsList extends GuiListExtended
         {
 
         	GuiVRControlsList.this.mc.fontRenderer.drawString(I18n.format(this.myKey.functionId), x + 40  - GuiVRControlsList.this.maxListLabelWidth, y + p_148279_5_ / 2 - GuiVRControlsList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
-        	this.btnChangeKeyBinding.x = x + 115;
+        	this.btnChangeKeyBinding.x = x + 90;
         	this.btnChangeKeyBinding.y = y;
-        	updateButtonList();
+        	updateButtonText();
         
         	boolean var10 = GuiVRControlsList.this.parent.mapping == myKey;
         	this.btnChangeKeyBinding.drawButton(GuiVRControlsList.this.mc, p_148279_7_, p_148279_8_, par);
+        	
+        	this.btnChangeKeyBindingList.x = x + 211;
+        	this.btnChangeKeyBindingList.y = y;
+        	this.btnChangeKeyBindingList.drawButton(GuiVRControlsList.this.mc, p_148279_7_, p_148279_8_, par);
 
         	if (myKey.functionDesc.startsWith("keyboard ")) {
-	        	this.btnDeleteKeyBinding.x = x + 238;
+	        	this.btnDeleteKeyBinding.x = x + 230;
 	        	this.btnDeleteKeyBinding.y = y;
 	        	this.btnDeleteKeyBinding.drawButton(GuiVRControlsList.this.mc, p_148279_7_, p_148279_8_, par);
         	}
@@ -210,8 +222,24 @@ public class GuiVRControlsList extends GuiListExtended
         
         public boolean mousePressed(int p_148278_1_, int p_148278_2_, int p_148278_3_, int p_148278_4_, int p_148278_5_, int p_148278_6_)
         {
-            if (this.btnChangeKeyBinding.mousePressed(GuiVRControlsList.this.mc, p_148278_2_, p_148278_3_))
+        	if (this.btnChangeKeyBinding.mousePressed(GuiVRControlsList.this.mc, p_148278_2_, p_148278_3_))
+        	{
+        		if (!parent.pressMode) {
+        			parent.pressMode = true;
+                	parent.mapping = myKey;   
+                	parent.mappingButtons = new HashSet<>(myKey.buttons);
+                	return true;
+        		} else if (parent.mapping == myKey) {
+    				parent.pressMode = false;
+        			parent.mapping = null;
+        			parent.mappingButtons = null;
+        			return true;
+        		}
+        		return false;
+        	}
+        	else if (this.btnChangeKeyBindingList.mousePressed(GuiVRControlsList.this.mc, p_148278_2_, p_148278_3_))
             {           	
+        		if (parent.pressMode) return false;
             	parent.selectionMode = true;
             	parent.mapping = myKey;   
             	parent.mappingButtons = new HashSet<>(myKey.buttons);
@@ -219,6 +247,7 @@ public class GuiVRControlsList extends GuiListExtended
             }
             else if (this.btnDeleteKeyBinding.mousePressed(GuiVRControlsList.this.mc, p_148278_2_, p_148278_3_))
             {           	
+            	if (parent.pressMode) return false;
             	GuiVRControlsList.this.mc.vrSettings.buttonMappings.remove(myKey.functionId);
             	GuiVRControlsList.this.buildList();
             	return true;          

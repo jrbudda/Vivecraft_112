@@ -70,16 +70,20 @@ public class BowTracker {
 		return itemStack != ItemStack.EMPTY && itemStack.getItem().getItemUseAction(itemStack) == EnumAction.BOW;
 	}
 	
-	public static boolean isHoldingBow(EntityLivingBase e) {
-		return isBow(e.getHeldItemMainhand());
+	public static boolean isHoldingBow(EntityLivingBase e, EnumHand hand) {
+		if(Minecraft.getMinecraft().vrSettings.seated) return false;
+		return isBow(e.getHeldItem(hand));
+	}
+	
+	public static boolean isHoldingBowEither(EntityLivingBase e) {
+		return isHoldingBow(e, EnumHand.MAIN_HAND) || isHoldingBow(e, EnumHand.OFF_HAND)  ;
 	}
 	
 	public boolean isActive(EntityPlayerSP p){
 		if(p == null) return false;
 		if(p.isDead) return false;
 		if(p.isPlayerSleeping()) return false;
-		if(p.getHeldItemMainhand() == ItemStack.EMPTY) return false;
-		return isHoldingBow(p);
+		return isHoldingBow(p, EnumHand.MAIN_HAND) || isHoldingBow(p, EnumHand.OFF_HAND)  ;
 	}
 	
 	float tsNotch = 0;
@@ -103,7 +107,6 @@ public class BowTracker {
 			return;
 		}
 		
-		ItemStack bow = player.getHeldItemMainhand();
 
 		lastcontrollersDist = controllersDist;
 		lastcontrollersDot = controllersDot;
@@ -140,7 +143,21 @@ public class BowTracker {
 
 		float notchDistThreshold = (float) (0.3 * provider.vrdata_world_render.worldScale);
 		
-		ItemStack ammo = findAmmoItemStack(player);
+		boolean main = this.isHoldingBow(player, EnumHand.MAIN_HAND);
+		
+		EnumHand hand = main ? EnumHand.MAIN_HAND : EnumHand.OFF_HAND;
+		
+		ItemStack ammo;
+		ItemStack bow;
+
+		if(main){ //autofind ammo.
+			ammo = findAmmoItemStack(player);
+			bow = player.getHeldItemMainhand();
+		}
+		else { //BYOA
+			ammo = this.isArrow(player.getHeldItemMainhand()) ?  player.getHeldItemMainhand() : null;
+			bow = player.getHeldItemOffhand();
+		}
 		
 		if(ammo !=null && notchDist <= notchDistThreshold && controllersDot <= notchDotThreshold)
 		{
@@ -155,7 +172,7 @@ public class BowTracker {
 			if(!isDrawing){
 				player.setItemInUseClient(bow);
 				player.setItemInUseCountClient(bow.getMaxItemUseDuration() - 1 );
-				minecraft.playerController.processRightClick(player, player.world, EnumHand.MAIN_HAND);//server
+				minecraft.playerController.processRightClick(player, player.world, hand);//server
 
 			}
 
@@ -167,7 +184,7 @@ public class BowTracker {
 		if (!isDrawing && canDraw  && pressed && !lastpressed) {
 			//draw     	    	
 			isDrawing = true;
-			minecraft.playerController.processRightClick(player, player.world, EnumHand.MAIN_HAND);//server
+			minecraft.playerController.processRightClick(player, player.world, hand);//server
 		}
 
 		if(isDrawing && !pressed && lastpressed && getDrawPercent() > 0.0) {
@@ -242,7 +259,9 @@ public class BowTracker {
 	
 	
     public ItemStack findAmmoItemStack(EntityPlayer player){
-        boolean flag = player.capabilities.isCreativeMode || EnchantmentHelper.getEnchantmentLevel(Enchantments.INFINITY, player.getHeldItemMainhand()) > 0;
+        boolean flag = player.capabilities.isCreativeMode || 
+        		EnchantmentHelper.getEnchantmentLevel(Enchantments.INFINITY, player.getHeldItemMainhand()) > 0;
+        		
         ItemStack itemstack = this.findAmmo(player);
 
         if (itemstack != null || flag)

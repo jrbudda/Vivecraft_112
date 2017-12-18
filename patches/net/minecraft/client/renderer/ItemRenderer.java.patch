@@ -413,7 +413,6 @@
 -    public void renderItemInFirstPerson(AbstractClientPlayer player, float p_187457_2_, float p_187457_3_, EnumHand hand, float p_187457_5_, ItemStack stack, float p_187457_7_)
 +    public void renderItemInFirstPerson(AbstractClientPlayer player, float partialTicks, float bodyPitch, EnumHand hand, float swingProgress, @Nullable ItemStack itemstack, float equippingprogress)
      {
-+    	if(Main.viewonly) return;
 +    	boolean mainHand = hand == EnumHand.MAIN_HAND;
 +    	EnumHandSide enumhandside = mainHand ? player.getPrimaryHand() : player.getPrimaryHand().opposite();
 +    	equippingprogress = getEquipProgress(hand, partialTicks);
@@ -696,6 +695,7 @@
 +
 +    						} 
 +    						else if(mc.vrSettings.seated){
++    							GlStateManager.scale(0.5f,0.5f,0.5f);    
 +    							GlStateManager.rotate(90f, 1.0F, 0.0F, 0.0F);    
 +    						}
 +

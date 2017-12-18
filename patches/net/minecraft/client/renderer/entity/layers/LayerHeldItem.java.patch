@@ -46,7 +46,7 @@
 +            	}
 +            }
 +            
-+            if(handSide == EnumHandSide.LEFT && vr && BowTracker.isHoldingBow(p_188358_1_)){
++            if(handSide == EnumHandSide.LEFT && vr && BowTracker.isHoldingBowEither(p_188358_1_)){
 +            	return;
 +            }
 +            

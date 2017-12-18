@@ -18,12 +18,17 @@
          optionparser.accepts("fullscreen");
          optionparser.accepts("checkGlErrors");
          OptionSpec<String> optionspec = optionparser.accepts("server").withRequiredArg();
-@@ -90,6 +96,9 @@
+@@ -90,6 +96,14 @@
          boolean flag = optionset.has("fullscreen");
          boolean flag1 = optionset.has("checkGlErrors");
          boolean flag2 = optionset.has("demo");
 +        kiosk = optionset.has("kiosk");
-+        if (kiosk) viewonly = optionset.has("viewonly");
++    	if(kiosk) System.out.println("Setting kiosk");
++        if (kiosk) {
++        	viewonly = optionset.has("viewonly");
++        	if(viewonly) 
++        		System.out.println("Setting viewonly");
++        }
 +        katvr = optionset.has("katvr");
          String s3 = (String)optionset.valueOf(optionspec12);
          Gson gson = (new GsonBuilder()).registerTypeAdapter(PropertyMap.class, new Serializer()).create();

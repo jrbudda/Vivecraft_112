@@ -912,7 +912,7 @@ public class OpenVRPlayer
 			//use r_hand aim
 			entity.rotationYawHead =	entity.rotationYaw =  data.getController(0).getYaw();
 			entity.rotationPitch = -data.getController(0).getPitch();
-		} else if (BowTracker.isBow(i) && mc.bowTracker.isNotched()){
+		} else if (BowTracker.isHoldingBowEither(entity) && mc.bowTracker.isNotched()){
 			//use bow aim
 			Vec3d aim = mc.bowTracker.getAimVector(); //this is actually reversed
 			if (aim != null && aim.lengthSquared() > 0) {

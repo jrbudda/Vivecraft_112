@@ -24,6 +24,7 @@ import com.mtbs3d.minecrift.control.ButtonType;
 import com.mtbs3d.minecrift.control.ControllerType;
 import com.mtbs3d.minecrift.control.VRButtonMapping;
 import com.mtbs3d.minecrift.control.VRInputEvent;
+import com.mtbs3d.minecrift.gui.GuiVRControls;
 import com.mtbs3d.minecrift.settings.VRHotkeys;
 import com.mtbs3d.minecrift.settings.VRSettings;
 import com.mtbs3d.minecrift.utils.HardwareType;
@@ -1068,6 +1069,11 @@ public class MCOpenVR
 		outer: while (hasNextInputEvent()) {
 			VRInputEvent event = nextInputEvent();
 			if (event.isButtonPressEvent()) {
+				if (event.getButtonState() && mc.currentScreen instanceof GuiVRControls && ((GuiVRControls)mc.currentScreen).pressMode) {
+					((GuiVRControls)mc.currentScreen).bindSingleButton(new ButtonTuple(event.getButton(), event.getController().getType()));
+					continue;
+				}
+				
 				// Hard-code these still so they always work
 				if(event.getButtonState() && event.getController().getType() == ControllerType.RIGHT && (event.getButton() == ButtonType.VIVE_APPMENU || event.getButton() == ButtonType.OCULUS_BY)) {
 					if((controllers[RIGHT_CONTROLLER].isButtonPressed(ButtonType.VIVE_GRIP) || controllers[RIGHT_CONTROLLER].isButtonPressed(ButtonType.OCULUS_HAND_TRIGGER)) && mc.vrSettings.displayMirrorMode == mc.vrSettings.MIRROR_MIXED_REALITY){				
@@ -1483,9 +1489,9 @@ public class MCOpenVR
 		outer: for (VRButtonMapping mapping : mc.vrSettings.buttonMappings.values()) {
 			if (mapping.keyBinding != null) {
 				for (ButtonTuple button : mapping.buttons) {
-					if (button.isTouch && controllers[button.controller.ordinal()].isButtonTouched(button.button))
+					if (button.isTouch && button.controller.getController().isButtonTouched(button.button))
 						continue outer;
-					if (!button.isTouch && controllers[button.controller.ordinal()].isButtonPressed(button.button))
+					if (!button.isTouch && button.controller.getController().isButtonPressed(button.button))
 						continue outer;
 				}
 				activeBindings.remove(mapping.keyBinding.getKeyDescription());
@@ -1589,7 +1595,7 @@ public class MCOpenVR
 	
 	public static TrackedController findActiveBindingController(KeyBinding binding) {
 		if (activeBindings.containsKey(binding.getKeyDescription())) {
-			return controllers[activeBindings.get(binding.getKeyDescription()).controller.ordinal()];
+			return activeBindings.get(binding.getKeyDescription()).controller.getController();
 		}
 		return null;
 	}
@@ -1600,7 +1606,7 @@ public class MCOpenVR
 
 		VRButtonMapping vb = mc.vrSettings.buttonMappings.get(binding.getKeyDescription());
 		for (ButtonTuple tuple : vb.buttons) {
-			if (MCOpenVR.controllers[tuple.controller.ordinal()].isActiveButton(tuple.button))
+			if (tuple.controller.getController().isButtonActive(tuple.button))
 				return tuple;
 		}
 		return null;

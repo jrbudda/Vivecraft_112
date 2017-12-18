@@ -37,7 +37,7 @@
 +        	//VIVE FIX
 +            Vec3d vec3d;
 +            VivePlayer vp = NetworkHelper.vivePlayers.get(player.getUniqueID());
-+            if (vp !=null)
++            if (vp !=null && vp.isVR())
 +            {
 +            	vec3d = vp.getHMDDir();
 +            } else {

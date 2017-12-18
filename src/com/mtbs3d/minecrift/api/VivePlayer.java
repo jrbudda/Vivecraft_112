@@ -141,7 +141,7 @@ public class VivePlayer {
 
 		}
 	 
-		return player.getPositionVector(); //why
+		return player.getPositionVector().addVector(0, 1.62, 0); //why
 
 	}
 	
@@ -178,7 +178,7 @@ public class VivePlayer {
 
 		}
 	 
-		return player.getPositionVector(); //why
+		return player.getPositionVector().addVector(0, 1.62, 0); //why
 
 	}
 

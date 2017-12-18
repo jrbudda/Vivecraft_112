@@ -32,10 +32,9 @@ public class GuiKeyBindingSelection extends GuiListExtended
 
         ArrayList<GuiListExtended.IGuiListEntry> entries = new ArrayList<>();
         
-        for (int i = 0; i < 2; i++)
+        for (ControllerType controller : ControllerType.values())
         {
-        	ControllerType controller = ControllerType.values()[i];
-	        for (ButtonType button : MCOpenVR.controllers[i].getActiveButtons())
+	        for (ButtonType button : controller.getController().getActiveButtons())
 	        {
 	        	String buttonName = new ButtonTuple(button, controller).toReadableString();
 	            int j = mcIn.fontRenderer.getStringWidth(buttonName);
@@ -43,7 +42,7 @@ public class GuiKeyBindingSelection extends GuiListExtended
 	                this.maxListLabelWidth = j;
 	            }
 	            entries.add(new GuiKeyBindingSelection.ButtonEntry(new ButtonTuple(button, controller), buttonName));
-	            if (MCOpenVR.controllers[i].canButtonBeTouched(button)) {
+	            if (controller.getController().canButtonBeTouched(button)) {
 	            	String buttonName2 = new ButtonTuple(button, controller, true).toReadableString();
 		            int k = mcIn.fontRenderer.getStringWidth(buttonName2);
 		            if (k > this.maxListLabelWidth) {

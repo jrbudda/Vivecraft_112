@@ -32,6 +32,7 @@ public class GuiVRControls extends BaseGuiSettings {
 	public VRButtonMapping mapping; 
 	public Set<ButtonTuple> mappingButtons;
 	public boolean selectionMode = false;
+	public boolean pressMode = false;
 	public boolean guiFilter = false;
 	private boolean waitingForKey = false;
 	private boolean keyboardHoldSelect = false;
@@ -179,8 +180,8 @@ public class GuiVRControls extends BaseGuiSettings {
         		btnRightTouchpadMode.y = 33;
     			btnDefaults.displayString = "Defaults";
     			if (MCOpenVR.isVive()) {
-    				btnLeftTouchpadMode.displayString = "Left TP: " + ((TrackedControllerVive)MCOpenVR.controllers[ControllerType.LEFT.ordinal()]).getTouchpadMode();
-    				btnRightTouchpadMode.displayString = "Right TP: " + ((TrackedControllerVive)MCOpenVR.controllers[ControllerType.RIGHT.ordinal()]).getTouchpadMode();
+    				btnLeftTouchpadMode.displayString = "Left TP: " + ((TrackedControllerVive)ControllerType.LEFT.getController()).getTouchpadMode();
+    				btnRightTouchpadMode.displayString = "Right TP: " + ((TrackedControllerVive)ControllerType.RIGHT.getController()).getTouchpadMode();
     			}
     			btnDefaults.x = this.width / 2 - 155;
     			btnDefaults.setWidth(100);
@@ -210,13 +211,14 @@ public class GuiVRControls extends BaseGuiSettings {
      * Fired when a control is clicked. This is the equivalent of ActionListener.actionPerformed(ActionEvent e).
      */
     protected void actionPerformed(GuiButton par1GuiButton) {
+    	if (this.pressMode) return;
     	if (par1GuiButton.id == ID_GENERIC_DONE) {
-    		if (this.selectionMode && this.mapping != null) {
+    		if (this.selectionMode && this.mapping != null) { //done in binding list
     			if (this.mapping.functionId.equals("GUI Left Click")) { // Gross mess to stop people screwing themselves
     				boolean bound = false;
-    				outer: for (int i = 0; i < 2; i++) {
-    					for (ButtonType button : MCOpenVR.controllers[i].getActiveButtons()) {
-    						if (mappingButtons.contains(new ButtonTuple(button, ControllerType.values()[i]))) {
+    				outer: for (ControllerType controller : ControllerType.values()) {
+    					for (ButtonType button : controller.getController().getActiveButtons()) {
+    						if (mappingButtons.contains(new ButtonTuple(button, controller))) {
     							bound = true;
     							break outer;
     						}
@@ -228,23 +230,23 @@ public class GuiVRControls extends BaseGuiSettings {
     			this.mapping.buttons.addAll(mappingButtons);
     			this.mappingButtons = null;
     			this.selectionMode = false;
-    		} else {
+    		} else { //done for whole thing
 	            this.guivrSettings.saveOptions();
 	            this.mc.displayGuiScreen(this.parentGuiScreen);
     		}
         } else if (par1GuiButton.id == ID_GENERIC_DEFAULTS){
-        	if (this.selectionMode && this.mapping != null) {
-        		for (int i = 0; i < 2; i++) {
-					for (ButtonType button : MCOpenVR.controllers[i].getActiveButtons()) {
-						mappingButtons.remove(new ButtonTuple(button, ControllerType.values()[i]));
+        	if (this.selectionMode && this.mapping != null) { //
+        		for (ControllerType controller : ControllerType.values()) {
+					for (ButtonType button : controller.getController().getActiveButtons()) {
+						mappingButtons.remove(new ButtonTuple(button, controller));
 					}
 				}
         	} else {
         		this.guivrSettings.leftTouchpadMode = TouchpadMode.SPLIT_QUAD;
         		this.guivrSettings.rightTouchpadMode = TouchpadMode.SPLIT_QUAD;
         		if (MCOpenVR.isVive()) {
-        			((TrackedControllerVive)MCOpenVR.controllers[ControllerType.LEFT.ordinal()]).setTouchpadMode(TouchpadMode.SPLIT_QUAD);
-        			((TrackedControllerVive)MCOpenVR.controllers[ControllerType.RIGHT.ordinal()]).setTouchpadMode(TouchpadMode.SPLIT_QUAD);
+        			((TrackedControllerVive)ControllerType.LEFT.getController()).setTouchpadMode(TouchpadMode.SPLIT_QUAD);
+        			((TrackedControllerVive)ControllerType.RIGHT.getController()).setTouchpadMode(TouchpadMode.SPLIT_QUAD);
         		}
         		this.guivrSettings.resetBindings();
 	        	this.guiList.buildList();
@@ -255,19 +257,19 @@ public class GuiVRControls extends BaseGuiSettings {
         	this.waitingForKey = false;
         	this.keyboardHoldSelect = false;
         	this.mappingButtons = null;
-        } else if (par1GuiButton.id == 100){
+        } else if (par1GuiButton.id == 100){ //keyboard mode selection
         	this.keyboardHoldSelect = true;
-        } else if (par1GuiButton.id == 101){
+        } else if (par1GuiButton.id == 101){ //keyboard (press)
         	this.keyboardHold = false;
         	this.waitingForKey = true;
         	this.keyboardHoldSelect = false;
-        } else if (par1GuiButton.id == 102){
+        } else if (par1GuiButton.id == 102){ //keyboard (hold)
         	this.keyboardHold = true;
         	this.waitingForKey = true;
         	this.keyboardHoldSelect = false;
-        } else if (par1GuiButton.id == 103){
+        } else if (par1GuiButton.id == 103){ //left touchpad mode
         	if (MCOpenVR.isVive()) {
-        		TrackedControllerVive controller = ((TrackedControllerVive)MCOpenVR.controllers[ControllerType.LEFT.ordinal()]);
+        		TrackedControllerVive controller = (TrackedControllerVive)ControllerType.LEFT.getController();
         		TouchpadMode mode = controller.getTouchpadMode();
         		if (mode.ordinal() == TouchpadMode.values().length - 1)
         			mode = TouchpadMode.values()[0];
@@ -277,9 +279,9 @@ public class GuiVRControls extends BaseGuiSettings {
         		this.guivrSettings.saveOptions();
         		this.guiSelection = new GuiKeyBindingSelection(this, mc);
         	}
-        } else if (par1GuiButton.id == 104){
+        } else if (par1GuiButton.id == 104){ //right touchpad mode
         	if (MCOpenVR.isVive()) {
-        		TrackedControllerVive controller = ((TrackedControllerVive)MCOpenVR.controllers[ControllerType.RIGHT.ordinal()]);
+        		TrackedControllerVive controller = (TrackedControllerVive)ControllerType.RIGHT.getController();
         		TouchpadMode mode = controller.getTouchpadMode();
         		if (mode.ordinal() == TouchpadMode.values().length - 1)
         			mode = TouchpadMode.values()[0];
@@ -300,10 +302,10 @@ public class GuiVRControls extends BaseGuiSettings {
       
         boolean flag = false;
         
-        if(this.selectionMode){
+        if (this.selectionMode) {
         		flag = this.guiSelection.mouseClicked(mouseX, mouseY, mouseButton);
         		this.guiList.setEnabled(true);
-        }else if (!this.keyboardHoldSelect && !this.waitingForKey){
+        } else if (!this.keyboardHoldSelect && !this.waitingForKey){
         		flag = this.guiList.mouseClicked(mouseX, mouseY, mouseButton);
         		this.guiSelection.setEnabled(true);
         }
@@ -335,6 +337,20 @@ public class GuiVRControls extends BaseGuiSettings {
         {
             super.mouseReleased(mouseX, mouseY, state);
         }
+    }
+    
+    public void bindSingleButton(ButtonTuple button) {
+    	if (this.pressMode && this.mapping != null) {
+    		for (ControllerType controller : ControllerType.values()) {
+				for (ButtonType buttonType : controller.getController().getActiveButtons()) {
+					mapping.buttons.remove(new ButtonTuple(buttonType, controller));
+				}
+			}
+    		mapping.buttons.add(button);
+    		this.pressMode = false;
+    		this.mapping = null;
+    		this.mappingButtons = null;
+    	}
     }
 
     

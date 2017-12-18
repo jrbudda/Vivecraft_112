@@ -29,7 +29,7 @@
 +        
 +       	//VIVE SET SPAWNPOS
 +        VivePlayer vp = NetworkHelper.vivePlayers.get(thrower.getUniqueID());
-+        if (vp !=null)
++        if (vp !=null && vp.isVR())
 +        {
 +	        Vec3d aimSource = vp.getControllerPos(0);
 +	        Vec3d aimDir = vp.getControllerDir(0).scale(0.6f);
@@ -45,7 +45,7 @@
      {
 +    	//VIVE USE CONTROLLER
 +        VivePlayer vp = NetworkHelper.vivePlayers.get(thrower.getUniqueID());
-+        if (vp !=null)
++        if (vp !=null && vp.isVR())
 +        {
 +        	Vec3d aim = vp.getControllerDir(0);
 +        	rotationPitchIn = -(float)Math.toDegrees(Math.asin(aim.y/aim.lengthVector()));

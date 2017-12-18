@@ -24,11 +24,11 @@
          if (shooter instanceof EntityPlayer)
          {
 +        	VivePlayer vp = NetworkHelper.vivePlayers.get(shooter.getUniqueID());
-+        	if (vp !=null)
++        	if (vp !=null && vp.isVR())
 +        	{
-+        		//VIVE SET SPAWNPOS - Aim is handled by LookOverride.
-+    	        Vec3d aimSource = vp.getControllerPos(1);
-+    	        Vec3d aimDir = shooter.getLookVec().scale(0.6f);
++        		//VIVE SET SPAWNPOS
++    	        Vec3d aimSource = vp.isSeated() ? vp.getControllerPos(0): vp.getControllerPos(1);
++    	        Vec3d aimDir = getVRAim(vp);
 +        		this.setPosition(aimSource.x + aimDir.x ,aimSource.y + aimDir.y ,aimSource.z+aimDir.z );
 +        		///
 +        	}
@@ -36,23 +36,32 @@
              this.pickupStatus = EntityArrow.PickupStatus.ALLOWED;
          }
      }
-@@ -119,9 +136,27 @@
+@@ -117,11 +134,36 @@
+         this.dataManager.register(CRITICAL, Byte.valueOf((byte)0));
+     }
  
++    public Vec3d getVRAim(VivePlayer vp){
++		Vec3d aim = vp.getControllerDir(0);
++    	if(!vp.isSeated()){
++    		aim = vp.getControllerPos(1).subtract(vp.getControllerPos(0)).normalize();
++    	}
++    	return aim;
++    }
++    
      public void shoot(Entity shooter, float pitch, float yaw, float p_184547_4_, float velocity, float inaccuracy)
      {
 +    	
 +    	//VIVE SET AIM AND SPEED
 +        VivePlayer vp = NetworkHelper.vivePlayers.get(shooter.getUniqueID());
-+        if (vp !=null )
++        if (vp !=null && vp.isVR())
 +        { 
-+    		Vec3d aim = vp.getControllerDir(0);
++    		Vec3d aim = getVRAim(vp);
 +        	if(!vp.isSeated()){
-+        		aim = vp.getControllerPos(0).subtract(vp.getControllerPos(1)).normalize();
 +        		velocity = velocity * vp.getDraw();  
 +        		this.damage *= 2;
 +        	}
-+			pitch = (float)Math.toDegrees(Math.asin(aim.y/aim.lengthVector()));
-+			yaw = (float)Math.toDegrees(Math.atan2(aim.x, -aim.z));   		
++			pitch = -(float)Math.toDegrees(Math.asin(aim.y/aim.lengthVector()));
++			yaw = (float)Math.toDegrees(Math.atan2(-aim.x, aim.z));   		
 +        }
 +        ///
 +        
