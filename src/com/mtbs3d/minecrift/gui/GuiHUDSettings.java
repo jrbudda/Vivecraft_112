@@ -38,67 +38,67 @@ public class GuiHUDSettings extends BaseGuiSettings
      */
     public void initGui()
     {
-        this.buttonList.clear();
-        this.buttonList.add(new GuiSmallButtonEx(VRSettings.VrOptions.HUD_HIDE.returnEnumOrdinal(), this.width / 2 - 78, this.height / 6 - 14, VRSettings.VrOptions.HUD_HIDE, this.guivrSettings.getKeyBinding(VRSettings.VrOptions.HUD_HIDE)));
-        this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, "Reset To Defaults"));
-        this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, "Done"));
-      if(!mc.vrSettings.seated)
-        this.buttonList.add(new GuiButtonEx(300, this.width / 2 + 5 , this.height / 6 + 74,150,20, "GUI Buttons..."));
-        VRSettings.VrOptions[] buttons = hudOptions;
+    	this.buttonList.clear();
+    	this.buttonList.add(new GuiSmallButtonEx(301, this.width / 2 - 78, this.height / 6 - 14, "Hide Hud (F1): " + mc.gameSettings.hideGUI));
+    	this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, "Reset To Defaults"));
+    	this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, "Done"));
+    	if(!mc.vrSettings.seated)
+    		this.buttonList.add(new GuiButtonEx(300, this.width / 2 + 5 , this.height / 6 + 74,150,20, "GUI Buttons..."));
+    	VRSettings.VrOptions[] buttons = hudOptions;
 
-        for (int var12 = 2; var12 < buttons.length + 2; ++var12)
-        {
-            VRSettings.VrOptions var8 = buttons[var12 - 2];
-            int width = this.width / 2 - 155 + var12 % 2 * 160;
-            int height = this.height / 6 + 21 * (var12 / 2) - 10;
+    	for (int var12 = 2; var12 < buttons.length + 2; ++var12)
+    	{
+    		VRSettings.VrOptions var8 = buttons[var12 - 2];
+    		int width = this.width / 2 - 155 + var12 % 2 * 160;
+    		int height = this.height / 6 + 21 * (var12 / 2) - 10;
 
-            if (var8 == VRSettings.VrOptions.DUMMY)
-                continue;
+    		if (var8 == VRSettings.VrOptions.DUMMY)
+    			continue;
 
-            if (var8.getEnumFloat())
-            {
-                float minValue = 0.0f;
-                float maxValue = 1.0f;
-                float increment = 0.01f;
+    		if (var8.getEnumFloat())
+    		{
+    			float minValue = 0.0f;
+    			float maxValue = 1.0f;
+    			float increment = 0.01f;
 
-                if (var8 == VRSettings.VrOptions.HUD_SCALE)
-                {
-                    minValue = 0.35f;
-                    maxValue = 2.5f;
-                    increment = 0.01f;
-                }
-                else if (var8 == VRSettings.VrOptions.HUD_DISTANCE)
-                {
-                    minValue = 0.25f;
-                    maxValue = 5.0f;
-                    increment = 0.01f;
-                }
-                else if (var8 == VRSettings.VrOptions.HUD_PITCH)
-                {
-                    minValue = -45f;
-                    maxValue = 45f;
-                    increment = 1f;
-                }
-                else if (var8 == VRSettings.VrOptions.HUD_YAW)
-                {
-                    minValue = -100f;
-                    maxValue = 100f;
-                    increment = 1f;
-                }
-                else if (var8 == VRSettings.VrOptions.HUD_OPACITY)
-                {
-                    minValue = 0.15f;
-                    maxValue = 1.0f;
-                    increment = 0.05f;
-                }
+    			if (var8 == VRSettings.VrOptions.HUD_SCALE)
+    			{
+    				minValue = 0.35f;
+    				maxValue = 2.5f;
+    				increment = 0.01f;
+    			}
+    			else if (var8 == VRSettings.VrOptions.HUD_DISTANCE)
+    			{
+    				minValue = 0.25f;
+    				maxValue = 5.0f;
+    				increment = 0.01f;
+    			}
+    			else if (var8 == VRSettings.VrOptions.HUD_PITCH)
+    			{
+    				minValue = -45f;
+    				maxValue = 45f;
+    				increment = 1f;
+    			}
+    			else if (var8 == VRSettings.VrOptions.HUD_YAW)
+    			{
+    				minValue = -100f;
+    				maxValue = 100f;
+    				increment = 1f;
+    			}
+    			else if (var8 == VRSettings.VrOptions.HUD_OPACITY)
+    			{
+    				minValue = 0.15f;
+    				maxValue = 1.0f;
+    				increment = 0.05f;
+    			}
 
-                this.buttonList.add(new GuiSliderEx(var8.returnEnumOrdinal(), width, height, var8, this.guivrSettings.getKeyBinding(var8), minValue, maxValue, increment, this.guivrSettings.getOptionFloatValue(var8)));
-            }
-            else
-            {
-                this.buttonList.add(new GuiSmallButtonEx(var8.returnEnumOrdinal(), width, height, var8, this.guivrSettings.getKeyBinding(var8)));
-            }
-        }
+    			this.buttonList.add(new GuiSliderEx(var8.returnEnumOrdinal(), width, height, var8, this.guivrSettings.getKeyBinding(var8), minValue, maxValue, increment, this.guivrSettings.getOptionFloatValue(var8)));
+    		}
+    		else
+    		{
+    			this.buttonList.add(new GuiSmallButtonEx(var8.returnEnumOrdinal(), width, height, var8, this.guivrSettings.getKeyBinding(var8)));
+    		}
+    	}
     }
 
     /**
@@ -127,13 +127,13 @@ public class GuiHUDSettings extends BaseGuiSettings
                 this.guivrSettings.hudScale = 1.5f;
                 this.guivrSettings.hudPitchOffset = -2f;
                 this.guivrSettings.hudYawOffset = 0f;
-                this.guivrSettings.hideGui = false;
                 this.guivrSettings.hudOpacity = 1f;
                 this.guivrSettings.menuBackground = false;
                 this.guivrSettings.vrHudLockMode = guivrSettings.HUD_LOCK_HAND;
                 this.guivrSettings.hudOcclusion = true;
                 this.guivrSettings.menuAlwaysFollowFace = false;
                 this.guivrSettings.autoOpenKeyboard = true;
+                this.mc.gameSettings.hideGUI = false;
 
                 Minecraft.getMinecraft().vrSettings.saveOptions();
                 this.reinit = true;
@@ -144,6 +144,12 @@ public class GuiHUDSettings extends BaseGuiSettings
             	GuiVRControls guiVRControls = new GuiVRControls(this, this.guivrSettings);
             	guiVRControls.guiFilter = true;
                 this.mc.displayGuiScreen(guiVRControls);
+            }
+            else if (par1GuiButton.id == 301)
+            {
+            	mc.gameSettings.hideGUI = !mc.gameSettings.hideGUI;
+                this.reinit = true;
+
             }
         }
     }
@@ -158,12 +164,6 @@ public class GuiHUDSettings extends BaseGuiSettings
                 case HUD_OPACITY:
                     return new String[] {
                             "How transparent to draw the in-game HUD and UI",
-                    };
-                case HUD_HIDE:
-                    return new String[] {
-                            "Whether to hide the in-game HUD or not.",
-                            "  YES: The HUD is hidden.",
-                            "  NO:  The HUD is visible."
                     };
                 case HUD_SCALE:
                 return new String[] {

@@ -1,4 +1,4 @@
-package com.mtbs3d.minecrift.provider;
+package com.mtbs3d.minecrift.control;
 
 import jopenvr.*;
 import net.minecraft.client.Minecraft;
@@ -9,13 +9,12 @@ import java.util.List;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 
-import com.mtbs3d.minecrift.control.AxisInfo;
-import com.mtbs3d.minecrift.control.AxisType;
-import com.mtbs3d.minecrift.control.ButtonType;
-import com.mtbs3d.minecrift.control.ControllerType;
+import com.mtbs3d.minecrift.provider.MCOpenVR;
 import com.mtbs3d.minecrift.utils.Quaternion;
 import com.mtbs3d.minecrift.utils.Vector2;
 import com.mtbs3d.minecrift.utils.Vector3;
+
+import de.fruitfly.ovr.structs.Vector3f;
 
 public class TrackedControllerOculus extends TrackedController {
 	private boolean stickButtonsEnabled = true;
@@ -34,7 +33,7 @@ public class TrackedControllerOculus extends TrackedController {
 	}
 
 	@Override
-	void processInput() {
+	public void processInput() {
 		// axis direction "buttons"
 		if (stickButtonsEnabled) {
 			if (state.rAxis[k_axisStick] != null && (state.rAxis[k_axisStick].x > 0.5F) != (lastState.rAxis[k_axisStick].x > 0.5F)) {
@@ -68,7 +67,7 @@ public class TrackedControllerOculus extends TrackedController {
 	}
 	
 	@Override
-	void processButtonEvent(int button, boolean state, boolean press) {
+	public void processButtonEvent(int button, boolean state, boolean press) {
 		switch (button) {
 			case JOpenVRLibrary.EVRButtonId.EVRButtonId_k_EButton_SteamVR_Trigger:
 				MCOpenVR.queueInputEvent(this, ButtonType.OCULUS_INDEX_TRIGGER, null, state, press, null);
@@ -206,5 +205,45 @@ public class TrackedControllerOculus extends TrackedController {
 
 	public void setStickButtonsEnabled(boolean stickButtonsEnabled) {
 		this.stickButtonsEnabled = stickButtonsEnabled;
+	}
+
+	@Override
+	public Vector3 getButtonLocation(ButtonType button) {
+		int i = this.type == ControllerType.RIGHT ? 0 : 1;
+		long butt = -1;
+		switch (button) {
+		case OCULUS_AX:
+			butt = k_buttonA;
+			break;
+		case OCULUS_BY:
+			butt = k_buttonB;
+			break;
+		case OCULUS_INDEX_TRIGGER:
+			butt = k_buttonIndexTrigger;
+			break;
+		case OCULUS_HAND_TRIGGER:
+			butt = k_buttonHandTrigger;
+			break;
+		case OCULUS_STICK:
+			butt = k_buttonStick;
+			break;
+		case OCULUS_STICK_RIGHT:
+			butt = k_axisStick;
+			break;
+		case OCULUS_STICK_LEFT:
+			butt = k_axisStick;
+			break;
+		case OCULUS_STICK_UP:
+			butt = k_axisStick;
+			break;
+		case OCULUS_STICK_DOWN:
+			butt = k_axisStick;
+			break;
+		default:
+			break;
+		}
+		de.fruitfly.ovr.structs.Matrix4f mat = MCOpenVR.getControllerComponentTransformFromButton(i, butt);
+		Vector3f v = mat.transform(MCOpenVR.forward);
+		return new Vector3(v.x, v.y, v.z);
 	}
 }

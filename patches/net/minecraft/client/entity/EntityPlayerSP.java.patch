@@ -11,7 +11,7 @@
 +import com.mtbs3d.minecrift.api.VRData;
 +import com.mtbs3d.minecrift.api.NetworkHelper.PacketDiscriminators;
 +import com.mtbs3d.minecrift.provider.MCOpenVR;
-+import com.mtbs3d.minecrift.provider.OpenVRPlayer;
++import com.mtbs3d.minecrift.gameplay.OpenVRPlayer;
 +import com.mtbs3d.minecrift.settings.VRSettings;
 +import com.mtbs3d.minecrift.utils.Utils;
 +import com.mtbs3d.minecrift.utils.jkatvr;

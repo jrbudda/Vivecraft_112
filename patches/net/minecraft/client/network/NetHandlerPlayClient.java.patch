@@ -10,7 +10,7 @@
  import com.mojang.authlib.GameProfile;
 +import com.mtbs3d.minecrift.api.NetworkHelper;
 +import com.mtbs3d.minecrift.api.NetworkHelper.PacketDiscriminators;
-+import com.mtbs3d.minecrift.provider.OpenVRPlayer;
++import com.mtbs3d.minecrift.gameplay.OpenVRPlayer;
 +import com.mtbs3d.minecrift.render.PlayerModelController;
 +import com.mtbs3d.minecrift.utils.BlockWithData;
 +

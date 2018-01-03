@@ -6,7 +6,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.lwjgl.util.vector.Matrix4f;
 
 import com.google.common.base.Charsets;
-import com.mtbs3d.minecrift.provider.OpenVRPlayer;
+import com.mtbs3d.minecrift.gameplay.OpenVRPlayer;
 import com.mtbs3d.minecrift.render.PlayerModelController;
 import com.mtbs3d.minecrift.utils.Quaternion;
 

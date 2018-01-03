@@ -1,0 +1,11 @@
+--- a/net/minecraft/util/ClassInheritanceMultiMap.java
++++ b/net/minecraft/util/ClassInheritanceMultiMap.java
+@@ -144,7 +144,7 @@
+ 
+     public Iterator<T> iterator()
+     {
+-        return this.values.isEmpty() ? Collections.emptyIterator() : IteratorCache.getReadOnly(this.values);
++        return this.values.isEmpty() ? Collections.emptyIterator() : (Iterator<T>) IteratorCache.getReadOnly(this.values);
+     }
+ 
+     public int size()

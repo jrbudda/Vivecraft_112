@@ -1,7 +1,5 @@
 package com.mtbs3d.minecrift.gameplay;
 
-import com.mtbs3d.minecrift.provider.OpenVRPlayer;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.Tessellator;

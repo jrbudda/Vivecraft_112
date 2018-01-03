@@ -6,6 +6,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.nio.IntBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,6 +23,10 @@ import com.mtbs3d.minecrift.control.AxisType;
 import com.mtbs3d.minecrift.control.ButtonTuple;
 import com.mtbs3d.minecrift.control.ButtonType;
 import com.mtbs3d.minecrift.control.ControllerType;
+import com.mtbs3d.minecrift.control.TrackedController;
+import com.mtbs3d.minecrift.control.TrackedControllerOculus;
+import com.mtbs3d.minecrift.control.TrackedControllerVive;
+import com.mtbs3d.minecrift.control.TrackedControllerWindowsMR;
 import com.mtbs3d.minecrift.control.VRButtonMapping;
 import com.mtbs3d.minecrift.control.VRInputEvent;
 import com.mtbs3d.minecrift.gui.GuiVRControls;
@@ -153,7 +158,6 @@ public class MCOpenVR
 	private static VRControllerState_t.ByReference[] inputStateRefernceArray = new VRControllerState_t.ByReference[3];
 	private static VRControllerState_t[] lastControllerState = new VRControllerState_t[3];
 	private static VRControllerState_t[] controllerStateReference = new VRControllerState_t[3];
-	private static Matrix4f[] controllerTipTransform = new Matrix4f[3];
 	
 	private static Queue<VRInputEvent> vrInputEvents = new LinkedList<>();
 	private static Map<String, ButtonTuple> activeBindings = new HashMap<>();
@@ -227,7 +231,6 @@ public class MCOpenVR
 			controllerRotation[c] = new Matrix4f();
 			handRotation[c] = new Matrix4f();
 			controllerDeviceIndex[c] = -1;
-			controllerTipTransform[c] = new Matrix4f();
 			
 			lastControllerState[c] = new VRControllerState_t();
 			controllerStateReference[c] = new VRControllerState_t();
@@ -547,25 +550,64 @@ public class MCOpenVR
 		}
 	}
 	
-	// TODO: Move this into TrackedController?
-	private static void getTipTransforms(){
-		if (vrRenderModels == null) return;
-		int count = vrRenderModels.GetRenderModelCount.apply();
-		Pointer pointer = new Memory(JOpenVRLibrary.k_unMaxPropertyStringSize);
-		for (int i = 0; i < 2; i++) {
-			if (controllerDeviceIndex[i] != -1 && !mc.vrSettings.seated) {
-				vrsystem.GetStringTrackedDeviceProperty.apply(controllerDeviceIndex[i], JOpenVRLibrary.ETrackedDeviceProperty.ETrackedDeviceProperty_Prop_RenderModelName_String, pointer, JOpenVRLibrary.k_unMaxPropertyStringSize - 1, hmdErrorStore);
-				RenderModel_ControllerMode_State_t modeState = new RenderModel_ControllerMode_State_t();
-				RenderModel_ComponentState_t componentState = new RenderModel_ComponentState_t();
-				vrRenderModels.GetComponentState.apply(pointer, ptrFomrString("tip"), controllerStateReference[i], modeState, componentState);
-				OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(componentState.mTrackingToComponentLocal, controllerTipTransform[i]);
-			} else {
-				OpenVRUtil.Matrix4fSetIdentity(controllerTipTransform[i]);
-			}
-		}
+	
+    private static Map<String, Matrix4f[]> controllerComponentTransforms;
+    private static Map<Long, String> controllerComponentNames;
+
+    private static void getTransforms(){
+    	if (vrRenderModels == null) return;
+    	
+    	if(controllerComponentTransforms == null) {
+    		controllerComponentTransforms = new HashMap<String, Matrix4f[]>();
+    	}
+    	
+    	int count = vrRenderModels.GetRenderModelCount.apply();
+    	Pointer pointer = new Memory(JOpenVRLibrary.k_unMaxPropertyStringSize);
+
+    	List<String> componentNames = new ArrayList<String>(); //TODO get the controller-specific list
+    	
+    	componentNames.add("tip");
+    	componentNames.add("base");
+    	componentNames.add("handgrip");
+    	componentNames.add("status");
+    	
+    	for (String comp : componentNames) {
+    		controllerComponentTransforms.put(comp, new Matrix4f[2]); 			
+			Pointer p = ptrFomrString(comp);
+			    		
+    		for (int i = 0; i < 2; i++) {
+    				vrsystem.GetStringTrackedDeviceProperty.apply(controllerDeviceIndex[i], JOpenVRLibrary.ETrackedDeviceProperty.ETrackedDeviceProperty_Prop_RenderModelName_String, pointer, JOpenVRLibrary.k_unMaxPropertyStringSize - 1, hmdErrorStore);
+    				
+    				//doing this next bit for each controller because pointer
+    				long button = vrRenderModels.GetComponentButtonMask.apply(pointer, p);   		
+    	    		if(button > 0){ //see now... wtf openvr, '0' is the system button, it cant also be the error value!
+    	    			controllerComponentNames.put(button, comp); //u get 1 button per component, nothing more
+    	    		}
+    	    		//
+    				
+    				RenderModel_ControllerMode_State_t modeState = new RenderModel_ControllerMode_State_t();
+    				RenderModel_ComponentState_t componentState = new RenderModel_ComponentState_t();
+    				vrRenderModels.GetComponentState.apply(pointer, p, controllerStateReference[i], modeState, componentState);
+    				Matrix4f xform = new Matrix4f();
+    				OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(componentState.mTrackingToComponentLocal, xform);
+    				controllerComponentTransforms.get(comp)[i] = xform;
+    		}
+    	}
 	}
 		
+    public static Matrix4f getControllerComponentTransform(int controllerIndex, String componenetName){
+    	if(controllerComponentTransforms == null || !controllerComponentTransforms.containsKey(componenetName)) 
+    		return new Matrix4f();
+    	return controllerComponentTransforms.get(componenetName)[controllerIndex];
+    }
 	
+    public static Matrix4f getControllerComponentTransformFromButton(int controllerIndex, long button){
+    	if (controllerComponentNames == null || !controllerComponentNames.containsKey(button))
+    		return getControllerComponentTransform(controllerIndex, "status");
+
+    	return getControllerComponentTransform(controllerIndex, controllerComponentNames.get(button));
+    }
+    
 	public static void initOpenVRCompositor(boolean set) throws Exception
 	{
 		if( set && vrsystem != null ) {
@@ -1701,7 +1743,8 @@ public class MCOpenVR
 			}
 		}
 
-		getTipTransforms(); //TODO dont do this @90hz.
+		if (controllerComponentTransforms == null) 
+			getTransforms(); //do we want the dynaimc info? I dont think so...
 
 		updateAim();
 		//VRHotkeys.snapMRCam(mc, 0);
@@ -1834,7 +1877,7 @@ public class MCOpenVR
 
 	public static float seatedRot;
 	
-	static Vector3f forward = new Vector3f(0,0,-1);
+	public static Vector3f forward = new Vector3f(0,0,-1);
 	static double aimPitch = 0; //needed for seated mode.
 
 	
@@ -1890,7 +1933,7 @@ public class MCOpenVR
 				controllerPose[0] = hmdPose.inverted().inverted();
 				controllerPose[1] = hmdPose.inverted().inverted();
 			} else	
-				controllerPose[0] = Matrix4f.multiply(controllerPose[0], controllerTipTransform[0]);
+				controllerPose[0] = Matrix4f.multiply(controllerPose[0], controllerComponentTransforms.get("tip")[0]);
 
 			// grab controller position in tracker space, scaled to minecraft units
 			Vector3f controllerPos = OpenVRUtil.convertMatrix4ftoTranslationVector(controllerPose[0]);
@@ -2005,7 +2048,7 @@ public class MCOpenVR
 
 			// update off hand aim
 			if(!mc.vrSettings.seated) 
-				controllerPose[1] = Matrix4f.multiply(controllerPose[1], controllerTipTransform[1]);
+				controllerPose[1] = Matrix4f.multiply(controllerPose[1], controllerComponentTransforms.get("tip")[1]);
 
 			Vector3f leftControllerPos = OpenVRUtil.convertMatrix4ftoTranslationVector(controllerPose[1]);
 			aimSource[1] = new Vec3d(
@@ -2113,4 +2156,8 @@ public class MCOpenVR
     public static boolean isVivecraftBinding(KeyBinding kb) {
     	return kb.getKeyCategory().startsWith("Vivecraft");
     }
+    
+	public static boolean isHMDTracking() {
+		return headIsTracking;
+	}
 }

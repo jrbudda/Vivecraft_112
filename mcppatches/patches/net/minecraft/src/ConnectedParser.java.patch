@@ -1,6 +1,6 @@
 --- a/net/minecraft/src/ConnectedParser.java
 +++ b/net/minecraft/src/ConnectedParser.java
-@@ -423,8 +423,9 @@
+@@ -427,8 +427,9 @@
  
      public static Comparable getPropertyValue(String p_getPropertyValue_0_, Collection p_getPropertyValue_1_)
      {

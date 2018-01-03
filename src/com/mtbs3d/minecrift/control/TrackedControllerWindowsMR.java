@@ -1,11 +1,8 @@
-package com.mtbs3d.minecrift.provider;
+package com.mtbs3d.minecrift.control;
 
 import java.util.List;
 
-import com.mtbs3d.minecrift.control.AxisInfo;
-import com.mtbs3d.minecrift.control.AxisType;
-import com.mtbs3d.minecrift.control.ButtonType;
-import com.mtbs3d.minecrift.control.ControllerType;
+import com.mtbs3d.minecrift.provider.MCOpenVR;
 import com.mtbs3d.minecrift.utils.Vector2;
 
 public class TrackedControllerWindowsMR extends TrackedControllerVive {
@@ -18,7 +15,7 @@ public class TrackedControllerWindowsMR extends TrackedControllerVive {
 	}
 
 	@Override
-	void processInput() {
+	public void processInput() {
 		// axis direction "buttons"
 		if (stickButtonsEnabled) {
 			if (state.rAxis[k_axisStick] != null && (state.rAxis[k_axisStick].x > 0.5F) != (lastState.rAxis[k_axisStick].x > 0.5F)) {

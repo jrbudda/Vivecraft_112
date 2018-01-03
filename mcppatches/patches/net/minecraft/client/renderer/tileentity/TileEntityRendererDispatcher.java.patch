@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher.java
 +++ b/net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher.java
-@@ -93,7 +93,7 @@
+@@ -95,7 +95,7 @@
  
          if (tileentityspecialrenderer == null && teClass != TileEntity.class)
          {

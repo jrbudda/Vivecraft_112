@@ -58,11 +58,11 @@ public class Installer extends JPanel  implements PropertyChangeListener
     private static final String MC_VERSION        = "1.12.2";
     private static final String MC_MD5            = "8c0443868b9e46c77d39db61c755679d";
 	private static final String OF_LIB_PATH       = "libraries/optifine/OptiFine/";
-    private static final String OF_FILE_NAME      = "1.12.2_HD_U_C5";
-    private static final String OF_JSON_NAME      = "1.12.2_HD_U_C5";
-    private static final String OF_MD5            = "e67fa3489563f55329d1d88ccffa9c9d";
+    private static final String OF_FILE_NAME      = "1.12.2_HD_U_C7";
+    private static final String OF_JSON_NAME      = "1.12.2_HD_U_C7";
+    private static final String OF_MD5            = "349B644370E7A8460482D1479EBCBDE1";
     private static final String OF_VERSION_EXT    = ".jar";
-    private static final String FORGE_VERSION     = "14.23.1.2559";
+    private static final String FORGE_VERSION     = "14.23.1.2583";
 	/* END OF DO NOT RENAME */
 
 	private static final String DEFAULT_PROFILE_NAME = "ViveCraft " + MINECRAFT_VERSION;
@@ -98,6 +98,8 @@ public class Installer extends JPanel  implements PropertyChangeListener
 	private JCheckBox useHrtf;
 	private JCheckBox katvr;
 	private JCheckBox kiosk;
+	private JCheckBox optCustomForgeVersion;
+	private JTextField txtCustomForgeVersion;
 	private JComboBox ramAllocation;
 	private final boolean QUIET_DEV = false;
 	private File releaseNotes = null;
@@ -244,7 +246,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 		//Create forge: no/yes buttons
 		useForge = new JCheckBox();
 		AbstractAction actf = new updateActionF();
-		actf.putValue(AbstractAction.NAME, "Install Vivecraft with Forge " + FORGE_VERSION);
+		actf.putValue(AbstractAction.NAME, "Install Vivecraft with Forge");
 		useForge.setAction(actf);
 		useForge.setSelected(DEFAULT_FORGE_INSTALL);
 		forgeVersion = new JComboBox();
@@ -260,6 +262,16 @@ public class Installer extends JPanel  implements PropertyChangeListener
 		forgeVersion.setAlignmentX(LEFT_ALIGNMENT);
 		forgePanel.setAlignmentX(LEFT_ALIGNMENT);
 		forgePanel.add(useForge);
+
+		optCustomForgeVersion = new JCheckBox();
+		
+		AbstractAction actf2 = new updateActionF();
+		actf2.putValue(AbstractAction.NAME, "Custom Version");
+		optCustomForgeVersion.setAction(actf2);
+		
+		txtCustomForgeVersion = new JTextField(FORGE_VERSION);
+		forgePanel.add(optCustomForgeVersion);
+		forgePanel.add(txtCustomForgeVersion);
 		//forgePanel.add(forgeVersion);
 
 		//Create Profile
@@ -579,7 +591,6 @@ public class Installer extends JPanel  implements PropertyChangeListener
 
 				// Failed. Sleep a bit and retry...
 				if (i < 3) {
-					monitor.setNote("Downloading Optifine... waiting...");
 					try {
 						Thread.sleep(i * 1000);
 					}
@@ -745,11 +756,11 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				if (optOnDiskMd5 == null)
 				{
 					// Just continue...
-					System.out.println("Optifine not found - downloading");
+					monitor.setNote("Optifine not found - downloading");
 				}
 				else if (!optOnDiskMd5.equalsIgnoreCase(OF_MD5)) {
 					// Bad copy. Attempt delete just to make sure.
-					System.out.println("Optifine MD5 bad - downloading");
+					monitor.setNote("Optifine MD5 bad - downloading");
 
 					try {
 						deleted = fo.delete();
@@ -760,7 +771,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				}
 				else {
 					// A good copy!
-					System.out.println("Optifine MD5 good! " + OF_MD5);
+					monitor.setNote("Optifine MD5 good! " + OF_MD5);
 					return true;
 				}
 
@@ -771,7 +782,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				if (success == false || optOnDiskMd5 == null || !optOnDiskMd5.equalsIgnoreCase(OF_MD5)) {
 					// No good
 					if (optOnDiskMd5 != null)
-						System.out.println("Optifine - bad MD5. Got " + optOnDiskMd5 + ", expected " + OF_MD5);
+						monitor.setNote("Optifine - bad MD5. Got " + optOnDiskMd5 + ", expected " + OF_MD5);
 					try {
 						deleted = fo.delete();
 					}
@@ -1099,7 +1110,8 @@ public class Installer extends JPanel  implements PropertyChangeListener
 							int ret = in.read(buff);
 							if( ret > 0 ) {
 								String s = new String( buff,0, ret, "UTF-8");
-								//s = s.replace("$FORGE_VERSION", (String)forgeVersion.getSelectedItem());
+								if(optCustomForgeVersion.isSelected())
+									s = s.replace(FORGE_VERSION,txtCustomForgeVersion.getText().trim());					
 								ret = s.length();
 								System.arraycopy(s.getBytes("UTF-8"), 0, buff, 0, ret);
 							}
@@ -1493,6 +1505,9 @@ public class Installer extends JPanel  implements PropertyChangeListener
 		out+="</html>";
 		instructions.setText(out);
 		ramAllocation.setEnabled(createProfile.isSelected());
+		txtCustomForgeVersion.setEnabled(optCustomForgeVersion.isSelected());
+		txtCustomForgeVersion.setVisible(useForge.isSelected());
+		optCustomForgeVersion.setVisible(useForge.isSelected());
 	}
 
 	private void updateFilePath()

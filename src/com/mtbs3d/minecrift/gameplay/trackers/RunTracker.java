@@ -1,4 +1,4 @@
-package com.mtbs3d.minecrift.gameplay;
+package com.mtbs3d.minecrift.gameplay.trackers;
 
 import com.mtbs3d.minecrift.provider.MCOpenVR;
 import com.mtbs3d.minecrift.settings.VRSettings;

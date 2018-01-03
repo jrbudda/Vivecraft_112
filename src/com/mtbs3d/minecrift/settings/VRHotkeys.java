@@ -5,8 +5,8 @@
 package com.mtbs3d.minecrift.settings;
 
 import com.google.common.util.concurrent.Runnables;
+import com.mtbs3d.minecrift.gameplay.OpenVRPlayer;
 import com.mtbs3d.minecrift.provider.MCOpenVR;
-import com.mtbs3d.minecrift.provider.OpenVRPlayer;
 import com.mtbs3d.minecrift.settings.VRSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiWinGame;

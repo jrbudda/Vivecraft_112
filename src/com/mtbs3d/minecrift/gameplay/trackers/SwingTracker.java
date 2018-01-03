@@ -1,4 +1,4 @@
-package com.mtbs3d.minecrift.gameplay;
+package com.mtbs3d.minecrift.gameplay.trackers;
 
 import java.util.List;
 

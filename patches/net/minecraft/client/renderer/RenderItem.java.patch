@@ -18,7 +18,7 @@
  import net.minecraft.util.ReportedException;
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.math.MathHelper;
-@@ -162,16 +166,48 @@
+@@ -164,16 +168,48 @@
          }
      }
  
@@ -69,17 +69,18 @@
                  GlStateManager.enableRescaleNormal();
                  TileEntityItemStackRenderer.instance.renderByItem(stack);
              }
-@@ -183,13 +219,30 @@
-                     this.modelLocation = null;
+@@ -186,7 +222,22 @@
                  }
  
+                 this.renderModelHasEmissive = false;
 -                this.renderModel(model, stack);
++                
 +                int c = -1;
 +                if(fade < 1){
-+                    int b = (int) (fade * 255);
-+                    c =  b << 24 | 255 << 16 | 255 << 8 | 255;
++                	int b = (int) (fade * 255);
++                	c =  b << 24 | 255 << 16 | 255 << 8 | 255;
 +                }
-+                   
++
 +                if (Minecraft.getMinecraft().jumpTracker.isBoots(stack))
 +                {
 +                	c = (255) << 24 | 255 << 8 ;
@@ -87,21 +88,22 @@
 +                {
 +                	c = (255) << 24 | 130 <<16 | 0 << 8 | 75 ;
 +                }
-+                              
-+                this.renderModel(model,c, stack);
++
++                this.renderModel(model, c, stack);
  
-                 if (stack.hasEffect() && (!Config.isCustomItems() || !CustomItems.renderCustomEffect(this, stack, model)))
+                 if (this.renderModelHasEmissive)
                  {
-                     this.renderEffect(model);
+@@ -205,6 +256,9 @@
                  }
              }
-+            
+ 
 +            GL14.glBlendColor(1, 1, 1, 1);
 +            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
- 
++
              GlStateManager.popMatrix();
          }
-@@ -299,7 +352,8 @@
+     }
+@@ -327,7 +381,8 @@
                  k = k | -16777216;
              }
  
@@ -111,7 +113,7 @@
          }
      }
  
-@@ -314,7 +368,7 @@
+@@ -342,7 +397,7 @@
          if (!stack.isEmpty())
          {
              IBakedModel ibakedmodel = this.getItemModelWithOverrides(stack, (World)null, (EntityLivingBase)null);
@@ -120,7 +122,7 @@
          }
      }
  
-@@ -353,16 +407,16 @@
+@@ -381,16 +436,16 @@
          }
      }
  
@@ -140,7 +142,7 @@
      {
          if (!stack.isEmpty())
          {
-@@ -1187,6 +1241,10 @@
+@@ -1215,6 +1270,10 @@
          this.registerItem(Items.DIAMOND_HORSE_ARMOR, "diamond_horse_armor");
          this.registerItem(Items.LEAD, "lead");
          this.registerItem(Items.NAME_TAG, "name_tag");

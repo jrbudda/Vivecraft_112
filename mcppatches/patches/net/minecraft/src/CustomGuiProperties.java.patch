@@ -1,0 +1,13 @@
+--- a/net/minecraft/src/CustomGuiProperties.java
++++ b/net/minecraft/src/CustomGuiProperties.java
+@@ -199,8 +199,9 @@
+ 
+         String s5 = p_parseTextureLocations_1_ + ".";
+ 
+-        for (String s1 : p_parseTextureLocations_0_.keySet())
++        for (Object o : p_parseTextureLocations_0_.keySet())
+         {
++        	String s1 = (String) o;
+             if (s1.startsWith(s5))
+             {
+                 String s2 = s1.substring(s5.length());

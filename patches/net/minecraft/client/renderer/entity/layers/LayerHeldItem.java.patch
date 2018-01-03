@@ -5,7 +5,7 @@
  
 +import java.util.UUID;
 +
-+import com.mtbs3d.minecrift.gameplay.BowTracker;
++import com.mtbs3d.minecrift.gameplay.trackers.BowTracker;
 +import com.mtbs3d.minecrift.render.PlayerModelController;
 +import com.mtbs3d.minecrift.render.PlayerModelController.RotInfo;
 +
