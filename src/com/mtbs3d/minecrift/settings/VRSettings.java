@@ -21,8 +21,8 @@ import com.mtbs3d.minecrift.control.ButtonType;
 import com.mtbs3d.minecrift.control.ControllerType;
 import com.mtbs3d.minecrift.control.LegacyButton;
 import com.mtbs3d.minecrift.control.VRButtonMapping;
+import com.mtbs3d.minecrift.control.TrackedControllerVive.TouchpadMode;
 import com.mtbs3d.minecrift.provider.MCOpenVR;
-import com.mtbs3d.minecrift.provider.TrackedControllerVive.TouchpadMode;
 import com.mtbs3d.minecrift.settings.profile.ProfileManager;
 import com.mtbs3d.minecrift.settings.profile.ProfileReader;
 import com.mtbs3d.minecrift.settings.profile.ProfileWriter;
@@ -183,7 +183,6 @@ public class VRSettings
     public boolean floatInventory = true; //false not working yet, have to account for rotation and tilt in MCOpenVR>processGui()
 	public boolean menuAlwaysFollowFace;
     public int vrHudLockMode = HUD_LOCK_HAND;
-    public boolean hideGui = false;     // VIVE show gui
     public boolean hudOcclusion = true;
     public float crosshairScale = 1.0f;
 	public boolean crosshairScalesWithDistance = false;
@@ -440,11 +439,6 @@ public class VRSettings
                         this.smoothTick = optionTokens[1].equals("true");
                     }
 
-                    if (optionTokens[0].equals("hideGui"))
-                    {
-                        this.hideGui = optionTokens[1].equals("true");
-                    }
-
                     // VIVE START - new options
                     if (optionTokens[0].equals("simulateFalling"))
                     {
@@ -663,6 +657,10 @@ public class VRSettings
                     if(optionTokens[0].equals("analogMovement")){
                         this.analogMovement = optionTokens[1].equals("true");
                     }
+                    
+                    if(optionTokens[0].equals("hideGUI")){
+                        this.mc.gameSettings.hideGUI = optionTokens[1].equals("true");
+                    }
 
                     if (optionTokens[0].startsWith("BUTTON_") || optionTokens[0].startsWith("OCULUS_"))
                     {
@@ -780,8 +778,6 @@ public class VRSettings
 	            return var4 + String.format("%.2f", this.hudOpacity);
             case RENDER_MENU_BACKGROUND:
                 return this.menuBackground ? var4 + "ON" : var4 + "OFF";
-	        case HUD_HIDE:
-	            return this.hideGui ? var4 + "YES" : var4 + "NO";
 	        case RENDER_FULL_FIRST_PERSON_MODEL_MODE:
                 if (this.renderFullFirstPersonModelMode == RENDER_FIRST_PERSON_FULL)
                     return var4 + "Full";
@@ -1072,9 +1068,6 @@ public class VRSettings
             case RENDER_MENU_BACKGROUND:
                 this.menuBackground = !this.menuBackground;
                 break;
-	        case HUD_HIDE:
-	            this.hideGui = !this.hideGui;
-	            break;
 	        case RENDER_FULL_FIRST_PERSON_MODEL_MODE:
                 this.renderFullFirstPersonModelMode++;
                 if (this.renderFullFirstPersonModelMode > RENDER_FIRST_PERSON_NONE)
@@ -1428,7 +1421,6 @@ public class VRSettings
             var5.println("inertiaFactor:" + this.inertiaFactor);
             var5.println("smoothRunTickCount:" + this.smoothRunTickCount);
             var5.println("smoothTick:" + this.smoothTick);
-            var5.println("hideGui:" + this.hideGui);
             //VIVE
             var5.println("simulateFalling:" + this.simulateFalling);
             var5.println("weaponCollision:" + this.weaponCollision);
@@ -1488,6 +1480,7 @@ public class VRSettings
             var5.println("freemoveWMRStick:" + this.freemoveWMRStick);
             var5.println("analogDeadzone:" + this.analogDeadzone);
             var5.println("analogMovement:" + this.analogMovement);
+            var5.println("hideGUI:" + this.mc.gameSettings.hideGUI);
 
 
             if (vrQuickCommands == null) vrQuickCommands = getQuickCommandsDefaults(); //defaults
@@ -1574,7 +1567,6 @@ public class VRSettings
         HUD_LOCK_TO("HUD Orientation Lock", false, true),
         HUD_OPACITY("HUD Opacity", true, false),
         RENDER_MENU_BACKGROUND("HUD/GUI Background", false, true),
-        HUD_HIDE("Hide HUD (F1)", false, true),
         HUD_OCCLUSION("HUD Occlusion", false, true),
         MENU_ALWAYS_FOLLOW_FACE("Main Menu Follow", false, true),
         CROSSHAIR_OCCLUSION("Crosshair Occlusion", false, true),

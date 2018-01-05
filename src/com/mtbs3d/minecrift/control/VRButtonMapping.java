@@ -11,7 +11,6 @@ import org.lwjgl.opengl.Display;
 
 import com.google.common.base.Joiner;
 import com.mtbs3d.minecrift.provider.MCOpenVR;
-import com.mtbs3d.minecrift.provider.TrackedController;
 import com.mtbs3d.minecrift.utils.KeyboardSimulator;
 import com.mtbs3d.minecrift.utils.MCReflection;
 

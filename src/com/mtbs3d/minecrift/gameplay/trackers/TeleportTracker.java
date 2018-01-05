@@ -1,12 +1,13 @@
-package com.mtbs3d.minecrift.gameplay;
+package com.mtbs3d.minecrift.gameplay.trackers;
 
 import java.nio.ByteBuffer;
 import java.util.Random;
 
 import com.mtbs3d.minecrift.api.NetworkHelper;
 import com.mtbs3d.minecrift.api.NetworkHelper.PacketDiscriminators;
+import com.mtbs3d.minecrift.gameplay.OpenVRPlayer;
+import com.mtbs3d.minecrift.gameplay.VRMovementStyle;
 import com.mtbs3d.minecrift.provider.MCOpenVR;
-import com.mtbs3d.minecrift.provider.OpenVRPlayer;
 
 import de.fruitfly.ovr.structs.EulerOrient;
 import de.fruitfly.ovr.structs.Matrix4f;

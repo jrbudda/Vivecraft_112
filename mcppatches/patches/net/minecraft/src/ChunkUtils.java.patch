@@ -1,6 +1,6 @@
 --- a/net/minecraft/src/ChunkUtils.java
 +++ b/net/minecraft/src/ChunkUtils.java
-@@ -50,16 +50,18 @@
+@@ -42,16 +42,18 @@
              p_findFieldHasEntities_0_.setHasEntities(false);
              List list2 = new ArrayList();
  

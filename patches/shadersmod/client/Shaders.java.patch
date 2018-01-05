@@ -1,6 +1,6 @@
 --- a/shadersmod/client/Shaders.java
 +++ b/shadersmod/client/Shaders.java
-@@ -26,6 +26,7 @@
+@@ -27,6 +27,7 @@
  import net.minecraft.block.Block;
  import net.minecraft.block.material.Material;
  import net.minecraft.client.Minecraft;
@@ -8,15 +8,7 @@
  import net.minecraft.client.model.ModelBase;
  import net.minecraft.client.model.ModelRenderer;
  import net.minecraft.client.renderer.BufferBuilder;
-@@ -75,7 +76,6 @@
- import org.lwjgl.opengl.GLContext;
- import org.lwjgl.util.glu.GLU;
- import shadersmod.common.SMCLog;
--
- public class Shaders
- {
-     static Minecraft mc;
-@@ -162,11 +162,11 @@
+@@ -169,11 +170,11 @@
      public static int midTexCoordAttrib = 11;
      public static int tangentAttrib = 12;
      public static boolean useEntityAttrib = false;
@@ -31,7 +23,7 @@
      public static boolean progUseTangentAttrib = false;
      public static int atlasSizeX = 0;
      public static int atlasSizeY = 0;
-@@ -204,7 +204,7 @@
+@@ -211,7 +212,7 @@
      static int usedShadowDepthBuffers = 0;
      static int usedColorAttachs = 0;
      static int usedDrawBuffers = 0;
@@ -39,8 +31,8 @@
 +    public static int dfb = 0;
      static int sfb = 0;
      private static int[] gbuffersFormat = new int[8];
-     private static boolean[] gbuffersClear = new boolean[8];
-@@ -373,10 +373,10 @@
+     public static boolean[] gbuffersClear = new boolean[8];
+@@ -397,10 +398,10 @@
      static final FloatBuffer tempMatrixDirectBuffer = nextFloatBuffer(16);
      static final FloatBuffer tempDirectFloatBuffer = nextFloatBuffer(16);
      static final IntBuffer dfbColorTextures = nextIntBuffer(16);
@@ -53,7 +45,7 @@
      static final IntBuffer sfbDrawBuffers = nextIntBuffer(8);
      static final IntBuffer drawBuffersNone = nextIntBuffer(8);
      static final IntBuffer drawBuffersAll = nextIntBuffer(8);
-@@ -714,11 +714,11 @@
+@@ -736,11 +737,11 @@
              flag2 = true;
          }
  
@@ -70,7 +62,7 @@
  
          String s = shadersConfig.getProperty(EnumShaderOption.SHADER_PACK.getPropertyKey(), packNameDefault);
  
-@@ -1565,11 +1565,10 @@
+@@ -1632,11 +1633,10 @@
          SMCLog.info(stringbuilder.toString());
      }
  
@@ -84,7 +76,7 @@
          capabilities = GLContext.getCapabilities();
          glVersionString = GL11.glGetString(GL11.GL_VERSION);
          glVendorString = GL11.glGetString(GL11.GL_VENDOR);
-@@ -1741,8 +1740,8 @@
+@@ -1815,8 +1815,8 @@
              shadowDistanceRenderMul = -1.0F;
              aoLevel = -1.0F;
              useEntityAttrib = false;
@@ -95,7 +87,7 @@
              useTangentAttrib = false;
              waterShadowEnabled = false;
              updateChunksErrorRecorded = false;
-@@ -2043,7 +2042,7 @@
+@@ -2130,7 +2130,7 @@
          if (i != 0)
          {
              progUseEntityAttrib = false;
@@ -104,7 +96,7 @@
              progUseTangentAttrib = false;
              int j = createVertShader(vShaderPath);
              int k = createFragShader(fShaderPath);
-@@ -2074,10 +2073,10 @@
+@@ -2161,10 +2161,10 @@
                      checkGLError("mc_Entity");
                  }
  
@@ -118,45 +110,23 @@
                  }
  
                  if (progUseTangentAttrib)
-@@ -2177,14 +2176,14 @@
-                             useEntityAttrib = true;
-                             progUseEntityAttrib = true;
-                         }
--                        else if (s.matches("attribute [_a-zA-Z0-9]+ mc_midTexCoord.*"))
-+                        else if (s.matches("attribute [_a-zA-Z0-9]+ mc_midTex.*"))
-                         {
--                            useMidTexCoordAttrib = true;
--                            progUseMidTexCoordAttrib = true;
-+                            useMidTexAttrib = true;
-+                            progUseMidTexAttrib = true;
-                         }
--                        else if (s.matches(".*gl_MultiTexCoord3.*"))
-+                        else if (s.matches(".*gl_MultiTex3.*"))
-                         {
--                            useMultiTexCoord3Attrib = true;
-+                            useMultiTex3Attrib = true;
-                         }
-                         else if (s.matches("attribute [_a-zA-Z0-9]+ at_tangent.*"))
-                         {
-@@ -3270,14 +3269,14 @@
-                 programsDrawBuffers[i] = null;
-                 programsCompositeMipmapSetting[i] = 0;
-             }
--
-+           
-             if (dfb != 0)
-             {
-                 EXTFramebufferObject.glDeleteFramebuffersEXT(dfb);
-                 dfb = 0;
--                checkGLError("del dfb");
-+                checkGLError("del dfbR");
-             }
--
-+            
-             if (sfb != 0)
-             {
-                 EXTFramebufferObject.glDeleteFramebuffersEXT(sfb);
-@@ -3344,11 +3343,12 @@
+@@ -2269,12 +2269,12 @@
+                             }
+                             else if (shaderline.isAttribute("mc_midTexCoord"))
+                             {
+-                                useMidTexCoordAttrib = true;
+-                                progUseMidTexCoordAttrib = true;
++                                useMidTexAttrib = true;
++                                progUseMidTexAttrib = true;
+                             }
+                             else if (s.contains("gl_MultiTexCoord3"))
+                             {
+-                                useMultiTexCoord3Attrib = true;
++                                useMultiTex3Attrib = true;
+                             }
+                             else if (shaderline.isAttribute("at_tangent"))
+                             {
+@@ -3391,11 +3391,12 @@
  
      private static void resize()
      {
@@ -174,7 +144,7 @@
      }
  
      private static void resizeShadow()
-@@ -3356,25 +3356,25 @@
+@@ -3403,25 +3404,25 @@
          needResizeShadow = false;
          shadowMapWidth = Math.round((float)spShadowMapWidth * configShadowResMul);
          shadowMapHeight = Math.round((float)spShadowMapHeight * configShadowResMul);
@@ -206,7 +176,7 @@
          GL20.glDrawBuffers(0);
          GL11.glReadBuffer(0);
  
-@@ -3447,23 +3447,25 @@
+@@ -3494,23 +3495,25 @@
          }
          else
          {
@@ -238,7 +208,7 @@
              GL11.glDrawBuffer(0);
              GL11.glReadBuffer(0);
              GL11.glGenTextures((IntBuffer)sfbDepthTextures.clear().limit(usedShadowDepthBuffers));
-@@ -3522,13 +3524,15 @@
+@@ -3569,13 +3572,15 @@
                  SMCLog.info("Shadow framebuffer created.");
              }
          }
@@ -255,7 +225,7 @@
          mc.mcProfiler.startSection("init");
          entityRenderer = mc.entityRenderer;
  
-@@ -3550,10 +3554,23 @@
+@@ -3597,10 +3602,23 @@
              }
          }
  
@@ -283,7 +253,7 @@
  
          if (needResizeShadow)
          {
-@@ -3650,6 +3667,7 @@
+@@ -3697,6 +3715,7 @@
          skipRenderHandMain = false;
          skipRenderHandOff = false;
  
@@ -291,7 +261,7 @@
          if (usedShadowDepthBuffers >= 1)
          {
              GlStateManager.setActiveTexture(33988);
-@@ -3742,17 +3760,14 @@
+@@ -3789,17 +3808,14 @@
          checkGLError("end beginRender");
      }
  
@@ -313,39 +283,25 @@
                  boolean flag = shaderPackDimensions.contains(Integer.valueOf(i));
                  boolean flag1 = shaderPackDimensions.contains(Integer.valueOf(j));
  
-@@ -3761,6 +3776,7 @@
+@@ -3808,7 +3824,7 @@
                      uninit();
                  }
              }
+-
 +            currentWorld = world;
+             Smoother.reset();
          }
      }
+@@ -3827,7 +3843,7 @@
+     }
  
-@@ -3769,7 +3785,7 @@
-         if (!isShadowPass)
-         {
-             EXTFramebufferObject.glBindFramebufferEXT(36160, dfb);
--            GL11.glViewport(0, 0, renderWidth, renderHeight);
-+            GlStateManager.viewport(0, 0, renderWidth, renderHeight);
-             activeDrawBuffers = null;
-             ShadersTex.bindNSTextures(defaultTexture.getMultiTexID());
-             useProgram(2);
-@@ -3783,12 +3799,12 @@
+     public static void setViewport(int vx, int vy, int vw, int vh)
+-    {
++    { //nice parameters u got there.....
+         GlStateManager.colorMask(true, true, true, true);
  
          if (isShadowPass)
-         {
--            GL11.glViewport(0, 0, shadowMapWidth, shadowMapHeight);
-+        	GlStateManager.viewport(0, 0, shadowMapWidth, shadowMapHeight);
-         }
-         else
-         {
--            GL11.glViewport(0, 0, renderWidth, renderHeight);
-             EXTFramebufferObject.glBindFramebufferEXT(36160, dfb);
-+        	GL11.glViewport(vx, vy, vw, vh);
-             isRenderingDfb = true;
-             GlStateManager.enableCull();
-             GlStateManager.enableDepth();
-@@ -3825,7 +3841,7 @@
+@@ -3875,7 +3891,7 @@
          {
              checkGLError("shadow clear pre");
              EXTFramebufferObject.glFramebufferTexture2DEXT(36160, 36096, 3553, sfbDepthTextures.get(0), 0);
@@ -354,7 +310,25 @@
              GL20.glDrawBuffers(programsDrawBuffers[30]);
              checkFramebufferStatus("shadow clear");
              GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-@@ -4035,7 +4051,7 @@
+@@ -3894,7 +3910,7 @@
+             if (gbuffersClear[1])
+             {
+                 GL20.glDrawBuffers(36065);
+-                GL11.glClearColor(1.0F, 1.0F, 1.0F, 1.0F);
++                GlStateManager.clearColor(1.0F, 1.0F, 1.0F, 1.0F);
+                 GL11.glClear(16384);
+             }
+ 
+@@ -3903,7 +3919,7 @@
+                 if (gbuffersClear[i])
+                 {
+                     GL20.glDrawBuffers(36064 + i);
+-                    GL11.glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
++                    GlStateManager.clearColor(0.0F, 0.0F, 0.0F, 0.0F);
+                     GL11.glClear(16384);
+                 }
+             }
+@@ -4085,7 +4101,7 @@
  
      public static void drawComposite()
      {
@@ -363,7 +337,7 @@
          GL11.glBegin(GL11.GL_QUADS);
          GL11.glTexCoord2f(0.0F, 0.0F);
          GL11.glVertex3f(0.0F, 0.0F, 0.0F);
-@@ -4059,7 +4075,7 @@
+@@ -4124,7 +4140,7 @@
              GL11.glPushMatrix();
              GL11.glLoadIdentity();
              GL11.glOrtho(0.0D, 1.0D, 0.0D, 1.0D, 0.0D, 1.0D);
@@ -372,59 +346,28 @@
              GlStateManager.enableTexture2D();
              GlStateManager.disableAlpha();
              GlStateManager.disableBlend();
-@@ -4164,7 +4180,7 @@
-             isRenderingDfb = false;
-             mc.getFramebuffer().bindFramebuffer(true);
-             OpenGlHelper.glFramebufferTexture2D(OpenGlHelper.GL_FRAMEBUFFER, OpenGlHelper.GL_COLOR_ATTACHMENT0, 3553, mc.getFramebuffer().framebufferTexture, 0);
--            GL11.glViewport(0, 0, mc.displayWidth, mc.displayHeight);
-+            // the bind does this for you.  GlStateManager.viewport(0, 0, renderWidth, renderHeight);
+@@ -4301,7 +4317,7 @@
+         isRenderingDfb = false;
+         mc.getFramebuffer().bindFramebuffer(true);
+         OpenGlHelper.glFramebufferTexture2D(OpenGlHelper.GL_FRAMEBUFFER, OpenGlHelper.GL_COLOR_ATTACHMENT0, 3553, mc.getFramebuffer().framebufferTexture, 0);
+-        GL11.glViewport(0, 0, mc.displayWidth, mc.displayHeight);
++        //Nope. GL11.glViewport(0, 0, mc.displayWidth, mc.displayHeight);
  
-             if (EntityRenderer.anaglyphEnable)
-             {
-@@ -4173,9 +4189,9 @@
-             }
- 
-             GlStateManager.depthMask(true);
--            GL11.glClearColor(clearColorR, clearColorG, clearColorB, 1.0F);
--            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
--            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-+            GlStateManager.clearColor(clearColorR, clearColorG, clearColorB, 1.0F);
-+            GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-             GlStateManager.enableTexture2D();
-             GlStateManager.disableAlpha();
-             GlStateManager.disableBlend();
-@@ -4294,9 +4310,9 @@
-     public static void preSkyList()
-     {
-         setUpPosition();
--        GL11.glColor3f(fogColorR, fogColorG, fogColorB);
-+        GlStateManager.color(fogColorR, fogColorG, fogColorB);
-         drawHorizon();
--        GL11.glColor3f(skyColorR, skyColorG, skyColorB);
-+        GlStateManager.color(skyColorR, skyColorG, skyColorB);
-     }
- 
-     public static void endSky()
-@@ -4639,7 +4655,8 @@
-     public static void endFPOverlay()
-     {
-     }
--
-+    
-+//unused
-     public static void glEnableWrapper(int cap)
-     {
-         GL11.glEnable(cap);
-@@ -4654,6 +4671,7 @@
+         if (EntityRenderer.anaglyphEnable)
+         {
+@@ -4310,9 +4326,9 @@
          }
-     }
  
-+    //unused
-     public static void glDisableWrapper(int cap)
-     {
-         GL11.glDisable(cap);
-@@ -5101,4 +5119,4 @@
+         GlStateManager.depthMask(true);
+-        GL11.glClearColor(clearColorR, clearColorG, clearColorB, 1.0F);
++        GlStateManager.clearColor(clearColorR, clearColorG, clearColorB, 1.0F);
+         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
++        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+         GlStateManager.enableTexture2D();
+         GlStateManager.disableAlpha();
+         GlStateManager.disableBlend();
+@@ -5256,4 +5272,4 @@
          drawBuffersNone.limit(0);
          drawBuffersColorAtt0.put(36064).position(0).limit(1);
      }

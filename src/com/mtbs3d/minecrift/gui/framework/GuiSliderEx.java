@@ -8,6 +8,8 @@ import com.mtbs3d.minecrift.gui.framework.GuiButtonEx;
 import com.mtbs3d.minecrift.gui.framework.GuiEventEx;
 import com.mtbs3d.minecrift.settings.VRSettings;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
+
 import org.lwjgl.opengl.GL11;
 
 public class GuiSliderEx extends GuiButtonEx
@@ -116,7 +118,7 @@ public class GuiSliderEx extends GuiButtonEx
                 }
             }
 
-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             this.drawTexturedModalRect(this.x + (int)(this.sliderValue * (float)(this.width - 8)), this.y, 0, 66, 4, 20);
             this.drawTexturedModalRect(this.x + (int)(this.sliderValue * (float)(this.width - 8)) + 4, this.y, 196, 66, 4, 20);
         }

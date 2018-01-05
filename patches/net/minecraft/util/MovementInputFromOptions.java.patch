@@ -7,7 +7,7 @@
 +import com.mtbs3d.minecrift.control.ButtonTuple;
 +import com.mtbs3d.minecrift.control.VRButtonMapping;
 +import com.mtbs3d.minecrift.provider.MCOpenVR;
-+import com.mtbs3d.minecrift.provider.TrackedController;
++import com.mtbs3d.minecrift.control.TrackedController;
 +import com.mtbs3d.minecrift.settings.VRSettings;
 +import com.mtbs3d.minecrift.utils.jkatvr;
 +

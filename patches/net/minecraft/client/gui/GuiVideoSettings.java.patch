@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/GuiVideoSettings.java
 +++ b/net/minecraft/client/gui/GuiVideoSettings.java
-@@ -171,11 +171,11 @@
+@@ -172,11 +172,11 @@
                      return;
                  }
  
@@ -17,7 +17,7 @@
  
                  if (Config.getGameSettings().anaglyph)
                  {
-@@ -237,4 +237,15 @@
+@@ -238,4 +238,15 @@
      {
          p_drawGradientRect_0_.drawGradientRect(p_drawGradientRect_1_, p_drawGradientRect_2_, p_drawGradientRect_3_, p_drawGradientRect_4_, p_drawGradientRect_5_, p_drawGradientRect_6_);
      }

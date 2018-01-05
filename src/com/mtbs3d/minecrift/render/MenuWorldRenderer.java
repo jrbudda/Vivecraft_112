@@ -6,7 +6,7 @@ import java.util.Random;
 import org.lwjgl.opengl.GL11;
 
 import com.google.common.base.Throwables;
-import com.mtbs3d.minecrift.provider.OpenVRPlayer;
+import com.mtbs3d.minecrift.gameplay.OpenVRPlayer;
 import com.mtbs3d.minecrift.utils.FakeBlockAccess;
 import com.mtbs3d.minecrift.utils.MCReflection;
 import com.mtbs3d.minecrift.utils.Utils;

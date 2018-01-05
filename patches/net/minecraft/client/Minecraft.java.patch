@@ -94,19 +94,19 @@
 +import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 +import com.mtbs3d.minecrift.api.ErrorHelper;
 +import com.mtbs3d.minecrift.control.VRButtonMapping;
-+import com.mtbs3d.minecrift.gameplay.BackpackTracker;
-+import com.mtbs3d.minecrift.gameplay.BowTracker;
-+import com.mtbs3d.minecrift.gameplay.ClimbTracker;
-+import com.mtbs3d.minecrift.gameplay.EatingTracker;
-+import com.mtbs3d.minecrift.gameplay.JumpTracker;
-+import com.mtbs3d.minecrift.gameplay.RowTracker;
-+import com.mtbs3d.minecrift.gameplay.RunTracker;
-+import com.mtbs3d.minecrift.gameplay.SneakTracker;
-+import com.mtbs3d.minecrift.gameplay.SwimTracker;
-+import com.mtbs3d.minecrift.gameplay.SwingTracker;
-+import com.mtbs3d.minecrift.gameplay.TeleportTracker;
++import com.mtbs3d.minecrift.gameplay.trackers.BackpackTracker;
++import com.mtbs3d.minecrift.gameplay.trackers.BowTracker;
++import com.mtbs3d.minecrift.gameplay.trackers.ClimbTracker;
++import com.mtbs3d.minecrift.gameplay.trackers.EatingTracker;
++import com.mtbs3d.minecrift.gameplay.trackers.JumpTracker;
++import com.mtbs3d.minecrift.gameplay.trackers.RowTracker;
++import com.mtbs3d.minecrift.gameplay.trackers.RunTracker;
++import com.mtbs3d.minecrift.gameplay.trackers.SneakTracker;
++import com.mtbs3d.minecrift.gameplay.trackers.SwimTracker;
++import com.mtbs3d.minecrift.gameplay.trackers.SwingTracker;
++import com.mtbs3d.minecrift.gameplay.trackers.TeleportTracker;
 +import com.mtbs3d.minecrift.provider.MCOpenVR;
-+import com.mtbs3d.minecrift.provider.OpenVRPlayer;
++import com.mtbs3d.minecrift.gameplay.OpenVRPlayer;
 +import com.mtbs3d.minecrift.provider.OpenVRStereoRenderer;
 +import com.mtbs3d.minecrift.render.MenuWorldRenderer;
 +import com.mtbs3d.minecrift.render.PlayerModelController;
@@ -292,7 +292,7 @@
 +	 * The minecriftVerString will be automatically updated by the build scripts, do not modify here.
 +	 * Modify minecriftversion.py in root minecrift dir.
 +	 */
-+    public final String minecriftVerString = "Vivecraft 1.12.2 jrbudda-5-final-r3";
++    public final String minecriftVerString = "Vivecraft 1.12.2 jrbudda-6-alpha";
 +	/* end version */
 +	/** END MINECRIFT */
 +    
@@ -974,7 +974,7 @@
 +				}
 +			}
 +			
-+			if (this.vrSettings.displayMirrorMode == vrSettings.MIRROR_OFF && this.vrPlayer.isHMDTracking()){
++			if (this.vrSettings.displayMirrorMode == vrSettings.MIRROR_OFF && MCOpenVR.isHMDTracking()){
 +				GlStateManager.viewport(0, 0, this.displayWidth, this.displayHeight);
 +				shouldupdate = true;
 +				this.framebufferMc.unbindFramebuffer();	//draw directly to window
@@ -1426,18 +1426,16 @@
                      }
  
                      flag1 = Keyboard.isKeyDown(61) && this.processKeyF3(i);
-@@ -2102,7 +2672,9 @@
+@@ -2102,7 +2672,7 @@
  
                      if (i == 59)
                      {
 -                        this.gameSettings.hideGUI = !this.gameSettings.hideGUI;
-+                    	//VIVECRAFT
-+						this.vrSettings.hideGui = !this.vrSettings.hideGui;
-+						//
++						this.gameSettings.hideGUI = !this.gameSettings.hideGUI;
                      }
                  }
  
-@@ -2150,6 +2722,11 @@
+@@ -2150,6 +2720,11 @@
                      }
                  }
              }
@@ -1449,7 +1447,7 @@
          }
  
          this.processKeyBinds();
-@@ -2254,20 +2831,37 @@
+@@ -2254,20 +2829,37 @@
      {
          for (; this.gameSettings.keyBindTogglePerspective.isPressed(); this.renderGlobal.setDisplayListEntitiesDirty())
          {
@@ -1501,7 +1499,7 @@
              }
          }
  
-@@ -2335,23 +2929,34 @@
+@@ -2335,23 +2927,34 @@
          boolean flag2 = this.gameSettings.chatVisibility != EntityPlayer.EnumChatVisibility.HIDDEN;
  
          if (flag2)
@@ -1544,7 +1542,7 @@
              }
  
              label109:
-@@ -2377,17 +2982,27 @@
+@@ -2377,17 +2980,27 @@
                  }
              }
          }
@@ -1580,7 +1578,7 @@
  
              while (this.gameSettings.keyBindPickBlock.isPressed())
              {
-@@ -2395,18 +3010,23 @@
+@@ -2395,18 +3008,23 @@
              }
          }
  
@@ -1607,7 +1605,7 @@
              int i = Mouse.getEventButton();
              KeyBinding.setKeyBindState(i - 100, Mouse.getEventButtonState());
  
-@@ -2421,6 +3041,11 @@
+@@ -2421,6 +3039,11 @@
                      KeyBinding.onTick(i - 100);
                  }
              }
@@ -1619,7 +1617,7 @@
  
              long j = getSystemTime() - this.systemTime;
  
-@@ -2456,6 +3081,10 @@
+@@ -2456,6 +3079,10 @@
                      {
                          this.setIngameFocus();
                      }
@@ -1630,7 +1628,7 @@
                  }
                  else if (this.currentScreen != null)
                  {
-@@ -2475,6 +3104,15 @@
+@@ -2475,6 +3102,15 @@
       */
      public void launchIntegratedServer(String folderName, String worldName, @Nullable WorldSettings worldSettingsIn)
      {
@@ -1646,7 +1644,7 @@
          this.loadWorld((WorldClient)null);
          System.gc();
          ISaveHandler isavehandler = this.saveLoader.getSaveLoader(folderName, false);
-@@ -2517,6 +3155,16 @@
+@@ -2517,6 +3153,16 @@
  
          while (!this.integratedServer.serverIsInRunLoop())
          {
@@ -1663,7 +1661,7 @@
              String s = this.integratedServer.getUserMessage();
  
              if (s != null)
-@@ -2537,12 +3185,20 @@
+@@ -2537,12 +3183,20 @@
                  ;
              }
          }
@@ -1686,7 +1684,7 @@
          networkmanager.sendPacket(new CPacketLoginStart(this.getSession().getProfile()));
          this.myNetworkManager = networkmanager;
      }
-@@ -2552,6 +3208,9 @@
+@@ -2552,6 +3206,9 @@
       */
      public void loadWorld(@Nullable WorldClient worldClientIn)
      {
@@ -1696,7 +1694,7 @@
          this.loadWorld(worldClientIn, "");
      }
  
-@@ -2560,6 +3219,11 @@
+@@ -2560,6 +3217,11 @@
       */
      public void loadWorld(@Nullable WorldClient worldClientIn, String loadingMessage)
      {
@@ -1708,7 +1706,7 @@
          if (worldClientIn == null)
          {
              NetHandlerPlayClient nethandlerplayclient = this.getConnection();
-@@ -2572,6 +3236,22 @@
+@@ -2572,6 +3234,22 @@
              if (this.integratedServer != null && this.integratedServer.isAnvilFileSet())
              {
                  this.integratedServer.initiateShutdown();
@@ -1731,7 +1729,7 @@
              }
  
              this.integratedServer = null;
-@@ -2595,6 +3275,11 @@
+@@ -2595,6 +3273,11 @@
              this.ingameGUI.resetPlayersOverlayFooterHeader();
              this.setServerData((ServerData)null);
              this.integratedServerIsRunning = false;
@@ -1743,7 +1741,7 @@
          }
  
          this.mcSoundHandler.stopSounds();
-@@ -2701,6 +3386,7 @@
+@@ -2701,6 +3384,7 @@
          return instance == null || !instance.gameSettings.hideGUI;
      }
  
@@ -1751,7 +1749,7 @@
      public static boolean isFancyGraphicsEnabled()
      {
          return instance != null && instance.gameSettings.fancyGraphics;
-@@ -2717,8 +3403,14 @@
+@@ -2717,8 +3401,14 @@
      /**
       * Called when user clicked he's mouse middle button (pick block)
       */
@@ -1767,7 +1765,7 @@
          if (this.objectMouseOver != null && this.objectMouseOver.typeOfHit != RayTraceResult.Type.MISS)
          {
              boolean flag = this.player.capabilities.isCreativeMode;
-@@ -2882,7 +3574,8 @@
+@@ -2882,7 +3572,8 @@
          }
      }
  
@@ -1777,7 +1775,7 @@
      {
          NBTTagCompound nbttagcompound = te.writeToNBT(new NBTTagCompound());
  
-@@ -3212,6 +3905,11 @@
+@@ -3212,6 +3903,11 @@
       */
      public static int getGLMaximumTextureSize()
      {
@@ -1789,7 +1787,7 @@
          for (int i = 16384; i > 0; i >>= 1)
          {
              GlStateManager.glTexImage2D(32868, 0, 6408, i, i, 0, 6408, 5121, (IntBuffer)null);
-@@ -3400,7 +4098,7 @@
+@@ -3400,7 +4096,7 @@
      }
  
      public void dispatchKeypresses()
@@ -1798,7 +1796,7 @@
          int i = Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey();
  
          if (i != 0 && !Keyboard.isRepeatEvent())
-@@ -3582,4 +4280,1205 @@
+@@ -3582,4 +4278,1205 @@
      {
          return this.tutorial;
      }
@@ -1906,7 +1904,7 @@
 +	{
 +		// VIVE start - render eye buffers to the desktop window
 +
-+			if (this.vrSettings.displayMirrorMode == vrSettings.MIRROR_OFF && this.vrPlayer.isHMDTracking())
++			if (this.vrSettings.displayMirrorMode == vrSettings.MIRROR_OFF && MCOpenVR.isHMDTracking())
 +			{
 +				return false;
 +			} 

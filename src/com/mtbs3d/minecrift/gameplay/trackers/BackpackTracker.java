@@ -1,7 +1,7 @@
-package com.mtbs3d.minecrift.gameplay;
+package com.mtbs3d.minecrift.gameplay.trackers;
 
+import com.mtbs3d.minecrift.gameplay.OpenVRPlayer;
 import com.mtbs3d.minecrift.provider.MCOpenVR;
-import com.mtbs3d.minecrift.provider.OpenVRPlayer;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;

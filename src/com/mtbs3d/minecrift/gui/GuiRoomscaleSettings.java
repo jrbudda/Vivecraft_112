@@ -1,6 +1,6 @@
 package com.mtbs3d.minecrift.gui;
 
-import com.mtbs3d.minecrift.gameplay.BackpackTracker;
+import com.mtbs3d.minecrift.gameplay.trackers.BackpackTracker;
 import com.mtbs3d.minecrift.gui.framework.*;
 import com.mtbs3d.minecrift.settings.VRSettings;
 

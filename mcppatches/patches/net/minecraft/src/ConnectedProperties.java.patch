@@ -1,6 +1,6 @@
 --- a/net/minecraft/src/ConnectedProperties.java
 +++ b/net/minecraft/src/ConnectedProperties.java
-@@ -438,8 +438,9 @@
+@@ -461,8 +461,9 @@
  
      public static IProperty getProperty(String p_getProperty_0_, Collection p_getProperty_1_)
      {

@@ -1,6 +1,6 @@
 --- a/shadersmod/client/GuiShaders.java
 +++ b/shadersmod/client/GuiShaders.java
-@@ -55,7 +55,7 @@
+@@ -58,7 +58,7 @@
          int j1 = this.width - i - 20;
          this.shaderList = new GuiSlotShaders(this, j1, this.height, l, this.height - 50, 16);
          this.shaderList.registerScrollButtons(7, 8);
@@ -9,7 +9,7 @@
          this.buttonList.add(new GuiButtonEnumShaderOption(EnumShaderOption.NORMAL_MAP, k, 1 * i1 + l, i, j));
          this.buttonList.add(new GuiButtonEnumShaderOption(EnumShaderOption.SPECULAR_MAP, k, 2 * i1 + l, i, j));
          this.buttonList.add(new GuiButtonEnumShaderOption(EnumShaderOption.RENDER_RES_MUL, k, 3 * i1 + l, i, j));
-@@ -80,6 +80,10 @@
+@@ -83,6 +83,10 @@
              {
                  guibutton.enabled = flag;
              }

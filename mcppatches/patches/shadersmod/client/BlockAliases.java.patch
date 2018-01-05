@@ -1,17 +1,17 @@
 --- a/shadersmod/client/BlockAliases.java
 +++ b/shadersmod/client/BlockAliases.java
-@@ -71,8 +71,9 @@
-             List<List<BlockAlias>> list = new ArrayList<List<BlockAlias>>();
-             ConnectedParser connectedparser = new ConnectedParser("Shaders");
+@@ -129,8 +129,9 @@
+                 Config.dbg("[Shaders] Parsing block mappings: " + path);
+                 ConnectedParser connectedparser = new ConnectedParser("Shaders");
  
--            for (String s1 : properties.keySet())
-+            for (Object s0 : properties.keySet())
-             {
-+            	String s1 = (String) s0;
-                 String s2 = properties.getProperty(s1);
-                 String s3 = "block.";
+-                for (String s : properties.keySet())
++                for (Object o : properties.keySet())
+                 {
++                	String s = (String) o;
+                     String s1 = properties.getProperty(s);
+                     String s2 = "block.";
  
-@@ -129,7 +130,7 @@
+@@ -181,7 +182,7 @@
  
              while (j >= blocksAliases.size())
              {

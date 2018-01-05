@@ -1,8 +1,8 @@
-package com.mtbs3d.minecrift.gameplay;
+package com.mtbs3d.minecrift.gameplay.trackers;
 
 import com.mtbs3d.minecrift.api.NetworkHelper;
+import com.mtbs3d.minecrift.gameplay.OpenVRPlayer;
 import com.mtbs3d.minecrift.provider.MCOpenVR;
-import com.mtbs3d.minecrift.provider.OpenVRPlayer;
 import com.mtbs3d.minecrift.settings.AutoCalibration;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;

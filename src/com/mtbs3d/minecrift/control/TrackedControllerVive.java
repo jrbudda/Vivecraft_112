@@ -1,4 +1,4 @@
-package com.mtbs3d.minecrift.provider;
+package com.mtbs3d.minecrift.control;
 
 import jopenvr.*;
 
@@ -8,13 +8,12 @@ import java.util.List;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 
-import com.mtbs3d.minecrift.control.AxisInfo;
-import com.mtbs3d.minecrift.control.AxisType;
-import com.mtbs3d.minecrift.control.ButtonType;
-import com.mtbs3d.minecrift.control.ControllerType;
+import com.mtbs3d.minecrift.provider.MCOpenVR;
 import com.mtbs3d.minecrift.utils.Quaternion;
 import com.mtbs3d.minecrift.utils.Vector2;
 import com.mtbs3d.minecrift.utils.Vector3;
+
+import de.fruitfly.ovr.structs.Vector3f;
 
 public class TrackedControllerVive extends TrackedController {
 	private TouchpadMode touchpadMode = TouchpadMode.SINGLE;
@@ -62,7 +61,7 @@ public class TrackedControllerVive extends TrackedController {
 	}
 
 	@Override
-	void processInput() {
+	public void processInput() {
 		// button touch
 		if ((state.ulButtonTouched & k_buttonTouchpad) > 0 && getTouchpadButton() != lastTouchedTouchpadButton) {
 			MCOpenVR.queueInputEvent(this, lastTouchedTouchpadButton, null, false, false, null);
@@ -122,7 +121,7 @@ public class TrackedControllerVive extends TrackedController {
 	}
 	
 	@Override
-	void processButtonEvent(int button, boolean state, boolean press) {
+	public void processButtonEvent(int button, boolean state, boolean press) {
 		switch (button) {
 			case JOpenVRLibrary.EVRButtonId.EVRButtonId_k_EButton_ApplicationMenu:
 				MCOpenVR.queueInputEvent(this, ButtonType.VIVE_APPMENU, null, state, press, null);
@@ -466,5 +465,48 @@ public class TrackedControllerVive extends TrackedController {
 		SPLIT_HEX_CENTER,
 		SPLIT_OCT,
 		SPLIT_OCT_CENTER
+	}
+
+	@Override
+	public Vector3 getButtonLocation(ButtonType button) {
+		int i = this.type == ControllerType.RIGHT ? 0 : 1;
+		long butt = -1;
+		switch (button) {
+		case VIVE_APPMENU:
+			butt = k_buttonAppMenu;
+			break;
+		case VIVE_GRIP:
+			butt = k_buttonGrip;
+			break;
+		case VIVE_TOUCHPAD:
+		case VIVE_TOUCHPAD_U:
+		case VIVE_TOUCHPAD_D:
+		case VIVE_TOUCHPAD_L:
+		case VIVE_TOUCHPAD_R:
+		case VIVE_TOUCHPAD_UL:
+		case VIVE_TOUCHPAD_UR:
+		case VIVE_TOUCHPAD_LR:
+		case VIVE_TOUCHPAD_LL:
+		case VIVE_TOUCHPAD_S1:
+		case VIVE_TOUCHPAD_S2:
+		case VIVE_TOUCHPAD_S3:
+		case VIVE_TOUCHPAD_S4:
+		case VIVE_TOUCHPAD_S5:
+		case VIVE_TOUCHPAD_S6:
+		case VIVE_TOUCHPAD_S7:
+		case VIVE_TOUCHPAD_S8:
+		case VIVE_TOUCHPAD_C:
+			butt = k_buttonTouchpad;
+			break;
+		case VIVE_TRIGGER:
+		case VIVE_TRIGGER_CLICK:
+			butt = k_buttonTrigger;
+			break;
+		default:
+			break;
+		}
+		de.fruitfly.ovr.structs.Matrix4f mat = MCOpenVR.getControllerComponentTransformFromButton(i, butt);
+		Vector3f v = mat.transform(MCOpenVR.forward);
+		return new Vector3(v.x, v.y, v.z);
 	}
 }

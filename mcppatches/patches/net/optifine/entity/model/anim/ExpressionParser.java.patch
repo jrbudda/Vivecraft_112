@@ -1,40 +1,40 @@
 --- a/net/optifine/entity/model/anim/ExpressionParser.java
 +++ b/net/optifine/entity/model/anim/ExpressionParser.java
-@@ -211,7 +211,7 @@
+@@ -242,7 +242,7 @@
          }
      }
  
--    private EnumFunctionType getFunctionType(Token token, Deque<Token> deque) throws ParseException
-+    private EnumFunctionType getFunctionType(Token tokenin, Deque<Token> deque) throws ParseException
+-    private FunctionType getFunctionType(Token token, Deque<Token> deque) throws ParseException
++    private FunctionType getFunctionType(Token tokenin, Deque<Token> deque) throws ParseException
      {
          Token token = deque.peek();
  
-@@ -223,7 +223,7 @@
+@@ -254,7 +254,7 @@
          }
          else
          {
--            EnumFunctionType enumfunctiontype = EnumFunctionType.parse(token.getText());
-+            EnumFunctionType enumfunctiontype = EnumFunctionType.parse(tokenin.getText());
+-            FunctionType functiontype = FunctionType.parse(token.getText());
++            FunctionType functiontype = FunctionType.parse(tokenin.getText());
  
-             if (enumfunctiontype == null)
+             if (functiontype == null)
              {
-@@ -240,7 +240,7 @@
+@@ -271,7 +271,7 @@
          }
      }
  
--    private IExpression makeFunction(EnumFunctionType type, Deque<Token> deque) throws ParseException
-+    private IExpression makeFunction(EnumFunctionType type, Deque<Token> dequein) throws ParseException
+-    private IExpression makeFunction(FunctionType type, Deque<Token> deque) throws ParseException
++    private IExpression makeFunction(FunctionType type, Deque<Token> dequein) throws ParseException
      {
-         if (type.getCountArguments() == 0)
+         if (type.getParameterCount(new IExpression[0]) == 0)
          {
-@@ -248,20 +248,20 @@
+@@ -279,20 +279,20 @@
          }
          else
          {
 -            Token token = deque.poll();
--            Deque<Token> deque = getGroup(deque, EnumTokenType.BRACKET_CLOSE, true);
+-            Deque<Token> deque = getGroup(deque, TokenType.BRACKET_CLOSE, true);
 +            Token token = dequein.poll();
-+            Deque<Token> deque = getGroup(dequein, EnumTokenType.BRACKET_CLOSE, true);
++            Deque<Token> deque = getGroup(dequein, TokenType.BRACKET_CLOSE, true);
              IExpression[] aiexpression = this.parseExpressions(deque);
              return makeFunction(type, aiexpression);
          }
@@ -47,30 +47,25 @@
  
          while (true)
          {
--            Deque<Token> deque = getGroup(deque, EnumTokenType.COMMA, false);
-+            Deque<Token> deque = getGroup(dequein, EnumTokenType.COMMA, false);
+-            Deque<Token> deque = getGroup(deque, TokenType.COMMA, false);
++            Deque<Token> deque = getGroup(dequein, TokenType.COMMA, false);
              IExpression iexpression = this.parseInfix(deque);
  
              if (iexpression == null)
-@@ -307,17 +307,17 @@
+@@ -363,13 +363,13 @@
          }
      }
  
 -    private IExpression makeBracketed(Token token, Deque<Token> deque) throws ParseException
 +    private IExpression makeBracketed(Token token, Deque<Token> dequein) throws ParseException
      {
--        Deque<Token> deque = getGroup(deque, EnumTokenType.BRACKET_CLOSE, true);
-+        Deque<Token> deque = getGroup(dequein, EnumTokenType.BRACKET_CLOSE, true);
+-        Deque<Token> deque = getGroup(deque, TokenType.BRACKET_CLOSE, true);
++        Deque<Token> deque = getGroup(dequein, TokenType.BRACKET_CLOSE, true);
          return this.parseInfix(deque);
      }
  
--    private static Deque<Token> getGroup(Deque<Token> deque, EnumTokenType tokenTypeEnd, boolean tokenEndRequired) throws ParseException
-+    private static Deque<Token> getGroup(Deque<Token> dequein, EnumTokenType tokenTypeEnd, boolean tokenEndRequired) throws ParseException
+-    private static Deque<Token> getGroup(Deque<Token> deque, TokenType tokenTypeEnd, boolean tokenEndRequired) throws ParseException
++    private static Deque<Token> getGroup(Deque<Token> dequein, TokenType tokenTypeEnd, boolean tokenEndRequired) throws ParseException
      {
          Deque<Token> deque = new ArrayDeque<Token>();
          int i = 0;
--        Iterator iterator = deque.iterator();
-+        Iterator iterator = dequein.iterator();
- 
-         while (iterator.hasNext())
-         {

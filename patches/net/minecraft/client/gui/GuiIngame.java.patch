@@ -19,7 +19,7 @@
  import net.minecraft.client.renderer.OpenGlHelper;
  import net.minecraft.client.renderer.RenderHelper;
  import net.minecraft.client.renderer.RenderItem;
-@@ -71,6 +76,7 @@
+@@ -72,6 +77,7 @@
      private final Random rand = new Random();
      private final Minecraft mc;
      private final RenderItem itemRenderer;
@@ -27,7 +27,7 @@
  
      /** ChatGUI instance that retains all previous chat data */
      private final GuiNewChat persistantChatGUI;
-@@ -169,6 +175,7 @@
+@@ -170,6 +176,7 @@
          FontRenderer fontrenderer = this.getFontRenderer();
          GlStateManager.enableBlend();
  
@@ -35,7 +35,7 @@
          if (Config.isVignetteEnabled())
          {
              this.renderVignette(this.mc.player.getBrightness(), scaledresolution);
-@@ -180,21 +187,13 @@
+@@ -181,21 +188,13 @@
          }
  
          ItemStack itemstack = this.mc.player.inventory.armorItemInSlot(3);
@@ -60,7 +60,7 @@
  
          if (this.mc.playerController.isSpectator())
          {
-@@ -204,20 +203,28 @@
+@@ -205,20 +204,28 @@
          {
              this.renderHotbar(scaledresolution, partialTicks);
          }
@@ -94,7 +94,7 @@
              this.renderPlayerStats(scaledresolution);
          }
  
-@@ -399,7 +406,7 @@
+@@ -400,7 +407,7 @@
          GlStateManager.enableAlpha();
      }
  
@@ -103,7 +103,7 @@
      {
          GameSettings gamesettings = this.mc.gameSettings;
  
-@@ -590,6 +597,7 @@
+@@ -591,6 +598,7 @@
              int j = 182;
              int k = 91;
              this.zLevel = -90.0F;
@@ -111,7 +111,7 @@
              this.drawTexturedModalRect(i - 91, sr.getScaledHeight() - 22, 0, 0, 182, 22);
              this.drawTexturedModalRect(i - 91 - 1 + entityplayer.inventory.currentItem * 20, sr.getScaledHeight() - 22 - 1, 0, 22, 24, 22);
  
-@@ -608,7 +616,7 @@
+@@ -609,7 +617,7 @@
              this.zLevel = f;
              GlStateManager.enableRescaleNormal();
              GlStateManager.enableBlend();
@@ -120,7 +120,7 @@
              RenderHelper.enableGUIStandardItemLighting();
              CustomItems.setRenderOffHand(false);
  
-@@ -786,7 +794,7 @@
+@@ -787,7 +795,7 @@
          this.mc.mcProfiler.endSection();
      }
  
@@ -129,7 +129,7 @@
      {
          Scoreboard scoreboard = objective.getScoreboard();
          Collection<Score> collection = scoreboard.getSortedScores(objective);
-@@ -844,11 +852,11 @@
+@@ -845,11 +853,11 @@
          }
      }
  
@@ -143,7 +143,7 @@
              int i = MathHelper.ceil(entityplayer.getHealth());
              boolean flag = this.healthUpdateCounter > (long)this.updateCounter && (this.healthUpdateCounter - (long)this.updateCounter) / 3L % 2L == 1L;
  
-@@ -1003,7 +1011,7 @@
+@@ -1004,7 +1012,7 @@
                      }
                  }
              }
@@ -152,7 +152,7 @@
              Entity entity = entityplayer.getRidingEntity();
  
              if (entity == null || !(entity instanceof EntityLivingBase))
-@@ -1067,7 +1075,7 @@
+@@ -1068,7 +1076,7 @@
          }
      }
  
@@ -161,7 +161,7 @@
      {
          if (this.mc.getRenderViewEntity() instanceof EntityPlayer)
          {
-@@ -1121,7 +1129,7 @@
+@@ -1122,7 +1130,7 @@
          }
      }
  
@@ -170,7 +170,7 @@
      {
          GlStateManager.disableDepth();
          GlStateManager.depthMask(false);
-@@ -1148,6 +1156,8 @@
+@@ -1149,6 +1157,8 @@
       */
      private void renderVignette(float lightLevel, ScaledResolution scaledRes)
      {
@@ -179,7 +179,7 @@
          if (!Config.isVignetteEnabled())
          {
              GlStateManager.enableDepth();
-@@ -1201,38 +1211,9 @@
+@@ -1202,38 +1212,9 @@
          }
      }
  
@@ -220,7 +220,7 @@
      }
  
      private void renderHotbarItem(int p_184044_1_, int p_184044_2_, float p_184044_3_, EntityPlayer player, ItemStack stack)
-@@ -1422,4 +1403,43 @@
+@@ -1428,4 +1409,43 @@
      {
          return this.overlayBoss;
      }

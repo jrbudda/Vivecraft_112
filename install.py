@@ -84,6 +84,7 @@ def download_file(url, target, md5=None):
             if not md5 == None and not md5 == "":
                 if not get_md5(target) == md5:
                     print 'Download of %s failed md5 check, deleting' % name
+                    print 'expected %s got %s' % (md5, get_md5(target))
                     os.remove(target)
                     return False
         except Exception as e:
@@ -242,6 +243,8 @@ def download_deps( mcp_dir, download_mc, forgedep=False ):
     download_optifine = False
     optifine_md5 = ''
     if not is_non_zero_file( optifine_dest_file ):
+        print 'Checking Optifine...'
+        print 'Optifine not Found at' + optifine_dest_file
         download_optifine = True
     else:
         optifine_md5 = get_md5( optifine_dest_file )
@@ -254,8 +257,8 @@ def download_deps( mcp_dir, download_mc, forgedep=False ):
     
     if download_optifine: 
         # Use optifine filename for URL
-        optifine_url = "http://optifine.net/download.php?f=OptiFine_"+of_file_name+of_file_extension
-        print 'Downloading Optifine...'
+        optifine_url = "http://vivecraft.org/jar/Optifine/OptiFine_"+of_file_name+of_file_extension
+        print 'Downloading Optifine from ' + optifine_url
         if not download_file( optifine_url, optifine_dest_file, of_file_md5 ):
             print 'FAILED to download Optifine!'
             sys.exit(1)

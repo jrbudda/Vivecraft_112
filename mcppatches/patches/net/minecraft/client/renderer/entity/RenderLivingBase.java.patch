@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/entity/RenderLivingBase.java
 +++ b/net/minecraft/client/renderer/entity/RenderLivingBase.java
-@@ -51,7 +51,7 @@
+@@ -58,7 +58,7 @@
  
      public <V extends EntityLivingBase, U extends LayerRenderer<V>> boolean addLayer(U layer)
      {
@@ -9,7 +9,7 @@
      }
  
      public ModelBase getMainModel()
-@@ -558,6 +558,39 @@
+@@ -629,6 +629,39 @@
  
      protected boolean canRenderName(T entity)
      {

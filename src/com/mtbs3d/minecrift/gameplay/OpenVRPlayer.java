@@ -1,4 +1,4 @@
-package com.mtbs3d.minecrift.provider;
+package com.mtbs3d.minecrift.gameplay;
 
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -13,7 +13,8 @@ import com.mtbs3d.minecrift.api.NetworkHelper;
 import com.mtbs3d.minecrift.api.NetworkHelper.PacketDiscriminators;
 import com.mtbs3d.minecrift.api.VRData;
 import com.mtbs3d.minecrift.control.VRButtonMapping;
-import com.mtbs3d.minecrift.gameplay.BowTracker;
+import com.mtbs3d.minecrift.gameplay.trackers.BowTracker;
+import com.mtbs3d.minecrift.provider.MCOpenVR;
 import com.mtbs3d.minecrift.settings.AutoCalibration;
 import com.mtbs3d.minecrift.settings.VRSettings;
 import com.mtbs3d.minecrift.utils.KeyboardSimulator;
@@ -726,10 +727,7 @@ public class OpenVRPlayer
 	//		return Matrix4f.multiply(rot,out).transposed().toFloatBuffer();
 	//	}
 
-	public boolean isHMDTracking() {
-		return MCOpenVR.headIsTracking;
-	}
-	//
+
 
 	@Override
 	public String toString() {
@@ -752,7 +750,7 @@ public class OpenVRPlayer
 				KeyboardSimulator.robot.mouseRelease(InputEvent.BUTTON2_DOWN_MASK);
 				KeyboardSimulator.robot.mouseRelease(InputEvent.BUTTON3_DOWN_MASK);
 				KeyboardSimulator.robot.keyRelease(KeyEvent.VK_SHIFT);		
-				for (VRButtonMapping mapping : MCOpenVR.mc.vrSettings.buttonMappings.values()) {
+				for (VRButtonMapping mapping : mc.vrSettings.buttonMappings.values()) {
 					mapping.actuallyUnpress();
 				}
 			}
@@ -766,11 +764,11 @@ public class OpenVRPlayer
 		}
 
 		// static main menu/win game/
-		if (!mc.vrSettings.seated && !mc.vrSettings.menuAlwaysFollowFace && (MCOpenVR.mc.world==null || newScreen instanceof GuiWinGame)) {
+		if (!mc.vrSettings.seated && !mc.vrSettings.menuAlwaysFollowFace && (mc.world==null || newScreen instanceof GuiWinGame)) {
 			//TODO reset scale things
 			guiScale = 2.0f;
-			MCOpenVR.mc.vrSettings.vrWorldRotationCached = MCOpenVR.mc.vrSettings.vrWorldRotation;
-			MCOpenVR.mc.vrSettings.vrWorldRotation = 0;
+			mc.vrSettings.vrWorldRotationCached = mc.vrSettings.vrWorldRotation;
+			mc.vrSettings.vrWorldRotation = 0;
 			float[] playArea = MCOpenVR.getPlayAreaSize();
 			guiPos_room = new Vec3d(
 					(float) (0),
@@ -786,9 +784,9 @@ public class OpenVRPlayer
 			return;
 		} else { //these dont update when screen open.
 
-			if (MCOpenVR.mc.vrSettings.vrWorldRotationCached != 0) {
-				MCOpenVR.mc.vrSettings.vrWorldRotation = MCOpenVR.mc.vrSettings.vrWorldRotationCached;
-				MCOpenVR.mc.vrSettings.vrWorldRotationCached = 0;
+			if (mc.vrSettings.vrWorldRotationCached != 0) {
+				mc.vrSettings.vrWorldRotation = mc.vrSettings.vrWorldRotationCached;
+				mc.vrSettings.vrWorldRotationCached = 0;
 			}
 
 		}		
@@ -807,14 +805,14 @@ public class OpenVRPlayer
 					|| (newScreen instanceof GuiRepair)
 					;
 
-			if(appearOverBlock && mc.objectMouseOver != null && MCOpenVR.mc.objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK){	
+			if(appearOverBlock && mc.objectMouseOver != null && mc.objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK){	
 				//appear over block.
 				Vec3d temp =new Vec3d(mc.objectMouseOver.getBlockPos().getX() + 0.5f,
 						mc.objectMouseOver.getBlockPos().getY(),
 						mc.objectMouseOver.getBlockPos().getZ() + 0.5f);
 
 				Vec3d temp_room = mc.vrPlayer.world_to_room_pos(temp, mc.vrPlayer.vrdata_world_pre);			
-				Vec3d pos = MCOpenVR.mc.vrPlayer.vrdata_room_pre.hmd.getPosition();
+				Vec3d pos = mc.vrPlayer.vrdata_room_pre.hmd.getPosition();
 
 				double dist = temp_room.subtract(pos).lengthVector();
 				guiScale = (float) Math.sqrt(dist);
@@ -846,14 +844,14 @@ public class OpenVRPlayer
 					adj = new Vec3d(0,1,-2);
 				}
 
-				Vec3d v = MCOpenVR.mc.vrPlayer.vrdata_room_pre.hmd.getPosition();
-				Vec3d e = MCOpenVR.mc.vrPlayer.vrdata_room_pre.hmd.getCustomVector(adj);
+				Vec3d v = mc.vrPlayer.vrdata_room_pre.hmd.getPosition();
+				Vec3d e = mc.vrPlayer.vrdata_room_pre.hmd.getCustomVector(adj);
 				guiPos_room = new Vec3d(
 						(e.x  / 2 + v.x),
 						(e.y / 2 + v.y),
 						(e.z / 2 + v.z));
 
-				Vec3d pos = MCOpenVR.mc.vrPlayer.vrdata_room_pre.hmd.getPosition();
+				Vec3d pos = mc.vrPlayer.vrdata_room_pre.hmd.getPosition();
 				Vector3f look = new Vector3f();
 				look.x = (float) (guiPos_room.x - pos.x);
 				look.y = (float) (guiPos_room.y - pos.y);

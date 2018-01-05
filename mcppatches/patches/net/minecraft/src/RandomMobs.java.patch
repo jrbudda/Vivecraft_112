@@ -1,6 +1,6 @@
 --- a/net/minecraft/src/RandomMobs.java
 +++ b/net/minecraft/src/RandomMobs.java
-@@ -68,7 +68,7 @@
+@@ -91,7 +91,7 @@
          }
          else
          {
@@ -9,7 +9,7 @@
  
              try
              {
-@@ -110,14 +110,14 @@
+@@ -133,14 +133,14 @@
                      return resourcelocation1;
                  }
  

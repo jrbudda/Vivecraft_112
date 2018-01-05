@@ -1,12 +1,10 @@
-package com.mtbs3d.minecrift.provider;
+package com.mtbs3d.minecrift.control;
 
 import java.util.List;
 
-import com.mtbs3d.minecrift.control.AxisInfo;
-import com.mtbs3d.minecrift.control.AxisType;
-import com.mtbs3d.minecrift.control.ButtonType;
-import com.mtbs3d.minecrift.control.ControllerType;
+import com.mtbs3d.minecrift.provider.MCOpenVR;
 import com.mtbs3d.minecrift.utils.Vector2;
+import com.mtbs3d.minecrift.utils.Vector3;
 
 import jopenvr.VRControllerAxis_t;
 import jopenvr.VRControllerState_t;
@@ -14,9 +12,9 @@ import jopenvr.VRControllerState_t;
 public abstract class TrackedController {
 	protected VRControllerState_t.ByReference state;
 	protected VRControllerState_t lastState;
-	int deviceIndex = -1;
+	public int deviceIndex = -1;
 	final ControllerType type;
-	boolean tracking;
+	public boolean tracking;
 	
 	public TrackedController(ControllerType type) {
 		this.type = type;
@@ -89,9 +87,10 @@ public abstract class TrackedController {
 			else return y > 0 ? y : 0;
 		}
 	}
-
-	abstract void processInput();
-	abstract void processButtonEvent(int button, boolean state, boolean press);
+	
+	public abstract Vector3 getButtonLocation(ButtonType button);
+	public abstract void processInput();
+	public abstract void processButtonEvent(int button, boolean state, boolean press);
 	public abstract List<ButtonType> getActiveButtons();
 	public abstract boolean isButtonTouched(ButtonType button);
 	public abstract boolean isButtonPressed(ButtonType button);

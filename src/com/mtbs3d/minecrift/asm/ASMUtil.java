@@ -103,6 +103,20 @@ public class ASMUtil {
 		return findNthInstructionPattern(node, 0, instructions);
 	}
 	
+	public static boolean addMethod(ClassNode node, MethodTuple tuple, MethodNode method) {
+	
+		for (Iterator<MethodNode> it = node.methods.iterator(); it.hasNext(); ) {
+			if ((method.name.equals(tuple.methodName) && method.desc.equals(tuple.methodDesc)) || (method.name.equals(tuple.methodNameObf) && method.desc.equals(tuple.methodDescObf))) {
+				//exists.
+				return false;
+			}
+		}
+	
+		node.methods.add(node);
+		
+		return true;
+	}
+	
 	public static AbstractInsnNode findLastInstructionPattern(MethodNode node, int n, Object[]... instructions) {
 		AbstractInsnNode ret = null;
 		int j = 0;

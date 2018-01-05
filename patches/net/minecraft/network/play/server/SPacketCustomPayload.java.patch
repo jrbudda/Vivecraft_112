@@ -1,0 +1,24 @@
+--- a/net/minecraft/network/play/server/SPacketCustomPayload.java
++++ b/net/minecraft/network/play/server/SPacketCustomPayload.java
+@@ -50,7 +50,11 @@
+     public void writePacketData(PacketBuffer buf) throws IOException
+     {
+         buf.writeString(this.channel);
+-        buf.writeBytes((ByteBuf)this.data);
++        synchronized (this.data) { // Forge: This may be access multiple times, from multiple threads, lets be safe.
++        	this.data.markReaderIndex();
++        	buf.writeBytes((ByteBuf)this.data);
++        	this.data.resetReaderIndex();
++        }
+     }
+ 
+     /**
+@@ -59,6 +63,8 @@
+     public void processPacket(INetHandlerPlayClient handler)
+     {
+         handler.handleCustomPayload(this);
++        // Forge: fix network buffer leaks (MC-121884)
++        if (this.data != null) this.data.release();
+     }
+ 
+     public String getChannelName()

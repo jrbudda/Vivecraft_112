@@ -10,7 +10,7 @@
  import com.mojang.authlib.GameProfile;
 +import com.mtbs3d.minecrift.api.NetworkHelper;
 +import com.mtbs3d.minecrift.api.NetworkHelper.PacketDiscriminators;
-+import com.mtbs3d.minecrift.provider.OpenVRPlayer;
++import com.mtbs3d.minecrift.gameplay.OpenVRPlayer;
 +import com.mtbs3d.minecrift.render.PlayerModelController;
 +import com.mtbs3d.minecrift.utils.BlockWithData;
 +
@@ -273,7 +273,15 @@
  
              if (potion != null)
              {
-@@ -2068,6 +2185,111 @@
+@@ -2029,6 +2146,7 @@
+             }
+             finally
+             {
++            	if (false) // Forge: let packet handle releasing buffer
+                 packetbuffer.release();
+             }
+         }
+@@ -2068,6 +2186,111 @@
              String s1 = packetbuffer3.readString(256);
              this.gameController.getSoundHandler().stop(s1, SoundCategory.getByName(s));
          }
@@ -374,18 +382,18 @@
 +        		break;
 +        	}
 +
-+        	packetbuffer.release();
++        	//packetbuffer.release(); // Causes error spam with Forge
 +        }
-+        else if ("REGISTER".equals(packetIn.getChannelName())){
-+        	PacketBuffer packetbuffer = packetIn.getBufferData(); 
-+        	String v = new String(packetbuffer.array(),Charsets.UTF_8);
-+        	System.out.println("REGISTER " + v );
++        else if ("REGISTER".equals(packetIn.getChannelName())){ // TODO: wtf is this? oh, nothing? and it spews an error? fuck it!
++        	//PacketBuffer packetbuffer = packetIn.getBufferData(); 
++        	//String v = new String(packetbuffer.array(),Charsets.UTF_8);
++        	//System.out.println("REGISTER " + v );
 +        }
 +        // VIVE END
      }
  
      /**
-@@ -2358,4 +2580,12 @@
+@@ -2358,4 +2581,12 @@
      {
          return this.advancementManager;
      }

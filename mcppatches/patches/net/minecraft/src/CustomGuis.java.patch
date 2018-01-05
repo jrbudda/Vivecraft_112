@@ -1,0 +1,11 @@
+--- a/net/minecraft/src/CustomGuis.java
++++ b/net/minecraft/src/CustomGuis.java
+@@ -306,7 +306,7 @@
+ 
+             while (p_addToList_1_.size() <= i)
+             {
+-                p_addToList_1_.add((Object)null);
++                p_addToList_1_.add((List<CustomGuiProperties>)null);
+             }
+ 
+             List<CustomGuiProperties> list = (List)p_addToList_1_.get(i);
