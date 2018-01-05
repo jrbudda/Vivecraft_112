@@ -1,5 +1,23 @@
 --- a/shadersmod/client/ShadersRender.java
 +++ b/shadersmod/client/ShadersRender.java
+@@ -111,7 +111,7 @@
+             {
+                 Shaders.readCenterDepth();
+                 Shaders.beginHand(false);
+-                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
++                GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+                 Shaders.setSkipRenderHands(flag, flag1);
+                 er.renderHand(par1, par2, true, false, false);
+                 Shaders.endHand();
+@@ -128,7 +128,7 @@
+             Shaders.readCenterDepth();
+             GlStateManager.enableBlend();
+             Shaders.beginHand(true);
+-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
++            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+             Shaders.setSkipRenderHands(Shaders.isHandRenderedMain(), Shaders.isHandRenderedOff());
+             er.renderHand(par1, par2, true, false, true);
+             Shaders.endHand();
 @@ -156,7 +156,7 @@
          }
  

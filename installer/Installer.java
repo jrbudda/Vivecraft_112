@@ -60,9 +60,9 @@ public class Installer extends JPanel  implements PropertyChangeListener
 	private static final String OF_LIB_PATH       = "libraries/optifine/OptiFine/";
     private static final String OF_FILE_NAME      = "1.12.2_HD_U_C7";
     private static final String OF_JSON_NAME      = "1.12.2_HD_U_C7";
-    private static final String OF_MD5            = "349B644370E7A8460482D1479EBCBDE1";
+    private static final String OF_MD5            = "349b644370e7a8460482d1479ebcbde1";
     private static final String OF_VERSION_EXT    = ".jar";
-    private static final String FORGE_VERSION     = "14.23.1.2583";
+    private static String FORGE_VERSION     = "14.23.1.2583";
 	/* END OF DO NOT RENAME */
 
 	private static final String DEFAULT_PROFILE_NAME = "ViveCraft " + MINECRAFT_VERSION;
@@ -70,7 +70,8 @@ public class Installer extends JPanel  implements PropertyChangeListener
 	private static final String GITHUB_LINK = "https://github.com/jrbudda/Vivecraft_112";
 	private static final String HOMEPAGE_LINK = "http://www.vivecraft.org";
 	private static final String DONATION_LINK = "https://www.patreon.com/jrbudda";
-
+    private static final String ORIG_FORGE_VERSION = FORGE_VERSION;
+	
 	private String mc_url = "https://s3.amazonaws.com/Minecraft.Download/versions/" + MINECRAFT_VERSION + "/" + MINECRAFT_VERSION +".jar";
 
 	private InstallTask task;
@@ -78,9 +79,9 @@ public class Installer extends JPanel  implements PropertyChangeListener
 	static private File targetDir;
 	private String[] forgeVersions = null;
 	private boolean forgeVersionInstalled = false;
-	private static final String FULL_FORGE_VERSION = MINECRAFT_VERSION + "-" + FORGE_VERSION;
+	private static String FULL_FORGE_VERSION = MINECRAFT_VERSION + "-" + FORGE_VERSION;
 	private String forge_url = "http://files.minecraftforge.net/maven/net/minecraftforge/forge/" + FULL_FORGE_VERSION + "/forge-" + FULL_FORGE_VERSION + "-installer.jar";
-	private File forgeInstaller = new File(tempDir + "/forge-" + FULL_FORGE_VERSION + "-installer.jar");
+	private File forgeInstaller;
 	private JTextField selectedDirText;
 	private JLabel infoLabel;
 	private JDialog dialog;
@@ -653,19 +654,46 @@ public class Installer extends JPanel  implements PropertyChangeListener
 			}
 			// VIVE END - install openVR
 
-			// Setup forge if necessary
-			if (useForge.isSelected() && !forgeVersionInstalled && !isMultiMC) {
-				monitor.setProgress(55);
-				monitor.setNote("Downloading Forge " + FULL_FORGE_VERSION + "...");
-				downloadedForge = downloadFile(forge_url, forgeInstaller);
-				if(!downloadedForge)
-					JOptionPane.showMessageDialog(null, "Could not download Forge. Please exit this installer and download it manually", "Forge Installation", JOptionPane.WARNING_MESSAGE);
-			}
 			
-			if (downloadedForge && useForge.isSelected() && !forgeVersionInstalled) {
-				monitor.setProgress(65);
-				monitor.setNote("Installing Forge " + FULL_FORGE_VERSION + "...");
-				installedForge = installForge(forgeInstaller);
+			// Setup forge if necessary
+			if(useForge.isSelected()){
+			
+				if(optCustomForgeVersion.isSelected())
+					FORGE_VERSION = txtCustomForgeVersion.getText();
+					
+				FULL_FORGE_VERSION = MINECRAFT_VERSION + "-" + FORGE_VERSION;
+				forgeInstaller = new File(tempDir + "/forge-" + FULL_FORGE_VERSION + "-installer.jar");
+				forge_url = "http://files.minecraftforge.net/maven/net/minecraftforge/forge/" + FULL_FORGE_VERSION + "/forge-" + FULL_FORGE_VERSION + "-installer.jar";
+
+				if( targetDir.exists() ) {
+					File ForgeDir = new File( targetDir, "libraries"+File.separator+"net"+File.separator+"minecraftforge"+File.separator+"forge");
+					if( ForgeDir.isDirectory() ) {
+						forgeVersions = ForgeDir.list();
+						if (forgeVersions != null && forgeVersions.length > 0) {
+							// Check for the currently required forge
+							for (String forgeVersion : forgeVersions) {
+								if (forgeVersion.contains(FORGE_VERSION)) {
+									forgeVersionInstalled = true;
+									break;
+								}
+							}
+						}
+					}
+				}
+				
+				if (useForge.isSelected() && !forgeVersionInstalled && !isMultiMC) {
+					monitor.setProgress(55);
+					monitor.setNote("Downloading Forge " + FULL_FORGE_VERSION + "...");
+					downloadedForge = downloadFile(forge_url, forgeInstaller);
+					if(!downloadedForge)
+					JOptionPane.showMessageDialog(null, "Could not download Forge. Please exit this installer and download it manually", "Forge Installation", JOptionPane.WARNING_MESSAGE);
+				}
+				
+				if (downloadedForge  && !forgeVersionInstalled) {
+					monitor.setProgress(65);
+					monitor.setNote("Installing Forge " + FULL_FORGE_VERSION + "...");
+					installedForge = installForge(forgeInstaller);
+				}
 			}
 			
 			monitor.setProgress(75);
@@ -1111,7 +1139,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 							if( ret > 0 ) {
 								String s = new String( buff,0, ret, "UTF-8");
 								if(optCustomForgeVersion.isSelected())
-									s = s.replace(FORGE_VERSION,txtCustomForgeVersion.getText().trim());					
+									s = s.replace(ORIG_FORGE_VERSION, FORGE_VERSION);					
 								ret = s.length();
 								System.arraycopy(s.getBytes("UTF-8"), 0, buff, 0, ret);
 							}
@@ -1500,7 +1528,8 @@ public class Installer extends JPanel  implements PropertyChangeListener
 		ramAllocation.setSelectedIndex(1);
 		if (useForge.isSelected()){
 			ramAllocation.setSelectedIndex(2);
-			out += "<br>Please make sure Forge has been installed first.";
+			if(optCustomForgeVersion.isSelected())
+				out += "<br>Custom Forge version NOT guaranteed to work!";
 		}
 		out+="</html>";
 		instructions.setText(out);
@@ -1515,22 +1544,6 @@ public class Installer extends JPanel  implements PropertyChangeListener
 		try
 		{
 			targetDir = targetDir.getCanonicalFile();
-			if( targetDir.exists() ) {
-				File ForgeDir = new File( targetDir, "libraries"+File.separator+"net"+File.separator+"minecraftforge"+File.separator+"forge");
-				if( ForgeDir.isDirectory() ) {
-					forgeVersions = ForgeDir.list();
-					if (forgeVersions != null && forgeVersions.length > 0) {
-						// Check for the currently required forge
-						for (String forgeVersion : forgeVersions) {
-							if (forgeVersion.contains(FORGE_VERSION)) {
-								forgeVersionInstalled = true;
-								break;
-							}
-						}
-					}
-				}
-			}
-
 			selectedDirText.setText(targetDir.getPath());
 			selectedDirText.setForeground(Color.BLACK);
 			infoLabel.setVisible(false);

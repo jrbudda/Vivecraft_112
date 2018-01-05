@@ -292,6 +292,15 @@
              Smoother.reset();
          }
      }
+@@ -3827,7 +3843,7 @@
+     }
+ 
+     public static void setViewport(int vx, int vy, int vw, int vh)
+-    {
++    { //nice parameters u got there.....
+         GlStateManager.colorMask(true, true, true, true);
+ 
+         if (isShadowPass)
 @@ -3875,7 +3891,7 @@
          {
              checkGLError("shadow clear pre");
@@ -337,6 +346,15 @@
              GlStateManager.enableTexture2D();
              GlStateManager.disableAlpha();
              GlStateManager.disableBlend();
+@@ -4301,7 +4317,7 @@
+         isRenderingDfb = false;
+         mc.getFramebuffer().bindFramebuffer(true);
+         OpenGlHelper.glFramebufferTexture2D(OpenGlHelper.GL_FRAMEBUFFER, OpenGlHelper.GL_COLOR_ATTACHMENT0, 3553, mc.getFramebuffer().framebufferTexture, 0);
+-        GL11.glViewport(0, 0, mc.displayWidth, mc.displayHeight);
++        //Nope. GL11.glViewport(0, 0, mc.displayWidth, mc.displayHeight);
+ 
+         if (EntityRenderer.anaglyphEnable)
+         {
 @@ -4310,9 +4326,9 @@
          }
  

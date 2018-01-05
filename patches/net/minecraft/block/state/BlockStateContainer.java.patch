@@ -1,0 +1,14 @@
+--- a/net/minecraft/block/state/BlockStateContainer.java
++++ b/net/minecraft/block/state/BlockStateContainer.java
+@@ -562,6 +562,11 @@
+         {
+             return Reflector.callBoolean(this.block, Reflector.ForgeBlock_isSideSolid, this, p_isSideSolid_1_, p_isSideSolid_2_, p_isSideSolid_3_);
+         }
++        
++        public boolean doesSideBlockChestOpening(IBlockAccess p_isSideSolid_1_, BlockPos p_isSideSolid_2_, EnumFacing p_isSideSolid_3_)
++        {
++            return Reflector.callBoolean(this.block, Reflector.ForgeBlock_isSideSolid, this, p_isSideSolid_1_, p_isSideSolid_2_, p_isSideSolid_3_);
++        }
+ 
+         public boolean doesSideBlockRendering(IBlockAccess p_doesSideBlockRendering_1_, BlockPos p_doesSideBlockRendering_2_, EnumFacing p_doesSideBlockRendering_3_)
+         {

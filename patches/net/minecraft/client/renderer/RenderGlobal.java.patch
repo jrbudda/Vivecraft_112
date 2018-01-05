@@ -179,22 +179,45 @@
 +        //finishTimeNano = (long)((double)finishTimeNano + 1.0E8D);
          this.displayListEntitiesDirty |= this.renderDispatcher.runChunkUploads(finishTimeNano);
 -
-+/*
++        /*
          if (this.chunksToUpdateForced.size() > 0)
          {
              Iterator iterator = this.chunksToUpdateForced.iterator();
-@@ -2440,8 +2449,10 @@
+@@ -2400,8 +2409,10 @@
+                 }
+             }
+         }
++         */
+ 
+-        int k1 = 0;
++        //int k1 = 0;
++        
+         int l1 = Config.getUpdatesPerFrame();
+ 
+         if (!this.chunksToUpdate.isEmpty())
+@@ -2430,7 +2441,8 @@
+ 
+                 renderchunk2.clearNeedsUpdate();
+                 iterator1.remove();
+-
++                
++                /*
+                 if (!flag2)
+                 {
+                     ++k1;
+@@ -2440,8 +2452,11 @@
                          break;
                      }
                  }
-+             
++             */
++                
              }
          }
-+           */
++         
      }
  
      public void renderWorldBorder(Entity entityIn, float partialTicks)
-@@ -2856,9 +2867,9 @@
+@@ -2856,9 +2871,9 @@
      {
      }
  
@@ -206,7 +229,7 @@
      }
  
      public void spawnParticle(int id, boolean ignoreRange, boolean p_190570_3_, final double x, final double y, final double z, double xSpeed, double ySpeed, double zSpeed, int... parameters)
-@@ -3144,6 +3155,8 @@
+@@ -3144,6 +3159,8 @@
      public void playEvent(EntityPlayer player, int type, BlockPos blockPosIn, int data)
      {
          Random random = this.world.rand;
@@ -215,7 +238,7 @@
  
          switch (type)
          {
-@@ -3200,18 +3213,30 @@
+@@ -3200,18 +3217,30 @@
                  break;
  
              case 1011:
@@ -246,7 +269,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_FENCE_GATE_CLOSE, SoundCategory.BLOCKS, 1.0F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -3232,14 +3257,26 @@
+@@ -3232,14 +3261,26 @@
                  break;
  
              case 1019:
@@ -273,7 +296,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.ENTITY_ZOMBIE_BREAK_DOOR_WOOD, SoundCategory.HOSTILE, 2.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F, false);
                  break;
  
-@@ -3268,10 +3305,17 @@
+@@ -3268,10 +3309,17 @@
                  break;
  
              case 1030:
@@ -291,7 +314,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_ANVIL_LAND, SoundCategory.BLOCKS, 0.3F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -3292,6 +3336,9 @@
+@@ -3292,6 +3340,9 @@
                  break;
  
              case 1036:
@@ -301,7 +324,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_IRON_TRAPDOOR_CLOSE, SoundCategory.BLOCKS, 1.0F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -3331,6 +3378,9 @@
+@@ -3331,6 +3382,9 @@
                      {
                          soundtype = (SoundType)Reflector.call(block, Reflector.ForgeBlock_getSoundType, Block.getStateById(data), this.world, blockPosIn, null);
                      }
