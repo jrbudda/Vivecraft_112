@@ -1,4 +1,4 @@
-import org.json.JSONObject;
+import org.json.*;
 import java.awt.*;
 import java.awt.TrayIcon.MessageType;
 import java.awt.event.*;
@@ -1121,7 +1121,11 @@ public class Installer extends JPanel  implements PropertyChangeListener
 			if( jar_id != null )
 			{
 				InputStream version_json;
-				if(useForge.isSelected() /*&& forgeVersion.getSelectedItem() != forgeNotFound*/ ) 
+				if(isMultiMC) {
+					String filename = "version-multimc.json";
+					version_json = Installer.class.getResourceAsStream(filename);
+				}
+				else if(useForge.isSelected() /*&& forgeVersion.getSelectedItem() != forgeNotFound*/ ) 
 				{
 					String filename;
 
@@ -1188,10 +1192,27 @@ public class Installer extends JPanel  implements PropertyChangeListener
 							String json = readAsciiFile(fileJson);
 							json = json.replace("$FILE",jar_id);
 							JSONObject root = new JSONObject(json);
-							String args = (String)root.get("minecraftArguments");
-							if(katvr.isSelected()) args += " --katvr";
-							if(kiosk.isSelected()) args += " --kiosk";
-							root.put("minecraftArguments", args);
+							
+							String args = (String)root.opt("minecraftArguments");
+							
+							if(args!=null) {
+								if(katvr.isSelected()) args += " --katvr";
+								if(kiosk.isSelected()) args += " --kiosk";
+								root.put("minecraftArguments", args);
+							}
+							
+							if(isMultiMC)
+								root.remove("id");
+							
+							if(isMultiMC && useForge.isSelected()) {
+								JSONArray tw = (JSONArray) root.get("+tweakers");
+								tw = new JSONArray();
+								tw.put("com.mtbs3d.minecrift.tweaker.MinecriftForgeTweaker");
+								tw.put("net.minecraftforge.fml.common.launcher.FMLTweaker");
+								tw.put("optifine.OptiFineForgeTweaker");
+								root.put("+tweakers", tw);
+							}
+							
 							FileWriter fwJson = new FileWriter(fileJson);
 							fwJson.write(root.toString(jsonIndentSpaces));
 							fwJson.flush();
@@ -1321,7 +1342,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				} else {
 					prof.remove("gameDir");
 				}
-
+				
 				FileWriter fwJson = new FileWriter(fileJson);
 				fwJson.write(root.toString(jsonIndentSpaces));
 				fwJson.flush();
@@ -1386,6 +1407,24 @@ public class Installer extends JPanel  implements PropertyChangeListener
 
 				w.close();
 
+				File mmcpack = new File(mcBaseDirFile, "mmc-pack.json");
+				if(!mmcpack.exists()) return result;
+				String json = readAsciiFile(mmcpack);
+								
+				JSONObject root = new JSONObject(json);
+				JSONArray components = (JSONArray)root.get("components");
+				
+				JSONObject v = new JSONObject();
+				v.put("cachedName", "Vivecraft");
+				v.put("uid", "vivecraft");
+				
+				components.put(v);
+				
+				FileWriter fwJson = new FileWriter(mmcpack);
+				fwJson.write(root.toString(2));
+				fwJson.flush();
+				fwJson.close();
+				
 				result = true;
 			}
 			catch (Exception e) {

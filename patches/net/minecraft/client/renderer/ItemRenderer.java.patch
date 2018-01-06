@@ -175,7 +175,8 @@
      {
 -        float f = hand == EnumHandSide.RIGHT ? 1.0F : -1.0F;
 -        GlStateManager.translate(f * 0.125F, -0.125F, 0.0F);
--
++    	float f = hand == EnumHandSide.RIGHT ? 1.0F : -1.0F;
+ 
 -        if (!this.mc.player.isInvisible())
 -        {
 -            GlStateManager.pushMatrix();
@@ -183,8 +184,7 @@
 -            this.renderArmFirstPerson(p_187465_1_, p_187465_3_, hand);
 -            GlStateManager.popMatrix();
 -        }
-+    	float f = hand == EnumHandSide.RIGHT ? 1.0F : -1.0F;
- 
+-
 -        GlStateManager.pushMatrix();
 -        GlStateManager.translate(f * 0.51F, -0.08F + p_187465_1_ * -1.2F, -0.75F);
 -        float f1 = MathHelper.sqrt(p_187465_3_);
@@ -418,7 +418,7 @@
 -            boolean flag = hand == EnumHand.MAIN_HAND;
 -            EnumHandSide enumhandside = flag ? player.getPrimaryHand() : player.getPrimaryHand().opposite();
 -            GlStateManager.pushMatrix();
--
+ 
 -            if (stack.isEmpty())
 -            {
 -                if (flag && !player.isInvisible())
@@ -440,7 +440,7 @@
 -            else
 -            {
 -                boolean flag1 = enumhandside == EnumHandSide.RIGHT;
- 
+-
 -                if (player.isHandActive() && player.getItemInUseCount() > 0 && player.getActiveHand() == hand)
 -                {
 -                    int j = flag1 ? 1 : -1;
@@ -831,14 +831,14 @@
      }
  
      /**
-@@ -472,84 +787,216 @@
+@@ -472,84 +787,213 @@
       */
      public void renderOverlays(float partialTicks)
      {
-+    	inportal = false;
-+    	inwater = false;
-+    	inblock = false;
-+    	onfire = false;
++    	mc.entityRenderer.inportal = false;
++    	mc.entityRenderer.inwater = false;
++    	mc.entityRenderer.inblock = false;
++    	mc.entityRenderer.onfire = false;
 +    	
          GlStateManager.disableAlpha();
 -
@@ -849,9 +849,7 @@
 -            IBlockState iblockstate = this.mc.world.getBlockState(new BlockPos(this.mc.player));
 -            BlockPos blockpos = new BlockPos(this.mc.player);
 -            EntityPlayer entityplayer = this.mc.player;
-+        	this.renderBlockInHand();
-+        	inblock = true;
- 
+-
 -            for (int i = 0; i < 8; ++i)
 -            {
 -                double d0 = entityplayer.posX + (double)(((float)((i >> 0) % 2) - 0.5F) * entityplayer.width * 0.8F);
@@ -859,64 +857,64 @@
 -                double d2 = entityplayer.posZ + (double)(((float)((i >> 2) % 2) - 0.5F) * entityplayer.width * 0.8F);
 -                BlockPos blockpos1 = new BlockPos(d0, d1 + (double)entityplayer.getEyeHeight(), d2);
 -                IBlockState iblockstate1 = this.mc.world.getBlockState(blockpos1);
-+		
-+        	mc.entityRenderer.renderGuiLayer(partialTicks);
-+        	
-+        }
- 
+-
 -                if (iblockstate1.causesSuffocation())
 -                {
 -                    iblockstate = iblockstate1;
 -                    blockpos = blockpos1;
 -                }
-+        if (!this.mc.player.isSpectator())
-+        {
-+            if (isInsideOfMaterial(pos, Material.WATER) )
-+            {
-+            	inwater = true;
-+              //  this.renderWaterOverlayTexture(partialTicks);
-             }
- 
--            if (iblockstate.getRenderType() != EnumBlockRenderType.INVISIBLE)
-+            
-+            if (this.mc.player.isBurning() && !Reflector.callBoolean(Reflector.ForgeEventFactory_renderFireOverlay, new Object[] {this.mc.player, Float.valueOf(partialTicks)}))
-             {
--                Object object = Reflector.getFieldValue(Reflector.RenderBlockOverlayEvent_OverlayType_BLOCK);
+-            }
 -
+-            if (iblockstate.getRenderType() != EnumBlockRenderType.INVISIBLE)
+-            {
+-                Object object = Reflector.getFieldValue(Reflector.RenderBlockOverlayEvent_OverlayType_BLOCK);
++        	this.renderBlockInHand();
++        	mc.entityRenderer.inblock = true;
+ 
 -                if (!Reflector.callBoolean(Reflector.ForgeEventFactory_renderBlockOverlay, this.mc.player, partialTicks, object, iblockstate, blockpos))
 -                {
 -                    this.renderBlockInHand(this.mc.getBlockRendererDispatcher().getBlockModelShapes().getTexture(iblockstate));
 -                }
-+                this.renderFireInFirstPerson();
-+                onfire = true;
-             }
+-            }
++		
++        	mc.entityRenderer.renderGuiLayer(partialTicks);
++        	
          }
  
--        if (!this.mc.player.isSpectator())
-+		
-+        if (!this.mc.player.isPotionActive(MobEffects.NAUSEA))
+         if (!this.mc.player.isSpectator())
          {
 -            if (this.mc.player.isInsideOfMaterial(Material.WATER) && !Reflector.callBoolean(Reflector.ForgeEventFactory_renderWaterOverlay, this.mc.player, partialTicks))
--            {
++            if (isInsideOfMaterial(pos, Material.WATER) )
+             {
 -                this.renderWaterOverlayTexture(partialTicks);
--            }
-+            float f = this.mc.player.prevTimeInPortal + (this.mc.player.timeInPortal - this.mc.player.prevTimeInPortal) * partialTicks;
++            	mc.entityRenderer.inwater = true;
++              //  this.renderWaterOverlayTexture(partialTicks);
+             }
  
 -            if (this.mc.player.isBurning() && !Reflector.callBoolean(Reflector.ForgeEventFactory_renderFireOverlay, this.mc.player, partialTicks))
-+            if (f > 0.0F)
++            
++            if (this.mc.player.isBurning() && !Reflector.callBoolean(Reflector.ForgeEventFactory_renderFireOverlay, new Object[] {this.mc.player, Float.valueOf(partialTicks)}))
              {
--                this.renderFireInFirstPerson();
-+            	inportal = true;
-+               // this.renderPortal(f, new ScaledResolution(mc));
+                 this.renderFireInFirstPerson();
++                mc.entityRenderer.onfire = true;
              }
          }
+ 
++		
++        if (!this.mc.player.isPotionActive(MobEffects.NAUSEA))
++        {
++            float f = this.mc.player.prevTimeInPortal + (this.mc.player.timeInPortal - this.mc.player.prevTimeInPortal) * partialTicks;
++
++            if (f > 0.0F)
++            {
++            	mc.entityRenderer.inportal = true;
++               // this.renderPortal(f, new ScaledResolution(mc));
++            }
++        }
 +		
 +                
-+        GlStateManager.enableAlpha();
-+    }
- 
-+    public boolean inwater, inportal, inblock, onfire;
-+    public float inBlock = 0;
+         GlStateManager.enableAlpha();
+     }
 +    
 +    private void renderPortal(float timeInPortal, ScaledResolution scaledRes)
 +    {
@@ -949,7 +947,7 @@
 +        tessellator.draw();
 +        GlStateManager.depthMask(true);
 +        GlStateManager.enableDepth();
-         GlStateManager.enableAlpha();
++        GlStateManager.enableAlpha();
 +        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 +    }
 +
@@ -982,12 +980,12 @@
 +    	BlockPos bp = new BlockPos(in);
 +    	
 +    	if(mc.world.getBlockState(bp).isOpaqueCube()) {
-+    		inBlock = 1;
++    		mc.entityRenderer.inBlock = 1;
 +    		return true;
 +    	}
 +    	
 +    	if(!set) return false;
-+    	inBlock = 0;    	
++    	mc.entityRenderer.inBlock = 0;    	
 +    	Vec3d pos = in.addVector(0, 0, 0);
 +    	float per = 0;
 +    	float buffer = .07f;	
@@ -995,47 +993,47 @@
 +    	if((pos.x - Math.floor(pos.x)) < buffer) 
 +    	{
 +    		per = (float) (pos.x - Math.floor(pos.x));
-+        	inBlock = (buffer - per) / buffer; 
++    		mc.entityRenderer.inBlock = (buffer - per) / buffer; 
 +    		if (mc.world.getBlockState(bp.west()).isOpaqueCube()) return true;
 +    	}
 +    	
 +    	if(pos.x - Math.floor(pos.x) > 1-buffer){
 +    		per = 1f - (float) (pos.x - Math.floor(pos.x));
-+        	inBlock = (buffer - per) / buffer; 
++    		mc.entityRenderer.inBlock = (buffer - per) / buffer; 
 +    		if (mc.world.getBlockState(bp.east()).isOpaqueCube()) return true;
 +    	}
 +    	
 +    	if((pos.y - Math.floor(pos.y)) < buffer) 
 +    	{
 +    		per = (float) (pos.y - Math.floor(pos.y));
-+        	inBlock = (buffer - per) / buffer; 
++    		mc.entityRenderer.inBlock = (buffer - per) / buffer; 
 +    		if (mc.world.getBlockState(bp.down()).isOpaqueCube()) return true;
 +    	} 
 +    	
 +    	if(pos.y - Math.floor(pos.y) > 1-buffer){
 +    		per = 1f - (float) (pos.y - Math.floor(pos.y));
-+        	inBlock = (buffer - per) / buffer; 
++    		mc.entityRenderer.inBlock = (buffer - per) / buffer; 
 +    		if (mc.world.getBlockState(bp.up()).isOpaqueCube()) return true;
 +    	}
 +    	
 +    	if((pos.z - Math.floor(pos.z)) < buffer) 
 +    	{
 +    		per = (float) (pos.z - Math.floor(pos.z));
-+        	inBlock = (buffer - per) / buffer; 
++    		mc.entityRenderer.inBlock = (buffer - per) / buffer; 
 +    		if (mc.world.getBlockState(bp.north()).isOpaqueCube()) return true;
 +    	} 
 +    	
 +    	if(pos.z - Math.floor(pos.z) > 1-buffer){
 +    		per = 1f - (float) (pos.z - Math.floor(pos.z));
-+        	inBlock = (buffer - per) / buffer; 
++    		mc.entityRenderer.inBlock = (buffer - per) / buffer; 
 +    		if (mc.world.getBlockState(bp.south()).isOpaqueCube()) return true;
 +    	}
 +
 +    	return false;
 +    	
-     }
- 
++    }
 +
+ 
      /**
       * Render the block in the player's hand
       */
@@ -1050,7 +1048,7 @@
 -        float f = 0.1F;
 -        GlStateManager.color(0.1F, 0.1F, 0.1F, 0.5F);
 +        
-+        GlStateManager.color(0f, 0F, 0F, inBlock);
++        GlStateManager.color(0f, 0F, 0F, mc.entityRenderer.inBlock);
 +        
 +        GlStateManager.matrixMode(GL11.GL_PROJECTION);
          GlStateManager.pushMatrix();

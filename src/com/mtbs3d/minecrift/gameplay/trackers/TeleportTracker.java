@@ -393,7 +393,7 @@ public class TeleportTracker {
       	
             boolean	water =false;
             if(mc.vrSettings.seated )
-            	water = mc.entityRenderer.itemRenderer.inwater;
+            	water = mc.entityRenderer.inwater;
             else{
                 water = mc.entityRenderer.itemRenderer.isInsideOfMaterial(start, Material.WATER);
             }

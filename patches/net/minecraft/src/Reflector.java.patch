@@ -42,7 +42,12 @@
  import net.minecraft.client.renderer.entity.RenderShulkerBullet;
  import net.minecraft.client.renderer.entity.RenderWitherSkull;
  import net.minecraft.client.renderer.tileentity.TileEntityBannerRenderer;
-@@ -88,17 +95,24 @@
+@@ -84,21 +91,29 @@
+ import net.minecraft.client.resources.LegacyV2Adapter;
+ import net.minecraft.client.settings.KeyBinding;
+ import net.minecraft.entity.Entity;
++import net.minecraft.entity.EntityLiving;
+ import net.minecraft.entity.EntityLivingBase;
  import net.minecraft.entity.EnumCreatureType;
  import net.minecraft.entity.item.EntityItemFrame;
  import net.minecraft.entity.passive.EntityVillager;
@@ -67,7 +72,7 @@
  import net.minecraft.world.ChunkCache;
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.IWorldNameable;
-@@ -109,1067 +123,1238 @@
+@@ -109,1067 +124,1238 @@
  
  public class Reflector
  {
@@ -1220,10 +1225,10 @@
 +	public static ReflectorMethod ForgeEntity_shouldRenderInPass = new ReflectorMethod(ForgeEntity, "shouldRenderInPass");
 +	public static ReflectorMethod ForgeEntity_shouldRiderSit = new ReflectorMethod(ForgeEntity, "shouldRiderSit");
 +	public static ReflectorClass ForgeEventFactory = new ReflectorClass("net.minecraftforge.event.ForgeEventFactory");
-+	public static ReflectorMethod ForgeEventFactory_canEntitySpawn = new ReflectorMethod(ForgeEventFactory, "canEntitySpawn");
++	public static ReflectorMethod ForgeEventFactory_canEntitySpawn = new ReflectorMethod(ForgeEventFactory, "canEntitySpawn", new Class[] {EntityLiving.class, World.class, Float.TYPE, Float.TYPE, Float.TYPE});
 +	public static ReflectorMethod ForgeEventFactory_canEntityDespawn = new ReflectorMethod(ForgeEventFactory, "canEntityDespawn");
 +	public static ReflectorMethod ForgeEventFactory_doSpecialSpawn = new ReflectorMethod(ForgeEventFactory, "doSpecialSpawn");
-+	public static ReflectorMethod ForgeEventFactory_getMaxSpawnedInChunk = new ReflectorMethod(ForgeEventFactory, "getMaxSpawnedInChunk");
++	public static ReflectorMethod ForgeEventFactory_getMaxSpawnPackSize = new ReflectorMethod(ForgeEventFactory, "getMaxSpawnPackSize");
 +	public static ReflectorMethod ForgeEventFactory_renderBlockOverlay = new ReflectorMethod(ForgeEventFactory, "renderBlockOverlay");
 +	public static ReflectorMethod ForgeEventFactory_renderFireOverlay = new ReflectorMethod(ForgeEventFactory, "renderFireOverlay");
 +	public static ReflectorMethod ForgeEventFactory_renderWaterOverlay = new ReflectorMethod(ForgeEventFactory, "renderWaterOverlay");
@@ -1245,7 +1250,7 @@
 +	public static ReflectorMethod ForgeHooks_onServerChatEvent = new ReflectorMethod(ForgeHooks, "onServerChatEvent");
 +	public static ReflectorMethod ForgeHooks_newChatWithLinks = new ReflectorMethod(ForgeHooks, "newChatWithLinks", new Class[]{String.class});
 +	public static ReflectorMethod ForgeHooks_onInteractEntityAt = new ReflectorMethod(ForgeHooks, "onInteractEntityAt", new Class[]{EntityPlayer.class, Entity.class, Vec3d.class, EnumHand.class});
-+	public static ReflectorMethod ForgeHooks_onInteractEntityAtAction = new ReflectorMethod(ForgeHooks, "onInteractEntityAtAction", new Class[]{EntityPlayer.class, Entity.class, Vec3d.class, EnumHand.class});
++	//public static ReflectorMethod ForgeHooks_onInteractEntityAtAction = new ReflectorMethod(ForgeHooks, "onInteractEntityAtAction", new Class[]{EntityPlayer.class, Entity.class, Vec3d.class, EnumHand.class});
 +	public static ReflectorMethod ForgeHooks_onTravelToDimension = new ReflectorMethod(ForgeHooks, "onTravelToDimension");
 +	public static ReflectorMethod ForgeHooks_onEmptyLeftClick = new ReflectorMethod(ForgeHooks, "onEmptyLeftClick", new Class[]{EntityPlayer.class});
 +	public static ReflectorMethod ForgeHooks_onEmptyClick = new ReflectorMethod(ForgeHooks, "onEmptyClick");
@@ -1449,7 +1454,7 @@
 +	public static ReflectorConstructor PlayerContainerEventOpen_Constructor = new ReflectorConstructor(PlayerContainerEventOpen, new Class[] {EntityPlayer.class, Container.class});
 +	public static ReflectorClass PlayerContainerEventClose = new ReflectorClass("net.minecraftforge.event.entity.player.PlayerContainerEvent$Close");
 +	public static ReflectorConstructor PlayerContainerEventClose_Constructor = new ReflectorConstructor(PlayerContainerEventClose, new Class[] {EntityPlayer.class, Container.class});
-+	public static ReflectorClass AchievementEvent = new ReflectorClass("net.minecraftforge.event.entity.player.AchievementEvent");
++	//public static ReflectorClass AchievementEvent = new ReflectorClass("net.minecraftforge.event.entity.player.AchievementEvent");
 +
 +	public static ReflectorClass ScreenshotEvent = new ReflectorClass("net.minecraftforge.client.event.ScreenshotEvent");
 +	public static ReflectorMethod ScreenshotEvent_getCancelMessage = new ReflectorMethod(ScreenshotEvent, "getCancelMessage");
@@ -1614,14 +1619,14 @@
 +	public static ReflectorClass ClientCommandHandler = new ReflectorClass("net.minecraftforge.client.ClientCommandHandler");
 +	public static ReflectorField ClientCommandHandler_instance = new ReflectorField(ClientCommandHandler, "instance");
 +
-+	public static ReflectorClass AchievementPage = new ReflectorClass("net.minecraftforge.common.AchievementPage");
-+	public static ReflectorMethod AchievementPage_isAchievementInPages = new ReflectorMethod(AchievementPage, "isAchievementInPages");
-+	public static ReflectorMethod AchievementPage_getTitle = new ReflectorMethod(AchievementPage, "getTitle");
-+	public static ReflectorMethod AchievementPage_getAchievementPages = new ReflectorMethod(AchievementPage, "getAchievementPages");
-+	public static ReflectorMethod AchievementPage_getAchievementPage = new ReflectorMethod(AchievementPage, "getAchievementPage", new Class[]{Integer.TYPE});
-+	public static ReflectorMethod AchievementPage_getAchievements = new ReflectorMethod(AchievementPage, "getAchievements");
++	//public static ReflectorClass AchievementPage = new ReflectorClass("net.minecraftforge.common.AchievementPage");
++	//public static ReflectorMethod AchievementPage_isAchievementInPages = new ReflectorMethod(AchievementPage, "isAchievementInPages");
++	//public static ReflectorMethod AchievementPage_getTitle = new ReflectorMethod(AchievementPage, "getTitle");
++	//public static ReflectorMethod AchievementPage_getAchievementPages = new ReflectorMethod(AchievementPage, "getAchievementPages");
++	//public static ReflectorMethod AchievementPage_getAchievementPage = new ReflectorMethod(AchievementPage, "getAchievementPage", new Class[]{Integer.TYPE});
++	//public static ReflectorMethod AchievementPage_getAchievements = new ReflectorMethod(AchievementPage, "getAchievements");
 +
-+	public static ReflectorClass GameData = new ReflectorClass("net.minecraftforge.fml.common.registry.GameData");
++	public static ReflectorClass GameData = new ReflectorClass("net.minecraftforge.registries.GameData");
 +	public static ReflectorMethod GameData_vanillaSnapshot = new ReflectorMethod(GameData, "vanillaSnapshot");
 +
 +	public static ReflectorClass DispenseFluidContainer = new ReflectorClass("net.minecraftforge.fluids.DispenseFluidContainer");
