@@ -292,7 +292,7 @@
 +	 * The minecriftVerString will be automatically updated by the build scripts, do not modify here.
 +	 * Modify minecriftversion.py in root minecrift dir.
 +	 */
-+    public final String minecriftVerString = "Vivecraft 1.12.2 jrbudda-6-alpha";
++    public final String minecriftVerString = "Vivecraft 1.12.2 jrbudda-6-alpha2";
 +	/* end version */
 +	/** END MINECRIFT */
 +    
@@ -2889,7 +2889,7 @@
 +				float time =  (float) (System.currentTimeMillis() - usageSnooper.getMinecraftStartTimeMillis()) / 1000;
 +				if (player!=null && world !=null) {
 +					
-+					if(entityRenderer.itemRenderer.inwater){
++					if(entityRenderer.inwater){
 +						watereffect = 1.3f;
 +					} else {
 +						if(watereffect == 1.3f) watereffect = 2.3f;
@@ -2899,7 +2899,7 @@
 +					
 +					if(Config.isShaders()) watereffect = 0; //dont stack.
 +					
-+					if(entityRenderer.itemRenderer.inportal){
++					if(entityRenderer.inportal){
 +						portaleffect = 1f;
 +					} else {
 +						portaleffect -= (1f/60f);
@@ -2921,7 +2921,7 @@
 +						if (player.isCreative()) r = 0;
 +					}
 +					
-+					if(entityRenderer.itemRenderer.inblock && player.isDead == false){
++					if(entityRenderer.inblock && player.isDead == false){
 +						//k = (float) entityRenderer.itemRenderer.inBlock;
 +						
 +					}

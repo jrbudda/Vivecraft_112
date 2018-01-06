@@ -10,12 +10,12 @@ public class MinecriftVanillaTweaker implements ITweaker
 {
     public void acceptOptions(List<String> args, File gameDir, File assetsDir, String profile)
     {
-        dbg("MinecriftForgeTweaker: acceptOptions");
+        dbg("MinecriftVanillaTweaker: acceptOptions");
     }
 
     public void injectIntoClassLoader(LaunchClassLoader classLoader)
     {
-        dbg("MinecriftForgeTweaker: injectIntoClassLoader");
+        dbg("MinecriftVanillaTweaker: injectIntoClassLoader");
         classLoader.addTransformerExclusion("com.mtbs3d.minecrift.asm.");
         classLoader.registerTransformer("com.mtbs3d.minecrift.tweaker.MinecriftClassTransformer");
         classLoader.registerTransformer("com.mtbs3d.minecrift.asm.VivecraftASMTransformer");
@@ -23,13 +23,13 @@ public class MinecriftVanillaTweaker implements ITweaker
 
     public String getLaunchTarget()
     {
-        dbg("MinecriftForgeTweaker: getLaunchTarget");
+        dbg("MinecriftVanillaTweaker: getLaunchTarget");
         return "net.minecraft.client.main.Main";
     }
 
     public String[] getLaunchArguments()
     {
-        dbg("MinecriftForgeTweaker: getLaunchArguments");
+        dbg("MinecriftVanillaTweaker: getLaunchArguments");
         return new String[0];
     }
 

@@ -110,7 +110,7 @@ public class MinecriftClassTransformer implements IClassTransformer
             {
                 debug("Minecrift ClassTransformer");
                 debug("Minecrift URL: " + url);
-                debug("Minecrift ZIP file: " + zipFile);
+                debug("Minecrift ZIP file: " + zipFile.getName());
                 mcZipURL = url;
                 return zipFile;
             }
