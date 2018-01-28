@@ -27,14 +27,17 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
+import org.apache.commons.io.IOUtils;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
+import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import com.mtbs3d.minecrift.provider.MCOpenVR;
+import com.mtbs3d.minecrift.render.VRShaders;
 import com.mtbs3d.minecrift.tweaker.MinecriftClassTransformer;
 
 import jopenvr.HmdMatrix34_t;
@@ -241,6 +244,38 @@ public class Utils
 		mat.m21 = matrix.m21;
 		mat.m22 = matrix.m22;
 		return mat;
+	}
+
+	public static byte[] loadAsset(String name, boolean required) {
+		InputStream is = VRShaders.class.getResourceAsStream("/assets/vivecraft/" + name);
+		byte[] out = new byte[0];
+		try {
+			if (is == null) {
+				//uhh debugging?
+				Path dir = Paths.get(System.getProperty("user.dir")); // ../mcpxxx/jars/
+				Path p5 = dir.getParent().resolve("src/assets/" + name);
+				if (!p5.toFile().exists()) {
+					p5 = dir.getParent().getParent().resolve("assets/vivecraft/" + name);
+				}
+				if (p5.toFile().exists()) {
+					is = new FileInputStream(p5.toFile());
+				}
+			}
+			out = IOUtils.toByteArray(is);
+			is.close();
+		} catch (Exception e) {
+			if (required) {
+				throw new RuntimeException("Failed to load asset: " + name, e);
+			} else {
+				System.out.println("Failed to load asset: " + name);
+				e.printStackTrace();
+			}
+		}
+		return out;
+	}
+	
+	public static String loadAssetAsString(String name, boolean required) {
+		return new String(loadAsset(name, required), Charsets.UTF_8);
 	}
 	
 	public static void unpackNatives(String directory) {

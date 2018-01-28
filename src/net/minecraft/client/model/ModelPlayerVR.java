@@ -154,7 +154,7 @@ public class ModelPlayerVR extends ModelBiped
         this.leftshoulder.render(scale);
         this.rightShoulder.render(scale);
         
-        this.vrHMD.setTextureLocation(new ResourceLocation(VRShaders.hmd_tex));
+        this.vrHMD.setTextureLocation(this.BLACK_HMD);
         GlStateManager.color(.2f, .2f, .2f);
         this.vrHMD.render(scale);
         

@@ -12,13 +12,15 @@ import java.util.Scanner;
 import org.apache.commons.io.IOUtils;
 import org.lwjgl.opengl.ARBShaderObjects;
 
+import com.mtbs3d.minecrift.utils.Utils;
+
 import net.minecraft.client.Minecraft;
 
 public class VRShaders {
 	public static int _Lanczos_shaderProgramId = -1;
-	public static int _LanczosShader_texelWidthOffsetUniform = -1;
-	public static int _LanczosShader_texelHeightOffsetUniform = -1;
-	public static int _LanczosShader_inputImageTextureUniform = -1;
+	public static int _Lanczos_texelWidthOffsetUniform = -1;
+	public static int _Lanczos_texelHeightOffsetUniform = -1;
+	public static int _Lanczos_inputImageTextureUniform = -1;
 	
 	public static int _DepthMask_shaderProgramId = -1;
 	public static int _DepthMask_resolutionUniform = -1;
@@ -37,57 +39,29 @@ public class VRShaders {
 	public static int _FOVReduction_Enabled = -1;
 	public static int _FOVReduction_RadiusUniform = -1;
 	public static int _FOVReduction_BorderUniform = -1;
-	public static int _FOVReduction_TextureUniform= -1;
+	public static int _FOVReduction_TextureUniform = -1;
 	public static int _FOVReduction_shaderProgramId = -1;
 	
 	public static int _Overlay_HealthAlpha = -1;
-	public static int _Overlay_waterAmplitude= -1;
-	public static int _Overlay_portalAmplitutde= -1;
-	public static int _Overlay_pumpkinAmplitutde= -1;
-	public static int _Overlay_time= -1;
+	public static int _Overlay_waterAmplitude = -1;
+	public static int _Overlay_portalAmplitutde = -1;
+	public static int _Overlay_pumpkinAmplitutde = -1;
+	public static int _Overlay_time = -1;
 	public static int _Overlay_BlackAlpha = -1;
-	public static int _Overlay_eye= -1;
+	public static int _Overlay_eye = -1;
 	
 	
 	private VRShaders() {
 	}
 
-	public static String load(String type,String name){
-		InputStream is = VRShaders.class.getResourceAsStream("/assets/vivecraft/shaders/" + name);
-		String out = "";
-		try {
-			if(is==null){
-				//uhh debugging?
-				Path dir = Paths.get(System.getProperty("user.dir")); // ..\mcpxxx\jars\
-				Path p5 = dir.getParent().resolve("src/assets/" + type + "/" + name);
-				if (!p5.toFile().exists()) {
-					p5 = dir.getParent().getParent().resolve("assets/vivecraft/" + type + "/" + name);
-				}
-				is = new FileInputStream(p5.toFile());
-			}
-			InputStreamReader in = new InputStreamReader(is);
-			out =IOUtils.toString(in);
-			if(out == null){
-				System.out.println("Cannot load "+type + ":"  + name);
-				out = "";
-			}
-			in.close();
-		} catch (Exception e) {
-		}
-		return out;
-	}
-
-	public static final String PASSTHRU_VERTEX_SHADER = load("shaders","passthru.vsh");
-	public static final String DEPTH_MASK_FRAGMENT_SHADER = load("shaders","mixedreality.fsh");
-	public static final String LANCZOS_SAMPLER_VERTEX_SHADER= load("shaders","lanczos.vsh");
-	public static final String LANCZOS_SAMPLER_FRAGMENT_SHADER= load("shaders","lanczos.fsh");
-	public static final String FOV_REDUCTION_FRAGMENT_SHADER= load("shaders","fovreduction.fsh");
+	public static final String PASSTHRU_VERTEX_SHADER = Utils.loadAssetAsString("shaders/passthru.vsh", true);
+	public static final String DEPTH_MASK_FRAGMENT_SHADER = Utils.loadAssetAsString("shaders/mixedreality.fsh", true);
+	public static final String LANCZOS_SAMPLER_VERTEX_SHADER = Utils.loadAssetAsString("shaders/lanczos.vsh", true);
+	public static final String LANCZOS_SAMPLER_FRAGMENT_SHADER = Utils.loadAssetAsString("shaders/lanczos.fsh", true);
+	public static final String FOV_REDUCTION_FRAGMENT_SHADER = Utils.loadAssetAsString("shaders/fovreduction.fsh", true);
 	
-	public static final String hmd_tex = load("textures","black_hmd.bmp");
-	
-	public static void setupDepthMask() throws Exception{
+	public static void setupDepthMask() throws Exception {
 		_DepthMask_shaderProgramId = ShaderHelper.initShaders(VRShaders.PASSTHRU_VERTEX_SHADER, VRShaders.DEPTH_MASK_FRAGMENT_SHADER, true);
-		
 		if (_DepthMask_shaderProgramId == 0) {
 			throw new Exception("Failed to validate depth mask shader!");
 		}
@@ -104,28 +78,26 @@ public class VRShaders {
 		_DepthMask_passUniform = ARBShaderObjects.glGetUniformLocationARB(_DepthMask_shaderProgramId, "pass");
 		_DepthMask_keyColorUniform = ARBShaderObjects.glGetUniformLocationARB(_DepthMask_shaderProgramId, "keyColor");
 		_DepthMask_alphaModeUniform = ARBShaderObjects.glGetUniformLocationARB(_DepthMask_shaderProgramId, "alphaMode");
-		
 	}
 	
-	public static void setupFSAA() throws Exception{
+	public static void setupFSAA() throws Exception {
 		_Lanczos_shaderProgramId = ShaderHelper.initShaders(VRShaders.LANCZOS_SAMPLER_VERTEX_SHADER, VRShaders.LANCZOS_SAMPLER_FRAGMENT_SHADER, true);
 		if (_Lanczos_shaderProgramId == 0) {
 			throw new Exception("Failed to validate FSAA shader!");
 		}
 
 		// Setup uniform IDs
-		_LanczosShader_texelWidthOffsetUniform = ARBShaderObjects.glGetUniformLocationARB(_Lanczos_shaderProgramId, "texelWidthOffset");
-		_LanczosShader_texelHeightOffsetUniform = ARBShaderObjects.glGetUniformLocationARB(_Lanczos_shaderProgramId, "texelHeightOffset");
-		_LanczosShader_inputImageTextureUniform = ARBShaderObjects.glGetUniformLocationARB(_Lanczos_shaderProgramId, "inputImageTexture");
-
+		_Lanczos_texelWidthOffsetUniform = ARBShaderObjects.glGetUniformLocationARB(_Lanczos_shaderProgramId, "texelWidthOffset");
+		_Lanczos_texelHeightOffsetUniform = ARBShaderObjects.glGetUniformLocationARB(_Lanczos_shaderProgramId, "texelHeightOffset");
+		_Lanczos_inputImageTextureUniform = ARBShaderObjects.glGetUniformLocationARB(_Lanczos_shaderProgramId, "inputImageTexture");
 	}
 	
-	public static void setupFOVReduction() throws Exception{
-		
+	public static void setupFOVReduction() throws Exception {
 		_FOVReduction_shaderProgramId = ShaderHelper.initShaders(VRShaders.PASSTHRU_VERTEX_SHADER, VRShaders.FOV_REDUCTION_FRAGMENT_SHADER, true);
 		if (_FOVReduction_shaderProgramId == 0) {
 			throw new Exception("Failed to validate FOV shader!");
 		}
+
 		// Setup uniform IDs
 		_FOVReduction_RadiusUniform = ARBShaderObjects.glGetUniformLocationARB(_FOVReduction_shaderProgramId, "circle_radius");
 		_FOVReduction_BorderUniform = ARBShaderObjects.glGetUniformLocationARB(_FOVReduction_shaderProgramId, "border");
@@ -138,7 +110,6 @@ public class VRShaders {
 		_Overlay_eye= ARBShaderObjects.glGetUniformLocationARB(_FOVReduction_shaderProgramId, "eye");
 		_Overlay_time= ARBShaderObjects.glGetUniformLocationARB(_FOVReduction_shaderProgramId, "portaltime");
 		_Overlay_BlackAlpha = ARBShaderObjects.glGetUniformLocationARB(_FOVReduction_shaderProgramId, "blackalpha");
-		
 	}
 	
 }

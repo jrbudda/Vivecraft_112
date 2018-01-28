@@ -1933,7 +1933,7 @@ public class MCOpenVR
 				controllerPose[0] = hmdPose.inverted().inverted();
 				controllerPose[1] = hmdPose.inverted().inverted();
 			} else	
-				controllerPose[0] = Matrix4f.multiply(controllerPose[0], controllerComponentTransforms.get("tip")[0]);
+				controllerPose[0] = Matrix4f.multiply(controllerPose[0], getControllerComponentTransform(0,"tip"));
 
 			// grab controller position in tracker space, scaled to minecraft units
 			Vector3f controllerPos = OpenVRUtil.convertMatrix4ftoTranslationVector(controllerPose[0]);
