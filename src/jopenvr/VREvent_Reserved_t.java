@@ -8,13 +8,13 @@ import java.util.List;
  * a tool written by <a href="http://ochafik.com/">Olivier Chafik</a> that <a href="http://code.google.com/p/jnaerator/wiki/CreditsAndLicense">uses a few opensource projects.</a>.<br>
  * For help, please visit <a href="http://nativelibs4java.googlecode.com/">NativeLibs4Java</a> , <a href="http://rococoa.dev.java.net/">Rococoa</a>, or <a href="http://jna.dev.java.net/">JNA</a>.
  */
-public class VREvent_Reserved_t extends AlignedStructure {
+public class VREvent_Reserved_t extends Structure {
 	public long reserved0;
 	public long reserved1;
 	public VREvent_Reserved_t() {
 		super();
 	}
-	protected List<String> getFieldOrder() {
+	protected List<? > getFieldOrder() {
 		return Arrays.asList("reserved0", "reserved1");
 	}
 	public VREvent_Reserved_t(long reserved0, long reserved1) {

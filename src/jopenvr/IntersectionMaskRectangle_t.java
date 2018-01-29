@@ -8,7 +8,7 @@ import java.util.List;
  * a tool written by <a href="http://ochafik.com/">Olivier Chafik</a> that <a href="http://code.google.com/p/jnaerator/wiki/CreditsAndLicense">uses a few opensource projects.</a>.<br>
  * For help, please visit <a href="http://nativelibs4java.googlecode.com/">NativeLibs4Java</a> , <a href="http://rococoa.dev.java.net/">Rococoa</a>, or <a href="http://jna.dev.java.net/">JNA</a>.
  */
-public class IntersectionMaskRectangle_t extends AlignedStructure {
+public class IntersectionMaskRectangle_t extends Structure {
 	public float m_flTopLeftX;
 	public float m_flTopLeftY;
 	public float m_flWidth;
@@ -16,7 +16,7 @@ public class IntersectionMaskRectangle_t extends AlignedStructure {
 	public IntersectionMaskRectangle_t() {
 		super();
 	}
-	protected List<String> getFieldOrder() {
+	protected List<? > getFieldOrder() {
 		return Arrays.asList("m_flTopLeftX", "m_flTopLeftY", "m_flWidth", "m_flHeight");
 	}
 	public IntersectionMaskRectangle_t(float m_flTopLeftX, float m_flTopLeftY, float m_flWidth, float m_flHeight) {

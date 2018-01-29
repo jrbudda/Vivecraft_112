@@ -271,6 +271,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 		optCustomForgeVersion.setAction(actf2);
 		
 		txtCustomForgeVersion = new JTextField(FORGE_VERSION);
+		txtCustomForgeVersion.setMaximumSize(new Dimension(100,20));
 		forgePanel.add(optCustomForgeVersion);
 		forgePanel.add(txtCustomForgeVersion);
 		//forgePanel.add(forgeVersion);

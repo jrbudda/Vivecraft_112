@@ -12,7 +12,7 @@ import jopenvr.JOpenVRLibrary.VkPhysicalDevice_T;
  * a tool written by <a href="http://ochafik.com/">Olivier Chafik</a> that <a href="http://code.google.com/p/jnaerator/wiki/CreditsAndLicense">uses a few opensource projects.</a>.<br>
  * For help, please visit <a href="http://nativelibs4java.googlecode.com/">NativeLibs4Java</a> , <a href="http://rococoa.dev.java.net/">Rococoa</a>, or <a href="http://jna.dev.java.net/">JNA</a>.
  */
-public class VR_IVRCompositor_FnTable extends AlignedStructure {
+public class VR_IVRCompositor_FnTable extends Structure {
 	public VR_IVRCompositor_FnTable.SetTrackingSpace_callback SetTrackingSpace;
 	public VR_IVRCompositor_FnTable.GetTrackingSpace_callback GetTrackingSpace;
 	public VR_IVRCompositor_FnTable.WaitGetPoses_callback WaitGetPoses;
@@ -47,12 +47,15 @@ public class VR_IVRCompositor_FnTable extends AlignedStructure {
 	public VR_IVRCompositor_FnTable.ForceReconnectProcess_callback ForceReconnectProcess;
 	public VR_IVRCompositor_FnTable.SuspendRendering_callback SuspendRendering;
 	public VR_IVRCompositor_FnTable.GetMirrorTextureD3D11_callback GetMirrorTextureD3D11;
+	public VR_IVRCompositor_FnTable.ReleaseMirrorTextureD3D11_callback ReleaseMirrorTextureD3D11;
 	public VR_IVRCompositor_FnTable.GetMirrorTextureGL_callback GetMirrorTextureGL;
 	public VR_IVRCompositor_FnTable.ReleaseSharedGLTexture_callback ReleaseSharedGLTexture;
 	public VR_IVRCompositor_FnTable.LockGLSharedTextureForAccess_callback LockGLSharedTextureForAccess;
 	public VR_IVRCompositor_FnTable.UnlockGLSharedTextureForAccess_callback UnlockGLSharedTextureForAccess;
 	public VR_IVRCompositor_FnTable.GetVulkanInstanceExtensionsRequired_callback GetVulkanInstanceExtensionsRequired;
 	public VR_IVRCompositor_FnTable.GetVulkanDeviceExtensionsRequired_callback GetVulkanDeviceExtensionsRequired;
+	public VR_IVRCompositor_FnTable.SetExplicitTimingMode_callback SetExplicitTimingMode;
+	public VR_IVRCompositor_FnTable.SubmitExplicitTimingData_callback SubmitExplicitTimingData;
 	public interface SetTrackingSpace_callback extends Callback {
 		void apply(int eOrigin);
 	};
@@ -155,6 +158,9 @@ public class VR_IVRCompositor_FnTable extends AlignedStructure {
 	public interface GetMirrorTextureD3D11_callback extends Callback {
 		int apply(int eEye, Pointer pD3D11DeviceOrResource, PointerByReference ppD3D11ShaderResourceView);
 	};
+	public interface ReleaseMirrorTextureD3D11_callback extends Callback {
+		void apply(Pointer pD3D11ShaderResourceView);
+	};
 	public interface GetMirrorTextureGL_callback extends Callback {
 		int apply(int eEye, IntByReference pglTextureId, PointerByReference pglSharedTextureHandle);
 	};
@@ -173,11 +179,17 @@ public class VR_IVRCompositor_FnTable extends AlignedStructure {
 	public interface GetVulkanDeviceExtensionsRequired_callback extends Callback {
 		int apply(VkPhysicalDevice_T pPhysicalDevice, Pointer pchValue, int unBufferSize);
 	};
+	public interface SetExplicitTimingMode_callback extends Callback {
+		void apply(int eTimingMode);
+	};
+	public interface SubmitExplicitTimingData_callback extends Callback {
+		int apply();
+	};
 	public VR_IVRCompositor_FnTable() {
 		super();
 	}
-	protected List<String> getFieldOrder() {
-		return Arrays.asList("SetTrackingSpace", "GetTrackingSpace", "WaitGetPoses", "GetLastPoses", "GetLastPoseForTrackedDeviceIndex", "Submit", "ClearLastSubmittedFrame", "PostPresentHandoff", "GetFrameTiming", "GetFrameTimings", "GetFrameTimeRemaining", "GetCumulativeStats", "FadeToColor", "GetCurrentFadeColor", "FadeGrid", "GetCurrentGridAlpha", "SetSkyboxOverride", "ClearSkyboxOverride", "CompositorBringToFront", "CompositorGoToBack", "CompositorQuit", "IsFullscreen", "GetCurrentSceneFocusProcess", "GetLastFrameRenderer", "CanRenderScene", "ShowMirrorWindow", "HideMirrorWindow", "IsMirrorWindowVisible", "CompositorDumpImages", "ShouldAppRenderWithLowResources", "ForceInterleavedReprojectionOn", "ForceReconnectProcess", "SuspendRendering", "GetMirrorTextureD3D11", "GetMirrorTextureGL", "ReleaseSharedGLTexture", "LockGLSharedTextureForAccess", "UnlockGLSharedTextureForAccess", "GetVulkanInstanceExtensionsRequired", "GetVulkanDeviceExtensionsRequired");
+	protected List<? > getFieldOrder() {
+		return Arrays.asList("SetTrackingSpace", "GetTrackingSpace", "WaitGetPoses", "GetLastPoses", "GetLastPoseForTrackedDeviceIndex", "Submit", "ClearLastSubmittedFrame", "PostPresentHandoff", "GetFrameTiming", "GetFrameTimings", "GetFrameTimeRemaining", "GetCumulativeStats", "FadeToColor", "GetCurrentFadeColor", "FadeGrid", "GetCurrentGridAlpha", "SetSkyboxOverride", "ClearSkyboxOverride", "CompositorBringToFront", "CompositorGoToBack", "CompositorQuit", "IsFullscreen", "GetCurrentSceneFocusProcess", "GetLastFrameRenderer", "CanRenderScene", "ShowMirrorWindow", "HideMirrorWindow", "IsMirrorWindowVisible", "CompositorDumpImages", "ShouldAppRenderWithLowResources", "ForceInterleavedReprojectionOn", "ForceReconnectProcess", "SuspendRendering", "GetMirrorTextureD3D11", "ReleaseMirrorTextureD3D11", "GetMirrorTextureGL", "ReleaseSharedGLTexture", "LockGLSharedTextureForAccess", "UnlockGLSharedTextureForAccess", "GetVulkanInstanceExtensionsRequired", "GetVulkanDeviceExtensionsRequired", "SetExplicitTimingMode", "SubmitExplicitTimingData");
 	}
 	public VR_IVRCompositor_FnTable(Pointer peer) {
 		super(peer);

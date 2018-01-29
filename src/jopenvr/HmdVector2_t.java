@@ -8,13 +8,13 @@ import java.util.List;
  * a tool written by <a href="http://ochafik.com/">Olivier Chafik</a> that <a href="http://code.google.com/p/jnaerator/wiki/CreditsAndLicense">uses a few opensource projects.</a>.<br>
  * For help, please visit <a href="http://nativelibs4java.googlecode.com/">NativeLibs4Java</a> , <a href="http://rococoa.dev.java.net/">Rococoa</a>, or <a href="http://jna.dev.java.net/">JNA</a>.
  */
-public class HmdVector2_t extends AlignedStructure {
+public class HmdVector2_t extends Structure {
 	/** float[2] */
 	public float[] v = new float[2];
 	public HmdVector2_t() {
 		super();
 	}
-	protected List<String> getFieldOrder() {
+	protected List<? > getFieldOrder() {
 		return Arrays.asList("v");
 	}
 	public HmdVector2_t(float v[]) {

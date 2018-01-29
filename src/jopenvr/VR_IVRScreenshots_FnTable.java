@@ -10,7 +10,7 @@ import java.util.List;
  * a tool written by <a href="http://ochafik.com/">Olivier Chafik</a> that <a href="http://code.google.com/p/jnaerator/wiki/CreditsAndLicense">uses a few opensource projects.</a>.<br>
  * For help, please visit <a href="http://nativelibs4java.googlecode.com/">NativeLibs4Java</a> , <a href="http://rococoa.dev.java.net/">Rococoa</a>, or <a href="http://jna.dev.java.net/">JNA</a>.
  */
-public class VR_IVRScreenshots_FnTable extends AlignedStructure {
+public class VR_IVRScreenshots_FnTable extends Structure {
 	public VR_IVRScreenshots_FnTable.RequestScreenshot_callback RequestScreenshot;
 	public VR_IVRScreenshots_FnTable.HookScreenshot_callback HookScreenshot;
 	public VR_IVRScreenshots_FnTable.GetScreenshotPropertyType_callback GetScreenshotPropertyType;
@@ -42,7 +42,7 @@ public class VR_IVRScreenshots_FnTable extends AlignedStructure {
 	public VR_IVRScreenshots_FnTable() {
 		super();
 	}
-	protected List<String> getFieldOrder() {
+	protected List<? > getFieldOrder() {
 		return Arrays.asList("RequestScreenshot", "HookScreenshot", "GetScreenshotPropertyType", "GetScreenshotPropertyFilename", "UpdateScreenshotProgress", "TakeStereoScreenshot", "SubmitScreenshot");
 	}
 	public VR_IVRScreenshots_FnTable(VR_IVRScreenshots_FnTable.RequestScreenshot_callback RequestScreenshot, VR_IVRScreenshots_FnTable.HookScreenshot_callback HookScreenshot, VR_IVRScreenshots_FnTable.GetScreenshotPropertyType_callback GetScreenshotPropertyType, VR_IVRScreenshots_FnTable.GetScreenshotPropertyFilename_callback GetScreenshotPropertyFilename, VR_IVRScreenshots_FnTable.UpdateScreenshotProgress_callback UpdateScreenshotProgress, VR_IVRScreenshots_FnTable.TakeStereoScreenshot_callback TakeStereoScreenshot, VR_IVRScreenshots_FnTable.SubmitScreenshot_callback SubmitScreenshot) {

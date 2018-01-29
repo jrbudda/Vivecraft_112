@@ -8,14 +8,14 @@ import java.util.List;
  * a tool written by <a href="http://ochafik.com/">Olivier Chafik</a> that <a href="http://code.google.com/p/jnaerator/wiki/CreditsAndLicense">uses a few opensource projects.</a>.<br>
  * For help, please visit <a href="http://nativelibs4java.googlecode.com/">NativeLibs4Java</a> , <a href="http://rococoa.dev.java.net/">Rococoa</a>, or <a href="http://jna.dev.java.net/">JNA</a>.
  */
-public class VROverlayIntersectionMaskPrimitive_t extends AlignedStructure {
+public class VROverlayIntersectionMaskPrimitive_t extends Structure {
 	/** @see EVROverlayIntersectionMaskPrimitiveType */
 	public int m_nPrimitiveType;
 	public VROverlayIntersectionMaskPrimitive_Data_t m_Primitive;
 	public VROverlayIntersectionMaskPrimitive_t() {
 		super();
 	}
-	protected List<String> getFieldOrder() {
+	protected List<? > getFieldOrder() {
 		return Arrays.asList("m_nPrimitiveType", "m_Primitive");
 	}
 	public VROverlayIntersectionMaskPrimitive_t(int m_nPrimitiveType, VROverlayIntersectionMaskPrimitive_Data_t m_Primitive) {

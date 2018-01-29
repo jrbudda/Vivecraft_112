@@ -13,7 +13,7 @@ import java.util.List;
  * a tool written by <a href="http://ochafik.com/">Olivier Chafik</a> that <a href="http://code.google.com/p/jnaerator/wiki/CreditsAndLicense">uses a few opensource projects.</a>.<br>
  * For help, please visit <a href="http://nativelibs4java.googlecode.com/">NativeLibs4Java</a> , <a href="http://rococoa.dev.java.net/">Rococoa</a>, or <a href="http://jna.dev.java.net/">JNA</a>.
  */
-public class VR_IVROverlay_FnTable extends AlignedStructure {
+public class VR_IVROverlay_FnTable extends Structure {
 	public VR_IVROverlay_FnTable.FindOverlay_callback FindOverlay;
 	public VR_IVROverlay_FnTable.CreateOverlay_callback CreateOverlay;
 	public VR_IVROverlay_FnTable.DestroyOverlay_callback DestroyOverlay;
@@ -21,6 +21,7 @@ public class VR_IVROverlay_FnTable extends AlignedStructure {
 	public VR_IVROverlay_FnTable.GetHighQualityOverlay_callback GetHighQualityOverlay;
 	public VR_IVROverlay_FnTable.GetOverlayKey_callback GetOverlayKey;
 	public VR_IVROverlay_FnTable.GetOverlayName_callback GetOverlayName;
+	public VR_IVROverlay_FnTable.SetOverlayName_callback SetOverlayName;
 	public VR_IVROverlay_FnTable.GetOverlayImageData_callback GetOverlayImageData;
 	public VR_IVROverlay_FnTable.GetOverlayErrorNameFromEnum_callback GetOverlayErrorNameFromEnum;
 	public VR_IVROverlay_FnTable.SetOverlayRenderingPid_callback SetOverlayRenderingPid;
@@ -43,6 +44,8 @@ public class VR_IVROverlay_FnTable extends AlignedStructure {
 	public VR_IVROverlay_FnTable.GetOverlayTextureColorSpace_callback GetOverlayTextureColorSpace;
 	public VR_IVROverlay_FnTable.SetOverlayTextureBounds_callback SetOverlayTextureBounds;
 	public VR_IVROverlay_FnTable.GetOverlayTextureBounds_callback GetOverlayTextureBounds;
+	public VR_IVROverlay_FnTable.GetOverlayRenderModel_callback GetOverlayRenderModel;
+	public VR_IVROverlay_FnTable.SetOverlayRenderModel_callback SetOverlayRenderModel;
 	public VR_IVROverlay_FnTable.GetOverlayTransformType_callback GetOverlayTransformType;
 	public VR_IVROverlay_FnTable.SetOverlayTransformAbsolute_callback SetOverlayTransformAbsolute;
 	public VR_IVROverlay_FnTable.GetOverlayTransformAbsolute_callback GetOverlayTransformAbsolute;
@@ -50,22 +53,25 @@ public class VR_IVROverlay_FnTable extends AlignedStructure {
 	public VR_IVROverlay_FnTable.GetOverlayTransformTrackedDeviceRelative_callback GetOverlayTransformTrackedDeviceRelative;
 	public VR_IVROverlay_FnTable.SetOverlayTransformTrackedDeviceComponent_callback SetOverlayTransformTrackedDeviceComponent;
 	public VR_IVROverlay_FnTable.GetOverlayTransformTrackedDeviceComponent_callback GetOverlayTransformTrackedDeviceComponent;
+	public VR_IVROverlay_FnTable.GetOverlayTransformOverlayRelative_callback GetOverlayTransformOverlayRelative;
+	public VR_IVROverlay_FnTable.SetOverlayTransformOverlayRelative_callback SetOverlayTransformOverlayRelative;
 	public VR_IVROverlay_FnTable.ShowOverlay_callback ShowOverlay;
 	public VR_IVROverlay_FnTable.HideOverlay_callback HideOverlay;
 	public VR_IVROverlay_FnTable.IsOverlayVisible_callback IsOverlayVisible;
-	public VR_IVROverlay_FnTable.GetTransformForOverlayinates_callback GetTransformForOverlayinates;
+	public VR_IVROverlay_FnTable.GetTransformForOverlayCoordinates_callback GetTransformForOverlayCoordinates;
 	public VR_IVROverlay_FnTable.PollNextOverlayEvent_callback PollNextOverlayEvent;
 	public VR_IVROverlay_FnTable.GetOverlayInputMethod_callback GetOverlayInputMethod;
 	public VR_IVROverlay_FnTable.SetOverlayInputMethod_callback SetOverlayInputMethod;
 	public VR_IVROverlay_FnTable.GetOverlayMouseScale_callback GetOverlayMouseScale;
 	public VR_IVROverlay_FnTable.SetOverlayMouseScale_callback SetOverlayMouseScale;
 	public VR_IVROverlay_FnTable.ComputeOverlayIntersection_callback ComputeOverlayIntersection;
-	public VR_IVROverlay_FnTable.HandleControllerOverlayInteractionAsMouse_callback HandleControllerOverlayInteractionAsMouse;
 	public VR_IVROverlay_FnTable.IsHoverTargetOverlay_callback IsHoverTargetOverlay;
 	public VR_IVROverlay_FnTable.GetGamepadFocusOverlay_callback GetGamepadFocusOverlay;
 	public VR_IVROverlay_FnTable.SetGamepadFocusOverlay_callback SetGamepadFocusOverlay;
 	public VR_IVROverlay_FnTable.SetOverlayNeighbor_callback SetOverlayNeighbor;
 	public VR_IVROverlay_FnTable.MoveGamepadFocusToNeighbor_callback MoveGamepadFocusToNeighbor;
+	public VR_IVROverlay_FnTable.SetOverlayDualAnalogTransform_callback SetOverlayDualAnalogTransform;
+	public VR_IVROverlay_FnTable.GetOverlayDualAnalogTransform_callback GetOverlayDualAnalogTransform;
 	public VR_IVROverlay_FnTable.SetOverlayTexture_callback SetOverlayTexture;
 	public VR_IVROverlay_FnTable.ClearOverlayTexture_callback ClearOverlayTexture;
 	public VR_IVROverlay_FnTable.SetOverlayRaw_callback SetOverlayRaw;
@@ -89,11 +95,12 @@ public class VR_IVROverlay_FnTable extends AlignedStructure {
 	public VR_IVROverlay_FnTable.SetOverlayIntersectionMask_callback SetOverlayIntersectionMask;
 	public VR_IVROverlay_FnTable.GetOverlayFlags_callback GetOverlayFlags;
 	public VR_IVROverlay_FnTable.ShowMessageOverlay_callback ShowMessageOverlay;
+	public VR_IVROverlay_FnTable.CloseMessageOverlay_callback CloseMessageOverlay;
 	public interface FindOverlay_callback extends Callback {
 		int apply(Pointer pchOverlayKey, LongByReference pOverlayHandle);
 	};
 	public interface CreateOverlay_callback extends Callback {
-		int apply(Pointer pchOverlayKey, Pointer pchOverlayFriendlyName, LongByReference pOverlayHandle);
+		int apply(Pointer pchOverlayKey, Pointer pchOverlayName, LongByReference pOverlayHandle);
 	};
 	public interface DestroyOverlay_callback extends Callback {
 		int apply(long ulOverlayHandle);
@@ -109,6 +116,9 @@ public class VR_IVROverlay_FnTable extends AlignedStructure {
 	};
 	public interface GetOverlayName_callback extends Callback {
 		int apply(long ulOverlayHandle, Pointer pchValue, int unBufferSize, IntByReference pError);
+	};
+	public interface SetOverlayName_callback extends Callback {
+		int apply(long ulOverlayHandle, Pointer pchName);
 	};
 	public interface GetOverlayImageData_callback extends Callback {
 		int apply(long ulOverlayHandle, Pointer pvBuffer, int unBufferSize, IntByReference punWidth, IntByReference punHeight);
@@ -176,6 +186,12 @@ public class VR_IVROverlay_FnTable extends AlignedStructure {
 	public interface GetOverlayTextureBounds_callback extends Callback {
 		int apply(long ulOverlayHandle, VRTextureBounds_t pOverlayTextureBounds);
 	};
+	public interface GetOverlayRenderModel_callback extends Callback {
+		int apply(long ulOverlayHandle, Pointer pchValue, int unBufferSize, HmdColor_t pColor, IntByReference pError);
+	};
+	public interface SetOverlayRenderModel_callback extends Callback {
+		int apply(long ulOverlayHandle, Pointer pchRenderModel, HmdColor_t pColor);
+	};
 	public interface GetOverlayTransformType_callback extends Callback {
 		int apply(long ulOverlayHandle, IntByReference peTransformType);
 	};
@@ -197,6 +213,12 @@ public class VR_IVROverlay_FnTable extends AlignedStructure {
 	public interface GetOverlayTransformTrackedDeviceComponent_callback extends Callback {
 		int apply(long ulOverlayHandle, IntByReference punDeviceIndex, Pointer pchComponentName, int unComponentNameSize);
 	};
+	public interface GetOverlayTransformOverlayRelative_callback extends Callback {
+		int apply(long ulOverlayHandle, LongByReference ulOverlayHandleParent, HmdMatrix34_t pmatParentOverlayToOverlayTransform);
+	};
+	public interface SetOverlayTransformOverlayRelative_callback extends Callback {
+		int apply(long ulOverlayHandle, long ulOverlayHandleParent, HmdMatrix34_t pmatParentOverlayToOverlayTransform);
+	};
 	public interface ShowOverlay_callback extends Callback {
 		int apply(long ulOverlayHandle);
 	};
@@ -206,7 +228,7 @@ public class VR_IVROverlay_FnTable extends AlignedStructure {
 	public interface IsOverlayVisible_callback extends Callback {
 		byte apply(long ulOverlayHandle);
 	};
-	public interface GetTransformForOverlayinates_callback extends Callback {
+	public interface GetTransformForOverlayCoordinates_callback extends Callback {
 		int apply(long ulOverlayHandle, int eTrackingOrigin, HmdVector2_t.ByValue coordinatesInOverlay, HmdMatrix34_t pmatTransform);
 	};
 	public interface PollNextOverlayEvent_callback extends Callback {
@@ -227,9 +249,6 @@ public class VR_IVROverlay_FnTable extends AlignedStructure {
 	public interface ComputeOverlayIntersection_callback extends Callback {
 		byte apply(long ulOverlayHandle, VROverlayIntersectionParams_t pParams, VROverlayIntersectionResults_t pResults);
 	};
-	public interface HandleControllerOverlayInteractionAsMouse_callback extends Callback {
-		byte apply(long ulOverlayHandle, int unControllerDeviceIndex);
-	};
 	public interface IsHoverTargetOverlay_callback extends Callback {
 		byte apply(long ulOverlayHandle);
 	};
@@ -244,6 +263,12 @@ public class VR_IVROverlay_FnTable extends AlignedStructure {
 	};
 	public interface MoveGamepadFocusToNeighbor_callback extends Callback {
 		int apply(int eDirection, long ulFrom);
+	};
+	public interface SetOverlayDualAnalogTransform_callback extends Callback {
+		int apply(long ulOverlay, int eWhich, HmdVector2_t vCenter, float fRadius);
+	};
+	public interface GetOverlayDualAnalogTransform_callback extends Callback {
+		int apply(long ulOverlay, int eWhich, HmdVector2_t pvCenter, FloatByReference pfRadius);
 	};
 	public interface SetOverlayTexture_callback extends Callback {
 		int apply(long ulOverlayHandle, Texture_t pTexture);
@@ -314,11 +339,14 @@ public class VR_IVROverlay_FnTable extends AlignedStructure {
 	public interface ShowMessageOverlay_callback extends Callback {
 		int apply(Pointer pchText, Pointer pchCaption, Pointer pchButton0Text, Pointer pchButton1Text, Pointer pchButton2Text, Pointer pchButton3Text);
 	};
+	public interface CloseMessageOverlay_callback extends Callback {
+		void apply();
+	};
 	public VR_IVROverlay_FnTable() {
 		super();
 	}
-	protected List<String> getFieldOrder() {
-		return Arrays.asList("FindOverlay", "CreateOverlay", "DestroyOverlay", "SetHighQualityOverlay", "GetHighQualityOverlay", "GetOverlayKey", "GetOverlayName", "GetOverlayImageData", "GetOverlayErrorNameFromEnum", "SetOverlayRenderingPid", "GetOverlayRenderingPid", "SetOverlayFlag", "GetOverlayFlag", "SetOverlayColor", "GetOverlayColor", "SetOverlayAlpha", "GetOverlayAlpha", "SetOverlayTexelAspect", "GetOverlayTexelAspect", "SetOverlaySortOrder", "GetOverlaySortOrder", "SetOverlayWidthInMeters", "GetOverlayWidthInMeters", "SetOverlayAutoCurveDistanceRangeInMeters", "GetOverlayAutoCurveDistanceRangeInMeters", "SetOverlayTextureColorSpace", "GetOverlayTextureColorSpace", "SetOverlayTextureBounds", "GetOverlayTextureBounds", "GetOverlayTransformType", "SetOverlayTransformAbsolute", "GetOverlayTransformAbsolute", "SetOverlayTransformTrackedDeviceRelative", "GetOverlayTransformTrackedDeviceRelative", "SetOverlayTransformTrackedDeviceComponent", "GetOverlayTransformTrackedDeviceComponent", "ShowOverlay", "HideOverlay", "IsOverlayVisible", "GetTransformForOverlayinates", "PollNextOverlayEvent", "GetOverlayInputMethod", "SetOverlayInputMethod", "GetOverlayMouseScale", "SetOverlayMouseScale", "ComputeOverlayIntersection", "HandleControllerOverlayInteractionAsMouse", "IsHoverTargetOverlay", "GetGamepadFocusOverlay", "SetGamepadFocusOverlay", "SetOverlayNeighbor", "MoveGamepadFocusToNeighbor", "SetOverlayTexture", "ClearOverlayTexture", "SetOverlayRaw", "SetOverlayFromFile", "GetOverlayTexture", "ReleaseNativeOverlayHandle", "GetOverlayTextureSize", "CreateDashboardOverlay", "IsDashboardVisible", "IsActiveDashboardOverlay", "SetDashboardOverlaySceneProcess", "GetDashboardOverlaySceneProcess", "ShowDashboard", "GetPrimaryDashboardDevice", "ShowKeyboard", "ShowKeyboardForOverlay", "GetKeyboardText", "HideKeyboard", "SetKeyboardTransformAbsolute", "SetKeyboardPositionForOverlay", "SetOverlayIntersectionMask", "GetOverlayFlags", "ShowMessageOverlay");
+	protected List<? > getFieldOrder() {
+		return Arrays.asList("FindOverlay", "CreateOverlay", "DestroyOverlay", "SetHighQualityOverlay", "GetHighQualityOverlay", "GetOverlayKey", "GetOverlayName", "SetOverlayName", "GetOverlayImageData", "GetOverlayErrorNameFromEnum", "SetOverlayRenderingPid", "GetOverlayRenderingPid", "SetOverlayFlag", "GetOverlayFlag", "SetOverlayColor", "GetOverlayColor", "SetOverlayAlpha", "GetOverlayAlpha", "SetOverlayTexelAspect", "GetOverlayTexelAspect", "SetOverlaySortOrder", "GetOverlaySortOrder", "SetOverlayWidthInMeters", "GetOverlayWidthInMeters", "SetOverlayAutoCurveDistanceRangeInMeters", "GetOverlayAutoCurveDistanceRangeInMeters", "SetOverlayTextureColorSpace", "GetOverlayTextureColorSpace", "SetOverlayTextureBounds", "GetOverlayTextureBounds", "GetOverlayRenderModel", "SetOverlayRenderModel", "GetOverlayTransformType", "SetOverlayTransformAbsolute", "GetOverlayTransformAbsolute", "SetOverlayTransformTrackedDeviceRelative", "GetOverlayTransformTrackedDeviceRelative", "SetOverlayTransformTrackedDeviceComponent", "GetOverlayTransformTrackedDeviceComponent", "GetOverlayTransformOverlayRelative", "SetOverlayTransformOverlayRelative", "ShowOverlay", "HideOverlay", "IsOverlayVisible", "GetTransformForOverlayCoordinates", "PollNextOverlayEvent", "GetOverlayInputMethod", "SetOverlayInputMethod", "GetOverlayMouseScale", "SetOverlayMouseScale", "ComputeOverlayIntersection", "IsHoverTargetOverlay", "GetGamepadFocusOverlay", "SetGamepadFocusOverlay", "SetOverlayNeighbor", "MoveGamepadFocusToNeighbor", "SetOverlayDualAnalogTransform", "GetOverlayDualAnalogTransform", "SetOverlayTexture", "ClearOverlayTexture", "SetOverlayRaw", "SetOverlayFromFile", "GetOverlayTexture", "ReleaseNativeOverlayHandle", "GetOverlayTextureSize", "CreateDashboardOverlay", "IsDashboardVisible", "IsActiveDashboardOverlay", "SetDashboardOverlaySceneProcess", "GetDashboardOverlaySceneProcess", "ShowDashboard", "GetPrimaryDashboardDevice", "ShowKeyboard", "ShowKeyboardForOverlay", "GetKeyboardText", "HideKeyboard", "SetKeyboardTransformAbsolute", "SetKeyboardPositionForOverlay", "SetOverlayIntersectionMask", "GetOverlayFlags", "ShowMessageOverlay", "CloseMessageOverlay");
 	}
 	public VR_IVROverlay_FnTable(Pointer peer) {
 		super(peer);

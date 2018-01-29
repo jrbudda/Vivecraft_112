@@ -10,7 +10,7 @@ import java.util.List;
  * a tool written by <a href="http://ochafik.com/">Olivier Chafik</a> that <a href="http://code.google.com/p/jnaerator/wiki/CreditsAndLicense">uses a few opensource projects.</a>.<br>
  * For help, please visit <a href="http://nativelibs4java.googlecode.com/">NativeLibs4Java</a> , <a href="http://rococoa.dev.java.net/">Rococoa</a>, or <a href="http://jna.dev.java.net/">JNA</a>.
  */
-public class VR_IVRApplications_FnTable extends AlignedStructure {
+public class VR_IVRApplications_FnTable extends Structure {
 	public VR_IVRApplications_FnTable.AddApplicationManifest_callback AddApplicationManifest;
 	public VR_IVRApplications_FnTable.RemoveApplicationManifest_callback RemoveApplicationManifest;
 	public VR_IVRApplications_FnTable.IsApplicationInstalled_callback IsApplicationInstalled;
@@ -41,6 +41,7 @@ public class VR_IVRApplications_FnTable extends AlignedStructure {
 	public VR_IVRApplications_FnTable.GetApplicationsTransitionStateNameFromEnum_callback GetApplicationsTransitionStateNameFromEnum;
 	public VR_IVRApplications_FnTable.IsQuitUserPromptRequested_callback IsQuitUserPromptRequested;
 	public VR_IVRApplications_FnTable.LaunchInternalProcess_callback LaunchInternalProcess;
+	public VR_IVRApplications_FnTable.GetCurrentSceneProcessId_callback GetCurrentSceneProcessId;
 	public interface AddApplicationManifest_callback extends Callback {
 		int apply(Pointer pchApplicationManifestFullPath, byte bTemporary);
 	};
@@ -131,11 +132,14 @@ public class VR_IVRApplications_FnTable extends AlignedStructure {
 	public interface LaunchInternalProcess_callback extends Callback {
 		int apply(Pointer pchBinaryPath, Pointer pchArguments, Pointer pchWorkingDirectory);
 	};
+	public interface GetCurrentSceneProcessId_callback extends Callback {
+		int apply();
+	};
 	public VR_IVRApplications_FnTable() {
 		super();
 	}
-	protected List<String> getFieldOrder() {
-		return Arrays.asList("AddApplicationManifest", "RemoveApplicationManifest", "IsApplicationInstalled", "GetApplicationCount", "GetApplicationKeyByIndex", "GetApplicationKeyByProcessId", "LaunchApplication", "LaunchTemplateApplication", "LaunchApplicationFromMimeType", "LaunchDashboardOverlay", "CancelApplicationLaunch", "IdentifyApplication", "GetApplicationProcessId", "GetApplicationsErrorNameFromEnum", "GetApplicationPropertyString", "GetApplicationPropertyBool", "GetApplicationPropertyUint64", "SetApplicationAutoLaunch", "GetApplicationAutoLaunch", "SetDefaultApplicationForMimeType", "GetDefaultApplicationForMimeType", "GetApplicationSupportedMimeTypes", "GetApplicationsThatSupportMimeType", "GetApplicationLaunchArguments", "GetStartingApplication", "GetTransitionState", "PerformApplicationPrelaunchCheck", "GetApplicationsTransitionStateNameFromEnum", "IsQuitUserPromptRequested", "LaunchInternalProcess");
+	protected List<? > getFieldOrder() {
+		return Arrays.asList("AddApplicationManifest", "RemoveApplicationManifest", "IsApplicationInstalled", "GetApplicationCount", "GetApplicationKeyByIndex", "GetApplicationKeyByProcessId", "LaunchApplication", "LaunchTemplateApplication", "LaunchApplicationFromMimeType", "LaunchDashboardOverlay", "CancelApplicationLaunch", "IdentifyApplication", "GetApplicationProcessId", "GetApplicationsErrorNameFromEnum", "GetApplicationPropertyString", "GetApplicationPropertyBool", "GetApplicationPropertyUint64", "SetApplicationAutoLaunch", "GetApplicationAutoLaunch", "SetDefaultApplicationForMimeType", "GetDefaultApplicationForMimeType", "GetApplicationSupportedMimeTypes", "GetApplicationsThatSupportMimeType", "GetApplicationLaunchArguments", "GetStartingApplication", "GetTransitionState", "PerformApplicationPrelaunchCheck", "GetApplicationsTransitionStateNameFromEnum", "IsQuitUserPromptRequested", "LaunchInternalProcess", "GetCurrentSceneProcessId");
 	}
 	public VR_IVRApplications_FnTable(Pointer peer) {
 		super(peer);

@@ -12,7 +12,7 @@ import jopenvr.JOpenVRLibrary.VkQueue_T;
  * a tool written by <a href="http://ochafik.com/">Olivier Chafik</a> that <a href="http://code.google.com/p/jnaerator/wiki/CreditsAndLicense">uses a few opensource projects.</a>.<br>
  * For help, please visit <a href="http://nativelibs4java.googlecode.com/">NativeLibs4Java</a> , <a href="http://rococoa.dev.java.net/">Rococoa</a>, or <a href="http://jna.dev.java.net/">JNA</a>.
  */
-public class VRVulkanTextureData_t extends AlignedStructure {
+public class VRVulkanTextureData_t extends Structure {
 	public long m_nImage;
 	/** struct VkDevice_T * */
 	public VkDevice_T m_pDevice;
@@ -30,7 +30,7 @@ public class VRVulkanTextureData_t extends AlignedStructure {
 	public VRVulkanTextureData_t() {
 		super();
 	}
-	protected List<String> getFieldOrder() {
+	protected List<? > getFieldOrder() {
 		return Arrays.asList("m_nImage", "m_pDevice", "m_pPhysicalDevice", "m_pInstance", "m_pQueue", "m_nQueueFamilyIndex", "m_nWidth", "m_nHeight", "m_nFormat", "m_nSampleCount");
 	}
 	public VRVulkanTextureData_t(Pointer peer) {

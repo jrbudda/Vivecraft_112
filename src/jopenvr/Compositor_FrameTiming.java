@@ -8,7 +8,7 @@ import java.util.List;
  * a tool written by <a href="http://ochafik.com/">Olivier Chafik</a> that <a href="http://code.google.com/p/jnaerator/wiki/CreditsAndLicense">uses a few opensource projects.</a>.<br>
  * For help, please visit <a href="http://nativelibs4java.googlecode.com/">NativeLibs4Java</a> , <a href="http://rococoa.dev.java.net/">Rococoa</a>, or <a href="http://jna.dev.java.net/">JNA</a>.
  */
-public class Compositor_FrameTiming extends AlignedStructure {
+public class Compositor_FrameTiming extends Structure {
 	public int m_nSize;
 	public int m_nFrameIndex;
 	public int m_nNumFramePresents;
@@ -36,7 +36,7 @@ public class Compositor_FrameTiming extends AlignedStructure {
 	public Compositor_FrameTiming() {
 		super();
 	}
-	protected List<String> getFieldOrder() {
+	protected List<? > getFieldOrder() {
 		return Arrays.asList("m_nSize", "m_nFrameIndex", "m_nNumFramePresents", "m_nNumMisPresented", "m_nNumDroppedFrames", "m_nReprojectionFlags", "m_flSystemTimeInSeconds", "m_flPreSubmitGpuMs", "m_flPostSubmitGpuMs", "m_flTotalRenderGpuMs", "m_flCompositorRenderGpuMs", "m_flCompositorRenderCpuMs", "m_flCompositorIdleCpuMs", "m_flClientFrameIntervalMs", "m_flPresentCallCpuMs", "m_flWaitForPresentCpuMs", "m_flSubmitFrameMs", "m_flWaitGetPosesCalledMs", "m_flNewPosesReadyMs", "m_flNewFrameReadyMs", "m_flCompositorUpdateStartMs", "m_flCompositorUpdateEndMs", "m_flCompositorRenderStartMs", "m_HmdPose");
 	}
 	public Compositor_FrameTiming(Pointer peer) {

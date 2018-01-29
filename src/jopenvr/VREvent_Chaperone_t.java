@@ -8,13 +8,13 @@ import java.util.List;
  * a tool written by <a href="http://ochafik.com/">Olivier Chafik</a> that <a href="http://code.google.com/p/jnaerator/wiki/CreditsAndLicense">uses a few opensource projects.</a>.<br>
  * For help, please visit <a href="http://nativelibs4java.googlecode.com/">NativeLibs4Java</a> , <a href="http://rococoa.dev.java.net/">Rococoa</a>, or <a href="http://jna.dev.java.net/">JNA</a>.
  */
-public class VREvent_Chaperone_t extends AlignedStructure {
+public class VREvent_Chaperone_t extends Structure {
 	public long m_nPreviousUniverse;
 	public long m_nCurrentUniverse;
 	public VREvent_Chaperone_t() {
 		super();
 	}
-	protected List<String> getFieldOrder() {
+	protected List<? > getFieldOrder() {
 		return Arrays.asList("m_nPreviousUniverse", "m_nCurrentUniverse");
 	}
 	public VREvent_Chaperone_t(long m_nPreviousUniverse, long m_nCurrentUniverse) {

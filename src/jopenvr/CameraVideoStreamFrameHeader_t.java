@@ -8,7 +8,7 @@ import java.util.List;
  * a tool written by <a href="http://ochafik.com/">Olivier Chafik</a> that <a href="http://code.google.com/p/jnaerator/wiki/CreditsAndLicense">uses a few opensource projects.</a>.<br>
  * For help, please visit <a href="http://nativelibs4java.googlecode.com/">NativeLibs4Java</a> , <a href="http://rococoa.dev.java.net/">Rococoa</a>, or <a href="http://jna.dev.java.net/">JNA</a>.
  */
-public class CameraVideoStreamFrameHeader_t extends AlignedStructure {
+public class CameraVideoStreamFrameHeader_t extends Structure {
 	/** @see EVRTrackedCameraFrameType */
 	public int eFrameType;
 	public int nWidth;
@@ -19,7 +19,7 @@ public class CameraVideoStreamFrameHeader_t extends AlignedStructure {
 	public CameraVideoStreamFrameHeader_t() {
 		super();
 	}
-	protected List<String> getFieldOrder() {
+	protected List<? > getFieldOrder() {
 		return Arrays.asList("eFrameType", "nWidth", "nHeight", "nBytesPerPixel", "nFrameSequence", "standingTrackedDevicePose");
 	}
 	public CameraVideoStreamFrameHeader_t(int eFrameType, int nWidth, int nHeight, int nBytesPerPixel, int nFrameSequence, TrackedDevicePose_t standingTrackedDevicePose) {

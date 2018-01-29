@@ -10,7 +10,7 @@ import java.util.List;
  * a tool written by <a href="http://ochafik.com/">Olivier Chafik</a> that <a href="http://code.google.com/p/jnaerator/wiki/CreditsAndLicense">uses a few opensource projects.</a>.<br>
  * For help, please visit <a href="http://nativelibs4java.googlecode.com/">NativeLibs4Java</a> , <a href="http://rococoa.dev.java.net/">Rococoa</a>, or <a href="http://jna.dev.java.net/">JNA</a>.
  */
-public class VR_IVRChaperone_FnTable extends AlignedStructure {
+public class VR_IVRChaperone_FnTable extends Structure {
 	public VR_IVRChaperone_FnTable.GetCalibrationState_callback GetCalibrationState;
 	public VR_IVRChaperone_FnTable.GetPlayAreaSize_callback GetPlayAreaSize;
 	public VR_IVRChaperone_FnTable.GetPlayAreaRect_callback GetPlayAreaRect;
@@ -46,7 +46,7 @@ public class VR_IVRChaperone_FnTable extends AlignedStructure {
 	public VR_IVRChaperone_FnTable() {
 		super();
 	}
-	protected List<String> getFieldOrder() {
+	protected List<? > getFieldOrder() {
 		return Arrays.asList("GetCalibrationState", "GetPlayAreaSize", "GetPlayAreaRect", "ReloadInfo", "SetSceneColor", "GetBoundsColor", "AreBoundsVisible", "ForceBoundsVisible");
 	}
 	public VR_IVRChaperone_FnTable(VR_IVRChaperone_FnTable.GetCalibrationState_callback GetCalibrationState, VR_IVRChaperone_FnTable.GetPlayAreaSize_callback GetPlayAreaSize, VR_IVRChaperone_FnTable.GetPlayAreaRect_callback GetPlayAreaRect, VR_IVRChaperone_FnTable.ReloadInfo_callback ReloadInfo, VR_IVRChaperone_FnTable.SetSceneColor_callback SetSceneColor, VR_IVRChaperone_FnTable.GetBoundsColor_callback GetBoundsColor, VR_IVRChaperone_FnTable.AreBoundsVisible_callback AreBoundsVisible, VR_IVRChaperone_FnTable.ForceBoundsVisible_callback ForceBoundsVisible) {

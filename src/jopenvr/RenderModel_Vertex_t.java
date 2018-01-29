@@ -8,7 +8,7 @@ import java.util.List;
  * a tool written by <a href="http://ochafik.com/">Olivier Chafik</a> that <a href="http://code.google.com/p/jnaerator/wiki/CreditsAndLicense">uses a few opensource projects.</a>.<br>
  * For help, please visit <a href="http://nativelibs4java.googlecode.com/">NativeLibs4Java</a> , <a href="http://rococoa.dev.java.net/">Rococoa</a>, or <a href="http://jna.dev.java.net/">JNA</a>.
  */
-public class RenderModel_Vertex_t extends AlignedStructure {
+public class RenderModel_Vertex_t extends Structure {
 	public HmdVector3_t vPosition;
 	public HmdVector3_t vNormal;
 	/** float[2] */
@@ -16,7 +16,7 @@ public class RenderModel_Vertex_t extends AlignedStructure {
 	public RenderModel_Vertex_t() {
 		super();
 	}
-	protected List<String> getFieldOrder() {
+	protected List<? > getFieldOrder() {
 		return Arrays.asList("vPosition", "vNormal", "rfTextureCoord");
 	}
 	public RenderModel_Vertex_t(HmdVector3_t vPosition, HmdVector3_t vNormal, float rfTextureCoord[]) {
