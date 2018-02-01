@@ -108,9 +108,9 @@ public class MinecriftClassTransformer implements IClassTransformer
 
             if (zipFile != null)
             {
-                debug("Minecrift ClassTransformer");
-                debug("Minecrift URL: " + url);
-                debug("Minecrift ZIP file: " + zipFile.getName());
+                debug("Vivecraft ClassTransformer");
+                debug("Vivecraft URL: " + url);
+                debug("Vivecraft ZIP file: " + zipFile.getName());
                 mcZipURL = url;
                 return zipFile;
             }
@@ -126,7 +126,7 @@ public class MinecriftClassTransformer implements IClassTransformer
 		    	byte[] minecriftClass = this.getMinecriftClass(name);
 		
 		    	if (minecriftClass == null) {
-		    		if (DEBUG) debug(String.format("Minecrift: Passthrough %s %s", name, transformedName));
+		    		if (DEBUG) debug(String.format("Vivecraft: Passthrough %s %s", name, transformedName));
 		    		if (DEBUG) writeToFile("original", transformedName , "", bytes);
 		    	}
 		    	else {
@@ -136,7 +136,7 @@ public class MinecriftClassTransformer implements IClassTransformer
 		    		minecriftClass = performAsmModification(minecriftClass, transformedName);
 		    		
 		    		if(bytes.length != minecriftClass.length) {
-		    			debug(String.format("Minecrift: Overwrite %s %s (%d != %d)", name, transformedName, bytes.length, minecriftClass.length));
+		    			debug(String.format("Vivecraft: Overwrite %s %s (%d != %d)", name, transformedName, bytes.length, minecriftClass.length));
 		    			myClasses.add(transformedName);
 		    		}
 		    		if (DEBUG) writeToFile("original", transformedName, "", bytes);

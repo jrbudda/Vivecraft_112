@@ -137,7 +137,7 @@ def create_install(mcp_dir):
     replacelineinfile( installer_java_file, "private static final String OF_JSON_NAME",      "    private static final String OF_JSON_NAME      = \"%s\";\n" % of_json_name );
     replacelineinfile( installer_java_file, "private static final String OF_MD5",            "    private static final String OF_MD5            = \"%s\";\n" % of_file_md5 );
     replacelineinfile( installer_java_file, "private static final String OF_VERSION_EXT",    "    private static final String OF_VERSION_EXT    = \"%s\";\n" % of_file_extension );
-    replacelineinfile( installer_java_file, "private static final String FORGE_VERSION",     "    private static final String FORGE_VERSION     = \"%s\";\n" % forge_version );
+    replacelineinfile( installer_java_file, "private static String FORGE_VERSION",     "    private static String FORGE_VERSION     = \"%s\";\n" % forge_version );
 
     # Build installer.java
     print "Recompiling Installer.java..."
