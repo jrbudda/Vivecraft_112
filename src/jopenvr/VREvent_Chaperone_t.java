@@ -14,7 +14,7 @@ public class VREvent_Chaperone_t extends Structure {
 	public VREvent_Chaperone_t() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("m_nPreviousUniverse", "m_nCurrentUniverse");
 	}
 	public VREvent_Chaperone_t(long m_nPreviousUniverse, long m_nCurrentUniverse) {

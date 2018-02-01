@@ -15,7 +15,7 @@ public class RenderModel_ComponentState_t extends Structure {
 	public RenderModel_ComponentState_t() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("mTrackingToComponentRenderModel", "mTrackingToComponentLocal", "uProperties");
 	}
 	public RenderModel_ComponentState_t(HmdMatrix34_t mTrackingToComponentRenderModel, HmdMatrix34_t mTrackingToComponentLocal, int uProperties) {

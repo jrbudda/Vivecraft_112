@@ -18,7 +18,7 @@ public class VREvent_DualAnalog_t extends Structure {
 	public VREvent_DualAnalog_t() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("x", "y", "transformedX", "transformedY", "which");
 	}
 	public VREvent_DualAnalog_t(float x, float y, float transformedX, float transformedY, int which) {

@@ -39,7 +39,7 @@ public class COpenVRContext extends Structure {
 	public COpenVRContext() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("m_pVRSystem", "m_pVRChaperone", "m_pVRChaperoneSetup", "m_pVRCompositor", "m_pVROverlay", "m_pVRResources", "m_pVRRenderModels", "m_pVRExtendedDisplay", "m_pVRSettings", "m_pVRApplications", "m_pVRTrackedCamera", "m_pVRScreenshots", "m_pVRDriverManager");
 	}
 	public COpenVRContext(Pointer peer) {

@@ -42,7 +42,7 @@ public class VR_IVRScreenshots_FnTable extends Structure {
 	public VR_IVRScreenshots_FnTable() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("RequestScreenshot", "HookScreenshot", "GetScreenshotPropertyType", "GetScreenshotPropertyFilename", "UpdateScreenshotProgress", "TakeStereoScreenshot", "SubmitScreenshot");
 	}
 	public VR_IVRScreenshots_FnTable(VR_IVRScreenshots_FnTable.RequestScreenshot_callback RequestScreenshot, VR_IVRScreenshots_FnTable.HookScreenshot_callback HookScreenshot, VR_IVRScreenshots_FnTable.GetScreenshotPropertyType_callback GetScreenshotPropertyType, VR_IVRScreenshots_FnTable.GetScreenshotPropertyFilename_callback GetScreenshotPropertyFilename, VR_IVRScreenshots_FnTable.UpdateScreenshotProgress_callback UpdateScreenshotProgress, VR_IVRScreenshots_FnTable.TakeStereoScreenshot_callback TakeStereoScreenshot, VR_IVRScreenshots_FnTable.SubmitScreenshot_callback SubmitScreenshot) {

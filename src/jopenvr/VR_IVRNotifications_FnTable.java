@@ -22,7 +22,7 @@ public class VR_IVRNotifications_FnTable extends Structure {
 	public VR_IVRNotifications_FnTable() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("CreateNotification", "RemoveNotification");
 	}
 	public VR_IVRNotifications_FnTable(VR_IVRNotifications_FnTable.CreateNotification_callback CreateNotification, VR_IVRNotifications_FnTable.RemoveNotification_callback RemoveNotification) {

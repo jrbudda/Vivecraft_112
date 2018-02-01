@@ -15,7 +15,7 @@ public class IntersectionMaskCircle_t extends Structure {
 	public IntersectionMaskCircle_t() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("m_flCenterX", "m_flCenterY", "m_flRadius");
 	}
 	public IntersectionMaskCircle_t(float m_flCenterX, float m_flCenterY, float m_flRadius) {

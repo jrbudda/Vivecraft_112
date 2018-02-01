@@ -21,7 +21,7 @@ public class VR_IVRDriverManager_FnTable extends Structure {
 	public VR_IVRDriverManager_FnTable() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("GetDriverCount", "GetDriverName");
 	}
 	public VR_IVRDriverManager_FnTable(VR_IVRDriverManager_FnTable.GetDriverCount_callback GetDriverCount, VR_IVRDriverManager_FnTable.GetDriverName_callback GetDriverName) {

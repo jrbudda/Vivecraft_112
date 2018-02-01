@@ -13,7 +13,7 @@ public class VREvent_Status_t extends Structure {
 	public VREvent_Status_t() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("statusState");
 	}
 	public VREvent_Status_t(int statusState) {

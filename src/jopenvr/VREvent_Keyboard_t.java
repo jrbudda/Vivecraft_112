@@ -15,7 +15,7 @@ public class VREvent_Keyboard_t extends Structure {
 	public VREvent_Keyboard_t() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("cNewInput", "uUserValue");
 	}
 	public VREvent_Keyboard_t(Pointer cNewInput[], long uUserValue) {

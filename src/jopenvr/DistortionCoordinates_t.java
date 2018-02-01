@@ -18,7 +18,7 @@ public class DistortionCoordinates_t extends Structure {
 	public DistortionCoordinates_t() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("rfRed", "rfGreen", "rfBlue");
 	}
 	public DistortionCoordinates_t(float rfRed[], float rfGreen[], float rfBlue[]) {

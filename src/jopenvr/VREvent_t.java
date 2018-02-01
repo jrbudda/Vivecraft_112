@@ -8,7 +8,7 @@ import java.util.List;
  * a tool written by <a href="http://ochafik.com/">Olivier Chafik</a> that <a href="http://code.google.com/p/jnaerator/wiki/CreditsAndLicense">uses a few opensource projects.</a>.<br>
  * For help, please visit <a href="http://nativelibs4java.googlecode.com/">NativeLibs4Java</a> , <a href="http://rococoa.dev.java.net/">Rococoa</a>, or <a href="http://jna.dev.java.net/">JNA</a>.
  */
-public class VREvent_t extends Structure {
+public class VREvent_t extends MispackedStructure {
 	/** EVREventType enum */
 	public int eventType;
 	public int trackedDeviceIndex;
@@ -17,7 +17,7 @@ public class VREvent_t extends Structure {
 	public VREvent_t() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("eventType", "trackedDeviceIndex", "eventAgeSeconds", "data");
 	}
 	public VREvent_t(int eventType, int trackedDeviceIndex, float eventAgeSeconds, VREvent_Data_t data) {

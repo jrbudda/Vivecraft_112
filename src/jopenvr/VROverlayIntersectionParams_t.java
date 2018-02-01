@@ -16,7 +16,7 @@ public class VROverlayIntersectionParams_t extends Structure {
 	public VROverlayIntersectionParams_t() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("vSource", "vDirection", "eOrigin");
 	}
 	public VROverlayIntersectionParams_t(HmdVector3_t vSource, HmdVector3_t vDirection, int eOrigin) {

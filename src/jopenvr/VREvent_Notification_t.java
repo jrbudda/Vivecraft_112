@@ -14,7 +14,7 @@ public class VREvent_Notification_t extends Structure {
 	public VREvent_Notification_t() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("ulUserValue", "notificationId");
 	}
 	public VREvent_Notification_t(long ulUserValue, int notificationId) {

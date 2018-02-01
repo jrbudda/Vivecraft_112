@@ -17,7 +17,7 @@ public class VREvent_HapticVibration_t extends Structure {
 	public VREvent_HapticVibration_t() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("containerHandle", "componentHandle", "fDurationSeconds", "fFrequency", "fAmplitude");
 	}
 	public VREvent_HapticVibration_t(long containerHandle, long componentHandle, float fDurationSeconds, float fFrequency, float fAmplitude) {

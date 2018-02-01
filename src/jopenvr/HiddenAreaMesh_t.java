@@ -15,7 +15,7 @@ public class HiddenAreaMesh_t extends Structure {
 	public HiddenAreaMesh_t() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("pVertexData", "unTriangleCount");
 	}
 	public HiddenAreaMesh_t(jopenvr.HmdVector2_t.ByReference pVertexData, int unTriangleCount) {

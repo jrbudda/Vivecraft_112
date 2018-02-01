@@ -537,7 +537,15 @@
      }
  
      /**
-@@ -1032,7 +1232,7 @@
+@@ -975,6 +1175,7 @@
+         float f = 0.8F;
+         boolean flag2 = this.movementInput.moveForward >= 0.8F;
+         this.movementInput.updatePlayerMoveState();
++        this.mc.vrPlayer.doLookOverride(mc.vrPlayer.vrdata_world_pre);
+         this.mc.getTutorial().handleMovement(this.movementInput);
+ 
+         if (this.isHandActive() && !this.isRiding())
+@@ -1032,7 +1233,7 @@
                      this.sendPlayerAbilities();
                  }
              }
@@ -546,7 +554,7 @@
              {
                  if (this.flyToggleTimer == 0)
                  {
-@@ -1120,6 +1320,10 @@
+@@ -1120,6 +1321,10 @@
  
          super.onLivingUpdate();
  
@@ -557,7 +565,7 @@
          if (this.onGround && this.capabilities.isFlying && !this.mc.playerController.isSpectatorMode())
          {
              this.capabilities.isFlying = false;
-@@ -1139,7 +1343,7 @@
+@@ -1139,7 +1344,7 @@
          {
              EntityBoat entityboat = (EntityBoat)this.getRidingEntity();
              entityboat.updateInputs(this.movementInput.leftKeyDown, this.movementInput.rightKeyDown, this.movementInput.forwardKeyDown, this.movementInput.backKeyDown);
@@ -566,7 +574,7 @@
          }
      }
  
-@@ -1170,10 +1374,40 @@
+@@ -1170,10 +1375,40 @@
       */
      public void move(MoverType type, double x, double y, double z)
      {
@@ -611,7 +619,7 @@
      }
  
      public boolean isAutoJumpEnabled()
-@@ -1199,12 +1433,16 @@
+@@ -1199,12 +1434,16 @@
                      float f = this.getAIMoveSpeed();
                      float f1 = (float)vec3d2.lengthSquared();
  
@@ -630,7 +638,7 @@
                          vec3d2 = new Vec3d((double)(f2 * f5 - f3 * f4), vec3d2.y, (double)(f3 * f5 + f2 * f4));
                          f1 = (float)vec3d2.lengthSquared();
  
-@@ -1324,4 +1562,381 @@
+@@ -1324,4 +1563,381 @@
              }
          }
      }

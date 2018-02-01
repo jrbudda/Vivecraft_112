@@ -147,7 +147,6 @@ public class OpenVRPlayer
 
 	public void preTick(){
 		
-
 		this.vrdata_world_pre = new VRData(this.roomOrigin, mc.vrSettings.walkMultiplier, worldScale, (float) Math.toRadians(mc.vrSettings.vrWorldRotation));
 
 		if(mc.vrSettings.seated)
@@ -871,7 +870,7 @@ public class OpenVRPlayer
 
 
 	public void doLookOverride(VRData data){
-		EntityPlayer entity = this.mc.player;
+		EntityPlayerSP entity = this.mc.player;
 		if(entity == null)return;
 		//This is used for all sorts of things both client and server side.
 
@@ -894,7 +893,7 @@ public class OpenVRPlayer
 		
 		ItemStack i = ((EntityPlayerSP) entity).inventory.getCurrentItem();
 
-		if(entity.isElytraFlying() || (entity.isRiding() && entity.moveForward > 0)){
+		if((entity.isSprinting() && entity.movementInput.jump) || entity.isElytraFlying() || (entity.isRiding() && entity.moveForward > 0)){
 			//us needed for server side movement.
 			if(mc.vrSettings.vrFreeMoveMode == mc.vrSettings.FREEMOVE_HMD ){
 				entity.rotationYawHead = entity.rotationYaw = data.hmd.getYaw();
@@ -909,7 +908,7 @@ public class OpenVRPlayer
 				i.getItem() == Items.POTIONITEM  
 				) {
 			//use r_hand aim
-			entity.rotationYawHead =	entity.rotationYaw =  data.getController(0).getYaw();
+			entity.rotationYawHead = entity.rotationYaw =  data.getController(0).getYaw();
 			entity.rotationPitch = -data.getController(0).getPitch();
 		} else if (BowTracker.isHoldingBowEither(entity) && mc.bowTracker.isNotched()){
 			//use bow aim

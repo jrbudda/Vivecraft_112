@@ -14,7 +14,7 @@ public class HmdMatrix44_t extends Structure {
 	public HmdMatrix44_t() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("m");
 	}
 	public HmdMatrix44_t(float m[]) {

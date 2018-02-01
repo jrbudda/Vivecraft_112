@@ -13,7 +13,7 @@ public class VREvent_Overlay_t extends Structure {
 	public VREvent_Overlay_t() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("overlayHandle");
 	}
 	public VREvent_Overlay_t(long overlayHandle) {

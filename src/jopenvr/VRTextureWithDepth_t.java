@@ -13,7 +13,7 @@ public class VRTextureWithDepth_t extends Structure {
 	public VRTextureWithDepth_t() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("depth");
 	}
 	public VRTextureWithDepth_t(VRTextureDepthInfo_t depth) {

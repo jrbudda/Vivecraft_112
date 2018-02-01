@@ -21,7 +21,7 @@ public class VR_IVRResources_FnTable extends Structure {
 	public VR_IVRResources_FnTable() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("LoadSharedResource", "GetResourceFullPath");
 	}
 	public VR_IVRResources_FnTable(VR_IVRResources_FnTable.LoadSharedResource_callback LoadSharedResource, VR_IVRResources_FnTable.GetResourceFullPath_callback GetResourceFullPath) {

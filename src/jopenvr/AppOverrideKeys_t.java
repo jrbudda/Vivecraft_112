@@ -16,7 +16,7 @@ public class AppOverrideKeys_t extends Structure {
 	public AppOverrideKeys_t() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("pchKey", "pchValue");
 	}
 	public AppOverrideKeys_t(Pointer pchKey, Pointer pchValue) {

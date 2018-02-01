@@ -267,23 +267,20 @@ public class MCOpenVR
 		String osname = System.getProperty("os.name").toLowerCase();
 		String osarch= System.getProperty("os.arch").toLowerCase();
 
-		String osFolder = "win32";
-		
-		if (osname.contains("windows")){	
-			if (osarch.contains("64"))
-			{
-				osFolder = "win64";
-			}
-		}
-		else if( osname.contains("linux")){
-			osFolder = "linux32";
-			if (osarch.contains("64"))
-			{
-				osFolder = "linux64";
-			}
+		String osFolder = "win";
+	
+		if( osname.contains("linux")){
+			osFolder = "linux";
 		}
 		else if( osname.contains("mac")){
 			osFolder = "osx";
+		}
+		
+		if (osarch.contains("64"))
+		{
+			osFolder += "64";
+		} else {
+			osFolder += "32";
 		}
 		
 		Utils.unpackNatives(osFolder);
@@ -561,6 +558,10 @@ public class MCOpenVR
     		controllerComponentTransforms = new HashMap<String, Matrix4f[]>();
     	}
     	
+    	if(controllerComponentNames == null) {
+    		controllerComponentNames = new HashMap<Long, String>();
+    	}
+    	
     	int count = vrRenderModels.GetRenderModelCount.apply();
     	Pointer pointer = new Memory(JOpenVRLibrary.k_unMaxPropertyStringSize);
 
@@ -591,6 +592,7 @@ public class MCOpenVR
     				Matrix4f xform = new Matrix4f();
     				OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(componentState.mTrackingToComponentLocal, xform);
     				controllerComponentTransforms.get(comp)[i] = xform;
+    				//System.out.println("Transform: " + comp + "controller: " + i +" button: " + button + "\r" + Utils.convertOVRMatrix(xform).toString());
     		}
     	}
 	}
@@ -700,12 +702,15 @@ public class MCOpenVR
 
 	private String lasttyped = "";
 
+	public static boolean paused =false; 
 	
 	public static void poll(long frameIndex)
 	{
 		Minecraft.getMinecraft().mcProfiler.startSection("input");
 		boolean sleeping = (mc.world !=null && mc.player != null && mc.player.isPlayerSleeping());		
-
+	
+		paused = vrsystem.ShouldApplicationPause.apply() != 0;
+		
 		if(!mc.vrSettings.seated){
 
 			for (TrackedController controller : controllers) {
@@ -1616,6 +1621,13 @@ public class MCOpenVR
 				break;
 			case EVREventType.EVREventType_VREvent_Quit:
 				mc.shutdown();
+				break;
+			case EVREventType.EVREventType_VREvent_TrackedDeviceActivated:
+			case EVREventType.EVREventType_VREvent_TrackedDeviceDeactivated:
+			case EVREventType.EVREventType_VREvent_TrackedDeviceRoleChanged:
+			case EVREventType.EVREventType_VREvent_TrackedDeviceUpdated:
+			case EVREventType.EVREventType_VREvent_ModelSkinSettingsHaveChanged:
+				controllerComponentTransforms = null;
 				break;
 			default:
 				break;

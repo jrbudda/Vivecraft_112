@@ -46,7 +46,7 @@ public class VR_IVRChaperone_FnTable extends Structure {
 	public VR_IVRChaperone_FnTable() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("GetCalibrationState", "GetPlayAreaSize", "GetPlayAreaRect", "ReloadInfo", "SetSceneColor", "GetBoundsColor", "AreBoundsVisible", "ForceBoundsVisible");
 	}
 	public VR_IVRChaperone_FnTable(VR_IVRChaperone_FnTable.GetCalibrationState_callback GetCalibrationState, VR_IVRChaperone_FnTable.GetPlayAreaSize_callback GetPlayAreaSize, VR_IVRChaperone_FnTable.GetPlayAreaRect_callback GetPlayAreaRect, VR_IVRChaperone_FnTable.ReloadInfo_callback ReloadInfo, VR_IVRChaperone_FnTable.SetSceneColor_callback SetSceneColor, VR_IVRChaperone_FnTable.GetBoundsColor_callback GetBoundsColor, VR_IVRChaperone_FnTable.AreBoundsVisible_callback AreBoundsVisible, VR_IVRChaperone_FnTable.ForceBoundsVisible_callback ForceBoundsVisible) {

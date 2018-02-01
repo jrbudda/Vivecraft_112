@@ -13,7 +13,7 @@ public class VREvent_Controller_t extends Structure {
 	public VREvent_Controller_t() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("button");
 	}
 	public VREvent_Controller_t(int button) {

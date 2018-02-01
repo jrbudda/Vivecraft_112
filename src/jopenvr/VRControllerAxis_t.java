@@ -14,7 +14,7 @@ public class VRControllerAxis_t extends Structure {
 	public VRControllerAxis_t() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("x", "y");
 	}
 	public VRControllerAxis_t(float x, float y) {

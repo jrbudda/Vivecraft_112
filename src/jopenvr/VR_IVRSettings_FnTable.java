@@ -62,7 +62,7 @@ public class VR_IVRSettings_FnTable extends Structure {
 	public VR_IVRSettings_FnTable() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("GetSettingsErrorNameFromEnum", "Sync", "SetBool", "SetInt32", "SetFloat", "SetString", "GetBool", "GetInt32", "GetFloat", "GetString", "RemoveSection", "RemoveKeyInSection");
 	}
 	public VR_IVRSettings_FnTable(Pointer peer) {

@@ -64,7 +64,7 @@ public class VR_IVRTrackedCamera_FnTable extends Structure {
 	public VR_IVRTrackedCamera_FnTable() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("GetCameraErrorNameFromEnum", "HasCamera", "GetCameraFrameSize", "GetCameraIntrinsics", "GetCameraProjection", "AcquireVideoStreamingService", "ReleaseVideoStreamingService", "GetVideoStreamFrameBuffer", "GetVideoStreamTextureSize", "GetVideoStreamTextureD3D11", "GetVideoStreamTextureGL", "ReleaseVideoStreamTextureGL");
 	}
 	public VR_IVRTrackedCamera_FnTable(Pointer peer) {

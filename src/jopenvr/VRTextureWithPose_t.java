@@ -13,7 +13,7 @@ public class VRTextureWithPose_t extends Structure {
 	public VRTextureWithPose_t() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("mDeviceToAbsoluteTracking");
 	}
 	public VRTextureWithPose_t(HmdMatrix34_t mDeviceToAbsoluteTracking) {

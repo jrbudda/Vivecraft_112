@@ -16,7 +16,7 @@ public class HmdColor_t extends Structure {
 	public HmdColor_t() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("r", "g", "b", "a");
 	}
 	public HmdColor_t(float r, float g, float b, float a) {

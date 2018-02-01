@@ -19,7 +19,7 @@ public class TrackedDevicePose_t extends Structure {
 	public TrackedDevicePose_t() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("mDeviceToAbsoluteTracking", "vVelocity", "vAngularVelocity", "eTrackingResult", "bPoseIsValid", "bDeviceIsConnected");
 	}
 	public TrackedDevicePose_t(HmdMatrix34_t mDeviceToAbsoluteTracking, HmdVector3_t vVelocity, HmdVector3_t vAngularVelocity, int eTrackingResult, byte bPoseIsValid, byte bDeviceIsConnected) {

@@ -16,7 +16,7 @@ public class VRTextureDepthInfo_t extends Structure {
 	public VRTextureDepthInfo_t() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("handle", "mProjection", "vRange");
 	}
 	public VRTextureDepthInfo_t(Pointer handle, HmdMatrix44_t mProjection, HmdVector2_t vRange) {

@@ -13,7 +13,7 @@ public class VREvent_Ipd_t extends Structure {
 	public VREvent_Ipd_t() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("ipdMeters");
 	}
 	public VREvent_Ipd_t(float ipdMeters) {

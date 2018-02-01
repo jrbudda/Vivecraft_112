@@ -13,7 +13,7 @@ public class VREvent_ScreenshotProgress_t extends Structure {
 	public VREvent_ScreenshotProgress_t() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("progress");
 	}
 	public VREvent_ScreenshotProgress_t(float progress) {

@@ -13,7 +13,7 @@ public class VREvent_SeatedZeroPoseReset_t extends Structure {
 	public VREvent_SeatedZeroPoseReset_t() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("bResetBySystemMenu");
 	}
 	public VREvent_SeatedZeroPoseReset_t(byte bResetBySystemMenu) {

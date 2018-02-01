@@ -16,7 +16,7 @@ public class VROverlayIntersectionResults_t extends Structure {
 	public VROverlayIntersectionResults_t() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("vPoint", "vNormal", "vUVs", "fDistance");
 	}
 	public VROverlayIntersectionResults_t(HmdVector3_t vPoint, HmdVector3_t vNormal, HmdVector2_t vUVs, float fDistance) {

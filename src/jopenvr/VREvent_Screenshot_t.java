@@ -14,7 +14,7 @@ public class VREvent_Screenshot_t extends Structure {
 	public VREvent_Screenshot_t() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("handle", "type");
 	}
 	public VREvent_Screenshot_t(int handle, int type) {

@@ -16,7 +16,7 @@ public class VRTextureBounds_t extends Structure {
 	public VRTextureBounds_t() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("uMin", "vMin", "uMax", "vMax");
 	}
 	public VRTextureBounds_t(float uMin, float vMin, float uMax, float vMax) {

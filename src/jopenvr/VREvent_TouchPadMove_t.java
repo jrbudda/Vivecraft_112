@@ -18,7 +18,7 @@ public class VREvent_TouchPadMove_t extends Structure {
 	public VREvent_TouchPadMove_t() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("bFingerDown", "flSecondsFingerDown", "fValueXFirst", "fValueYFirst", "fValueXRaw", "fValueYRaw");
 	}
 	public VREvent_TouchPadMove_t(byte bFingerDown, float flSecondsFingerDown, float fValueXFirst, float fValueYFirst, float fValueXRaw, float fValueYRaw) {

@@ -228,7 +228,7 @@ public class PlayerModelController {
 	public boolean debug = false;
 
 	public boolean isTracked(UUID uuid){
-		this.debug = false;
+		debug = false;
 		if(debug) return true;
 		return vivePlayers.containsKey(uuid);
 	}

@@ -16,7 +16,7 @@ public class RenderModel_Vertex_t extends Structure {
 	public RenderModel_Vertex_t() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("vPosition", "vNormal", "rfTextureCoord");
 	}
 	public RenderModel_Vertex_t(HmdVector3_t vPosition, HmdVector3_t vNormal, float rfTextureCoord[]) {

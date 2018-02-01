@@ -15,7 +15,7 @@ public class VREvent_Scroll_t extends Structure {
 	public VREvent_Scroll_t() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("xdelta", "ydelta", "repeatCount");
 	}
 	public VREvent_Scroll_t(float xdelta, float ydelta, int repeatCount) {
