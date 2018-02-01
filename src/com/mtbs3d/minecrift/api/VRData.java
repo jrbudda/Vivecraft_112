@@ -1,11 +1,11 @@
 package com.mtbs3d.minecrift.api;
 
 import com.mtbs3d.minecrift.provider.MCOpenVR;
+import com.mtbs3d.minecrift.render.renderPass;
 
 import de.fruitfly.ovr.structs.Matrix4f;
 import de.fruitfly.ovr.structs.Vector3f;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.Minecraft.renderPass;
 import net.minecraft.util.math.Vec3d;
 
 public class VRData{

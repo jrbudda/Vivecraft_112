@@ -40,6 +40,7 @@
 +import com.mtbs3d.minecrift.gameplay.OpenVRPlayer;
 +import com.mtbs3d.minecrift.gameplay.trackers.BowTracker;
 +import com.mtbs3d.minecrift.provider.MCOpenVR;
++import com.mtbs3d.minecrift.render.renderPass;
 +import com.mtbs3d.minecrift.settings.VRSettings;
 +import com.mtbs3d.minecrift.utils.MCReflection;
 +
@@ -53,7 +54,6 @@
  import net.minecraft.block.material.Material;
  import net.minecraft.block.state.IBlockState;
  import net.minecraft.client.Minecraft;
-+import net.minecraft.client.Minecraft.renderPass;
  import net.minecraft.client.entity.AbstractClientPlayer;
 +import net.minecraft.client.entity.EntityPlayerSP;
  import net.minecraft.client.gui.FontRenderer;

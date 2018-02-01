@@ -71,9 +71,11 @@ def create_install(mcp_dir):
     #continue
     in_mem_zip = StringIO.StringIO()
     with zipfile.ZipFile( in_mem_zip,'w', zipfile.ZIP_DEFLATED) as zipout:
+        vanilla = os.listdir(reobf)
         for abs_path, _, filelist in os.walk(reobf, followlinks=True):
             arc_path = os.path.relpath( abs_path, reobf ).replace('\\','/').replace('.','')+'/'
             for cur_file in fnmatch.filter(filelist, '*.class'):
+                flg = False
                 #if cur_file in {'MinecriftVanillaTweaker.class','MinecriftClassTransformer.class','MinecriftForgeTweaker.class','MinecriftClassTransformer$Stage.class','MinecriftClassTransformer$1.class','MinecriftClassTransformer$2.class','MinecriftClassTransformer$3.class','MinecriftClassTransformer$4.class'}:
                 #if cur_file in {'brl.class', 'brl$1.class', 'brl$2.class', 'brl$3.class', 'brl$4.class', 'brl$5.class', 'brl$a.class'}: #skip facebakery
                 #    continue
@@ -83,6 +85,8 @@ def create_install(mcp_dir):
                     continue
                 if cur_file in {'Matrix4f.class'}: #why
                     continue
+                if cur_file in vanilla: #these misbehave when loaded in this jar, do some magic.
+                    flg = True
                 # Just don't ask about this nonsense because I don't have any idea
                 #if cur_file in {'brd.class'}: #skip bakedquad
                 #    continue
@@ -98,6 +102,8 @@ def create_install(mcp_dir):
                 #    continue
                 in_file= os.path.join(abs_path,cur_file)
                 arcname =  arc_path + cur_file
+                if flg:
+                    arcname =  arc_path + cur_file.replace('.class', '.clazz')
                 zipout.write(in_file, arcname)
         print "Checking Assets..."
         for a, b, c in os.walk(assets):

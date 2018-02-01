@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/ItemRenderer.java
 +++ b/net/minecraft/client/renderer/ItemRenderer.java
-@@ -2,12 +2,23 @@
+@@ -2,12 +2,22 @@
  
  import com.google.common.base.MoreObjects;
  import java.util.Objects;
@@ -16,7 +16,6 @@
 +import net.minecraft.block.state.BlockStateBase;
  import net.minecraft.block.state.IBlockState;
  import net.minecraft.client.Minecraft;
-+import net.minecraft.client.Minecraft.renderPass;
  import net.minecraft.client.entity.AbstractClientPlayer;
  import net.minecraft.client.entity.EntityPlayerSP;
 +import net.minecraft.client.gui.ScaledResolution;
@@ -24,7 +23,7 @@
  import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
  import net.minecraft.client.renderer.entity.Render;
  import net.minecraft.client.renderer.entity.RenderManager;
-@@ -16,11 +27,26 @@
+@@ -16,11 +26,26 @@
  import net.minecraft.client.renderer.texture.TextureMap;
  import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
  import net.minecraft.entity.EntityLivingBase;
@@ -51,7 +50,7 @@
  import net.minecraft.src.Config;
  import net.minecraft.src.DynamicLights;
  import net.minecraft.src.Reflector;
-@@ -32,9 +58,17 @@
+@@ -32,9 +57,18 @@
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.MathHelper;
@@ -63,6 +62,7 @@
 +import com.mtbs3d.minecrift.provider.MCOpenVR;
 +import com.mtbs3d.minecrift.render.OpenGLdebugging;
 +import com.mtbs3d.minecrift.render.RenderVRPlayer;
++import com.mtbs3d.minecrift.render.renderPass;
 +
 +import de.fruitfly.ovr.structs.Vector3f;
 +

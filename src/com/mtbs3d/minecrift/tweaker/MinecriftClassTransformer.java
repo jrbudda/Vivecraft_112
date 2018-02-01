@@ -199,9 +199,14 @@ public class MinecriftClassTransformer implements IClassTransformer
             String fullName = name + ".class";
             ZipEntry ze = this.mcZipFile.getEntry(fullName);
 
+            if (ze == null) {
+            	fullName = name + ".clazz";
+            	ze = this.mcZipFile.getEntry(fullName);
+            }
+            
             if (ze == null)
-            {
-                return null;
+            { 
+                	return null;
             }
             else
             {

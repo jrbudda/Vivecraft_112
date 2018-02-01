@@ -1,6 +1,7 @@
 package com.mtbs3d.minecrift.provider;
 
 import com.mtbs3d.minecrift.render.RenderConfigException;
+import com.mtbs3d.minecrift.render.renderPass;
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
@@ -14,7 +15,6 @@ import jopenvr.JOpenVRLibrary.EVRCompositorError;
 import jopenvr.OpenVRUtil;
 import jopenvr.Texture_t;
 import jopenvr.VRTextureBounds_t;
-import net.minecraft.client.Minecraft.renderPass;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager.Color;
 

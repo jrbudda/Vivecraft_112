@@ -7,6 +7,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiChat;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.inventory.GuiScreenHorseInventory;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 
@@ -110,10 +114,10 @@ public class VivecraftMain
 		}
 
 		try {
+			GuiScreen v = new GuiChat();
 			final String launchTarget = "net.minecraft.client.main.Main";
        	 	final Class<?> clazz = Class.forName(launchTarget, false, load);
          	final Method mainMethod = clazz.getMethod("main", String[].class);
-
          	mainMethod.invoke(null, (Object) p_main_0_);
 		} catch (Exception e) {
 	    	System.out.println("************** Vivecraft critical error ***************");

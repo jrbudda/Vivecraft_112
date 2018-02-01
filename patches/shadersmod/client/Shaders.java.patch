@@ -1,14 +1,6 @@
 --- a/shadersmod/client/Shaders.java
 +++ b/shadersmod/client/Shaders.java
-@@ -27,6 +27,7 @@
- import net.minecraft.block.Block;
- import net.minecraft.block.material.Material;
- import net.minecraft.client.Minecraft;
-+import net.minecraft.client.Minecraft.renderPass;
- import net.minecraft.client.model.ModelBase;
- import net.minecraft.client.model.ModelRenderer;
- import net.minecraft.client.renderer.BufferBuilder;
-@@ -169,11 +170,11 @@
+@@ -169,11 +169,11 @@
      public static int midTexCoordAttrib = 11;
      public static int tangentAttrib = 12;
      public static boolean useEntityAttrib = false;
@@ -23,7 +15,7 @@
      public static boolean progUseTangentAttrib = false;
      public static int atlasSizeX = 0;
      public static int atlasSizeY = 0;
-@@ -211,7 +212,7 @@
+@@ -211,7 +211,7 @@
      static int usedShadowDepthBuffers = 0;
      static int usedColorAttachs = 0;
      static int usedDrawBuffers = 0;
@@ -32,7 +24,7 @@
      static int sfb = 0;
      private static int[] gbuffersFormat = new int[8];
      public static boolean[] gbuffersClear = new boolean[8];
-@@ -397,10 +398,10 @@
+@@ -397,10 +397,10 @@
      static final FloatBuffer tempMatrixDirectBuffer = nextFloatBuffer(16);
      static final FloatBuffer tempDirectFloatBuffer = nextFloatBuffer(16);
      static final IntBuffer dfbColorTextures = nextIntBuffer(16);
@@ -45,7 +37,7 @@
      static final IntBuffer sfbDrawBuffers = nextIntBuffer(8);
      static final IntBuffer drawBuffersNone = nextIntBuffer(8);
      static final IntBuffer drawBuffersAll = nextIntBuffer(8);
-@@ -736,11 +737,11 @@
+@@ -736,11 +736,11 @@
              flag2 = true;
          }
  
@@ -62,7 +54,7 @@
  
          String s = shadersConfig.getProperty(EnumShaderOption.SHADER_PACK.getPropertyKey(), packNameDefault);
  
-@@ -1632,11 +1633,10 @@
+@@ -1632,11 +1632,10 @@
          SMCLog.info(stringbuilder.toString());
      }
  
@@ -76,7 +68,7 @@
          capabilities = GLContext.getCapabilities();
          glVersionString = GL11.glGetString(GL11.GL_VERSION);
          glVendorString = GL11.glGetString(GL11.GL_VENDOR);
-@@ -1815,8 +1815,8 @@
+@@ -1815,8 +1814,8 @@
              shadowDistanceRenderMul = -1.0F;
              aoLevel = -1.0F;
              useEntityAttrib = false;
@@ -87,7 +79,7 @@
              useTangentAttrib = false;
              waterShadowEnabled = false;
              updateChunksErrorRecorded = false;
-@@ -2130,7 +2130,7 @@
+@@ -2130,7 +2129,7 @@
          if (i != 0)
          {
              progUseEntityAttrib = false;
@@ -96,7 +88,7 @@
              progUseTangentAttrib = false;
              int j = createVertShader(vShaderPath);
              int k = createFragShader(fShaderPath);
-@@ -2161,10 +2161,10 @@
+@@ -2161,10 +2160,10 @@
                      checkGLError("mc_Entity");
                  }
  
@@ -110,7 +102,7 @@
                  }
  
                  if (progUseTangentAttrib)
-@@ -2269,12 +2269,12 @@
+@@ -2269,12 +2268,12 @@
                              }
                              else if (shaderline.isAttribute("mc_midTexCoord"))
                              {
@@ -126,7 +118,7 @@
                              }
                              else if (shaderline.isAttribute("at_tangent"))
                              {
-@@ -3391,11 +3391,12 @@
+@@ -3391,11 +3390,12 @@
  
      private static void resize()
      {
@@ -144,7 +136,7 @@
      }
  
      private static void resizeShadow()
-@@ -3403,25 +3404,25 @@
+@@ -3403,25 +3403,25 @@
          needResizeShadow = false;
          shadowMapWidth = Math.round((float)spShadowMapWidth * configShadowResMul);
          shadowMapHeight = Math.round((float)spShadowMapHeight * configShadowResMul);
@@ -176,7 +168,7 @@
          GL20.glDrawBuffers(0);
          GL11.glReadBuffer(0);
  
-@@ -3494,23 +3495,25 @@
+@@ -3494,23 +3494,25 @@
          }
          else
          {
@@ -208,7 +200,7 @@
              GL11.glDrawBuffer(0);
              GL11.glReadBuffer(0);
              GL11.glGenTextures((IntBuffer)sfbDepthTextures.clear().limit(usedShadowDepthBuffers));
-@@ -3569,13 +3572,15 @@
+@@ -3569,13 +3571,15 @@
                  SMCLog.info("Shadow framebuffer created.");
              }
          }
@@ -225,7 +217,7 @@
          mc.mcProfiler.startSection("init");
          entityRenderer = mc.entityRenderer;
  
-@@ -3597,10 +3602,23 @@
+@@ -3597,10 +3601,23 @@
              }
          }
  
@@ -253,7 +245,7 @@
  
          if (needResizeShadow)
          {
-@@ -3697,6 +3715,7 @@
+@@ -3697,6 +3714,7 @@
          skipRenderHandMain = false;
          skipRenderHandOff = false;
  
@@ -261,7 +253,7 @@
          if (usedShadowDepthBuffers >= 1)
          {
              GlStateManager.setActiveTexture(33988);
-@@ -3789,17 +3808,14 @@
+@@ -3789,17 +3807,14 @@
          checkGLError("end beginRender");
      }
  
@@ -283,7 +275,7 @@
                  boolean flag = shaderPackDimensions.contains(Integer.valueOf(i));
                  boolean flag1 = shaderPackDimensions.contains(Integer.valueOf(j));
  
-@@ -3808,7 +3824,7 @@
+@@ -3808,7 +3823,7 @@
                      uninit();
                  }
              }
@@ -292,7 +284,7 @@
              Smoother.reset();
          }
      }
-@@ -3827,7 +3843,7 @@
+@@ -3827,7 +3842,7 @@
      }
  
      public static void setViewport(int vx, int vy, int vw, int vh)
@@ -301,7 +293,7 @@
          GlStateManager.colorMask(true, true, true, true);
  
          if (isShadowPass)
-@@ -3875,7 +3891,7 @@
+@@ -3875,7 +3890,7 @@
          {
              checkGLError("shadow clear pre");
              EXTFramebufferObject.glFramebufferTexture2DEXT(36160, 36096, 3553, sfbDepthTextures.get(0), 0);
@@ -310,7 +302,7 @@
              GL20.glDrawBuffers(programsDrawBuffers[30]);
              checkFramebufferStatus("shadow clear");
              GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-@@ -3894,7 +3910,7 @@
+@@ -3894,7 +3909,7 @@
              if (gbuffersClear[1])
              {
                  GL20.glDrawBuffers(36065);
@@ -319,7 +311,7 @@
                  GL11.glClear(16384);
              }
  
-@@ -3903,7 +3919,7 @@
+@@ -3903,7 +3918,7 @@
                  if (gbuffersClear[i])
                  {
                      GL20.glDrawBuffers(36064 + i);
@@ -328,7 +320,7 @@
                      GL11.glClear(16384);
                  }
              }
-@@ -4085,7 +4101,7 @@
+@@ -4085,7 +4100,7 @@
  
      public static void drawComposite()
      {
@@ -337,7 +329,7 @@
          GL11.glBegin(GL11.GL_QUADS);
          GL11.glTexCoord2f(0.0F, 0.0F);
          GL11.glVertex3f(0.0F, 0.0F, 0.0F);
-@@ -4124,7 +4140,7 @@
+@@ -4124,7 +4139,7 @@
              GL11.glPushMatrix();
              GL11.glLoadIdentity();
              GL11.glOrtho(0.0D, 1.0D, 0.0D, 1.0D, 0.0D, 1.0D);
@@ -346,7 +338,7 @@
              GlStateManager.enableTexture2D();
              GlStateManager.disableAlpha();
              GlStateManager.disableBlend();
-@@ -4301,7 +4317,7 @@
+@@ -4301,7 +4316,7 @@
          isRenderingDfb = false;
          mc.getFramebuffer().bindFramebuffer(true);
          OpenGlHelper.glFramebufferTexture2D(OpenGlHelper.GL_FRAMEBUFFER, OpenGlHelper.GL_COLOR_ATTACHMENT0, 3553, mc.getFramebuffer().framebufferTexture, 0);
@@ -355,7 +347,7 @@
  
          if (EntityRenderer.anaglyphEnable)
          {
-@@ -4310,9 +4326,9 @@
+@@ -4310,9 +4325,9 @@
          }
  
          GlStateManager.depthMask(true);
@@ -367,7 +359,7 @@
          GlStateManager.enableTexture2D();
          GlStateManager.disableAlpha();
          GlStateManager.disableBlend();
-@@ -5256,4 +5272,4 @@
+@@ -5256,4 +5271,4 @@
          drawBuffersNone.limit(0);
          drawBuffersColorAtt0.put(36064).position(0).limit(1);
      }
