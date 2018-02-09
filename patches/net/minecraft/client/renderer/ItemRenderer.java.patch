@@ -406,7 +406,7 @@
      }
  
      /**
-@@ -371,100 +454,332 @@
+@@ -371,100 +454,346 @@
          RenderHelper.disableStandardItemLighting();
      }
  
@@ -783,9 +783,7 @@
 +     								GlStateManager.translate(0.003*Math.sin(t),0, 0);
 +     							}
 +     							GlStateManager.scale(1,mc.bowTracker.getDrawPercent()*0.15+1,1);
-+ 
-+ 
-+     						} 
++       						} 
 +     						else if(mc.vrSettings.seated){
 +     							GlStateManager.scale(0.5f,0.5f,0.5f);    
 +     							GlStateManager.rotate(90f, 1.0F, 0.0F, 0.0F);    
@@ -802,6 +800,22 @@
 +     						GlStateManager.rotate(-90.0F, 0.0F, 1.0F, 0.0F);
 +     						GlStateManager.rotate(90.0F, 0.0F, 0.0F, 1.0F);	
 + 
++     					}
++     					else if (item instanceof ItemBow) {
++    						//roomscale bow off
++     						GlStateManager.scale(0.5f,0.5f,0.5f);    
++     						GlStateManager.rotate(90f, 1.0F, 0.0F, 0.0F);    
++ 
++     						if(vive){
++     							GlStateManager.translate(-0.012, 0.2, 00);
++     							GlStateManager.rotate(-45F, 1.0F, 0.0F, 0.0F);
++     						} else {
++     							GlStateManager.translate(-0.012, 0.17, .100);
++     							GlStateManager.rotate(-45F + 39.4f, 1.0F, 0.0F, 0.0F	);
++     						}
++ 
++     						GlStateManager.rotate(-90.0F, 0.0F, 1.0F, 0.0F);
++     						GlStateManager.rotate(90.0F, 0.0F, 0.0F, 1.0F);	
 +     					}
 +     					else { //NORMAL ITEMS
 +     						GlStateManager.translate(0f, 0f, -0.1f);		
@@ -831,7 +845,7 @@
      }
  
      /**
-@@ -472,84 +787,213 @@
+@@ -472,84 +801,213 @@
       */
      public void renderOverlays(float partialTicks)
      {

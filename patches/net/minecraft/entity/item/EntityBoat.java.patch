@@ -128,8 +128,8 @@
 +    		} else {
 +    			//roomscale or vanilla behavior
 +    			if(mc.rowTracker.isRowing()){
-+    				this.deltaRotation -= mc.rowTracker.LOar / 1.5;
-+    				this.deltaRotation += mc.rowTracker.ROar / 1.5;
++    				this.deltaRotation += mc.rowTracker.LOar / 1.5;
++    				this.deltaRotation -= mc.rowTracker.ROar / 1.5;
 +    				
 +    				if (deltaRotation < 0) this.leftInputDown = true;
 +    				if (deltaRotation > 0) this.rightInputDown = true;

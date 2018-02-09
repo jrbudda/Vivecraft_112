@@ -46,6 +46,10 @@ public class VRSettings
     public static final int INERTIA_LARGE = 2;
     public static final int INERTIA_MASSIVE = 3;
 
+    public static final int BOW_MODE_ON = 2;
+    public static final int BOW_MODE_VANILLA = 1;
+    public static final int BOW_MODE_OFF = 0;
+
     public static final float INERTIA_NONE_ADD_FACTOR = 1f / 0.01f;
     public static final float INERTIA_NORMAL_ADD_FACTOR = 1f;
     public static final float INERTIA_LARGE_ADD_FACTOR = 1f / 4f;
@@ -96,7 +100,7 @@ public class VRSettings
     //Control
     public boolean vrReverseHands = false;
     public boolean vrReverseShootingEye = false;
-    public Map<String, VRButtonMapping> buttonMappings = new HashMap<>();
+    public Map<String, VRButtonMapping> buttonMappings = new HashMap();
 	public TouchpadMode leftTouchpadMode = TouchpadMode.SPLIT_QUAD;
 	public TouchpadMode rightTouchpadMode = TouchpadMode.SPLIT_QUAD;
 	public boolean freemoveWMRStick = true;
@@ -113,6 +117,8 @@ public class VRSettings
     public float manualCalibration=-1;
     public float playerEyeHeight = 1.62f;
 	public boolean alwaysSimulateKeyboard = false;
+    public int bowMode = BOW_MODE_ON;
+
     //
     
     //Locomotion
@@ -658,6 +664,10 @@ public class VRSettings
                         this.analogMovement = optionTokens[1].equals("true");
                     }
                     
+                    if(optionTokens[0].equals("bowMode")){
+                        this.bowMode = Integer.parseInt(optionTokens[1]);
+                    }
+                    
                     if(optionTokens[0].equals("hideGUI")){
                         this.mc.gameSettings.hideGUI = optionTokens[1].equals("true");
                     }
@@ -983,8 +993,14 @@ public class VRSettings
                 return this.backpackSwitching ? var4 + "YES" : var4 + "NO";
             case ANALOG_MOVEMENT:
                 return this.analogMovement ? var4 + "YES" : var4 + "NO";
-
-
+            case BOW_MODE:
+            	if(this.bowMode == BOW_MODE_OFF)
+            		return var4 + " OFF";
+            	else if(this.bowMode == BOW_MODE_ON)
+            		return var4 + " ON";
+            	else if (this.bowMode == BOW_MODE_VANILLA)
+            		return var4 + "VANILLA";
+            	else return var4 + " wtf?";
  	        default:
 	        	return "";
         }
@@ -1053,6 +1069,8 @@ public class VRSettings
             	return this.renderScaleFactor;
             case ANALOG_DEADZONE:
             	return this.analogDeadzone;
+            case BOW_MODE:
+            	return this.bowMode;
             // VIVE END - new options
             default:
                 return 0.0f;
@@ -1265,6 +1283,10 @@ public class VRSettings
             	break;
             case ANALOG_MOVEMENT:
             	analogMovement = !analogMovement;
+            	break;
+            case BOW_MODE:
+            	this.bowMode++;
+            	if(this.bowMode>2) this.bowMode = 0;
             	break;
             default:
             	break;
@@ -1481,7 +1503,7 @@ public class VRSettings
             var5.println("analogDeadzone:" + this.analogDeadzone);
             var5.println("analogMovement:" + this.analogMovement);
             var5.println("hideGUI:" + this.mc.gameSettings.hideGUI);
-
+            var5.println("bowMode:" + this.bowMode);
 
             if (vrQuickCommands == null) vrQuickCommands = getQuickCommandsDefaults(); //defaults
             
@@ -1662,7 +1684,8 @@ public class VRSettings
         SEATED_HMD("Forward Direction",false,true),
         SEATED_HUD_XHAIR("HUD Follows",false,true), 
         BACKPACK_SWITCH("Backpack Switching",false,true),
-        ANALOG_MOVEMENT("Analog Movement",false,true); 
+        ANALOG_MOVEMENT("Analog Movement",false,true), 
+        BOW_MODE("Roomscale Bow Mode", false, true); 
 
 //        ANISOTROPIC_FILTERING("options.anisotropicFiltering", true, false, 1.0F, 16.0F, 0.0F)
 //                {

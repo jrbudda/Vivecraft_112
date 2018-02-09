@@ -585,21 +585,24 @@ public class MCOpenVR
     	    			controllerComponentNames.put(button, comp); //u get 1 button per component, nothing more
     	    		}
     	    		//
-    				
     				RenderModel_ControllerMode_State_t modeState = new RenderModel_ControllerMode_State_t();
     				RenderModel_ComponentState_t componentState = new RenderModel_ComponentState_t();
-    				vrRenderModels.GetComponentState.apply(pointer, p, controllerStateReference[i], modeState, componentState);
+    				byte ret = vrRenderModels.GetComponentState.apply(pointer, p, controllerStateReference[i], modeState, componentState);
+    				if(ret == 0) {
+        				System.out.println("Failed getting transform: " + comp + " controller " + i);
+    					continue;
+    				}
     				Matrix4f xform = new Matrix4f();
     				OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(componentState.mTrackingToComponentLocal, xform);
     				controllerComponentTransforms.get(comp)[i] = xform;
-    				//System.out.println("Transform: " + comp + "controller: " + i +" button: " + button + "\r" + Utils.convertOVRMatrix(xform).toString());
+    				//System.out.println("Transform: " + comp + " controller: " + i +" button: " + button + "\r" + Utils.convertOVRMatrix(xform).toString());
     		}
     	}
 	}
 		
     public static Matrix4f getControllerComponentTransform(int controllerIndex, String componenetName){
-    	if(controllerComponentTransforms == null || !controllerComponentTransforms.containsKey(componenetName)) 
-    		return new Matrix4f();
+    	if(controllerComponentTransforms == null || !controllerComponentTransforms.containsKey(componenetName)  || controllerComponentTransforms.get(componenetName)[controllerIndex] == null)
+    		return OpenVRUtil.Matrix4fSetIdentity(new Matrix4f());
     	return controllerComponentTransforms.get(componenetName)[controllerIndex];
     }
 	
@@ -2060,7 +2063,7 @@ public class MCOpenVR
 
 			// update off hand aim
 			if(!mc.vrSettings.seated) 
-				controllerPose[1] = Matrix4f.multiply(controllerPose[1], controllerComponentTransforms.get("tip")[1]);
+				controllerPose[1] = Matrix4f.multiply(controllerPose[1], getControllerComponentTransform(1,"tip"));
 
 			Vector3f leftControllerPos = OpenVRUtil.convertMatrix4ftoTranslationVector(controllerPose[1]);
 			aimSource[1] = new Vec3d(

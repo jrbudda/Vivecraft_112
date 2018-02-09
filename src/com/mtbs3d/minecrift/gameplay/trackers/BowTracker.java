@@ -67,7 +67,10 @@ public class BowTracker {
 	}
 	
 	public static boolean isBow(ItemStack itemStack) {
-		return itemStack != ItemStack.EMPTY && itemStack.getItem().getItemUseAction(itemStack) == EnumAction.BOW;
+		if( itemStack == ItemStack.EMPTY) return false;
+		if(Minecraft.getMinecraft().vrSettings.bowMode == 0) return false;
+		else if(Minecraft.getMinecraft().vrSettings.bowMode == 1) return itemStack.getItem() == Items.BOW; 
+		else return itemStack.getItem().getItemUseAction(itemStack) == EnumAction.BOW;			 
 	}
 	
 	public static boolean isHoldingBow(EntityLivingBase e, EnumHand hand) {
@@ -194,6 +197,8 @@ public class BowTracker {
 			CPacketCustomPayload pack =	NetworkHelper.getVivecraftClientPacket(PacketDiscriminators.DRAW, ByteBuffer.allocate(4).putFloat((float) getDrawPercent()).array());
 			Minecraft.getMinecraft().getConnection().sendPacket(pack);
 			minecraft.playerController.onStoppedUsingItem(player); //server
+			pack =	NetworkHelper.getVivecraftClientPacket(PacketDiscriminators.DRAW, ByteBuffer.allocate(4).putFloat(0).array()); //reset to 0, in case user switches modes.
+			Minecraft.getMinecraft().getConnection().sendPacket(pack);
 			isDrawing = false;     	
 		}
 		

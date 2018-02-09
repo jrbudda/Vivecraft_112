@@ -717,14 +717,19 @@ public class Installer extends JPanel  implements PropertyChangeListener
 			}
 			boolean profileCreated = false;
 			finalMessage = "Failed: Couldn't setup profile!";
-
+			
+			String profileName = getMinecraftProfileName(useForge.isSelected(), useShadersMod.isSelected());
+				if(chkCustomProfileName.isSelected() && txtCustomProfileName.getText().trim() != ""){
+					profileName = txtCustomProfileName.getText();
+				}
+				
 			if(!isMultiMC){
 				if (createProfile.isSelected())
 				{
 					monitor.setProgress(95);
 					monitor.setNote("Creating Vivecraft profile...");
-
-					if (!updateLauncherJson(targetDir, minecriftVersionName))
+								
+					if (!updateLauncherJson(targetDir, minecriftVersionName, profileName))
 						sbErrors.append("Failed to set up 'Vivecraft' profile (you can still manually select Edit Profile->Use Version " + minecriftVersionName + " in the Minecraft launcher)\n");
 					else
 						profileCreated = true;
@@ -746,8 +751,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 					finalMessage = "Installed successfully!. MultiMC Instance: " + mmcinst.toString();
 				else
 					finalMessage = "Installed successfully! Restart Minecraft" +
-							(profileCreated == false ? " and Edit Profile->Use Version " + minecriftVersionName : " and select the '" + getMinecraftProfileName(useForge.isSelected(), useShadersMod.isSelected()) + "' profile.");
-
+							(profileCreated == false ? " and Edit Profile->Use Version " + minecriftVersionName : " and select the '" + profileName + "' profile.");
 			}
 
 			monitor.setProgress(100);
@@ -1301,16 +1305,12 @@ public class Installer extends JPanel  implements PropertyChangeListener
 			} catch (InterruptedException e) {}
 		}
 
-		private boolean updateLauncherJson(File mcBaseDirFile, String minecriftVer)
+		private boolean updateLauncherJson(File mcBaseDirFile, String minecriftVer, String profileName)
 		{
 			boolean result = false;
 
 			try {
 				int jsonIndentSpaces = 2;
-				String profileName = getMinecraftProfileName(useForge.isSelected(), useShadersMod.isSelected());
-				if(chkCustomProfileName.isSelected() && txtCustomProfileName.getText().trim() != ""){
-					profileName = txtCustomProfileName.getText();
-				}
 				File fileJson = new File(mcBaseDirFile, "launcher_profiles.json");
 				String json = readAsciiFile(fileJson);
 				JSONObject root = new JSONObject(json);

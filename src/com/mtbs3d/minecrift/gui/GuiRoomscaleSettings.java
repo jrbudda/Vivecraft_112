@@ -1,6 +1,7 @@
 package com.mtbs3d.minecrift.gui;
 
 import com.mtbs3d.minecrift.gameplay.trackers.BackpackTracker;
+import com.mtbs3d.minecrift.gameplay.trackers.BowTracker;
 import com.mtbs3d.minecrift.gui.framework.*;
 import com.mtbs3d.minecrift.settings.VRSettings;
 
@@ -19,6 +20,7 @@ public class GuiRoomscaleSettings extends BaseGuiSettings implements GuiEventEx
             VRSettings.VrOptions.REALISTIC_CLIMB,
             VRSettings.VrOptions.REALISTIC_ROW,
             VRSettings.VrOptions.REALISTIC_SWIM,
+            VRSettings.VrOptions.BOW_MODE,
             VRSettings.VrOptions.BACKPACK_SWITCH
             };
     
@@ -232,6 +234,13 @@ public class GuiRoomscaleSettings extends BaseGuiSettings implements GuiEventEx
                 case REALISTIC_ROW:
                     return new String[]{
                             "Row, row, row your boat... by flapping your arms like mad."
+                    };
+                case BOW_MODE:
+                    return new String[]{
+                            "Sets when to use Roomscale Archery",
+                            "OFF: Never",
+                            "Vanilla: Only for the vanilla bow, no mod items",
+                            "ON: Always for any item that uses the 'bow' action"                        
                     };
                 default:
                     return null;

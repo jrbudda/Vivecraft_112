@@ -283,18 +283,22 @@ public class Utils
 			new File("openvr/" + directory).mkdirs();
 				
 			// dev environment
-			Path dir = Paths.get(System.getProperty("user.dir")); // ..\mcpxxx\jars\
-			Path path = dir.getParent().resolve("src/assets/natives/" + directory);
-			if (!path.toFile().exists()) {
-				path = dir.getParent().getParent().resolve("assets/vivecraft/natives/" + directory);
-			}
-			if (path.toFile().exists()) { 
-				System.out.println("Copying " + directory + " natives...");
-				for (File file : path.toFile().listFiles()) {
-					System.out.println(file.getName());
-					Files.copy(file, new File("openvr/" + directory + "/" + file.getName()));
+			try {
+				Path dir = Paths.get(System.getProperty("user.dir")); // ..\mcpxxx\jars\
+				Path path = dir.getParent().resolve("src/assets/natives/" + directory);
+				if (!path.toFile().exists()) {
+					path = dir.getParent().getParent().resolve("assets/vivecraft/natives/" + directory);
 				}
-				return;
+				if (path.toFile().exists()) { 
+					System.out.println("Copying " + directory + " natives...");
+					for (File file : path.toFile().listFiles()) {
+						System.out.println(file.getName());
+						Files.copy(file, new File("openvr/" + directory + "/" + file.getName()));
+					}
+					return;
+				}
+	
+			} catch (Exception e) {
 			}
 			//
 			

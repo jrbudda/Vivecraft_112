@@ -79,12 +79,13 @@ public class OpenVRUtil {
         dest.M[3][3] = source.M[3][3];
     }
 
-    public static void Matrix4fSetIdentity(Matrix4f mat)
+    public static Matrix4f Matrix4fSetIdentity(Matrix4f mat)
     {
         mat.M[0][0] = mat.M[1][1] = mat.M[2][2] = mat.M[3][3] = 1.0F;
         mat.M[0][1] = mat.M[1][0] = mat.M[2][3] = mat.M[3][1] = 0.0F;
         mat.M[0][2] = mat.M[1][2] = mat.M[2][0] = mat.M[3][2] = 0.0F;
         mat.M[0][3] = mat.M[1][3] = mat.M[2][1] = mat.M[3][0] = 0.0F;
+        return mat;
     }
         
     public static Matrix4f convertSteamVRMatrix3ToMatrix4f(HmdMatrix34_t hmdMatrix, Matrix4f mat){
