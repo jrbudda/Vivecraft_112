@@ -51,11 +51,12 @@
              }
  
              boolean flag2 = this.cursorPosition < this.text.length() || this.text.length() >= this.getMaxStringLength();
-@@ -732,6 +746,12 @@
+@@ -732,6 +746,13 @@
          {
              Minecraft.getMinecraft().currentScreen.setFocused(isFocusedIn);
          }
 +
++        if(Minecraft.getMinecraft().currentScreen instanceof GuiSleepMP) return;
 +        // VIVE START - show keyboard
 +        if(isFocusedIn && this.visible && (this.canLoseFocus == false || Minecraft.getMinecraft().vrSettings.autoOpenKeyboard))
 +     	   MCOpenVR.setKeyboardOverlayShowing(isFocusedIn, this);

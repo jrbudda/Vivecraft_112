@@ -446,34 +446,35 @@ public class MCOpenVR
 
 	}
 
-	static void debugOut(){
+	static void debugOut(int deviceindex){
+		System.out.println("******************* VR DEVICE: " + deviceindex + " *************************");
 		for(Field i :JOpenVRLibrary.ETrackedDeviceProperty.class.getDeclaredFields()){
 			try {
 				String[] ts = i.getName().split("_");
 				String Type = ts[ts.length - 1];
 				String out = "";
-
-				
 				if (Type.equals("Float")) {
-					out += i.getName() + " " + vrsystem.GetFloatTrackedDeviceProperty.apply(JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, i.getInt(null), hmdErrorStore);
+					out += i.getName() + " " + vrsystem.GetFloatTrackedDeviceProperty.apply(deviceindex, i.getInt(null), hmdErrorStore);
 				}				else if (Type.equals("String")) {
 					Pointer pointer = new Memory(JOpenVRLibrary.k_unMaxPropertyStringSize);
-					int len = vrsystem.GetStringTrackedDeviceProperty.apply(JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, i.getInt(null), pointer, JOpenVRLibrary.k_unMaxPropertyStringSize - 1, hmdErrorStore);
+					int len = vrsystem.GetStringTrackedDeviceProperty.apply(deviceindex, i.getInt(null), pointer, JOpenVRLibrary.k_unMaxPropertyStringSize - 1, hmdErrorStore);
 					out += i.getName() + " " + pointer.getString(0);
 				} else if (Type.equals("Bool")) {
-					out += i.getName() + " " + vrsystem.GetBoolTrackedDeviceProperty.apply(JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, i.getInt(null), hmdErrorStore);
+					out += i.getName() + " " + vrsystem.GetBoolTrackedDeviceProperty.apply(deviceindex, i.getInt(null), hmdErrorStore);
 				} else if (Type.equals("Int32")) {
-					out += i.getName() + " " + vrsystem.GetInt32TrackedDeviceProperty.apply(JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, i.getInt(null), hmdErrorStore);
+					out += i.getName() + " " + vrsystem.GetInt32TrackedDeviceProperty.apply(deviceindex, i.getInt(null), hmdErrorStore);
 				} else if (Type.equals("Uint64")) {
-					out += i.getName() + " " + vrsystem.GetUint64TrackedDeviceProperty.apply(JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd, i.getInt(null), hmdErrorStore);
+					out += i.getName() + " " + vrsystem.GetUint64TrackedDeviceProperty.apply(deviceindex, i.getInt(null), hmdErrorStore);
+				}else {
+					out += i.getName() + " (skipped)" ; 
 				}
-				System.out.println(out);
+				System.out.println(out.replace("ETrackedDeviceProperty_Prop_", ""));
 			}catch (IllegalAccessException e){
 				e.printStackTrace();
 			}
 		}
+		System.out.println("******************* END VR DEVICE: " + deviceindex + " *************************");
 
-		System.out.println("TrackingSpace: "+vrCompositor.GetTrackingSpace.apply());
 	}
 
 	// needed for in-game keyboard
@@ -553,52 +554,55 @@ public class MCOpenVR
 
     private static void getTransforms(){
     	if (vrRenderModels == null) return;
-    	
+
     	if(controllerComponentTransforms == null) {
     		controllerComponentTransforms = new HashMap<String, Matrix4f[]>();
     	}
-    	
+
     	if(controllerComponentNames == null) {
     		controllerComponentNames = new HashMap<Long, String>();
     	}
-    	
+
     	int count = vrRenderModels.GetRenderModelCount.apply();
     	Pointer pointer = new Memory(JOpenVRLibrary.k_unMaxPropertyStringSize);
 
     	List<String> componentNames = new ArrayList<String>(); //TODO get the controller-specific list
-    	
+
     	componentNames.add("tip");
     	componentNames.add("base");
     	componentNames.add("handgrip");
     	componentNames.add("status");
-    	
+
     	for (String comp : componentNames) {
     		controllerComponentTransforms.put(comp, new Matrix4f[2]); 			
-			Pointer p = ptrFomrString(comp);
-			    		
+    		Pointer p = ptrFomrString(comp);
+
     		for (int i = 0; i < 2; i++) {
-    				vrsystem.GetStringTrackedDeviceProperty.apply(controllerDeviceIndex[i], JOpenVRLibrary.ETrackedDeviceProperty.ETrackedDeviceProperty_Prop_RenderModelName_String, pointer, JOpenVRLibrary.k_unMaxPropertyStringSize - 1, hmdErrorStore);
-    				
-    				//doing this next bit for each controller because pointer
-    				long button = vrRenderModels.GetComponentButtonMask.apply(pointer, p);   		
-    	    		if(button > 0){ //see now... wtf openvr, '0' is the system button, it cant also be the error value!
-    	    			controllerComponentNames.put(button, comp); //u get 1 button per component, nothing more
-    	    		}
-    	    		//
-    				RenderModel_ControllerMode_State_t modeState = new RenderModel_ControllerMode_State_t();
-    				RenderModel_ComponentState_t componentState = new RenderModel_ComponentState_t();
-    				byte ret = vrRenderModels.GetComponentState.apply(pointer, p, controllerStateReference[i], modeState, componentState);
-    				if(ret == 0) {
-        				System.out.println("Failed getting transform: " + comp + " controller " + i);
-    					continue;
-    				}
-    				Matrix4f xform = new Matrix4f();
-    				OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(componentState.mTrackingToComponentLocal, xform);
-    				controllerComponentTransforms.get(comp)[i] = xform;
-    				//System.out.println("Transform: " + comp + " controller: " + i +" button: " + button + "\r" + Utils.convertOVRMatrix(xform).toString());
+
+    			//	debugOut(controllerDeviceIndex[i]);
+
+    			vrsystem.GetStringTrackedDeviceProperty.apply(controllerDeviceIndex[i], JOpenVRLibrary.ETrackedDeviceProperty.ETrackedDeviceProperty_Prop_RenderModelName_String, pointer, JOpenVRLibrary.k_unMaxPropertyStringSize - 1, hmdErrorStore);
+
+    			//doing this next bit for each controller because pointer
+    			long button = vrRenderModels.GetComponentButtonMask.apply(pointer, p);   		
+    			if(button > 0){ //see now... wtf openvr, '0' is the system button, it cant also be the error value!
+    				controllerComponentNames.put(button, comp); //u get 1 button per component, nothing more
+    			}
+    			//
+    			RenderModel_ControllerMode_State_t modeState = new RenderModel_ControllerMode_State_t();
+    			RenderModel_ComponentState_t componentState = new RenderModel_ComponentState_t();
+    			byte ret = vrRenderModels.GetComponentState.apply(pointer, p, controllerStateReference[i], modeState, componentState);
+    			if(ret == 0) {
+    				System.out.println("Failed getting transform: " + comp + " controller " + i);
+    				continue;
+    			}
+    			Matrix4f xform = new Matrix4f();
+    			OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(componentState.mTrackingToComponentLocal, xform);
+    			controllerComponentTransforms.get(comp)[i] = xform;
+    			//	System.out.println("Transform: " + comp + " controller: " + i +" button: " + button + "\r" + Utils.convertOVRMatrix(xform).toString());
     		}
     	}
-	}
+    }
 		
     public static Matrix4f getControllerComponentTransform(int controllerIndex, String componenetName){
     	if(controllerComponentTransforms == null || !controllerComponentTransforms.containsKey(componenetName)  || controllerComponentTransforms.get(componenetName)[controllerIndex] == null)
@@ -626,7 +630,10 @@ public class MCOpenVR
 				int buffsize=20;
 				Pointer s=new Memory(buffsize);
 
-				debugOut();
+
+				debugOut(0);
+				
+				System.out.println("TrackingSpace: "+vrCompositor.GetTrackingSpace.apply());
 
 				vrsystem.GetStringTrackedDeviceProperty.apply(JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd,JOpenVRLibrary.ETrackedDeviceProperty.ETrackedDeviceProperty_Prop_ManufacturerName_String,s,buffsize,hmdErrorStore);
 				String id=s.getString(0);
@@ -1052,6 +1059,7 @@ public class MCOpenVR
 	{
 		controllerDeviceIndex[RIGHT_CONTROLLER] = -1;
 		controllerDeviceIndex[LEFT_CONTROLLER] = -1;
+		controllerDeviceIndex[THIRD_CONTROLLER] = -1;
 
 		if(mc.vrSettings.vrReverseHands){
 			controllerDeviceIndex[RIGHT_CONTROLLER]  = vrsystem.GetTrackedDeviceIndexForControllerRole.apply(JOpenVRLibrary.ETrackedControllerRole.ETrackedControllerRole_TrackedControllerRole_LeftHand);
@@ -1063,6 +1071,7 @@ public class MCOpenVR
 
 		controllers[RIGHT_CONTROLLER].deviceIndex = controllerDeviceIndex[RIGHT_CONTROLLER];
 		controllers[LEFT_CONTROLLER].deviceIndex = controllerDeviceIndex[LEFT_CONTROLLER];
+		
 	}
 
 	private static void updateControllerButtonState()
@@ -1126,7 +1135,8 @@ public class MCOpenVR
 				
 				// Hard-code these still so they always work
 				if(event.getButtonState() && event.getController().getType() == ControllerType.RIGHT && (event.getButton() == ButtonType.VIVE_APPMENU || event.getButton() == ButtonType.OCULUS_BY)) {
-					if((controllers[RIGHT_CONTROLLER].isButtonPressed(ButtonType.VIVE_GRIP) || controllers[RIGHT_CONTROLLER].isButtonPressed(ButtonType.OCULUS_HAND_TRIGGER)) && mc.vrSettings.displayMirrorMode == mc.vrSettings.MIRROR_MIXED_REALITY){				
+					if((controllers[RIGHT_CONTROLLER].isButtonPressed(ButtonType.VIVE_GRIP) || controllers[RIGHT_CONTROLLER].isButtonPressed(ButtonType.OCULUS_HAND_TRIGGER)) 
+							&& (mc.vrSettings.displayMirrorMode == mc.vrSettings.MIRROR_MIXED_REALITY||mc.vrSettings.displayMirrorMode == mc.vrSettings.MIRROR_THIRD_PERSON)){				
 						if (!Main.kiosk) {
 							VRHotkeys.snapMRCam(mc, 0);
 							mc.vrSettings.saveOptions();
@@ -1699,17 +1709,21 @@ public class MCOpenVR
 	{
 		if ( vrsystem == null || vrCompositor == null )
 			return;
+		
 		int ret = vrCompositor.WaitGetPoses.apply(hmdTrackedDevicePoseReference, JOpenVRLibrary.k_unMaxTrackedDeviceCount, null, 0);
 
-		if(ret>0)System.out.println("Compositor Error: GetPoseError " + OpenVRStereoRenderer.getCompostiorError(ret)); 
+		if (ret>0)
+			System.out.println("Compositor Error: GetPoseError " + OpenVRStereoRenderer.getCompostiorError(ret)); 
 				
 		if(ret == 101){ //this is so dumb but it works.
 			triggerHapticPulse(0, 500);
 			triggerHapticPulse(1, 500);
 		}
 		
-		controllerDeviceIndex[THIRD_CONTROLLER] = -1;
-		findControllerDevices(); //todo dont do this @90hz
+		if (controllerComponentTransforms == null) { //set null by events.
+			getTransforms(); //do we want the dynamic info? I don't think so...
+			findControllerDevices(); 
+		}
 
 		for (int nDevice = 0; nDevice < JOpenVRLibrary.k_unMaxTrackedDeviceCount; ++nDevice )
 		{
@@ -1718,18 +1732,18 @@ public class MCOpenVR
 			{
 				jopenvr.OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(hmdTrackedDevicePoses[nDevice].mDeviceToAbsoluteTracking, poseMatrices[nDevice]);
 				deviceVelocity[nDevice] = new Vec3d(hmdTrackedDevicePoses[nDevice].vVelocity.v[0],hmdTrackedDevicePoses[nDevice].vVelocity.v[1],hmdTrackedDevicePoses[nDevice].vVelocity.v[2]);
+				if(mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_MIXED_REALITY || mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_THIRD_PERSON){
+					if(controllerDeviceIndex[0]!= -1 && controllerDeviceIndex[1] != -1 ){
+						int c = vrsystem.GetTrackedDeviceClass.apply(nDevice);
+						int r = vrsystem.GetControllerRoleForTrackedDeviceIndex.apply(nDevice);
+						if((c == 2 && r == 0) || c == 3) {
+							controllerDeviceIndex[THIRD_CONTROLLER] = nDevice;
+						}
+					} 
+				}
 			}		
-
-			if(mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_MIXED_REALITY){
-				if(controllerDeviceIndex[0]!= -1 && controllerDeviceIndex[1] != -1 ){
-					int c = vrsystem.GetTrackedDeviceClass.apply(nDevice);
-					int r = vrsystem.GetControllerRoleForTrackedDeviceIndex.apply(nDevice);
-					if((c == 2 && r == 0) || c == 3)
-						controllerDeviceIndex[THIRD_CONTROLLER] = nDevice;
-				} 
-			}
-
 		}
+		
 		if (hmdTrackedDevicePoses[JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd].bPoseIsValid != 0 )
 		{
 			OpenVRUtil.Matrix4fCopy(poseMatrices[JOpenVRLibrary.k_unTrackedDeviceIndex_Hmd], hmdPose);
@@ -1758,8 +1772,6 @@ public class MCOpenVR
 			}
 		}
 
-		if (controllerComponentTransforms == null) 
-			getTransforms(); //do we want the dynaimc info? I dont think so...
 
 		updateAim();
 		//VRHotkeys.snapMRCam(mc, 0);
@@ -2118,7 +2130,7 @@ public class MCOpenVR
 			controllerRotation[2].M[3][2] = 0.0F;
 			controllerRotation[2].M[3][3] = 1.0F;
 		
-		if(controllerDeviceIndex[THIRD_CONTROLLER]!=-1 && mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_MIXED_REALITY || debugThirdController) {
+		if(controllerDeviceIndex[THIRD_CONTROLLER]!=-1 && (mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_MIXED_REALITY || mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_THIRD_PERSON )|| debugThirdController) {
 			mrMovingCamActive = true;
 			Vector3f thirdControllerPos = OpenVRUtil.convertMatrix4ftoTranslationVector(controllerPose[2]);
 			aimSource[2] = new Vec3d(

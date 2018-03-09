@@ -18,7 +18,7 @@
  import net.minecraft.util.ReportedException;
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.math.MathHelper;
-@@ -164,16 +168,48 @@
+@@ -164,16 +168,46 @@
          }
      }
  
@@ -32,9 +32,7 @@
          {
              GlStateManager.pushMatrix();
              GlStateManager.translate(-0.5F, -0.5F, -0.5F);
- 
-+            float fade = 1;
-+            
++           
 +            EntityPlayerSP p = Minecraft.getMinecraft().player;
 +                       
 +            if(p!=null && isfphand){
@@ -52,12 +50,12 @@
 +                		fade = 1;
 +                	else
 +                		fade = 0.75f;
-+
+ 
 +                if(fade < 0.1) fade = 0.1f;
 +                if(fade > 1) fade = 1f;
 +                GlStateManager.enableBlend();
 +                GL14.glBlendColor(1, 1, 1, fade);
-+                GlStateManager.blendFunc(GlStateManager.SourceFactor.CONSTANT_ALPHA, GlStateManager.DestFactor.ONE_MINUS_CONSTANT_ALPHA);
++                GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.CONSTANT_ALPHA, GlStateManager.DestFactor.ONE_MINUS_CONSTANT_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 +            }
 +                          
              if (model.isBuiltInRenderer())
@@ -69,51 +67,118 @@
                  GlStateManager.enableRescaleNormal();
                  TileEntityItemStackRenderer.instance.renderByItem(stack);
              }
-@@ -186,7 +222,22 @@
+@@ -186,7 +220,8 @@
                  }
  
                  this.renderModelHasEmissive = false;
 -                this.renderModel(model, stack);
-+                
-+                int c = -1;
-+                if(fade < 1){
-+                	int b = (int) (fade * 255);
-+                	c =  b << 24 | 255 << 16 | 255 << 8 | 255;
-+                }
-+
-+                if (Minecraft.getMinecraft().jumpTracker.isBoots(stack))
-+                {
-+                	c = (255) << 24 | 255 << 8 ;
-+                } else if (Minecraft.getMinecraft().climbTracker.isClaws(stack))
-+                {
-+                	c = (255) << 24 | 130 <<16 | 0 << 8 | 75 ;
-+                }
-+
-+                this.renderModel(model, c, stack);
++                                              
++                this.renderModel(model, -1, stack);
  
                  if (this.renderModelHasEmissive)
                  {
-@@ -205,6 +256,9 @@
+@@ -205,10 +240,19 @@
                  }
              }
  
 +            GL14.glBlendColor(1, 1, 1, 1);
-+            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-+
++            GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
++            GlStateManager.disableBlend();
++            fade = 1;
              GlStateManager.popMatrix();
          }
      }
-@@ -327,7 +381,8 @@
-                 k = k | -16777216;
-             }
  
--            this.renderQuad(renderer, bakedquad, k);
-+            if (Reflector.forgeExists()) Reflector.callVoid(Reflector.LightUtil_renderQuadColor, renderer, bakedquad, k);
-+            else this.renderQuad(renderer, bakedquad, k);
-         }
++    
++    private int makeColor(int a, int r, int g, int b) {
++    	return  a << 24 | r << 16 | g << 8 | b;
++    }
++    
+     private void renderEffect(IBakedModel model)
+     {
+         if (!Config.isCustomItems() || CustomItems.isUseGlint())
+@@ -300,35 +344,54 @@
+         this.putQuadNormal(renderer, quad);
      }
  
-@@ -342,7 +397,7 @@
++   float fade = 1;
++    
+     private void renderQuads(BufferBuilder renderer, List<BakedQuad> quads, int color, ItemStack stack)
+     {
+-        boolean flag = color == -1 && !stack.isEmpty();
+-        int i = 0;
++    	boolean flag = color == -1 && !stack.isEmpty();
++    	int i = 0;
+ 
+-        for (int j = quads.size(); i < j; ++i)
+-        {
+-            BakedQuad bakedquad = quads.get(i);
+-            int k = color;
+-
+-            if (flag && bakedquad.hasTintIndex())
+-            {
+-                k = this.itemColors.colorMultiplier(stack, bakedquad.getTintIndex());
+-
+-                if (Config.isCustomColors())
+-                {
+-                    k = CustomColors.getColorFromItemStack(stack, bakedquad.getTintIndex(), k);
+-                }
+-
+-                if (EntityRenderer.anaglyphEnable)
+-                {
+-                    k = TextureUtil.anaglyphColor(k);
+-                }
+-
+-                k = k | -16777216;
+-            }
+-
+-            this.renderQuad(renderer, bakedquad, k);
+-        }
++    	for (int j = quads.size(); i < j; ++i)
++    	{
++    		BakedQuad bakedquad = quads.get(i);
++    		int k = color;
++
++    		if (flag && bakedquad.hasTintIndex())
++    		{
++    			k = this.itemColors.colorMultiplier(stack, bakedquad.getTintIndex());
++
++    			if (Config.isCustomColors())
++    			{
++    				k = CustomColors.getColorFromItemStack(stack, bakedquad.getTintIndex(), k);
++    			}
++
++    			if (EntityRenderer.anaglyphEnable)
++    			{
++    				k = TextureUtil.anaglyphColor(k);
++    			}
++
++    			int b = (int) (fade * 255);
++
++    			int rev = (255 - b) >> 24;
++
++		    	k -= rev; //apply fade to tinted color.
++		
++		    	if (Minecraft.getMinecraft().jumpTracker.isBoots(stack))
++		    	{
++		    		k = makeColor(b, 0, 255, 0);
++		    	} else if (Minecraft.getMinecraft().climbTracker.isClaws(stack))
++		    	{
++		    		k = makeColor(b, 130, 0, 75);
++		    	} //override color
++		
++		    	k = k | -16777216; //wtf r u.
++
++    		}
++
++    		if (Reflector.forgeExists()) Reflector.callVoid(Reflector.LightUtil_renderQuadColor, renderer, bakedquad, k);
++    		else this.renderQuad(renderer, bakedquad, k);
++    	}
++    	   	
+     }
+ 
+     public boolean shouldRenderItemIn3D(ItemStack stack)
+@@ -342,7 +405,7 @@
          if (!stack.isEmpty())
          {
              IBakedModel ibakedmodel = this.getItemModelWithOverrides(stack, (World)null, (EntityLivingBase)null);
@@ -122,7 +187,7 @@
          }
      }
  
-@@ -381,16 +436,16 @@
+@@ -381,16 +444,16 @@
          }
      }
  
@@ -142,7 +207,7 @@
      {
          if (!stack.isEmpty())
          {
-@@ -1215,6 +1270,10 @@
+@@ -1215,6 +1278,10 @@
          this.registerItem(Items.DIAMOND_HORSE_ARMOR, "diamond_horse_armor");
          this.registerItem(Items.LEAD, "lead");
          this.registerItem(Items.NAME_TAG, "name_tag");

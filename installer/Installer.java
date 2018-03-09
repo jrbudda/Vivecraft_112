@@ -62,7 +62,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
     private static final String OF_JSON_NAME      = "1.12.2_HD_U_C7";
     private static final String OF_MD5            = "349b644370e7a8460482d1479ebcbde1";
     private static final String OF_VERSION_EXT    = ".jar";
-    private static String FORGE_VERSION     = "14.23.1.2608";
+    private static String FORGE_VERSION     = "14.23.2.2624";
 	/* END OF DO NOT RENAME */
 
 	private static final String DEFAULT_PROFILE_NAME = "ViveCraft " + MINECRAFT_VERSION;
@@ -330,7 +330,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 		ramAllocation.setToolTipText(
 				"<html>" +
 						"Select the amount of Ram, in GB to allocate to the Vivecraft profile.<br>" +
-						"At least 2GB is recommened. More than 1GB of ram requires 64 bit PC and java." +
+						"At least 2GB is recommended. More than 1GB of ram requires 64 bit PC and java." +
 				"</html>");
 		ramAllocation.setAlignmentX(LEFT_ALIGNMENT);
 		ramAllocation.setMaximumSize( new Dimension((int)ramAllocation.getPreferredSize().getWidth(), 20));

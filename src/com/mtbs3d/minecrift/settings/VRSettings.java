@@ -64,13 +64,12 @@ public class VRSettings
     public static final int RENDER_BLOCK_OUTLINE_MODE_HUD = 1;
     public static final int RENDER_BLOCK_OUTLINE_MODE_NEVER = 2;
   
-    public static final int MIRROR_OFF = 0;
-    public static final int MIRROR_ON_ONE_THIRD_FRAME_RATE = 1;
-    public static final int MIRROR_ON_FULL_FRAME_RATE = 2;
-    public static final int MIRROR_ON_ONE_THIRD_FRAME_RATE_SINGLE_VIEW = 3;
-    public static final int MIRROR_ON_FULL_FRAME_RATE_SINGLE_VIEW = 4;
-    public static final int MIRROR_MIXED_REALITY = 5;
-    public static final int MIRROR_FIRST_PERSON = 6;
+    public static final int MIRROR_OFF = 10;
+    public static final int MIRROR_ON_DUAL = 11;
+    public static final int MIRROR_ON_SINGLE = 12;
+    public static final int MIRROR_FIRST_PERSON = 13;
+    public static final int MIRROR_THIRD_PERSON = 14;
+    public static final int MIRROR_MIXED_REALITY = 15;
     
     public static final int HUD_LOCK_HEAD= 1;
     public static final int HUD_LOCK_HAND= 2;
@@ -155,7 +154,7 @@ public class VRSettings
     public boolean vrUseStencil = true;
     public boolean insideBlockSolidColor = false; //unused
     public float renderScaleFactor = 1.0f;
-    public int displayMirrorMode = MIRROR_ON_FULL_FRAME_RATE_SINGLE_VIEW;
+    public int displayMirrorMode = MIRROR_ON_DUAL;
     //
     
     //Mixed Reality
@@ -800,18 +799,17 @@ public class VRSettings
                     case MIRROR_OFF:
                     default:
                         return var4 + "OFF";
-                    case MIRROR_ON_ONE_THIRD_FRAME_RATE:
-                        return var4 + "Dual (1/3)";
-                    case MIRROR_ON_FULL_FRAME_RATE:
-                        return var4 + "Dual (Full)";
-                    case MIRROR_ON_ONE_THIRD_FRAME_RATE_SINGLE_VIEW:
-                        return var4 + "Single (1/3)";
-                    case MIRROR_ON_FULL_FRAME_RATE_SINGLE_VIEW:
-                        return var4 + "Ssingle (Full)";
+                    case MIRROR_ON_DUAL:
+                        return var4 + "Dual";
+                    case MIRROR_ON_SINGLE:
+                        return var4 + "Single";
+                    case MIRROR_FIRST_PERSON:
+                        return var4 + "1st Person";
+                    case MIRROR_THIRD_PERSON:
+                        return var4 + "3rd Person";
                     case MIRROR_MIXED_REALITY:
                         return var4 + "Mixed Reality";
-                    case MIRROR_FIRST_PERSON:
-                        return var4 + "Undistorted";
+
                 }
             case MIXED_REALITY_KEY_COLOR:
                 if (this.mixedRealityKeyColor.equals(new Color(0, 0, 0))) {
@@ -1093,7 +1091,7 @@ public class VRSettings
 	            break;
              case MIRROR_DISPLAY:
                 this.displayMirrorMode++;
-                if (this.displayMirrorMode > MIRROR_FIRST_PERSON)
+                if (this.displayMirrorMode > MIRROR_MIXED_REALITY)
                     this.displayMirrorMode = MIRROR_OFF;
                 break;
             case MIXED_REALITY_KEY_COLOR:

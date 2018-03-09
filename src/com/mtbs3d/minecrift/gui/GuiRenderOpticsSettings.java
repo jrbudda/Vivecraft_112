@@ -53,6 +53,10 @@ public class GuiRenderOpticsSettings  extends BaseGuiSettings implements GuiEven
     static VRSettings.VrOptions[] UDOptions = new VRSettings.VrOptions[] {
             VRSettings.VrOptions.MONO_FOV,
     };
+    
+    static VRSettings.VrOptions[] TUDOptions = new VRSettings.VrOptions[] {
+            VRSettings.VrOptions.MIXED_REALITY_FOV,
+    };
 
     GameSettings settings;
     VRSettings vrSettings;
@@ -100,11 +104,16 @@ public class GuiRenderOpticsSettings  extends BaseGuiSettings implements GuiEven
     		}
     		addButtons(buttons, 75);
 
-    	}else if(mc.vrSettings.displayMirrorMode == vrSettings.MIRROR_FIRST_PERSON){
+    	}else if(mc.vrSettings.displayMirrorMode == vrSettings.MIRROR_FIRST_PERSON ){
     		GuiSmallButtonEx mr = new GuiSmallButtonEx(0, this.width / 2 - 68, this.height / 6 + 65, "Undistorted Mirror Options");
     		mr.enabled = false;
     		this.buttonList.add(mr);
     		addButtons(UDOptions,75);
+    	}else if( mc.vrSettings.displayMirrorMode == vrSettings.MIRROR_THIRD_PERSON){
+    		GuiSmallButtonEx mr = new GuiSmallButtonEx(0, this.width / 2 - 68, this.height / 6 + 65, "Undistorted Mirror Options");
+    		mr.enabled = false;
+    		this.buttonList.add(mr);
+    		addButtons(TUDOptions,75);
     	}
     }
 
@@ -181,7 +190,7 @@ public class GuiRenderOpticsSettings  extends BaseGuiSettings implements GuiEven
             {
 
                 minecraft.vrSettings.renderScaleFactor = 1.0f;
-                minecraft.vrSettings.displayMirrorMode = VRSettings.MIRROR_ON_FULL_FRAME_RATE_SINGLE_VIEW;
+                minecraft.vrSettings.displayMirrorMode = VRSettings.MIRROR_ON_DUAL;
                 minecraft.vrSettings.mixedRealityKeyColor = new Color();
                 minecraft.vrSettings.mixedRealityRenderHands = false;
                 minecraft.vrSettings.insideBlockSolidColor = false;
@@ -311,8 +320,10 @@ public class GuiRenderOpticsSettings  extends BaseGuiSettings implements GuiEven
             case MIRROR_DISPLAY:
                 return new String[] {
                         "Mirrors image on HMD to separate desktop window.",
-                        "Can be set to OFF, single or dual view at 1/3 or",
-                        "full framerate."
+                        "Can be set to OFF, single or dual hmd-view, ",
+                        "first-person undistorted, third person undistorted",
+                        "and Mixed Reality. The undistorted and MR views have",
+                        "a performance cost"
                 };
             case MIXED_REALITY_KEY_COLOR:
                 return new String[] {

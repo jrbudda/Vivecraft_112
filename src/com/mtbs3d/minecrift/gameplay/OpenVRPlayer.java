@@ -49,6 +49,7 @@ import net.minecraft.client.gui.inventory.GuiCrafting;
 import net.minecraft.client.gui.inventory.GuiDispenser;
 import net.minecraft.client.gui.inventory.GuiEditSign;
 import net.minecraft.client.gui.inventory.GuiFurnace;
+import net.minecraft.client.gui.inventory.GuiShulkerBox;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
@@ -795,6 +796,7 @@ public class OpenVRPlayer
 			Quatf controllerOrientationQuat;
 			boolean appearOverBlock = (newScreen instanceof GuiCrafting)
 					|| (newScreen instanceof GuiChest)
+					|| (newScreen instanceof GuiShulkerBox)
 					|| (newScreen instanceof GuiHopper)
 					|| (newScreen instanceof GuiFurnace)
 					|| (newScreen instanceof GuiBrewingStand)

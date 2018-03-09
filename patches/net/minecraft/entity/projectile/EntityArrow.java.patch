@@ -28,7 +28,7 @@
 +        	{
 +        		//VIVE SET SPAWNPOS
 +    	        Vec3d aimSource = (vp.isSeated() || vp.getDraw()==0) ? vp.getControllerPos(0): vp.getControllerPos(1);
-+    	        Vec3d aimDir = getVRAim(vp);
++    	        Vec3d aimDir = getVRAim(vp).scale(0.6f);
 +        		this.setPosition(aimSource.x + aimDir.x ,aimSource.y + aimDir.y ,aimSource.z+aimDir.z );
 +        		//
 +        	}
