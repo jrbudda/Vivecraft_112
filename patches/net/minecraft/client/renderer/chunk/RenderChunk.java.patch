@@ -8,18 +8,27 @@
          }
      }
  
-@@ -141,7 +142,9 @@
+@@ -141,7 +142,7 @@
              this.postRenderBlocks(BlockRenderLayer.TRANSLUCENT, x, y, z, bufferbuilder, compiledchunk);
          }
      }
 -
-+    
-+    BlockPosM blockposm;
-+    
++       
      public void rebuildChunk(float x, float y, float z, ChunkCompileTaskGenerator generator)
      {
          CompiledChunk compiledchunk = new CompiledChunk();
-@@ -273,7 +276,7 @@
+@@ -177,9 +178,8 @@
+             boolean flag = Reflector.ForgeBlock_canRenderInLayer.exists();
+             boolean flag1 = Reflector.ForgeHooksClient_setRenderLayer.exists();
+ 
+-            for (Object o : BlockPosM.getAllInBoxMutable(blockpos, blockpos1))
++            for (BlockPosM blockposm : (Iterable<BlockPosM>) BlockPosM.getAllInBoxMutable(blockpos, blockpos1))
+             {
+-            	BlockPosM blockposm = (BlockPosM) o;
+                 IBlockState iblockstate = chunkcacheof.getBlockState(blockposm);
+                 Block block = iblockstate.getBlock();
+ 
+@@ -273,7 +273,7 @@
  
                  if (flag1)
                  {
