@@ -166,14 +166,6 @@ def installAndPatchMcp( mcp_dir ):
     if os.path.exists(ff_jar_source_path):
         print 'Updating fernflower.jar: copying %s to %s' % (ff_jar_source_path, ff_jar_dest_path)
         shutil.copy(ff_jar_source_path,ff_jar_dest_path)
-
-    # Patch Start.java with minecraft version
-    start_java_file = os.path.join(base_dir,"mcppatches","Start.java")
-    if os.path.exists(start_java_file):
-        target_start_java_file = os.path.join(mcp_dir,"conf","patches","Start.java")
-        print 'Updating Start.java: copying %s to %s' % (start_java_file, target_start_java_file)
-        shutil.copy(start_java_file,target_start_java_file)
-        replacelineinfile( target_start_java_file, "args = concat(new String[] {\"--version\", \"mcp\"", "        args = concat(new String[] {\"--version\", \"mcp\", \"--accessToken\", \"0\", \"--assetsDir\", \"assets\", \"--assetIndex\", \"%s\", \"--userProperties\", \"{}\"}, args);\n" % mc_version );
     
     # Setup the appropriate mcp file versions
     mcp_version_cfg = os.path.join(mcp_dir,"conf","version.cfg")
@@ -181,22 +173,32 @@ def installAndPatchMcp( mcp_dir ):
     replacelineinfile( mcp_version_cfg, "ServerVersion =", "ServerVersion = %s\n" % mc_version );
 
     # Patch in mcp mappings (if present)
-    params_csv_source = os.path.join(base_dir,"mcppatches","mappings","params.csv")
-    params_csv_dest = os.path.join(mcp_dir,"conf","params.csv")
-    if os.path.exists(params_csv_source):
-        shutil.copy(params_csv_source,params_csv_dest)
+    mappingsdir = os.path.join(base_dir,"mcppatches","mappings")
+    mappingstarget = os.path.join(mcp_dir,"conf")
+    if os.path.exists(mappingsdir):
+        src_files = os.listdir(mappingsdir)
+        for file_name in src_files:
+            full_file_name = os.path.join(mappingsdir, file_name)
+            if (os.path.isfile(full_file_name)):
+                shutil.copy(full_file_name, os.path.join(mappingstarget, file_name))
 
-    methods_csv_source = os.path.join(base_dir,"mcppatches","mappings","methods.csv")
-    methods_csv_dest = os.path.join(mcp_dir,"conf","methods.csv")
-    if os.path.exists(methods_csv_source):
-        shutil.copy(methods_csv_source,methods_csv_dest)
+    mcppatches = os.path.join(base_dir,"mcppatches","mappings","patches")
+    mcppatchesmcp = os.path.join(mcp_dir,"conf","patches")
+    if os.path.exists(mcppatches):
+        if os.path.exists(mcppatchesmcp):
+            shutil.rmtree(mcppatchesmcp)
+        shutil.copytree(mcppatches,mcppatchesmcp)
+        
+    # Patch Start.java with minecraft version
+    start_java_file = os.path.join(base_dir,"mcppatches","Start.java")
+    if os.path.exists(start_java_file):
+        target_start_java_file = os.path.join(mcp_dir,"conf","patches","Start.java")
+        print 'Updating Start.java: copying %s to %s' % (start_java_file, target_start_java_file)
+        shutil.copy(start_java_file,target_start_java_file)
+        replacelineinfile( target_start_java_file, "args = concat(new String[] {\"--version\", \"mcp\"", "        args = concat(new String[] {\"--version\", \"mcp\", \"--accessToken\", \"0\", \"--assetsDir\", \"assets\", \"--assetIndex\", \"%s\", \"--userProperties\", \"{}\"}, args);\n" % mc_version );
 
-    fields_csv_source = os.path.join(base_dir,"mcppatches","mappings","fields.csv")
-    fields_csv_dest = os.path.join(mcp_dir,"conf","fields.csv")
-    if os.path.exists(fields_csv_source):
-        shutil.copy(fields_csv_source,fields_csv_dest)
 
-
+        
 def download_deps( mcp_dir, download_mc, forgedep=False ):
 
     jars = os.path.join(mcp_dir,"jars")
@@ -257,7 +259,7 @@ def download_deps( mcp_dir, download_mc, forgedep=False ):
     
     if download_optifine: 
         # Use optifine filename for URL
-        optifine_url = "http://vivecraft.org/jar/Optifine/OptiFine_"+of_file_name+of_file_extension
+        optifine_url = "http://vivecraft.org/jar/build/OptiFine-"+of_file_name+of_file_extension
         print 'Downloading Optifine from ' + optifine_url
         if not download_file( optifine_url, optifine_dest_file, of_file_md5 ):
             print 'FAILED to download Optifine!'
@@ -476,7 +478,7 @@ def main(mcp_dir):
     if includeForge:
         download_deps( mcp_dir, True, True ) # Forge libs
 
-    download_deps( mcp_dir, False, False ) # Vanilla libs
+    download_deps( mcp_dir, True, False ) # Vanilla libs
     if dependenciesOnly:
         sys.exit(1)
 
