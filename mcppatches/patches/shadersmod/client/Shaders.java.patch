@@ -1,26 +1,23 @@
 --- a/shadersmod/client/Shaders.java
 +++ b/shadersmod/client/Shaders.java
-@@ -64,6 +64,7 @@
- import net.minecraft.world.World;
+@@ -68,6 +68,7 @@
+ import net.optifine.entity.model.anim.IExpressionBool;
  import org.apache.commons.io.IOUtils;
  import org.lwjgl.BufferUtils;
 +import org.lwjgl.opengl.ARBFragmentShader;
  import org.lwjgl.opengl.ARBShaderObjects;
  import org.lwjgl.opengl.ARBVertexShader;
  import org.lwjgl.opengl.ContextCapabilities;
-@@ -908,8 +909,10 @@
+@@ -1029,7 +1030,7 @@
          Set set = props.keySet();
          List<CustomTexture> list = new ArrayList<CustomTexture>();
  
 -        for (String s1 : set)
-+        for (Object s0 : set)
++        for (String s1 : (Set<String>)(Set<?>)set)
          {
-+        	String s1 = (String) s0;
-+
              if (s1.startsWith(s))
              {
-                 String s2 = s1.substring(s.length());
-@@ -1233,7 +1236,7 @@
+@@ -1354,7 +1355,7 @@
  
                      if (shaderoption == null)
                      {
@@ -29,23 +26,65 @@
                      }
                      else if (shaderoption instanceof ShaderOptionRest)
                      {
-@@ -3786,12 +3789,12 @@
-         checkGLError("end beginRender");
-     }
+@@ -2177,11 +2178,11 @@
  
--    private static void checkWorldChanged(World world)
-+    private static void checkWorldChanged(World worldin)
+     private static int getDrawBuffer(int p, String str, int i)
      {
--        if (currentWorld != world)
-+        if (currentWorld != worldin)
-         {
-             World world = currentWorld;
--            currentWorld = world;
-+            currentWorld = worldin;
+-        int i = 0;
++        int d = 0;
  
-             if (world != null && world != null)
+         if (i >= str.length())
+         {
+-            return i;
++            return d;
+         }
+         else
+         {
+@@ -2191,23 +2192,23 @@
              {
-@@ -4873,8 +4876,6 @@
+                 if (j >= 0 && j <= 1)
+                 {
+-                    i = j + 36064;
++                    d = j + 36064;
+                     usedShadowColorBuffers = Math.max(usedShadowColorBuffers, j);
+                 }
+ 
+-                return i;
++                return d;
+             }
+             else
+             {
+                 if (j >= 0 && j <= 7)
+                 {
+                     programsToggleColorTextures[p][j] = true;
+-                    i = j + 36064;
++                    d = j + 36064;
+                     usedColorAttachs = Math.max(usedColorAttachs, j);
+                     usedColorBuffers = Math.max(usedColorBuffers, j);
+                 }
+ 
+-                return i;
++                return d;
+             }
+         }
+     }
+@@ -3907,12 +3908,12 @@
+     {
+         if (currentWorld != world)
+         {
+-            World world = currentWorld;
++            World oldworld = currentWorld;
+             currentWorld = world;
+ 
+-            if (world != null && world != null)
++            if (world != null && oldworld != null)
+             {
+-                int i = world.provider.getDimensionType().getId();
++                int i = oldworld.provider.getDimensionType().getId();
+                 int j = world.provider.getDimensionType().getId();
+                 boolean flag = shaderPackDimensions.contains(Integer.valueOf(i));
+                 boolean flag1 = shaderPackDimensions.contains(Integer.valueOf(j));
+@@ -5025,8 +5026,6 @@
      public static void setFog(GlStateManager.FogMode fogMode)
      {
          GlStateManager.setFog(fogMode);
@@ -53,16 +92,13 @@
 -
          if (fogEnabled)
          {
-             setProgramUniform1i("fogMode", fogMode.capabilityId);
-@@ -5055,8 +5056,10 @@
+             setProgramUniform1i(uniform_fogMode, fogMode.capabilityId);
+@@ -5207,7 +5206,7 @@
                          Lang.loadLocaleData(inputstream, properties);
                          inputstream.close();
  
 -                        for (String s4 : properties.keySet())
-+                        for (Object s0 : properties.keySet())
++                        for (String s4 : (Set<String>)(Set<?>)properties.keySet())
                          {
-+                        	String s4 = (String) s0;
-+
                              String s5 = properties.getProperty(s4);
                              shaderPackResources.put(s4, s5);
-                         }

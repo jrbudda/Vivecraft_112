@@ -5,7 +5,7 @@
          if (tileentityspecialrenderer == null && teClass != TileEntity.class)
          {
 -            tileentityspecialrenderer = this.<T>getRenderer(teClass.getSuperclass());
-+            tileentityspecialrenderer = getRenderer((Class<? extends TileEntity>) teClass.getSuperclass());
++            tileentityspecialrenderer = this.getRenderer((Class<? extends TileEntity>) teClass.getSuperclass());
              this.renderers.put(teClass, tileentityspecialrenderer);
          }
  

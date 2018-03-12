@@ -1,0 +1,14 @@
+--- a/optifine/json/JSONWriter.java
++++ b/optifine/json/JSONWriter.java
+@@ -79,8 +79,10 @@
+         int i = set.size();
+         int j = 0;
+ 
+-        for (String s : set)
++        for (Object s0 : set)
+         {
++        	String s = (String) s0;
++
+             Object object = jObj.get(s);
+             this.writeIndent();
+             this.writer.write(JSONValue.toJSONString(s));

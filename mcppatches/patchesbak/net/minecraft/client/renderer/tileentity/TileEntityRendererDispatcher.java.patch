@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher.java
++++ b/net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher.java
+@@ -95,7 +95,7 @@
+ 
+         if (tileentityspecialrenderer == null && teClass != TileEntity.class)
+         {
+-            tileentityspecialrenderer = this.<T>getRenderer(teClass.getSuperclass());
++            tileentityspecialrenderer = getRenderer((Class<? extends TileEntity>) teClass.getSuperclass());
+             this.renderers.put(teClass, tileentityspecialrenderer);
+         }
+ 

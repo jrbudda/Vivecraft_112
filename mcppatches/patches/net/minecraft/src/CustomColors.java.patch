@@ -9,69 +9,57 @@
          }
          else
          {
-@@ -459,8 +459,9 @@
+@@ -459,7 +459,7 @@
          String s = "palette.block.";
          Map map = new HashMap();
  
 -        for (String s1 : p_readCustomColormaps_0_.keySet())
-+        for (Object s0 : p_readCustomColormaps_0_.keySet())
++        for (String s1 : (Set<String>)(Set<?>)p_readCustomColormaps_0_.keySet())
          {
-+        	String s1 = (String) s0;
              String s2 = p_readCustomColormaps_0_.getProperty(s1);
  
-             if (s1.startsWith(s))
-@@ -1372,8 +1373,9 @@
+@@ -1372,7 +1372,7 @@
          Set set = p_readSpawnEggColors_0_.keySet();
          int i = 0;
  
 -        for (String s : set)
-+        for (Object s0 : set)
++        for (String s : (Set<String>)(Set<?>)set)
          {
-+        	String s = (String) s0;
              String s1 = p_readSpawnEggColors_0_.getProperty(s);
  
-             if (s.startsWith(p_readSpawnEggColors_2_))
-@@ -1511,8 +1513,9 @@
+@@ -1511,7 +1511,7 @@
          float[][] afloat1 = new float[aenumdyecolor.length][];
          int k = 0;
  
 -        for (String s : p_readDyeColors_0_.keySet())
-+        for (Object s0 : p_readDyeColors_0_.keySet())
++        for (String s : (Set<String>)(Set<?>)p_readDyeColors_0_.keySet())
          {
-+        	String s = (String) s0;
              String s1 = p_readDyeColors_0_.getProperty(s);
  
-             if (s.startsWith(p_readDyeColors_2_))
-@@ -1584,8 +1587,9 @@
+@@ -1584,7 +1584,7 @@
          Arrays.fill(aint, -1);
          int i = 0;
  
 -        for (String s : p_readTextColors_0_.keySet())
-+        for (Object s0 : p_readTextColors_0_.keySet())
++        for (String s : (Set<String>)(Set<?>)p_readTextColors_0_.keySet())
          {
-+        	String s = (String) s0;
              String s1 = p_readTextColors_0_.getProperty(s);
  
-             if (s.startsWith(p_readTextColors_2_))
-@@ -1640,8 +1644,9 @@
+@@ -1640,7 +1640,7 @@
          Arrays.fill(aint, -1);
          int i = 0;
  
 -        for (String s : p_readMapColors_0_.keySet())
-+        for (Object s0 : p_readMapColors_0_.keySet())
++        for (String s : (Set<String>)(Set<?>)p_readMapColors_0_.keySet())
          {
-+        	String s = (String) s0;
              String s1 = p_readMapColors_0_.getProperty(s);
  
-             if (s.startsWith(p_readMapColors_2_))
-@@ -1679,8 +1684,9 @@
+@@ -1679,7 +1679,7 @@
          Arrays.fill(aint, -1);
          int i = 0;
  
 -        for (String s : p_readPotionColors_0_.keySet())
-+        for (Object s0 : p_readPotionColors_0_.keySet())
++        for (String s : (Set<String>)(Set<?>) p_readPotionColors_0_.keySet())
          {
-+        	String s = (String) s0;
              String s1 = p_readPotionColors_0_.getProperty(s);
  
-             if (s.startsWith(p_readPotionColors_2_))

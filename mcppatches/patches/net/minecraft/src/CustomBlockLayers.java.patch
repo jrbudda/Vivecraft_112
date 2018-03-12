@@ -1,0 +1,11 @@
+--- a/net/minecraft/src/CustomBlockLayers.java
++++ b/net/minecraft/src/CustomBlockLayers.java
+@@ -109,7 +109,7 @@
+                     {
+                         while (p_readLayer_3_.size() < j + 1)
+                         {
+-                            p_readLayer_3_.add((Object)null);
++                            p_readLayer_3_.add((BlockRenderLayer)null);
+                         }
+ 
+                         if (p_readLayer_3_.get(j) != null)

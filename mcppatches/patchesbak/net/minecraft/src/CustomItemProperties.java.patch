@@ -1,0 +1,50 @@
+--- a/net/minecraft/src/CustomItemProperties.java
++++ b/net/minecraft/src/CustomItemProperties.java
+@@ -340,8 +340,10 @@
+             Set set = map.keySet();
+             Map map1 = new LinkedHashMap();
+ 
+-            for (String s1 : set)
++            for (Object s0 : set)
+             {
++            	String s1 = (String) s0;
++
+                 String s2 = (String)map.get(s1);
+                 s2 = fixTextureName(s2, p_parseTextures_1_);
+                 map1.put(s1, s2);
+@@ -421,8 +423,10 @@
+             Set set = map.keySet();
+             Map map1 = new LinkedHashMap();
+ 
+-            for (String s1 : set)
++            for (Object s0 : set)
+             {
++            	String s1 = (String) s0;
++
+                 String s2 = (String)map.get(s1);
+                 s2 = fixModelName(s2, p_parseModels_1_);
+                 map1.put(s1, s2);
+@@ -629,8 +633,10 @@
+         {
+             List list = new ArrayList();
+ 
+-            for (String s1 : map.keySet())
++            for (Object s0 : map.keySet())
+             {
++            	String s1 = (String) s0;
++
+                 String s2 = (String)map.get(s1);
+                 String s3 = s1.substring(s.length());
+                 NbtTagValue nbttagvalue = new NbtTagValue(s3, s2);
+@@ -646,8 +652,10 @@
+     {
+         Map map = new LinkedHashMap();
+ 
+-        for (String s : p_getMatchingProperties_0_.keySet())
++        for (Object s0 : p_getMatchingProperties_0_.keySet())
+         {
++        	String s = (String) s0;
++
+             String s1 = p_getMatchingProperties_0_.getProperty(s);
+ 
+             if (s.startsWith(p_getMatchingProperties_1_))

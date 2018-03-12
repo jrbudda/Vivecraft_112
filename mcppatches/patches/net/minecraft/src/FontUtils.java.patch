@@ -1,14 +1,20 @@
 --- a/net/minecraft/src/FontUtils.java
 +++ b/net/minecraft/src/FontUtils.java
-@@ -50,8 +50,10 @@
+@@ -4,6 +4,8 @@
+ import java.io.IOException;
+ import java.io.InputStream;
+ import java.util.Properties;
++import java.util.Set;
++
+ import net.minecraft.util.ResourceLocation;
+ 
+ public class FontUtils
+@@ -50,7 +52,7 @@
  
      public static void readCustomCharWidths(Properties p_readCustomCharWidths_0_, float[] p_readCustomCharWidths_1_)
      {
 -        for (String s : p_readCustomCharWidths_0_.keySet())
-+        for (Object s0 : p_readCustomCharWidths_0_.keySet())
++        for (String s : (Set<String>)(Set<?>)p_readCustomCharWidths_0_.keySet())
          {
-+        	String s = (String) s0;
-+
              String s1 = "width.";
  
-             if (s.startsWith(s1))

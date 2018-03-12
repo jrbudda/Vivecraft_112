@@ -1,18 +1,24 @@
 --- a/shadersmod/client/ShaderPackParser.java
 +++ b/shadersmod/client/ShaderPackParser.java
-@@ -248,8 +248,10 @@
+@@ -258,7 +258,7 @@
          String s = "profile.";
          List<ShaderProfile> list = new ArrayList<ShaderProfile>();
  
 -        for (String s1 : props.keySet())
-+        for (Object s0 : props.keySet())
++        for (String s1 : (Set<String>)(Set<?>)props.keySet())
          {
-+        	String s1 = (String) s0;
-+
              if (s1.startsWith(s))
              {
-                 String s2 = s1.substring(s.length());
-@@ -446,7 +448,7 @@
+@@ -291,7 +291,7 @@
+         Pattern pattern = Pattern.compile("program\\.(\\w+)\\.enabled");
+         Map<String, IExpressionBool> map = new HashMap<String, IExpressionBool>();
+ 
+-        for (String s1 : props.keySet())
++        for (String s1 : (Set<String>)(Set<?>)props.keySet())
+         {
+             Matcher matcher = pattern.matcher(s1);
+ 
+@@ -502,7 +502,7 @@
  
                  if (s1.equals("<empty>"))
                  {
@@ -21,7 +27,7 @@
                  }
                  else if (set.contains(s1))
                  {
-@@ -498,7 +500,7 @@
+@@ -554,7 +554,7 @@
                          if (shaderoption == null)
                          {
                              Config.warn("[Shaders] Invalid option: " + s1 + ", key: " + key);
@@ -30,14 +36,48 @@
                          }
                          else
                          {
-@@ -688,8 +690,9 @@
+@@ -744,7 +744,7 @@
          Map<String, IExpression> map = new HashMap<String, IExpression>();
          List<CustomUniform> list = new ArrayList<CustomUniform>();
  
 -        for (String s4 : props.keySet())
-+        for (Object o : props.keySet())
++        for (String s4 : (Set<String>)(Set<?>)props.keySet())
          {
-+        	String s4 = (String)o;
              String[] astring = Config.tokenize(s4, ".");
  
-             if (astring.length == 3)
+@@ -841,7 +841,7 @@
+ 
+     public static void parseAlphaStates(GlAlphaState[] states, Properties props)
+     {
+-        for (String s : props.keySet())
++        for (String s : (Set<String>)(Set<?>)props.keySet())
+         {
+             String[] astring = Config.tokenize(s, ".");
+ 
+@@ -905,7 +905,7 @@
+ 
+     public static void parseBlendStates(GlBlendState[] states, Properties props)
+     {
+-        for (String s : props.keySet())
++        for (String s : (Set<String>)(Set<?>)props.keySet())
+         {
+             String[] astring = Config.tokenize(s, ".");
+ 
+@@ -980,7 +980,7 @@
+ 
+     public static void parseRenderScales(RenderScale[] scales, Properties props)
+     {
+-        for (String s : props.keySet())
++        for (String s : (Set<String>)(Set<?>)props.keySet())
+         {
+             String[] astring = Config.tokenize(s, ".");
+ 
+@@ -1044,7 +1044,7 @@
+ 
+     public static void parseBuffersFlip(Boolean[][] programBuffersFlip, Properties props)
+     {
+-        for (String s : props.keySet())
++        for (String s : (Set<String>)(Set<?>)props.keySet())
+         {
+             String[] astring = Config.tokenize(s, ".");
+ 

@@ -1,25 +1,15 @@
 --- a/net/minecraft/src/Config.java
 +++ b/net/minecraft/src/Config.java
-@@ -37,6 +37,7 @@
- import net.minecraft.client.resources.IResourceManager;
- import net.minecraft.client.resources.IResourcePack;
- import net.minecraft.client.resources.ResourcePackRepository;
-+import net.minecraft.client.resources.ResourcePackRepository.Entry;
- import net.minecraft.client.settings.GameSettings;
- import net.minecraft.entity.Entity;
- import net.minecraft.server.integrated.IntegratedServer;
-@@ -1068,8 +1069,9 @@
+@@ -1068,7 +1068,7 @@
          List list = resourcepackrepository.getRepositoryEntries();
          List list1 = new ArrayList();
  
 -        for (ResourcePackRepository.Entry resourcepackrepository$entry : list)
-+        for (Object r : list)
++        for (ResourcePackRepository.Entry resourcepackrepository$entry : (List<ResourcePackRepository.Entry>)list)
          {
-+        	ResourcePackRepository.Entry resourcepackrepository$entry = (Entry) r;
              list1.add(resourcepackrepository$entry.getResourcePack());
          }
- 
-@@ -2241,7 +2243,7 @@
+@@ -2213,7 +2213,7 @@
          {
              int i = p_addObjectToArray_0_.length;
              int j = i + 1;
@@ -28,7 +18,7 @@
              System.arraycopy(p_addObjectToArray_0_, 0, aobject, 0, i);
              aobject[i] = p_addObjectToArray_1_;
              return aobject;
-@@ -2252,7 +2254,7 @@
+@@ -2224,7 +2224,7 @@
      {
          List list = new ArrayList(Arrays.asList(p_addObjectToArray_0_));
          list.add(p_addObjectToArray_2_, p_addObjectToArray_1_);
@@ -37,7 +27,7 @@
          return list.toArray(aobject);
      }
  
-@@ -2270,7 +2272,7 @@
+@@ -2242,7 +2242,7 @@
          {
              int i = p_addObjectsToArray_0_.length;
              int j = i + p_addObjectsToArray_1_.length;

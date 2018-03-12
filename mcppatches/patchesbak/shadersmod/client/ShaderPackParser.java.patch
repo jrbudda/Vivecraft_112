@@ -1,0 +1,43 @@
+--- a/shadersmod/client/ShaderPackParser.java
++++ b/shadersmod/client/ShaderPackParser.java
+@@ -248,8 +248,10 @@
+         String s = "profile.";
+         List<ShaderProfile> list = new ArrayList<ShaderProfile>();
+ 
+-        for (String s1 : props.keySet())
++        for (Object s0 : props.keySet())
+         {
++        	String s1 = (String) s0;
++
+             if (s1.startsWith(s))
+             {
+                 String s2 = s1.substring(s.length());
+@@ -446,7 +448,7 @@
+ 
+                 if (s1.equals("<empty>"))
+                 {
+-                    list.add((Object)null);
++                    list.add((ShaderOption)null);
+                 }
+                 else if (set.contains(s1))
+                 {
+@@ -498,7 +500,7 @@
+                         if (shaderoption == null)
+                         {
+                             Config.warn("[Shaders] Invalid option: " + s1 + ", key: " + key);
+-                            list.add((Object)null);
++                            list.add((ShaderOption)null);
+                         }
+                         else
+                         {
+@@ -688,8 +690,9 @@
+         Map<String, IExpression> map = new HashMap<String, IExpression>();
+         List<CustomUniform> list = new ArrayList<CustomUniform>();
+ 
+-        for (String s4 : props.keySet())
++        for (Object o : props.keySet())
+         {
++        	String s4 = (String)o;
+             String[] astring = Config.tokenize(s4, ".");
+ 
+             if (astring.length == 3)

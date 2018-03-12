@@ -1,17 +1,21 @@
 --- a/optifine/json/JSONValue.java
 +++ b/optifine/json/JSONValue.java
-@@ -161,11 +161,11 @@
-         }
-     }
+@@ -200,15 +200,15 @@
  
--    static void escape(String s, StringBuffer sb)
-+    static void escape(String in, StringBuffer sb)
-     {
--        for (int i = 0; i < s.length(); ++i)
-+        for (int i = 0; i < in.length(); ++i)
-         {
--            char c0 = s.charAt(i);
-+            char c0 = in.charAt(i);
+             if (c0 >= 0 && c0 <= 31 || c0 >= 127 && c0 <= 159 || c0 >= 8192 && c0 <= 8447)
+             {
+-                String s = Integer.toHexString(c0);
++                String s1 = Integer.toHexString(c0);
+                 sb.append("\\u");
  
-             switch (c0)
+-                for (int j = 0; j < 4 - s.length(); ++j)
++                for (int j = 0; j < 4 - s1.length(); ++j)
+                 {
+                     sb.append('0');
+                 }
+ 
+-                sb.append(s.toUpperCase());
++                sb.append(s1.toUpperCase());
+             }
+             else
              {

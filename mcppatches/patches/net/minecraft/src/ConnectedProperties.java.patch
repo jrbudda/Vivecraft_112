@@ -1,13 +1,11 @@
 --- a/net/minecraft/src/ConnectedProperties.java
 +++ b/net/minecraft/src/ConnectedProperties.java
-@@ -461,8 +461,9 @@
+@@ -470,7 +470,7 @@
  
      public static IProperty getProperty(String p_getProperty_0_, Collection p_getProperty_1_)
      {
 -        for (IProperty iproperty : p_getProperty_1_)
-+        for (Object p : p_getProperty_1_)
++        for (IProperty iproperty : (Iterable<IProperty>) p_getProperty_1_)
          {
-+        	IProperty iproperty = (IProperty) p;
              if (p_getProperty_0_.equals(iproperty.getName()))
              {
-                 return iproperty;

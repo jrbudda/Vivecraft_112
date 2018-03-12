@@ -1,13 +1,11 @@
 --- a/net/minecraft/src/HttpPipeline.java
 +++ b/net/minecraft/src/HttpPipeline.java
-@@ -211,8 +211,9 @@
+@@ -211,7 +211,7 @@
  
      public static boolean hasActiveRequests()
      {
 -        for (HttpPipelineConnection httppipelineconnection : mapConnections.values())
-+        for (Object h : mapConnections.values())
++        for (HttpPipelineConnection httppipelineconnection : (Iterable<HttpPipelineConnection>)mapConnections.values())
          {
-+        	HttpPipelineConnection httppipelineconnection = (HttpPipelineConnection) h;
              if (httppipelineconnection.hasActiveRequests())
              {
-                 return true;

@@ -1,29 +1,15 @@
 --- a/net/minecraft/client/renderer/texture/TextureUtil.java
 +++ b/net/minecraft/client/renderer/texture/TextureUtil.java
-@@ -272,8 +272,7 @@
-     public static int[] readImageData(IResourceManager resourceManager, ResourceLocation imageLocation) throws IOException
-     {
-         IResource iresource = null;
--        Object i;
--
-+        int[] out;
-         try
-         {
-             iresource = resourceManager.getResource(imageLocation);
-@@ -289,14 +288,14 @@
+@@ -282,9 +282,9 @@
+             if (bufferedimage != null)
+             {
+                 int j = bufferedimage.getWidth();
+-                int i = bufferedimage.getHeight();
+-                int[] aint1 = new int[j * i];
+-                bufferedimage.getRGB(0, 0, j, i, aint1, 0, j);
++                int h = bufferedimage.getHeight();
++                int[] aint1 = new int[j * h];
++                bufferedimage.getRGB(0, 0, j, h, aint1, 0, j);
+                 int[] aint = aint1;
                  return aint;
              }
- 
--            i = null;
-+            out = null;
-         }
-         finally
-         {
-             IOUtils.closeQuietly((Closeable)iresource);
-         }
- 
--        return (int[])i;
-+        return out;
-     }
- 
-     public static BufferedImage readBufferedImage(InputStream imageStream) throws IOException

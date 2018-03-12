@@ -1,0 +1,11 @@
+--- a/net/minecraft/src/CacheObjectArray.java
++++ b/net/minecraft/src/CacheObjectArray.java
+@@ -110,7 +110,7 @@
+ 
+         for (int j = 0; j < p_testNewObjDyn_2_; ++j)
+         {
+-            Object[] aobject = Array.newInstance(p_testNewObjDyn_0_, p_testNewObjDyn_1_);
++            Object[] aobject = (Object[]) Array.newInstance(p_testNewObjDyn_0_, p_testNewObjDyn_1_);
+         }
+ 
+         long k = System.currentTimeMillis();

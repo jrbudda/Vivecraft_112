@@ -1,0 +1,48 @@
+--- a/net/minecraft/src/Config.java
++++ b/net/minecraft/src/Config.java
+@@ -37,6 +37,7 @@
+ import net.minecraft.client.resources.IResourceManager;
+ import net.minecraft.client.resources.IResourcePack;
+ import net.minecraft.client.resources.ResourcePackRepository;
++import net.minecraft.client.resources.ResourcePackRepository.Entry;
+ import net.minecraft.client.settings.GameSettings;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.server.integrated.IntegratedServer;
+@@ -1068,8 +1069,9 @@
+         List list = resourcepackrepository.getRepositoryEntries();
+         List list1 = new ArrayList();
+ 
+-        for (ResourcePackRepository.Entry resourcepackrepository$entry : list)
++        for (Object r : list)
+         {
++        	ResourcePackRepository.Entry resourcepackrepository$entry = (Entry) r;
+             list1.add(resourcepackrepository$entry.getResourcePack());
+         }
+ 
+@@ -2241,7 +2243,7 @@
+         {
+             int i = p_addObjectToArray_0_.length;
+             int j = i + 1;
+-            Object[] aobject = Array.newInstance(p_addObjectToArray_0_.getClass().getComponentType(), j);
++            Object[] aobject = (Object[]) Array.newInstance(p_addObjectToArray_0_.getClass().getComponentType(), j);
+             System.arraycopy(p_addObjectToArray_0_, 0, aobject, 0, i);
+             aobject[i] = p_addObjectToArray_1_;
+             return aobject;
+@@ -2252,7 +2254,7 @@
+     {
+         List list = new ArrayList(Arrays.asList(p_addObjectToArray_0_));
+         list.add(p_addObjectToArray_2_, p_addObjectToArray_1_);
+-        Object[] aobject = Array.newInstance(p_addObjectToArray_0_.getClass().getComponentType(), list.size());
++        Object[] aobject = (Object[]) Array.newInstance(p_addObjectToArray_0_.getClass().getComponentType(), list.size());
+         return list.toArray(aobject);
+     }
+ 
+@@ -2270,7 +2272,7 @@
+         {
+             int i = p_addObjectsToArray_0_.length;
+             int j = i + p_addObjectsToArray_1_.length;
+-            Object[] aobject = Array.newInstance(p_addObjectsToArray_0_.getClass().getComponentType(), j);
++            Object[] aobject = (Object[]) Array.newInstance(p_addObjectsToArray_0_.getClass().getComponentType(), j);
+             System.arraycopy(p_addObjectsToArray_0_, 0, aobject, 0, i);
+             System.arraycopy(p_addObjectsToArray_1_, 0, aobject, i, p_addObjectsToArray_1_.length);
+             return aobject;

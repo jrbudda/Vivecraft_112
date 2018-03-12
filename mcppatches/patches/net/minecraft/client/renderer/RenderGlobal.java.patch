@@ -1,28 +1,24 @@
 --- a/net/minecraft/client/renderer/RenderGlobal.java
 +++ b/net/minecraft/client/renderer/RenderGlobal.java
-@@ -743,8 +743,9 @@
+@@ -743,7 +743,7 @@
              List<Entity> list2 = Lists.<Entity>newArrayList();
              BlockPos.PooledMutableBlockPos blockpos$pooledmutableblockpos = BlockPos.PooledMutableBlockPos.retain();
  
 -            for (RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation : this.renderInfosEntities)
-+            for (Object o: this.renderInfosEntities)
++            for (RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation :  (Iterable<RenderGlobal.ContainerLocalRenderInformation>)this.renderInfosEntities)
              {
-+            	RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation = (RenderGlobal.ContainerLocalRenderInformation)o; 
                  Chunk chunk = renderglobal$containerlocalrenderinformation.renderChunk.getChunk();
                  ClassInheritanceMultiMap<Entity> classinheritancemultimap = chunk.getEntityLists()[renderglobal$containerlocalrenderinformation.renderChunk.getPosition().getY() / 16];
- 
-@@ -908,8 +909,9 @@
+@@ -908,7 +908,7 @@
  
              label251:
  
 -            for (RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation1 : this.renderInfosTileEntities)
-+            for (Object r : this.renderInfosTileEntities)
++            for (RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation1 : (Iterable<RenderGlobal.ContainerLocalRenderInformation>)this.renderInfosTileEntities)
              {
-+            	RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation1 = (ContainerLocalRenderInformation) r;
                  List<TileEntity> list3 = renderglobal$containerlocalrenderinformation1.renderChunk.getCompiledChunk().getTileEntities();
  
-                 if (!list3.isEmpty())
-@@ -1560,10 +1562,7 @@
+@@ -1560,10 +1560,7 @@
                  GlStateManager.disableFog();
              }
  
@@ -30,7 +26,7 @@
 -            {
 -                return "render_" + p_lambda$renderBlockLayer$0_0_;
 -            });
-+            this.mc.mcProfiler.endStartSection("render_" + blockLayerIn);
++            this.mc.mcProfiler.startSection("render_" + blockLayerIn);
              this.renderBlockLayer(blockLayerIn);
              this.mc.mcProfiler.endSection();
              return l;

@@ -1,0 +1,11 @@
+--- a/net/minecraft/src/CustomLoadingScreens.java
++++ b/net/minecraft/src/CustomLoadingScreens.java
+@@ -73,7 +73,7 @@
+ 
+         if (ainteger.length <= 0)
+         {
+-            return new ImmutablePair<CustomLoadingScreen[], Integer>((Object)null, Integer.valueOf(0));
++            return new ImmutablePair<CustomLoadingScreen[], Integer>((CustomLoadingScreen[])null, Integer.valueOf(0));
+         }
+         else
+         {
