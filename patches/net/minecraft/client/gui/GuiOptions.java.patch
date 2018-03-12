@@ -1,0 +1,68 @@
+--- a/net/minecraft/client/gui/GuiOptions.java
++++ b/net/minecraft/client/gui/GuiOptions.java
+@@ -1,6 +1,9 @@
+ package net.minecraft.client.gui;
+ 
+ import java.io.IOException;
++
++import com.mtbs3d.minecrift.gui.GuiMinecriftSettings;
++
+ import net.minecraft.client.resources.I18n;
+ import net.minecraft.client.settings.GameSettings;
+ import net.minecraft.util.text.ITextComponent;
+@@ -21,6 +24,7 @@
+ 
+     public GuiOptions(GuiScreen p_i1046_1_, GameSettings p_i1046_2_)
+     {
++    	
+         this.lastScreen = p_i1046_1_;
+         this.settings = p_i1046_2_;
+     }
+@@ -31,6 +35,7 @@
+      */
+     public void initGui()
+     {
++        int var1 = 0;
+         this.title = I18n.format("options.title");
+         int i = 0;
+ 
+@@ -38,11 +43,21 @@
+         {
+             if (gamesettings$options.isFloat())
+             {
+-                this.buttonList.add(new GuiOptionSlider(gamesettings$options.getOrdinal(), this.width / 2 - 155 + i % 2 * 160, this.height / 6 - 12 + 24 * (i >> 1), gamesettings$options));
+-            }
++            	/** MINECRIFT */
++            	if (gamesettings$options.getTranslation().equalsIgnoreCase("options.fov"))
++            	{
++            		GuiOptionButton var7 = new GuiOptionButton(666, this.width / 2 - 155 + var1 % 2 * 160, this.height / 6 - 12 + 24 * (var1 >> 1), "VR Settings...");
++            		this.buttonList.add(var7);
++            	}
++            	else
++            	{
++            		this.buttonList.add(new GuiOptionSlider(gamesettings$options.getOrdinal(), this.width / 2 - 155 + var1 % 2 * 160, this.height / 6 - 12 + 24 * (var1 >> 1), gamesettings$options));
++            	}
++            	/** END MINECRIFT */            }
++
+             else
+             {
+-                GuiOptionButton guioptionbutton = new GuiOptionButton(gamesettings$options.getOrdinal(), this.width / 2 - 155 + i % 2 * 160, this.height / 6 - 12 + 24 * (i >> 1), gamesettings$options, this.settings.getKeyBinding(gamesettings$options));
++            	GuiOptionButton guioptionbutton = new GuiOptionButton(gamesettings$options.getOrdinal(), this.width / 2 - 155 + i % 2 * 160, this.height / 6 - 12 + 24 * (i >> 1), gamesettings$options, this.settings.getKeyBinding(gamesettings$options));
+                 this.buttonList.add(guioptionbutton);
+             }
+ 
+@@ -199,6 +214,14 @@
+                 this.mc.gameSettings.saveOptions();
+                 this.mc.displayGuiScreen(new GuiScreenOptionsSounds(this, this.settings));
+             }
++            
++            /** MINECRIFT */
++            if (button.id == 666)
++            {
++                this.mc.gameSettings.saveOptions();
++                this.mc.displayGuiScreen(new GuiMinecriftSettings(this, this.mc.vrSettings, this.settings));
++            }
++			/** END MINECRIFT */
+         }
+     }
+ 

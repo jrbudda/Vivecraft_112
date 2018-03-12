@@ -1,0 +1,27 @@
+--- a/net/minecraft/client/renderer/OpenGlHelper.java
++++ b/net/minecraft/client/renderer/OpenGlHelper.java
+@@ -940,20 +940,12 @@
+         }
+     }
+ 
++    public static boolean fbo = true;
++    
+     public static boolean isFramebufferEnabled()
+     {
+-        if (Config.isFastRender())
+-        {
+-            return false;
+-        }
+-        else if (Config.isAntialiasing())
+-        {
+-            return false;
+-        }
+-        else
+-        {
+-            return framebufferSupported && Minecraft.getMinecraft().gameSettings.fboEnable;
+-        }
++    	return fbo;
++        //return Config.isFastRender() ? false : (Config.isAntialiasing() ? false : framebufferSupported && Minecraft.getMinecraft().gameSettings.fboEnable);
+     }
+ 
+     public static String getCpu()

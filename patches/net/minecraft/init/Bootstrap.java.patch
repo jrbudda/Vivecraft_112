@@ -1,0 +1,111 @@
+--- a/net/minecraft/init/Bootstrap.java
++++ b/net/minecraft/init/Bootstrap.java
+@@ -16,6 +16,8 @@
+ import net.minecraft.block.BlockTNT;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.state.IBlockState;
++import net.minecraft.client.particle.ParticleBreaking.SlimeFactory;
++import net.minecraft.creativetab.CreativeTabs;
+ import net.minecraft.dispenser.BehaviorDefaultDispenseItem;
+ import net.minecraft.dispenser.BehaviorProjectileDispense;
+ import net.minecraft.dispenser.IBehaviorDispenseItem;
+@@ -44,15 +46,20 @@
+ import net.minecraft.item.ItemArmor;
+ import net.minecraft.item.ItemBucket;
+ import net.minecraft.item.ItemDye;
++import net.minecraft.item.ItemFoodWonder;
+ import net.minecraft.item.ItemMonsterPlacer;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.item.crafting.CraftingManager;
++import net.minecraft.item.crafting.Ingredient;
++import net.minecraft.item.crafting.ShapedRecipes;
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.nbt.NBTUtil;
+ import net.minecraft.potion.Potion;
+ import net.minecraft.potion.PotionHelper;
+ import net.minecraft.potion.PotionType;
+ import net.minecraft.server.DebugLoggingPrintStream;
++import net.minecraft.src.Reflector;
++import net.minecraft.src.ReflectorMethod;
+ import net.minecraft.stats.StatList;
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.tileentity.TileEntityDispenser;
+@@ -60,6 +67,8 @@
+ import net.minecraft.tileentity.TileEntitySkull;
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.util.LoggingPrintStream;
++import net.minecraft.util.NonNullList;
++import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.SoundCategory;
+ import net.minecraft.util.SoundEvent;
+ import net.minecraft.util.StringUtils;
+@@ -267,6 +276,11 @@
+         };
+         BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(Items.LAVA_BUCKET, ibehaviordispenseitem);
+         BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(Items.WATER_BUCKET, ibehaviordispenseitem);
++        if (Reflector.forgeExists()) {
++        	BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(Items.MILK_BUCKET, (IBehaviorDispenseItem)Reflector.call(Reflector.DispenseFluidContainer_getInstance));
++        	BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(Items.BUCKET, (IBehaviorDispenseItem)Reflector.call(Reflector.DispenseFluidContainer_getInstance));
++        }
++        else
+         BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(Items.BUCKET, new BehaviorDefaultDispenseItem()
+         {
+             private final BehaviorDefaultDispenseItem dispenseBehavior = new BehaviorDefaultDispenseItem();
+@@ -501,7 +515,16 @@
+             BlockFire.init();
+             Potion.registerPotions();
+             Enchantment.registerEnchantments();
++            
++            //VIVECRAFT Avoid edit to item.java, this has to be exactly here.
++            Item.REGISTRY.register(22000, new ResourceLocation("eatme_cake"), (new ItemFoodWonder(2, 0.3F, false).setAlwaysEdible()).setUnlocalizedName("eatme_cake").setCreativeTab(CreativeTabs.BREWING));
++            Item.REGISTRY.register(22001, new ResourceLocation("drinkme_bottle"), (new ItemFoodWonder(1, 0.3F, false).setAlwaysEdible()).setUnlocalizedName("drinkme_bottle").setCreativeTab(CreativeTabs.BREWING));
++      //      Item.REGISTRY.register(22002, new ResourceLocation("jump_boots"), (new ItemArmorJump(ItemArmor.ArmorMaterial.LEATHER, 0, EntityEquipmentSlot.FEET)).setUnlocalizedName("jump_boots").setCreativeTab(CreativeTabs.TRANSPORTATION));    
++      //      Item.REGISTRY.register(22003, new ResourceLocation("climb_claws"), (new ItemClimbClaws()).setUnlocalizedName("climb_claws").setCreativeTab(CreativeTabs.TRANSPORTATION));
++            ///
++            
+             Item.registerItems();
++            
+             PotionType.registerPotionTypes();
+             PotionHelper.init();
+             EntityList.init();
+@@ -514,6 +537,32 @@
+                 LOGGER.error("Errors with built-in recipes!");
+             }
+ 
++            //VIVECRAFT
++            ItemStack is = new ItemStack(Items.LEATHER_BOOTS);
++            is.setStackDisplayName("Jump Boots");
++            is.getTagCompound().setBoolean("Unbreakable", true);
++            is.getTagCompound().setInteger("HideFlags",4);
++
++            ItemStack is2 = new ItemStack(Items.SHEARS);
++            is2.setStackDisplayName("Climb Claws");
++            is2.getTagCompound().setBoolean("Unbreakable", true);
++            is2.getTagCompound().setInteger("HideFlags",4);
++            
++            ShapedRecipes boot = new ShapedRecipes("", 1, 2, NonNullList.from(Ingredient.EMPTY,Ingredient.fromItem(Items.LEATHER_BOOTS), Ingredient.fromStacks(new ItemStack(Blocks.SLIME_BLOCK))), is);
++            ShapedRecipes claw = new ShapedRecipes("", 3, 2, NonNullList.from(Ingredient.EMPTY,Ingredient.fromItem(Items.SPIDER_EYE),Ingredient.EMPTY,Ingredient.fromItem(Items.SPIDER_EYE),Ingredient.fromItem(Items.SHEARS),Ingredient.EMPTY,Ingredient.fromItem(Items.SHEARS)), is2);
++
++            //
++            if(Reflector.forgeExists()){
++            	Reflector.call(Reflector.GameRegistry_addShapedRecipe, new ResourceLocation("vivecraftforgeextensions:jump_boots"), (ResourceLocation) null, is, new Object[]{  "B", "S", 'S', Blocks.SLIME_BLOCK, 'B', Items.LEATHER_BOOTS});
++            	Reflector.call(Reflector.GameRegistry_addShapedRecipe, new ResourceLocation("vivecraftforgeextensions:climb_claws"), (ResourceLocation) null, is2, new Object[]{  "S S", "C C", 'S', Items.SPIDER_EYE, 'C', Items.SHEARS});
++            }
++            else
++            {
++            	CraftingManager.register("jumpboots", boot);
++            	CraftingManager.register("climbclaws", claw);
++            }
++            //
++
+             StatList.init();
+ 
+             if (LOGGER.isDebugEnabled())
+@@ -530,6 +579,7 @@
+                     LOGGER.error("Errors with built-in loot tables");
+                 }
+             }
++Reflector.callVoid(Reflector.GameData_vanillaSnapshot);
+         }
+     }
+ 

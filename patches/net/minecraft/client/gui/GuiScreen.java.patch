@@ -1,0 +1,315 @@
+--- a/net/minecraft/client/gui/GuiScreen.java
++++ b/net/minecraft/client/gui/GuiScreen.java
+@@ -3,6 +3,9 @@
+ import com.google.common.base.Splitter;
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Sets;
++import com.mtbs3d.minecrift.provider.MCOpenVR;
++import com.mtbs3d.minecrift.settings.VRSettings;
++
+ import java.awt.Toolkit;
+ import java.awt.datatransfer.ClipboardOwner;
+ import java.awt.datatransfer.DataFlavor;
+@@ -16,6 +19,7 @@
+ import java.util.List;
+ import java.util.Locale;
+ import java.util.Set;
++
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.client.renderer.BufferBuilder;
+ import net.minecraft.client.renderer.GlStateManager;
+@@ -24,15 +28,18 @@
+ import net.minecraft.client.renderer.Tessellator;
+ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+ import net.minecraft.client.util.ITooltipFlag;
++import net.minecraft.command.CommandHandler;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.nbt.JsonToNBT;
+ import net.minecraft.nbt.NBTBase;
+ import net.minecraft.nbt.NBTException;
+ import net.minecraft.nbt.NBTTagCompound;
++import net.minecraft.src.Reflector;
+ import net.minecraft.util.text.ITextComponent;
+ import net.minecraft.util.text.TextFormatting;
+ import net.minecraft.util.text.event.ClickEvent;
+ import net.minecraft.util.text.event.HoverEvent;
++
+ import org.apache.commons.lang3.StringUtils;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+@@ -46,7 +53,7 @@
+     private static final Splitter NEWLINE_SPLITTER = Splitter.on('\n');
+ 
+     /** Reference to the Minecraft object. */
+-    protected Minecraft mc;
++    public Minecraft mc;
+ 
+     /**
+      * Holds a instance of RenderItem, used to draw the achievement icons on screen (is based on ItemStack)
+@@ -77,6 +84,13 @@
+     private URI clickedLinkURI;
+     private boolean focused;
+ 
++    protected boolean keyHandled, mouseHandled; // Forge: allow canceling key and mouse Post events from handleMouseInput and handleKeyboardInput
++	
++    public boolean pressShiftFake;
++	public static boolean isFakeShift(){
++		return Minecraft.getMinecraft().currentScreen != null ? Minecraft.getMinecraft().currentScreen.pressShiftFake : false;
++	}
++	
+     /**
+      * Draws the screen and all the components in it.
+      */
+@@ -101,6 +115,10 @@
+     {
+         if (keyCode == 1)
+         {
++            /** MINECRIFT */
++            // Escape pressed - save all
++            VRSettings.saveAll(this.mc);
++            /** END MINECRIFT */
+             this.mc.displayGuiScreen((GuiScreen)null);
+ 
+             if (this.mc.currentScreen == null)
+@@ -109,6 +127,10 @@
+             }
+         }
+     }
++    
++    public void keyTypedPublic(char typedChar, int keyCode) throws IOException {
++    	keyTyped(typedChar, keyCode);
++    }
+ 
+     protected <T extends GuiButton> T addButton(T buttonIn)
+     {
+@@ -204,7 +226,16 @@
+      */
+     public void drawHoveringText(List<String> textLines, int x, int y)
+     {
+-        if (!textLines.isEmpty())
++        drawHoveringText(textLines, x, y, fontRenderer);
++    }
++
++    protected void drawHoveringText(List<String> textLines, int x, int y, FontRenderer font)
++    {
++    	if (Reflector.forgeExists())
++    	{
++    		Reflector.callVoid(Reflector.GuiUtils_drawHoveringText, textLines, x, y, width, height, -1, font);
++    	} 
++    	else if (!textLines.isEmpty())
+         {
+             GlStateManager.disableRescaleNormal();
+             RenderHelper.disableStandardItemLighting();
+@@ -449,10 +480,17 @@
+ 
+     public void sendChatMessage(String msg, boolean addToChat)
+     {
++    	if (Reflector.forgeExists())
++	    	msg = Reflector.callString(Reflector.ForgeEventFactory_onClientSendMessage, msg);
++    	if (msg.isEmpty()) return;
+         if (addToChat)
+         {
+             this.mc.ingameGUI.getChatGUI().addToSentMessages(msg);
+         }
++        if (Reflector.forgeExists()) {
++        	CommandHandler cmd = (CommandHandler)Reflector.getFieldValue(Reflector.ClientCommandHandler_instance);
++        	if (cmd.executeCommand(mc.player, msg) != 0) return;
++        }
+ 
+         this.mc.player.sendChatMessage(msg);
+     }
+@@ -470,9 +508,19 @@
+ 
+                 if (guibutton.mousePressed(this.mc, mouseX, mouseY))
+                 {
++                	Object event = null;
++                	if (Reflector.forgeExists()) {
++	                    event = Reflector.newInstance(Reflector.GuiScreenEvent_ActionPerformedEvent_Pre_Constructor, this, guibutton, this.buttonList);
++	                    if (Reflector.postForgeBusEvent(event))
++	                        break;
++	                    guibutton = (GuiButton)Reflector.call(event, Reflector.GuiScreenEvent_ActionPerformedEvent_getButton);
++                	}
+                     this.selectedButton = guibutton;
+                     guibutton.playPressSound(this.mc.getSoundHandler());
+                     this.actionPerformed(guibutton);
++                    if (Reflector.forgeExists() && this.equals(this.mc.currentScreen)) {
++                    	Reflector.postForgeBusEvent(Reflector.GuiScreenEvent_ActionPerformedEvent_Post_Constructor, this, Reflector.call(event, Reflector.GuiScreenEvent_ActionPerformedEvent_getButton), this.buttonList);
++                    }
+                 }
+             }
+         }
+@@ -516,8 +564,11 @@
+         this.fontRenderer = mc.fontRenderer;
+         this.width = width;
+         this.height = height;
++    	if (!Reflector.forgeExists() || !Reflector.postForgeBusEvent(Reflector.GuiScreenEvent_InitGuiEvent_Pre_Constructor, this, this.buttonList)) {
+         this.buttonList.clear();
+         this.initGui();
++    		if (Reflector.forgeExists()) Reflector.postForgeBusEvent(Reflector.GuiScreenEvent_InitGuiEvent_Post_Constructor, this, this.buttonList);
++    	}
+     }
+ 
+     /**
+@@ -546,7 +597,16 @@
+         {
+             while (Mouse.next())
+             {
++            	if (!MCOpenVR.controllerMouseValid) {
++            		MCOpenVR.controllerMouseValid = true;
++            		MCOpenVR.controllerMouseTicks = 20;
++            	}
++
++            	this.mouseHandled = false;
++            	if (Reflector.forgeExists() && Reflector.postForgeBusEvent(Reflector.GuiScreenEvent_MouseInputEvent_Pre_Constructor, this)) continue;
+                 this.handleMouseInput();
++                if (Reflector.forgeExists() && this.equals(this.mc.currentScreen) && !this.mouseHandled) Reflector.postForgeBusEvent(Reflector.GuiScreenEvent_MouseInputEvent_Post_Constructor, this);
++                
+             }
+         }
+ 
+@@ -554,7 +614,10 @@
+         {
+             while (Keyboard.next())
+             {
++            	this.keyHandled = false;
++            	if (Reflector.forgeExists() && Reflector.postForgeBusEvent(Reflector.GuiScreenEvent_KeyboardInputEvent_Pre_Constructor, this)) continue;
+                 this.handleKeyboardInput();
++                if (Reflector.forgeExists() && this.equals(this.mc.currentScreen) && !this.keyHandled) Reflector.postForgeBusEvent(Reflector.GuiScreenEvent_KeyboardInputEvent_Post_Constructor, this);
+             }
+         }
+     }
+@@ -568,6 +631,13 @@
+         int j = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
+         int k = Mouse.getEventButton();
+ 
++        /** MINECRIFT */
++        if(!MCOpenVR.controllerMouseValid){
++        	if (mc.mouseHelper.deltaX > 0 || mc.mouseHelper.deltaY> 0 )
++        		MCOpenVR.controllerMouseValid = true;
++        }
++        /** END MINECRIFT */
++
+         if (Mouse.getEventButtonState())
+         {
+             if (this.mc.gameSettings.touchscreen && this.touchValue++ > 0)
+@@ -601,6 +671,11 @@
+      */
+     public void handleKeyboardInput() throws IOException
+     {
++        if(Keyboard.getEventKey()==1 && MCOpenVR.keyboardShowing){
++        	MCOpenVR.setKeyboardOverlayShowing(false, null);
++        	return;
++        }
++        
+         char c0 = Keyboard.getEventCharacter();
+ 
+         if (Keyboard.getEventKey() == 0 && c0 >= ' ' || Keyboard.getEventKeyState())
+@@ -631,13 +706,23 @@
+     public void drawDefaultBackground()
+     {
+         this.drawWorldBackground(0);
++        if (Reflector.forgeExists()) Reflector.postForgeBusEvent(Reflector.GuiScreenEvent_BackgroundDrawnEvent_Constructor, this);
+     }
+ 
+     public void drawWorldBackground(int tint)
+     {
+         if (this.mc.world != null)
+         {
+-            this.drawGradientRect(0, 0, this.width, this.height, -1072689136, -804253680);
++            /** MINECRIFT */
++            if (this.mc.vrSettings != null && this.mc.vrSettings.menuBackground == false)
++            {
++                this.drawGradientRect(0, 0, this.width, this.height, 0, 0);
++            }
++            else
++            {
++                this.drawGradientRect(0, 0, this.width, this.height, -1072689136, -804253680);
++            }
++    		/** END MINECRIFT */
+         }
+         else
+         {
+@@ -722,7 +807,7 @@
+      */
+     public static boolean isShiftKeyDown()
+     {
+-        return Keyboard.isKeyDown(42) || Keyboard.isKeyDown(54);
++        return Keyboard.isKeyDown(42) || Keyboard.isKeyDown(54) || isFakeShift();
+     }
+ 
+     /**
+@@ -760,4 +845,74 @@
+     {
+         this.setWorldAndResolution(mcIn, w, h);
+     }
++    
++    /** MINECRIFT ADDITIONS BELOW */
++	public static boolean mouseDown;
++    public void mouseDown( int rawX, int rawY, int button )
++    {
++        int var1 = rawX * this.width / this.mc.displayWidth;
++        int var2 = this.height - rawY * this.height / this.mc.displayHeight - 1;
++        this.eventButton = button;
++        this.lastMouseEvent = Minecraft.getSystemTime();
++        try {
++			mouseClicked(var1, var2, button);
++		} catch (IOException e) {
++			// TODO Auto-generated catch block
++			e.printStackTrace();
++		}
++    	mouseDown = true;
++    }
++    
++    public void mouseUp( int rawX, int rawY, int button )
++    {
++    	mouseDown = false;
++        int var1 = rawX * this.width / this.mc.displayWidth;
++        int var2 = this.height - rawY * this.height / this.mc.displayHeight - 1;
++        mouseReleased(var1, var2, button);
++    }
++    
++    public void mouseDrag( int rawX, int rawY )
++    {
++        int var1 = rawX * this.width / this.mc.displayWidth;
++        int var2 = this.height - rawY * this.height / this.mc.displayHeight - 1;
++        long var3 = Minecraft.getSystemTime() - this.lastMouseEvent;
++        this.mouseClickMove(var1, var2, this.eventButton, var3);
++    }
++
++    public void mouseGuiDown( int guiX, int guiY, int button )
++    {
++        this.eventButton = button;
++        this.lastMouseEvent = Minecraft.getSystemTime();
++        try {
++			mouseClicked(guiX, guiY, button);
++		} catch (IOException e) {
++			// TODO Auto-generated catch block
++			e.printStackTrace();
++		}
++    }
++    
++    public void mouseGuiUp( int guiX, int guiY, int button )
++    {
++    	mouseDown = false;
++        mouseReleased(guiX, guiY, button);
++    }
++    
++    public void mouseGuiDrag( int guiX, int guiY )
++    {
++        long var3 = Minecraft.getSystemTime() - this.lastMouseEvent;
++        this.mouseClickMove(guiX, guiY, this.eventButton, var3);
++    }
++
++    public int getMouseXPos()
++    {
++        int mX = Mouse.getX() * this.mc.currentScreen.width / this.mc.displayWidth;
++        return mX;
++    }
++
++    public int getMouseYPos()
++    {
++        int mY = this.mc.currentScreen.height - Mouse.getY() * this.mc.currentScreen.height / this.mc.displayHeight - 1;
++        return mY;
++    }
++
+ }

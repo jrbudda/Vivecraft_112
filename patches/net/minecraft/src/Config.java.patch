@@ -1,0 +1,51 @@
+--- a/net/minecraft/src/Config.java
++++ b/net/minecraft/src/Config.java
+@@ -120,18 +120,23 @@
+ 
+     public static void initGameSettings(GameSettings p_initGameSettings_0_)
+     {
+-        if (gameSettings == null)
+-        {
++    	//VIVE WHY WOULD YOU DO THAT??
++//        if (gameSettings == null)
++     //{
+             gameSettings = p_initGameSettings_0_;
++            minecraft = Minecraft.getMinecraft();
+             desktopDisplayMode = Display.getDesktopDisplayMode();
+             updateAvailableProcessors();
+             ReflectorForge.putLaunchBlackboard("optifine.ForgeSplashCompatible", Boolean.TRUE);
+-        }
++//        }
+     }
+ 
+     public static void initDisplay()
+     {
+         checkInitialized();
++        //VIVE
++        gameSettings.ofAaLevel = 0;
++        //
+         antialiasingLevel = gameSettings.ofAaLevel;
+         checkDisplaySettings();
+         checkDisplayMode();
+@@ -2195,12 +2200,7 @@
+ 
+     public static void updateFramebufferSize()
+     {
+-        minecraft.getFramebuffer().createBindFramebuffer(minecraft.displayWidth, minecraft.displayHeight);
+-
+-        if (minecraft.entityRenderer != null)
+-        {
+-            minecraft.entityRenderer.updateShaderGroupSize(minecraft.displayWidth, minecraft.displayHeight);
+-        }
++    	Minecraft.getMinecraft().reinitFramebuffers = true; 
+     }
+ 
+     public static Object[] addObjectToArray(Object[] p_addObjectToArray_0_, Object p_addObjectToArray_1_)
+@@ -2400,6 +2400,7 @@
+ 
+     public static boolean isDynamicLights()
+     {
++    	boolean wat = Minecraft.getMinecraft().gameSettings == gameSettings;
+         return gameSettings.ofDynamicLights != 3;
+     }
+ 

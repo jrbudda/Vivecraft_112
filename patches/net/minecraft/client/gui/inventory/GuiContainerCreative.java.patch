@@ -1,0 +1,19 @@
+--- a/net/minecraft/client/gui/inventory/GuiContainerCreative.java
++++ b/net/minecraft/client/gui/inventory/GuiContainerCreative.java
+@@ -9,6 +9,7 @@
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.client.entity.EntityPlayerSP;
+ import net.minecraft.client.gui.GuiButton;
++import net.minecraft.client.gui.GuiScreen;
+ import net.minecraft.client.gui.GuiTextField;
+ import net.minecraft.client.gui.achievement.GuiStats;
+ import net.minecraft.client.renderer.GlStateManager;
+@@ -618,7 +619,7 @@
+     public void drawScreen(int mouseX, int mouseY, float partialTicks)
+     {
+         this.drawDefaultBackground();
+-        boolean flag = Mouse.isButtonDown(0);
++        boolean flag = Mouse.isButtonDown(0)|| GuiScreen.mouseDown;
+         int i = this.guiLeft;
+         int j = this.guiTop;
+         int k = i + 175;

@@ -1,0 +1,34 @@
+--- a/net/minecraft/entity/ai/EntityAICreeperSwell.java
++++ b/net/minecraft/entity/ai/EntityAICreeperSwell.java
+@@ -1,5 +1,8 @@
+ package net.minecraft.entity.ai;
+ 
++import com.mtbs3d.minecrift.api.NetworkHelper;
++import com.mtbs3d.minecrift.api.VivePlayer;
++
+ import net.minecraft.entity.EntityLivingBase;
+ import net.minecraft.entity.monster.EntityCreeper;
+ 
+@@ -19,13 +22,21 @@
+         this.setMutexBits(1);
+     }
+ 
++    public float creeperBlowyUppyRadius = 1.75f; //VIVE default is 3.
++    
+     /**
+      * Returns whether the EntityAIBase should begin execution.
+      */
+     public boolean shouldExecute()
+     {
+         EntityLivingBase entitylivingbase = this.swellingCreeper.getAttackTarget();
+-        return this.swellingCreeper.getCreeperState() > 0 || entitylivingbase != null && this.swellingCreeper.getDistanceSqToEntity(entitylivingbase) < 9.0D;
++        float radius = 9.0f;
++        if (entitylivingbase != null){
++        	VivePlayer vp = NetworkHelper.vivePlayers.get(entitylivingbase.getUniqueID());
++        	if (vp != null && vp.isVR())
++        		radius = 3.0f;
++        }
++        return this.swellingCreeper.getCreeperState() > 0 || entitylivingbase != null && this.swellingCreeper.getDistanceSqToEntity(entitylivingbase) < radius;
+     }
+ 
+     /**

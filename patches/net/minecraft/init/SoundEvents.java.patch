@@ -1,0 +1,11 @@
+--- a/net/minecraft/init/SoundEvents.java
++++ b/net/minecraft/init/SoundEvents.java
+@@ -555,7 +555,7 @@
+     public static final SoundEvent ENTITY_ZOMBIE_VILLAGER_HURT;
+     public static final SoundEvent ENTITY_ZOMBIE_VILLAGER_STEP;
+ 
+-    private static SoundEvent getRegisteredSoundEvent(String id)
++    public static SoundEvent getRegisteredSoundEvent(String id)
+     {
+         SoundEvent soundevent = SoundEvent.REGISTRY.getObject(new ResourceLocation(id));
+ 

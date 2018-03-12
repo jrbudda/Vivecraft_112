@@ -1,0 +1,75 @@
+--- a/net/minecraft/entity/projectile/EntityArrow.java
++++ b/net/minecraft/entity/projectile/EntityArrow.java
+@@ -2,11 +2,18 @@
+ 
+ import com.google.common.base.Predicate;
+ import com.google.common.base.Predicates;
++import com.mtbs3d.minecrift.api.NetworkHelper;
++import com.mtbs3d.minecrift.api.VivePlayer;
++
+ import java.util.List;
+ import javax.annotation.Nullable;
++
++import org.apache.http.impl.client.AIMDBackoffManager;
++
+ import net.minecraft.block.Block;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.state.IBlockState;
++import net.minecraft.client.Minecraft;
+ import net.minecraft.enchantment.EnchantmentHelper;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityLivingBase;
+@@ -92,6 +99,16 @@
+ 
+         if (shooter instanceof EntityPlayer)
+         {
++        	VivePlayer vp = NetworkHelper.vivePlayers.get(shooter.getUniqueID());
++        	if (vp !=null && vp.isVR())
++        	{
++        		//VIVE SET SPAWNPOS
++    	        Vec3d aimSource = (vp.isSeated() || vp.getDraw()==0) ? vp.getControllerPos(0): vp.getControllerPos(1);
++    	        Vec3d aimDir = getVRAim(vp).scale(0.6f);
++        		this.setPosition(aimSource.x + aimDir.x ,aimSource.y + aimDir.y ,aimSource.z+aimDir.z );
++        		//
++        	}
++            
+             this.pickupStatus = EntityArrow.PickupStatus.ALLOWED;
+         }
+     }
+@@ -117,11 +134,36 @@
+         this.dataManager.register(CRITICAL, Byte.valueOf((byte)0));
+     }
+ 
++    public Vec3d getVRAim(VivePlayer vp){
++		Vec3d aim = vp.getControllerDir(0);
++    	if(!vp.isSeated() && vp.getDraw() > 0){
++    		aim = vp.getControllerPos(1).subtract(vp.getControllerPos(0)).normalize();
++    	}
++    	return aim;
++    }
++    
+     public void shoot(Entity shooter, float pitch, float yaw, float p_184547_4_, float velocity, float inaccuracy)
+     {
++    	
++    	//VIVE SET AIM AND SPEED
++        VivePlayer vp = NetworkHelper.vivePlayers.get(shooter.getUniqueID());
++        if (vp !=null && vp.isVR())
++        { 
++    		Vec3d aim = getVRAim(vp);
++        	if(!vp.isSeated() && vp.getDraw() > 0){
++        		velocity = velocity * vp.getDraw();  
++        		this.damage *= 2;
++        	}
++			pitch = -(float)Math.toDegrees(Math.asin(aim.y/aim.lengthVector()));
++			yaw = (float)Math.toDegrees(Math.atan2(-aim.x, aim.z));   		
++        }
++        ///
++        
+         float f = -MathHelper.sin(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F);
+         float f1 = -MathHelper.sin(pitch * 0.017453292F);
+         float f2 = MathHelper.cos(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F);
++ 
++
+         this.shoot((double)f, (double)f1, (double)f2, velocity, inaccuracy);
+         this.motionX += shooter.motionX;
+         this.motionZ += shooter.motionZ;

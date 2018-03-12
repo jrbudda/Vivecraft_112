@@ -1,0 +1,47 @@
+--- a/net/minecraft/profiler/Profiler.java
++++ b/net/minecraft/profiler/Profiler.java
+@@ -58,6 +58,7 @@
+      */
+     public void startSection(String name)
+     {
++    	ended = false;
+         if (Lagometer.isActive())
+         {
+             int i = name.hashCode();
+@@ -95,6 +96,7 @@
+         {
+             if (this.profilingEnabled)
+             {
++            	//System.out.println("Start " + name);
+                 if (!this.profilingSection.isEmpty())
+                 {
+                     this.profilingSection = this.profilingSection + ".";
+@@ -118,6 +120,8 @@
+         }
+     }
+ 
++    String last = "";
++    boolean ended  = false;
+     /**
+      * End section
+      */
+@@ -127,9 +131,18 @@
+         {
+             if (this.profilingEnabled)
+             {
++            	//System.out.println("Remove " + this.profilingSection);
++            	if(ended){
++            	}
++            	ended = true;
++            	if(sectionList.size() == 0){
++            		return;
++            	}
++            	if(sectionList.size() == 1){
++            	}
+                 long i = System.nanoTime();
+                 long j = ((Long)this.timestampList.remove(this.timestampList.size() - 1)).longValue();
+-                this.sectionList.remove(this.sectionList.size() - 1);
++                last = this.sectionList.remove(this.sectionList.size() - 1);
+                 long k = i - j;
+ 
+                 if (this.profilingMap.containsKey(this.profilingSection))

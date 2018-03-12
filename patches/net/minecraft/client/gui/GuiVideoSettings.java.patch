@@ -1,0 +1,35 @@
+--- a/net/minecraft/client/gui/GuiVideoSettings.java
++++ b/net/minecraft/client/gui/GuiVideoSettings.java
+@@ -172,11 +172,11 @@
+                     return;
+                 }
+ 
+-                if (Config.isFastRender())
+-                {
+-                    Config.showGuiMessage(Lang.get("of.message.shaders.fr1"), Lang.get("of.message.shaders.fr2"));
+-                    return;
+-                }
++//                if (Config.isFastRender())
++//                {
++//                    Config.showGuiMessage(Lang.get("of.message.shaders.fr1"), Lang.get("of.message.shaders.fr2"));
++//                    return;
++//                }
+ 
+                 if (Config.getGameSettings().anaglyph)
+                 {
+@@ -243,4 +243,15 @@
+     {
+         return p_getGuiChatText_0_.inputField.getText();
+     }
++    
++    // FORGE: fix for MC-64581 very laggy mipmap slider
++    /**
++     * Called when the screen is unloaded. Used to disable keyboard repeat events
++     */
++    @Override
++    public void onGuiClosed()
++    {
++    	super.onGuiClosed();
++    	this.mc.gameSettings.onGuiClosed();
++    }
+ }

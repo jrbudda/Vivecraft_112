@@ -1,0 +1,127 @@
+--- a/net/minecraft/client/settings/GameSettings.java
++++ b/net/minecraft/client/settings/GameSettings.java
+@@ -111,7 +111,7 @@
+     public float chatOpacity = 1.0F;
+     public boolean snooperEnabled = true;
+     public boolean fullScreen;
+-    public boolean enableVsync = true;
++    public boolean enableVsync = false;
+     public boolean useVbo = true;
+     public boolean reducedDebugInfo;
+     public boolean hideServerAddress;
+@@ -141,7 +141,7 @@
+     public boolean enableWeakAttacks;
+     public boolean showSubtitles;
+     public boolean realmsNotifications = true;
+-    public boolean autoJump = true;
++    public boolean autoJump = false;
+     public TutorialSteps tutorialStep = TutorialSteps.MOVEMENT;
+     public KeyBinding keyBindForward = new KeyBinding("key.forward", 17, "key.categories.movement");
+     public KeyBinding keyBindLeft = new KeyBinding("key.left", 30, "key.categories.movement");
+@@ -225,7 +225,7 @@
+     public boolean ofStars = true;
+     public boolean ofSunMoon = true;
+     public int ofVignette = 0;
+-    public int ofChunkUpdates = 1;
++    public int ofChunkUpdates = 5;
+     public boolean ofChunkUpdatesDynamic = false;
+     public int ofTime = 0;
+     public boolean ofClearWater = false;
+@@ -465,7 +465,7 @@
+                 this.mc.getTextureMapBlocks().setMipmapLevels(this.mipmapLevels);
+                 this.mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+                 this.mc.getTextureMapBlocks().setBlurMipmapDirect(false, this.mipmapLevels > 0);
+-                this.mc.scheduleResourcesRefresh();
++                this.needsResourceRefresh = true; // FORGE: fix for MC-64581 very laggy mipmap slider
+             }
+         }
+ 
+@@ -2026,7 +2026,7 @@
+         {
+             ++this.ofChunkUpdates;
+ 
+-            if (this.ofChunkUpdates > 5)
++            if (this.ofChunkUpdates > 15)
+             {
+                 this.ofChunkUpdates = 1;
+             }
+@@ -2136,18 +2136,18 @@
+ 
+         if (p_setOptionValueOF_1_ == GameSettings.Options.FAST_RENDER)
+         {
+-            if (!this.ofFastRender && Config.isShaders())
+-            {
+-                Config.showGuiMessage(Lang.get("of.message.fr.shaders1"), Lang.get("of.message.fr.shaders2"));
+-                return;
+-            }
++//            if (!this.ofFastRender && Config.isShaders())
++//            {
++//                Config.showGuiMessage(Lang.get("of.message.fr.shaders1"), Lang.get("of.message.fr.shaders2"));
++//                return;
++//            }
+ 
+             this.ofFastRender = !this.ofFastRender;
+ 
+-            if (this.ofFastRender)
+-            {
+-                this.mc.entityRenderer.stopUseShader();
+-            }
++//            if (this.ofFastRender)
++//            {
++//                this.mc.entityRenderer.stopUseShader();
++//            }
+ 
+             Config.updateFramebufferSize();
+         }
+@@ -2998,7 +2998,7 @@
+                     if (astring[0].equals("ofChunkUpdates") && astring.length >= 2)
+                     {
+                         this.ofChunkUpdates = Integer.valueOf(astring[1]).intValue();
+-                        this.ofChunkUpdates = Config.limit(this.ofChunkUpdates, 1, 5);
++                        this.ofChunkUpdates = Config.limit(this.ofChunkUpdates, 1, 15);
+                     }
+ 
+                     if (astring[0].equals("ofChunkUpdatesDynamic") && astring.length >= 2)
+@@ -3299,7 +3299,7 @@
+         this.guiScale = 0;
+         this.particleSetting = 0;
+         this.heldItemTooltips = true;
+-        this.useVbo = false;
++        this.useVbo = true;
+         this.forceUnicodeFont = false;
+         this.ofFogType = 1;
+         this.ofFogStart = 0.8F;
+@@ -3310,7 +3310,7 @@
+         this.ofSmoothWorld = Config.isSingleProcessor();
+         this.ofLazyChunkLoading = false;
+         this.ofFastMath = false;
+-        this.ofFastRender = false;
++        this.ofFastRender = true;
+         this.ofTranslucentBlocks = 0;
+         this.ofDynamicFov = true;
+         this.ofAlternateBlocks = true;
+@@ -3335,7 +3335,7 @@
+         this.ofStars = true;
+         this.ofSunMoon = true;
+         this.ofVignette = 0;
+-        this.ofChunkUpdates = 1;
++        this.ofChunkUpdates = 5;
+         this.ofChunkUpdatesDynamic = false;
+         this.ofTime = 0;
+         this.ofClearWater = false;
+@@ -3481,6 +3481,7 @@
+         }
+     }
+ 
++    //FORGE
+     public void onGuiClosed()
+     {
+         if (this.needsResourceRefresh)
+@@ -3489,6 +3490,7 @@
+             this.needsResourceRefresh = false;
+         }
+     }
++    ////
+ 
+     public static enum Options
+     {

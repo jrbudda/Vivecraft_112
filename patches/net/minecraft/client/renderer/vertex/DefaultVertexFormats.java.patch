@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/vertex/DefaultVertexFormats.java
++++ b/net/minecraft/client/renderer/vertex/DefaultVertexFormats.java
+@@ -27,6 +27,8 @@
+     public static final VertexFormatElement TEX_2S = new VertexFormatElement(1, VertexFormatElement.EnumType.SHORT, VertexFormatElement.EnumUsage.UV, 2);
+     public static final VertexFormatElement NORMAL_3B = new VertexFormatElement(0, VertexFormatElement.EnumType.BYTE, VertexFormatElement.EnumUsage.NORMAL, 3);
+     public static final VertexFormatElement PADDING_1B = new VertexFormatElement(0, VertexFormatElement.EnumType.BYTE, VertexFormatElement.EnumUsage.PADDING, 1);
++    
++    public static VertexFormat ORIG_DEFAULT_BAKED_FORMAT;
+ 
+     public static void updateVertexFormats()
+     {

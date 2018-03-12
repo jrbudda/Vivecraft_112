@@ -1,0 +1,64 @@
+--- a/net/minecraft/entity/projectile/EntityFishHook.java
++++ b/net/minecraft/entity/projectile/EntityFishHook.java
+@@ -1,10 +1,15 @@
+ package net.minecraft.entity.projectile;
+ 
+ import java.util.List;
++
++import com.mtbs3d.minecrift.api.NetworkHelper;
++import com.mtbs3d.minecrift.api.VivePlayer;
++
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockLiquid;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.state.IBlockState;
++import net.minecraft.client.Minecraft;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.MoverType;
+ import net.minecraft.entity.item.EntityItem;
+@@ -83,17 +88,34 @@
+     }
+ 
+     private void shoot()
+-    {
+-        float f = this.angler.prevRotationPitch + (this.angler.rotationPitch - this.angler.prevRotationPitch);
+-        float f1 = this.angler.prevRotationYaw + (this.angler.rotationYaw - this.angler.prevRotationYaw);
+-        float f2 = MathHelper.cos(-f1 * 0.017453292F - (float)Math.PI);
+-        float f3 = MathHelper.sin(-f1 * 0.017453292F - (float)Math.PI);
+-        float f4 = -MathHelper.cos(-f * 0.017453292F);
+-        float f5 = MathHelper.sin(-f * 0.017453292F);
+-        double d0 = this.angler.prevPosX + (this.angler.posX - this.angler.prevPosX) - (double)f3 * 0.3D;
+-        double d1 = this.angler.prevPosY + (this.angler.posY - this.angler.prevPosY) + (double)this.angler.getEyeHeight();
+-        double d2 = this.angler.prevPosZ + (this.angler.posZ - this.angler.prevPosZ) - (double)f2 * 0.3D;
+-        this.setLocationAndAngles(d0, d1, d2, f1, f);
++    {   	
++
++    	float f = this.angler.prevRotationPitch + (this.angler.rotationPitch - this.angler.prevRotationPitch);
++    	float f1 = this.angler.prevRotationYaw + (this.angler.rotationYaw - this.angler.prevRotationYaw);
++    	float f2 = MathHelper.cos(-f1 * 0.017453292F - (float)Math.PI);
++    	float f3 = MathHelper.sin(-f1 * 0.017453292F - (float)Math.PI);
++    	float f4 = -MathHelper.cos(-f * 0.017453292F);
++    	float f5 = MathHelper.sin(-f * 0.017453292F);
++        
++    	//VIVE USE CONTROLLER  	
++    	VivePlayer vp = NetworkHelper.vivePlayers.get(angler.getUniqueID());
++    	if (vp !=null && vp.isVR())
++    	{
++    		Vec3d aim = vp.getControllerDir(0);
++    		Vec3d aimSource = vp.getControllerPos(0);
++    		float pitch = (float)Math.toDegrees(Math.asin(aim.y/aim.lengthVector()));
++    		float yaw = (float)Math.toDegrees(Math.atan2(aim.x, -aim.z));   
++    		this.setLocationAndAngles(aimSource.x + aim.x*0.6f, aimSource.y+aim.y*0.6f, aimSource.z+aim.z*0.6f, yaw, pitch);
++    		f = pitch;
++    		f1 = yaw;
++    	}else {
++    		double d0 = this.angler.prevPosX + (this.angler.posX - this.angler.prevPosX) - (double)f3 * 0.3D;
++    		double d1 = this.angler.prevPosY + (this.angler.posY - this.angler.prevPosY) + (double)this.angler.getEyeHeight();
++    		double d2 = this.angler.prevPosZ + (this.angler.posZ - this.angler.prevPosZ) - (double)f2 * 0.3D;
++    		this.setLocationAndAngles(d0, d1, d2, f1, f);
++    	}
++    	//END VIVE
++
+         this.motionX = (double)(-f3);
+         this.motionY = (double)MathHelper.clamp(-(f5 / f4), -5.0F, 5.0F);
+         this.motionZ = (double)(-f2);

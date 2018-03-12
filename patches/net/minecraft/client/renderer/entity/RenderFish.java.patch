@@ -1,0 +1,26 @@
+--- a/net/minecraft/client/renderer/entity/RenderFish.java
++++ b/net/minecraft/client/renderer/entity/RenderFish.java
+@@ -105,11 +105,22 @@
+                 d5 = entityplayer.prevPosY + (entityplayer.posY - entityplayer.prevPosY) * (double)partialTicks + vec3d.y;
+                 d6 = entityplayer.prevPosZ + (entityplayer.posZ - entityplayer.prevPosZ) * (double)partialTicks + vec3d.z;
+                 d7 = (double)entityplayer.getEyeHeight();
++                
++                // VIVE START - use controller for fishing rod start point
++                int c = 1;
++                if (entityplayer.getHeldItemMainhand().getItem() == Items.FISHING_ROD) c = 0;
++                Vec3d aimSource = Minecraft.getMinecraft().vrPlayer.vrdata_world_render.getController(c).getPosition();
++                Vec3d aimRotation = Minecraft.getMinecraft().vrPlayer.vrdata_world_render.getController(c).getDirection();
++                d4= aimSource.x + aimRotation.x * 0.4f;
++                d5= aimSource.y + aimRotation.y * 0.4f;
++                d6 = aimSource.z + aimRotation.z * 0.4f;
++                d7=0;
++                // VIVE END
+             }
+             else
+             {
+                 d4 = entityplayer.prevPosX + (entityplayer.posX - entityplayer.prevPosX) * (double)partialTicks - d1 * d2 - d0 * 0.8D;
+-                d5 = entityplayer.prevPosY + (double)entityplayer.getEyeHeight() + (entityplayer.posY - entityplayer.prevPosY) * (double)partialTicks - 0.45D;
++                d5 = entityplayer.prevPosY  + (entityplayer.posY - entityplayer.prevPosY) * (double)partialTicks - 0.45D;
+                 d6 = entityplayer.prevPosZ + (entityplayer.posZ - entityplayer.prevPosZ) * (double)partialTicks - d0 * d2 + d1 * 0.8D;
+                 d7 = entityplayer.isSneaking() ? -0.1875D : 0.0D;
+             }

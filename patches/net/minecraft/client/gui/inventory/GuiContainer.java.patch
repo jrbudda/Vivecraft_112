@@ -1,0 +1,38 @@
+--- a/net/minecraft/client/gui/inventory/GuiContainer.java
++++ b/net/minecraft/client/gui/inventory/GuiContainer.java
+@@ -124,7 +124,9 @@
+ 
+             if (slot.isEnabled())
+             {
++                GlStateManager.colorMask(true, true, true, false);
+                 this.drawSlot(slot);
++                GlStateManager.colorMask(true, true, true, true);
+             }
+ 
+             if (this.isMouseOverSlot(slot, mouseX, mouseY) && slot.isEnabled())
+@@ -141,7 +143,7 @@
+                 GlStateManager.enableDepth();
+             }
+         }
+-
++        
+         RenderHelper.disableStandardItemLighting();
+         this.drawGuiContainerForegroundLayer(mouseX, mouseY);
+         RenderHelper.enableGUIStandardItemLighting();
+@@ -169,7 +171,6 @@
+                     s = "" + TextFormatting.YELLOW + "0";
+                 }
+             }
+-
+             this.drawItemStack(itemstack, mouseX - i - 8, mouseY - j - k2, s);
+         }
+ 
+@@ -422,7 +423,7 @@
+                         }
+                         else
+                         {
+-                            boolean flag2 = l != -999 && (Keyboard.isKeyDown(42) || Keyboard.isKeyDown(54));
++                            boolean flag2 = l != -999 && (Keyboard.isKeyDown(42) || Keyboard.isKeyDown(54) || isFakeShift());
+                             ClickType clicktype = ClickType.PICKUP;
+ 
+                             if (flag2)
