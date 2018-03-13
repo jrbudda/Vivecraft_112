@@ -7,7 +7,7 @@ This readme is intended for developers. For downloads and gameplay instructions 
 Using this Repository
 ========
  
- Vivecraft uses patches to avoid distributing Minecraft code. The build scripts are in Pyton 2.X.
+ Vivecraft uses patches to avoid distributing Minecraft code. The build scripts are in Python 2.X.
  
  - Fork, checkout or download the repo using your Git method of choice.
  - Install Java JDK 1.8. The Java JRE will NOT work.
@@ -28,7 +28,7 @@ The install process (install.py) does a number of things:
  - It copies all files found in \assets\ to \mcp9xx\src\assets\.
  This directory is now the full 'Vivecraft' codebase.
  
-IF you use Eclipse you can open the workspace found in \mcp9xx\eclipse. You may have to redirect some build path jar's to the correct location. To run the game from eclipse you also have to attach natives to the lwjgl jar.
+If you use Eclipse you can open the workspace found in \mcp9xx\eclipse. You may have to redirect some build path jar's to the correct location. To run the game from eclipse you also have to attach natives to the lwjgl jar.
 
 Make all changes to the game in the \mcp9xx\src\minecraft directory.
 
