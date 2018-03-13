@@ -977,7 +977,7 @@ public class MCOpenVR
 //			mc.controllerPosY = controllerPos.y;
 //			mc.controllerPosZ = controllerPos.z;
 		}
-
+	
 		if (controllerMouseX >= 0 && controllerMouseX < mc.displayWidth
 				&& controllerMouseY >=0 && controllerMouseY < mc.displayHeight)
 		{

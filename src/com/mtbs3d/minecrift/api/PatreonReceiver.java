@@ -7,6 +7,7 @@ import com.mtbs3d.minecrift.render.PlayerModelController;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.src.Config;
 import net.minecraft.src.IFileDownloadListener;
+import net.minecraft.util.text.TextComponentString;
 
 public class PatreonReceiver implements IFileDownloadListener
 {
@@ -30,8 +31,11 @@ public class PatreonReceiver implements IFileDownloadListener
             	for (String string : lines) {
             		try{
     					String[] bits = string.split(":");
-    					if(bits[0].equalsIgnoreCase(player))
-    		            	PlayerModelController.getInstance().setHMD(p.getUniqueID(), Integer.parseInt(bits[1]));      
+    					if(bits[0].equalsIgnoreCase(player)) {
+    						int level = Integer.parseInt(bits[1]);
+    						p.sendMessage(new TextComponentString("Welcome Patron " + player + "!"));
+    		            	PlayerModelController.getInstance().setHMD(p.getUniqueID(), level );
+    					}
             		} catch(Exception e){continue;}
 				}
             }

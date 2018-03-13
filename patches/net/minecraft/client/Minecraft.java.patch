@@ -294,7 +294,7 @@
 +	 * The minecriftVerString will be automatically updated by the build scripts, do not modify here.
 +	 * Modify minecriftversion.py in root minecrift dir.
 +	 */
-+    public final String minecriftVerString = "Vivecraft 1.12.2 jrbudda-6-beta1";
++    public final String minecriftVerString = "Vivecraft 1.12.2 jrbudda-6-beta2";
 +	/* end version */
 +	/** END MINECRIFT */
 +    
@@ -888,7 +888,7 @@
 +		if (hmdYawSamples.size() == hmdAvgLength)
 +			hmdYawSamples.removeFirst();
 +
-+		float yaw = vrPlayer.vrdata_world_pre.hmd.getYaw();
++		float yaw = vrPlayer.vrdata_room_pre.hmd.getYaw();
 +		if (yaw < 0) yaw += 360;
 +		hmdYawTotal += angleDiff(yaw, hmdYawLast);
 +		hmdYawLast = yaw;
@@ -897,7 +897,7 @@
 +			System.out.println("HMD yaw desync/overflow corrected");
 +		}
 +
-+		hmdPosSamples.add(vrPlayer.vrdata_world_pre.hmd.getPosition());
++		hmdPosSamples.add(vrPlayer.vrdata_room_pre.hmd.getPosition());
 +		float yawAvg = 0;
 +		if(hmdYawSamples.size() > 0){
 +			for (float f : hmdYawSamples) {

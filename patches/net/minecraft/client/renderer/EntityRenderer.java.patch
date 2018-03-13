@@ -2040,13 +2040,13 @@
 +//	            GlStateManager.loadIdentity();
 +//	            Project.gluPerspective(this.getFOVModifier(partialTicks, true), (float)this.mc.displayWidth / (float)this.mc.displayHeight, 0.05F, this.clipDistance);
 +	            GlStateManager.matrixMode(5888);
-+
++	            
 +	            if (shadersMod)
 +	            {
 +	                Shaders.beginSky();
 +	            }
 +	            
-+	           renderglobal.renderSky(partialTicks, pass);
++	            renderglobal.renderSky(partialTicks, pass);
 +	            
 +	            if (shadersMod)
 +	            {
@@ -2743,7 +2743,7 @@
          if (this.itemActivationItem != null && this.itemActivationTicks > 0)
          {
              int i = 40 - this.itemActivationTicks;
-@@ -3073,26 +3131,2238 @@
+@@ -3073,26 +3131,2248 @@
              float f2 = f * f1;
              float f3 = 10.25F * f2 * f1 + -24.95F * f1 * f1 + 25.5F * f2 + -13.8F * f1 + 4.0F * f;
              float f4 = f3 * (float)Math.PI;
@@ -3233,7 +3233,9 @@
 +	void renderGuiLayer(float par1)
 +	{
 +    	if(mc.bowTracker.isDrawing) return;	
-+    			
++    	
++    	if(mc.currentScreen ==null && mc.gameSettings.hideGUI) return;
++    	
 +			boolean inMenuRoom = this.mc.world == null || mc.currentScreen instanceof GuiWinGame || mc.integratedServerLaunchInProgress ;
 +			// Pass matrici on to OpenGL...
 +			GL11.glMatrixMode(GL11.GL_PROJECTION);
@@ -3374,28 +3376,30 @@
 +	 */
 +	public void drawFramebuffer(float renderPartialTicks, long tickDuration)    // VIVE - added parameter for debug info
 +	{
-+	
++
 +		int mouseX = 0;
 +		int mouseY = 0;
 +		final ScaledResolution var15 = new ScaledResolution(this.mc);
 +		GL11.glDisable(GL11.GL_STENCIL_TEST);
-+		
++
 +		if (this.mc.showSplashScreen)
 +		{
 +			mc.showSplashScreen = false;
-+    		//this.mc.showSplash(this.mc.getFramebuffer());
++			//this.mc.showSplash(this.mc.getFramebuffer());
 +		}
 +		else if (false)//(this.mc.isIntegratedServerLaunching())
 +		{
-+//			this.guiScreenShowingThisFrame = true;
-+//			this.mc.loadingScreen.render();
++			//			this.guiScreenShowingThisFrame = true;
++			//			this.mc.loadingScreen.render();
 +		}
 +		else //always for vive, never for mono
 +		{
-+			if ((this.mc.world != null && !this.mc.gameSettings.hideGUI && this.mc.player.getSleepTimer() == 0) 
-+					|| this.mc.currentScreen != null)
++			if (
++					(this.mc.world != null && this.mc.player.getSleepTimer() == 0) 
++					|| 
++					this.mc.currentScreen != null
++					) //draw a thing
 +			{
-+								
 +				//Render all UI elements into guiFBO
 +				GlStateManager.clearColor(0, 0, 0, 0);
 +				GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
@@ -3408,36 +3412,34 @@
 +				GlStateManager.tryBlendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ZERO);
 +
 +				// Display loading / progress window if necessary
-+				if (this.mc.world != null && !this.mc.gameSettings.hideGUI /*&& !this.blankGUIUntilWorldValid*/)
++				if (this.mc.world != null  /*&& !this.blankGUIUntilWorldValid*/)
 +				{
-+
 +					//Draw in game HUD overlay
 +					GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
-+					
++
 +					Object fmlCommonHandler = null;
 +					if (Reflector.FMLCommonHandler_instance.exists()) {
 +						fmlCommonHandler = Reflector.call(Reflector.FMLCommonHandler_instance);
 +						Reflector.callVoid(fmlCommonHandler, Reflector.FMLCommonHandler_onRenderTickStart, new Object[]{renderPartialTicks});
 +					}
-+					
++
 +					if(!Main.viewonly){
 +						//Render HUD elements
 +						renderViveHudIcons();
 +						this.mc.ingameGUI.renderGameOverlay(renderPartialTicks);
 +					}
-+					
++
 +					if (this.mc.gameSettings.ofShowFps && !this.mc.gameSettings.showDebugInfo)
 +					{
 +						Config.drawFps();
 +					}
-+					
++
 +					//mc.guiAchievement.updateAchievementWindow();
 +
 +					if (fmlCommonHandler != null) {
 +						Reflector.callVoid(fmlCommonHandler, Reflector.FMLCommonHandler_onRenderTickEnd, new Object[]{renderPartialTicks});		
 +					}
 +
-+					
 +					GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
 +				}
 +
@@ -3464,9 +3466,9 @@
 +						if(mc.currentScreen !=null){ 
 +
 +							//	Draw GUI crosshair
-+			
-+								if(MCOpenVR.controllerMouseValid)
-+									mc.ingameGUI.drawMouseMenuQuad(mc.currentScreen.getMouseXPos(),mc.currentScreen.getMouseYPos());				
++
++							if(MCOpenVR.controllerMouseValid)
++								mc.ingameGUI.drawMouseMenuQuad(mc.currentScreen.getMouseXPos(),mc.currentScreen.getMouseYPos());				
 +						}
 +					}
 +					catch (Throwable throwable)
@@ -3477,15 +3479,15 @@
 +					GlStateManager.disableLighting();
 +					GlStateManager.tryBlendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ZERO);
 +					//inventory messes up fog color sometimes... This fixes
-+				
++
 +				}
 +			}
-+		// VIVE added debug info to HUD
-+	       if (mc.gameSettings.showDebugInfo && mc.gameSettings.showDebugProfilerChart && !mc.gameSettings.hideGUI)
-+	        {
-+	            mc.displayDebugInfo(tickDuration);
-+	        }
++			// VIVE added debug info to HUD
++			if (mc.gameSettings.showDebugInfo && mc.gameSettings.showDebugProfilerChart)
++			{
++				mc.displayDebugInfo(tickDuration);
 +			}
++		}
 +
 +		//update mipmaps for Gui layer
 +		this.mc.getFramebuffer().bindFramebufferTexture();
@@ -3800,6 +3802,7 @@
 +								start.y - dir.y*.18*sc,
 +								start.z - dir.z*.18*sc);
 +			
++						
 +						tes.getBuffer().begin(7, DefaultVertexFormats.POSITION_COLOR);
 +						renderBox(tes, start, end, -0.02f*sc, 0.02f*sc, -0.025f*sc, 0.00f*sc, up, color, alpha);
 +						tes.draw();
@@ -4417,11 +4420,11 @@
 +				renderPass p = renderPass.Center;
 +				out = mc.vrPlayer.vrdata_world_render.getEye(p).getPosition().addVector(dir.x*0.3 * mc.vrPlayer.vrdata_world_render.worldScale, -0.4* mc.vrPlayer.vrdata_world_render.worldScale ,dir.z*0.3* mc.vrPlayer.vrdata_world_render.worldScale);
 +			} else { //main menu
-+				Vec3d dir = mc.vrPlayer.vrdata_room_post.hmd.getDirection();
++				Vec3d dir = mc.vrPlayer.vrdata_world_render.hmd.getDirection();
 +				dir = dir.rotateYaw((float) Math.toRadians(c==0?-35:35));
 +				dir = new Vec3d(dir.x, 0, dir.z);
 +				dir = dir.normalize();
-+				out = mc.vrPlayer.vrdata_room_post.hmd.getPosition().addVector(dir.x*0.3 , -0.4 ,dir.z*0.3);
++				out = mc.vrPlayer.vrdata_world_render.hmd.getPosition().addVector(dir.x*0.3 , -0.4 ,dir.z*0.3);
 +			}
 +			return out;
 +		} else {
@@ -4582,27 +4585,32 @@
 +					yawAvg += f;
 +				}
 +				yawAvg /= mc.hmdYawSamples.size();
-+				yawAvg = (float)Math.toRadians(yawAvg + 90);
++				yawAvg = (float)Math.toRadians(yawAvg);
 +							
-+				Vec3d dir = new Vec3d(Math.cos(yawAvg), 0, Math.sin(yawAvg));
++				Vec3d dir = new Vec3d(-Math.sin(yawAvg), 0, Math.cos(yawAvg));
 +				float dist = mc.world == null || mc.currentScreen instanceof GuiWinGame ? 2.5F*mc.vrPlayer.vrdata_world_render.worldScale: mc.vrSettings.hudDistance;
 +				Vec3d pos = posAvg.add(new Vec3d(dir.x * dist, dir.y * dist, dir.z * dist));
-+				guipos = new Vec3d(pos.x, pos.y, pos.z);
-+				guirot = Matrix4f.rotationY(-(yawAvg + (float)Math.PI / 2)); // don't ask
++				Vec3d gpr = new Vec3d(pos.x, pos.y, pos.z);
++				
++				Matrix4f gr = Matrix4f.rotationY(135-yawAvg); // don't ask
++				
++				guirot = Matrix4f.multiply(gr, Matrix4f.rotationY(mc.vrPlayer.vrdata_world_render.rotation));
++				guipos = mc.vrPlayer.room_to_world_pos(gpr, mc.vrPlayer.vrdata_world_render); 
 +				
 +				//for mouse control
-+				mc.vrPlayer.guiRotation_room = guirot;
++				mc.vrPlayer.guiRotation_room = gr;
 +				mc.vrPlayer.guiScale=2;
-+				mc.vrPlayer.guiPos_room = mc.vrPlayer.world_to_room_pos(guipos, mc.vrPlayer.vrdata_world_render);
++				mc.vrPlayer.guiPos_room = gpr;
 +				//
 +			}
 +			
 +			// counter head rotation
 +			if (currentPass != renderPass.Third) {
-+					GL11.glMultMatrix(mc.vrPlayer.vrdata_world_render.hmd.getMatrix().toFloatBuffer());
++				GL11.glMultMatrix(mc.vrPlayer.vrdata_world_render.hmd.getMatrix().toFloatBuffer());
 +			} else {
-+				applyMRCameraRotation(false);			}
-+			
++				applyMRCameraRotation(false);			
++			}
++
 +			
 +			GL11.glTranslatef((float) (guipos.x - eye.x), (float)(guipos.y - eye.y), (float)(guipos.z - eye.z));
 +//		
@@ -4805,6 +4813,8 @@
 +			GL11.glLoadIdentity();
 +
 +			renderItemActivation(0, 0, par1); //totem of undying
++			
++			GlStateManager.disableCull();
 +			
 +			AxisAlignedBB bb = mc.player.getEntityBoundingBox();
 +			if(this.mc.vrSettings.vrShowBlueCircleBuddy && bb != null){ 	//blue circle buddy	  - have to draw here so it sits on top of overlays (face in block)
