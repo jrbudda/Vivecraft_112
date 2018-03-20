@@ -133,79 +133,6 @@ public class VRHotkeys {
 		}
 		
 		
-		if (Keyboard.getEventKey() == Keyboard.KEY_LEFT && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && !Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
-		{
-			mc.vrSettings.vrFixedCamposX -= 0.01;
-			gotKey = true;
-		}
-		if (Keyboard.getEventKey() == Keyboard.KEY_RIGHT&& Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && !Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
-		{
-			mc.vrSettings.vrFixedCamposX += 0.01;
-			gotKey = true;
-		}
-		if (Keyboard.getEventKey() == Keyboard.KEY_UP&& Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && !Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
-		{
-			mc.vrSettings.vrFixedCamposZ -= 0.01;
-			gotKey = true;
-		}
-		if (Keyboard.getEventKey() == Keyboard.KEY_DOWN && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && !Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
-		{
-			mc.vrSettings.vrFixedCamposZ += 0.01;
-			gotKey = true;
-		}
-		if (Keyboard.getEventKey() == Keyboard.KEY_PRIOR && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && !Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
-		{
-			mc.vrSettings.vrFixedCamposY += 0.01;
-			gotKey = true;
-		}
-		if (Keyboard.getEventKey() == Keyboard.KEY_NEXT && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && !Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
-		{
-			mc.vrSettings.vrFixedCamposY -= 0.01;
-			gotKey = true;
-		}
-		
-		if (Keyboard.getEventKey() == Keyboard.KEY_UP && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
-		{
-			mc.vrSettings.vrFixedCamrotPitch -= 0.5;
-			gotKey = true;
-		}
-		if (Keyboard.getEventKey() == Keyboard.KEY_DOWN && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
-		{
-			mc.vrSettings.vrFixedCamrotPitch += 0.5;	
-			gotKey = true;
-		
-		}
-		if (Keyboard.getEventKey() == Keyboard.KEY_LEFT && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
-		{
-			mc.vrSettings.vrFixedCamrotYaw -= 0.5;
-			gotKey = true;
-		}
-		if (Keyboard.getEventKey() == Keyboard.KEY_RIGHT && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
-		{
-			mc.vrSettings.vrFixedCamrotYaw += 0.5;
-			gotKey = true;
-		}
-		if (Keyboard.getEventKey() == Keyboard.KEY_PRIOR && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
-		{
-			mc.vrSettings.vrFixedCamrotRoll -= 0.05;
-			gotKey = true;
-		}
-		if (Keyboard.getEventKey() == Keyboard.KEY_NEXT && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
-		{
-			mc.vrSettings.vrFixedCamrotRoll += 0.05;	
-			gotKey = true;
-		}
-		if (Keyboard.getEventKey() == Keyboard.KEY_INSERT && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL))
-		{
-			mc.gameSettings.fovSetting +=1 ;
-			gotKey = true;
-		}
-		if (Keyboard.getEventKey() == Keyboard.KEY_DELETE && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL))
-
-		{
-			mc.gameSettings.fovSetting -=1 ;
-			gotKey = true;
-		}
 		if (Keyboard.getEventKey() == Keyboard.KEY_HOME && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL))
 		{
 			snapMRCam(mc, 0);
@@ -225,6 +152,84 @@ public class VRHotkeys {
 		return gotKey;
 	}
 
+	public static void handleMRKeys() {
+		Minecraft mc = Minecraft.getMinecraft();
+		boolean gotKey;
+		if (Keyboard.isKeyDown(Keyboard.KEY_LEFT) && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && !Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
+		{
+			mc.vrSettings.vrFixedCamposX -= 0.01;
+			gotKey = true;
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT) && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && !Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
+		{
+			mc.vrSettings.vrFixedCamposX += 0.01;
+			gotKey = true;
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_UP) && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && !Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
+		{
+			mc.vrSettings.vrFixedCamposZ -= 0.01;
+			gotKey = true;
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_DOWN) && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && !Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
+		{
+			mc.vrSettings.vrFixedCamposZ += 0.01;
+			gotKey = true;
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_PRIOR) && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && !Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
+		{
+			mc.vrSettings.vrFixedCamposY += 0.01;
+			gotKey = true;
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_NEXT) && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && !Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
+		{
+			mc.vrSettings.vrFixedCamposY -= 0.01;
+			gotKey = true;
+		}
+		
+		if (Keyboard.isKeyDown(Keyboard.KEY_UP) && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
+		{
+			mc.vrSettings.vrFixedCamrotPitch -= 0.5;
+			gotKey = true;
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_DOWN) && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
+		{
+			mc.vrSettings.vrFixedCamrotPitch += 0.5;	
+			gotKey = true;
+		
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_LEFT) && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
+		{
+			mc.vrSettings.vrFixedCamrotYaw -= 0.5;
+			gotKey = true;
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT) && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
+		{
+			mc.vrSettings.vrFixedCamrotYaw += 0.5;
+			gotKey = true;
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_PRIOR) && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
+		{
+			mc.vrSettings.vrFixedCamrotRoll -= 0.05;
+			gotKey = true;
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_NEXT) && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
+		{
+			mc.vrSettings.vrFixedCamrotRoll += 0.05;	
+			gotKey = true;
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_INSERT) && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL))
+		{
+			mc.gameSettings.fovSetting +=1 ;
+			gotKey = true;
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_DELETE) && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL))
+
+		{
+			mc.gameSettings.fovSetting -=1 ;
+			gotKey = true;
+		}
+	}
+	
 	public static void snapMRCam(Minecraft mc, int controller) {
 		Vec3d c = mc.vrPlayer.vrdata_room_pre.getController(controller).getPosition();
 		mc.vrSettings.vrFixedCamposX =(float) c.x;
