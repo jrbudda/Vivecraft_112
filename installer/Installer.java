@@ -403,7 +403,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 
 		// KATVR
 
-		katvr = new JCheckBox("KATVR Driver", false);
+		katvr = new JCheckBox("KATVR Treadmill Driver", false);
 		katvr.setToolTipText(
 				"<html>" +
 						"If checked, install the drivers needed for KATVR Treadmill<br>" +
