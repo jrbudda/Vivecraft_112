@@ -65,7 +65,7 @@ def process_json(addon, version, mcversion, forgeversion, ofversion):
 def create_install(mcp_dir):
     print "Creating Installer..."
     reobf = os.path.join(mcp_dir,'reobf','minecraft')
-    assets = os.path.join(base_dir,"assets")
+    resources = os.path.join(base_dir,"resources")
     # VIVE - removed from inner loop. blk.class is EntityPlayerSP, not anything to do with sound?
     #if cur_file=='blk.class': #skip SoundManager
     #continue
@@ -105,12 +105,12 @@ def create_install(mcp_dir):
                 if flg:
                     arcname =  arc_path + cur_file.replace('.class', '.clazz')
                 zipout.write(in_file, arcname)
-        print "Checking Assets..."
-        for a, b, c in os.walk(assets):
+        print "Checking Resources..."
+        for a, b, c in os.walk(resources):
             print a
-            arc_path = os.path.relpath(a,base_dir).replace('\\','/').replace('.','')+'/'
+            arc_path = os.path.relpath(a,resources).replace('\\','/').replace('.','')+'/'
             for cur_file in c:
-                print "Adding asset %s..." % cur_file
+                print "Adding resource %s..." % cur_file
                 in_file= os.path.join(a,cur_file) 
                 arcname =  arc_path + cur_file
                 zipout.write(in_file, arcname)
