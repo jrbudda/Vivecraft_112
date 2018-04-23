@@ -61,6 +61,15 @@ def process_json(addon, version, mcversion, forgeversion, ofversion):
         json_obj["libraries"].insert(0,{"name":lib_id, "MMC-hint":"local"}) #Insert at beginning
         #json_obj["libraries"].append({"name":"net.minecraft:Minecraft:"+mc_version}) #Insert at end
         return json.dumps( json_obj, indent=1 )
+	
+def parse_srg_classnames(srgfile):
+	classnames = []
+	with open(srgfile) as f:
+		for line in f:
+			split = line.split(" ")
+			if split[0] == "CL:":
+				classnames.append("%s.class" % (split[1]))
+	return classnames
 
 def create_install(mcp_dir):
     print "Creating Installer..."
@@ -71,7 +80,7 @@ def create_install(mcp_dir):
     #continue
     in_mem_zip = StringIO.StringIO()
     with zipfile.ZipFile( in_mem_zip,'w', zipfile.ZIP_DEFLATED) as zipout:
-        vanilla = os.listdir(reobf)
+        vanilla = parse_srg_classnames(os.path.join(mcp_dir, "conf", "joined.srg"))
         for abs_path, _, filelist in os.walk(reobf, followlinks=True):
             arc_path = os.path.relpath( abs_path, reobf ).replace('\\','/').replace('.','')+'/'
             for cur_file in fnmatch.filter(filelist, '*.class'):
