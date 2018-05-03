@@ -280,18 +280,20 @@
          if (this.chunksToUpdateForced.size() > 0)
          {
              Iterator iterator = this.chunksToUpdateForced.iterator();
-@@ -2400,8 +2427,10 @@
+@@ -2400,9 +2427,11 @@
                  }
              }
          }
 +         */
  
 -        int k1 = 0;
+-        int l1 = Config.getUpdatesPerFrame();
 +        //int k1 = 0;
 +        
-         int l1 = Config.getUpdatesPerFrame();
++        //int l1 = Config.getUpdatesPerFrame();
  
          if (!this.chunksToUpdate.isEmpty())
+         {
 @@ -2430,7 +2459,8 @@
  
                  renderchunk2.clearNeedsUpdate();

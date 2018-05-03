@@ -63,7 +63,8 @@ public class VRShaders {
 	public static void setupDepthMask() throws Exception {
 		_DepthMask_shaderProgramId = ShaderHelper.initShaders(VRShaders.PASSTHRU_VERTEX_SHADER, VRShaders.DEPTH_MASK_FRAGMENT_SHADER, true);
 		if (_DepthMask_shaderProgramId == 0) {
-			throw new Exception("Failed to validate depth mask shader!");
+			System.out.println("Failed to validate depth mask shader! Mixed reality will not function!");
+			return;
 		}
 		
 		// Setup uniform IDs

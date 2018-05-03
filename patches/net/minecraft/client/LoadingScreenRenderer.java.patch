@@ -1,0 +1,13 @@
+--- a/net/minecraft/client/LoadingScreenRenderer.java
++++ b/net/minecraft/client/LoadingScreenRenderer.java
+@@ -222,7 +222,9 @@
+                     this.mc.fontRenderer.drawStringWithShadow(this.message, (float)((k - this.mc.fontRenderer.getStringWidth(this.message)) / 2), (float)(l / 2 - 4 + 8), 16777215);
+                 }
+ 
+-                this.framebuffer.unbindFramebuffer();
++                // Render to GUI framebuffer if it's created, otherwise render to window.
++                if (this.mc.guiFramebuffer != null) this.mc.guiFramebuffer.bindFramebuffer(true);
++                else this.framebuffer.unbindFramebuffer();
+ 
+                 if (OpenGlHelper.isFramebufferEnabled())
+                 {

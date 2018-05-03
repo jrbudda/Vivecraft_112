@@ -1,6 +1,7 @@
 package com.mtbs3d.minecrift.utils;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,7 +60,7 @@ public class MenuWorldDownloader {
 		System.out.println("Couldn't download a world, trying random file from directory");
 		File dir = new File("menuworlds");
 		if (dir.exists()) {
-			File[] files = dir.listFiles();
+			File[] files = dir.listFiles(file -> file.isFile() && file.getName().toLowerCase().endsWith(".mmw"));
 			if (files.length > 0) {
 				return new FileInputStream(files[rand.nextInt(files.length)]);
 			}

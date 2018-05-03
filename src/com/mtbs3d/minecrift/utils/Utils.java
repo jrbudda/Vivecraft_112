@@ -253,9 +253,9 @@ public class Utils
 			if (is == null) {
 				//uhh debugging?
 				Path dir = Paths.get(System.getProperty("user.dir")); // ../mcpxxx/jars/
-				Path p5 = dir.getParent().resolve("src/assets/" + name);
+				Path p5 = dir.getParent().resolve("src/resources/assets/vivecraft/" + name);
 				if (!p5.toFile().exists()) {
-					p5 = dir.getParent().getParent().resolve("assets/vivecraft/" + name);
+					p5 = dir.getParent().getParent().resolve("resources/assets/vivecraft/" + name);
 				}
 				if (p5.toFile().exists()) {
 					is = new FileInputStream(p5.toFile());
@@ -285,9 +285,9 @@ public class Utils
 			// dev environment
 			try {
 				Path dir = Paths.get(System.getProperty("user.dir")); // ..\mcpxxx\jars\
-				Path path = dir.getParent().resolve("src/assets/natives/" + directory);
+				Path path = dir.getParent().resolve("src/resources/natives/" + directory);
 				if (!path.toFile().exists()) {
-					path = dir.getParent().getParent().resolve("assets/vivecraft/natives/" + directory);
+					path = dir.getParent().getParent().resolve("resources/natives/" + directory);
 				}
 				if (path.toFile().exists()) { 
 					System.out.println("Copying " + directory + " natives...");
@@ -308,7 +308,7 @@ public class Utils
 			Enumeration<? extends ZipEntry> entries = zip.entries();
 			while (entries.hasMoreElements()) {
 				ZipEntry entry = entries.nextElement();
-				if (entry.getName().startsWith("assets/vivecraft/natives/" + directory)) {
+				if (entry.getName().startsWith("natives/" + directory)) {
 					String name = Paths.get(entry.getName()).getFileName().toString();
 					System.out.println(name);
 					writeStreamToFile(zip.getInputStream(entry), new File("openvr/" + directory + "/" + name));

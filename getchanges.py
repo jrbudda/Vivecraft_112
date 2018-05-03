@@ -30,6 +30,9 @@ def create_patch( target_dir, src_file, mod_file, label, patch_file ):
         with open( patch_file, 'wb') as out:
             out.write( stdout.replace('\r\n','\n').replace('\r','\n') )
 
+def pythonisdumb(func, path, excinfo):
+    print path + str(excinfo)
+
 def main(mcp_dir, patch_dir = "patches", orig_dir = ".minecraft_orig"):
     new_src_dir    = os.path.join( base_dir , "src" )
     patch_base_dir = os.path.join( base_dir , patch_dir )
@@ -37,13 +40,25 @@ def main(mcp_dir, patch_dir = "patches", orig_dir = ".minecraft_orig"):
     resources_base_dir    = os.path.join(base_dir, "resources" )
 
     try:
-        shutil.rmtree( new_src_dir )
-        shutil.rmtree( patch_base_dir )
-        shutil.rmtree( patchsrc_base_dir )
-        shutil.rmtree( resources_base_dir )
+        shutil.rmtree( new_src_dir, onerror=pythonisdumb, ignore_errors=True)
     except OSError as e:
-        pass
-    
+        print e
+        
+    try:
+        shutil.rmtree( patch_base_dir, onerror=pythonisdumb, ignore_errors=True)
+    except OSError as e:
+        print e
+        
+    try:
+        shutil.rmtree( patchsrc_base_dir, onerror=pythonisdumb, ignore_errors=True)
+    except OSError as e:
+        print e
+        
+    try:
+        shutil.rmtree( resources_base_dir, onerror=pythonisdumb, ignore_errors=True)
+    except OSError as e:
+        print e  
+     
     if not os.path.exists( new_src_dir ):
         os.mkdir( new_src_dir )
     

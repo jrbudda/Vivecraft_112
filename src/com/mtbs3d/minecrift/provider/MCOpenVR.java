@@ -3,6 +3,7 @@ package com.mtbs3d.minecrift.provider;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.IntBuffer;
 import java.nio.charset.StandardCharsets;
@@ -18,6 +19,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.mtbs3d.minecrift.api.Vec3History;
 import com.mtbs3d.minecrift.control.AxisType;
 import com.mtbs3d.minecrift.control.ButtonTuple;
@@ -37,6 +39,7 @@ import com.mtbs3d.minecrift.utils.HardwareType;
 import com.mtbs3d.minecrift.utils.InputInjector;
 import com.mtbs3d.minecrift.utils.KeyboardSimulator;
 import com.mtbs3d.minecrift.utils.MCReflection;
+import com.mtbs3d.minecrift.utils.MenuWorldExporter;
 import com.mtbs3d.minecrift.utils.Utils;
 import com.mtbs3d.minecrift.utils.Vector2;
 import com.mtbs3d.minecrift.utils.jkatvr;
@@ -79,8 +82,10 @@ import net.minecraft.client.main.Main;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.ItemStack;
 import net.minecraft.src.Reflector;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 
 public class MCOpenVR 
 {
@@ -210,6 +215,7 @@ public class MCOpenVR
 	static final KeyBinding rotateFree = new KeyBinding("Rotate Free", 199, "Vivecraft");
 	static final KeyBinding quickTorch = new KeyBinding("Quick Torch", 210, "Vivecraft");
 	static final KeyBinding menuButton = new KeyBinding("In-Game Menu Button", 0, "Vivecraft");
+	static final KeyBinding exportWorld = new KeyBinding("Export Menu World", 0, "Vivecraft");
 	static final KeyBinding guiMenuButton = new KeyBinding("GUI Menu Button", 0, "Vivecraft GUI");
 	static final KeyBinding guiLeftClick = new KeyBinding("GUI Left Click", 0, "Vivecraft GUI");
 	static final KeyBinding guiRightClick = new KeyBinding("GUI Right Click", 0, "Vivecraft GUI");
@@ -381,6 +387,7 @@ public class MCOpenVR
 	    mc.gameSettings.keyBindings = (KeyBinding[])((KeyBinding[])ArrayUtils.add(mc.gameSettings.keyBindings, hotbarNext));	
 	    mc.gameSettings.keyBindings = (KeyBinding[])((KeyBinding[])ArrayUtils.add(mc.gameSettings.keyBindings, hotbarPrev));	
 	    mc.gameSettings.keyBindings = (KeyBinding[])((KeyBinding[])ArrayUtils.add(mc.gameSettings.keyBindings, menuButton));
+	    mc.gameSettings.keyBindings = (KeyBinding[])((KeyBinding[])ArrayUtils.add(mc.gameSettings.keyBindings, exportWorld));
 	    mc.gameSettings.keyBindings = (KeyBinding[])((KeyBinding[])ArrayUtils.add(mc.gameSettings.keyBindings, guiMenuButton));
 	    mc.gameSettings.keyBindings = (KeyBinding[])((KeyBinding[])ArrayUtils.add(mc.gameSettings.keyBindings, guiLeftClick));
 	    mc.gameSettings.keyBindings = (KeyBinding[])((KeyBinding[])ArrayUtils.add(mc.gameSettings.keyBindings, guiRightClick));
@@ -548,6 +555,7 @@ public class MCOpenVR
 		}
 	}
 	
+	private static boolean getXforms = true;
 	
     private static Map<String, Matrix4f[]> controllerComponentTransforms;
     private static Map<Long, String> controllerComponentNames;
@@ -555,7 +563,7 @@ public class MCOpenVR
     private static void getTransforms(){
     	if (vrRenderModels == null) return;
 
-    	if(controllerComponentTransforms == null) {
+    	if(getXforms == true) {
     		controllerComponentTransforms = new HashMap<String, Matrix4f[]>();
     	}
 
@@ -572,7 +580,7 @@ public class MCOpenVR
     	componentNames.add("base");
     	componentNames.add("handgrip");
     	componentNames.add("status");
-
+    	boolean failed = false;
     	for (String comp : componentNames) {
     		controllerComponentTransforms.put(comp, new Matrix4f[2]); 			
     		Pointer p = ptrFomrString(comp);
@@ -593,15 +601,17 @@ public class MCOpenVR
     			RenderModel_ComponentState_t componentState = new RenderModel_ComponentState_t();
     			byte ret = vrRenderModels.GetComponentState.apply(pointer, p, controllerStateReference[i], modeState, componentState);
     			if(ret == 0) {
-    				System.out.println("Failed getting transform: " + comp + " controller " + i);
+    		//		System.out.println("Failed getting transform: " + comp + " controller " + i);
+    				failed = true; // Oculus does not seem to raise ANY trackedDevice events. So just keep trying...
     				continue;
     			}
     			Matrix4f xform = new Matrix4f();
     			OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(componentState.mTrackingToComponentLocal, xform);
     			controllerComponentTransforms.get(comp)[i] = xform;
-    			//	System.out.println("Transform: " + comp + " controller: " + i +" button: " + button + "\r" + Utils.convertOVRMatrix(xform).toString());
+    		//	System.out.println("Transform: " + comp + " controller: " + i +" button: " + button + "\r" + Utils.convertOVRMatrix(xform).toString());
     		}
     	}
+    	getXforms = failed;
     }
 		
     public static Matrix4f getControllerComponentTransform(int controllerIndex, String componenetName){
@@ -1329,7 +1339,7 @@ public class MCOpenVR
 		// if you start teleporting, close any UI
 		if (gui && !sleeping && mc.gameSettings.keyBindForward.isKeyDown() && !(mc.currentScreen instanceof GuiWinGame))
 		{
-			mc.player.closeScreen();
+			if(mc.player !=null) mc.player.closeScreen();
 		}
 
 		if(!mc.gameSettings.keyBindInventory.isKeyDown()){
@@ -1380,6 +1390,40 @@ public class MCOpenVR
 					else mc.displayInGameMenu();
 				}
 				setKeyboardOverlayShowing(false, null);
+			}
+		}
+		
+		if (exportWorld.isPressed()) {
+			if (mc.world != null && mc.player != null) {
+				try {
+		        	final BlockPos pos = mc.player.getPosition();
+		        	final int size = 320;
+					final File file = new File("worldexport.mmw");
+		        	System.out.println("Exporting world... area size: " + size);
+		        	System.out.println("Saving to " + file.getAbsolutePath());
+		        	if (mc.isIntegratedServerRunning()) {
+		        		final World world = mc.getIntegratedServer().getWorld(mc.player.dimension);
+		        		ListenableFuture task = mc.getIntegratedServer().addScheduledTask(new Runnable() {
+		        			@Override
+		        			public void run() {
+		        				try {
+		        					MenuWorldExporter.saveAreaToFile(world, pos.getX() - size / 2, pos.getZ() - size / 2, size, size, pos.getY(), file);
+		        				} catch (IOException e) {
+		        					e.printStackTrace();
+		        				}
+		        			}
+		        		});
+		        		while (!task.isDone()) {
+		        			Thread.sleep(10);
+		        		}
+		        	} else {
+		        		MenuWorldExporter.saveAreaToFile(mc.world, pos.getX() - size / 2, pos.getZ() - size / 2, size, size, pos.getY(), file);
+		        	}
+		        	mc.player.sendChatMessage("World export complete... area size: " + size);
+		        	mc.player.sendChatMessage("Saved to " + file.getAbsolutePath());
+		    	} catch (Exception e) {
+		    		e.printStackTrace();
+		    	}
 			}
 		}
 		
@@ -1571,6 +1615,28 @@ public class MCOpenVR
 		}
 	}
 		
+	private static String findEvent(int eventcode) {
+		Field[] fields = EVREventType.class.getFields();
+		
+		for (Field field : fields) {
+			if (field.getType() == Integer.TYPE) {
+				String n = field.getName();
+				int val;
+				try {
+					val = field.getInt(null);
+					if(val == eventcode) return n;
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		return "";
+	}
+	
 	//jrbuda:: oh hello there you are.
 	private static void pollInputEvents()
 	{
@@ -1581,7 +1647,7 @@ public class MCOpenVR
 
 		while (vrsystem.PollNextEvent.apply(event, event.size() ) > 0)
 		{
-
+		//	System.out.println("SteamVR Event: " + findEvent(event.eventType));
 			switch (event.eventType) {
 			case EVREventType.EVREventType_VREvent_KeyboardClosed:
 				//'huzzah'
@@ -1640,7 +1706,7 @@ public class MCOpenVR
 			case EVREventType.EVREventType_VREvent_TrackedDeviceRoleChanged:
 			case EVREventType.EVREventType_VREvent_TrackedDeviceUpdated:
 			case EVREventType.EVREventType_VREvent_ModelSkinSettingsHaveChanged:
-				controllerComponentTransforms = null;
+				getXforms = true;
 				break;
 			default:
 				break;
@@ -1720,7 +1786,7 @@ public class MCOpenVR
 			triggerHapticPulse(1, 500);
 		}
 		
-		if (controllerComponentTransforms == null) { //set null by events.
+		if (getXforms == true) { //set null by events.
 			getTransforms(); //do we want the dynamic info? I don't think so...
 			findControllerDevices(); 
 		}

@@ -52,13 +52,13 @@ public class MenuWorldExporter {
 		dos.writeInt(ground);
 		dos.writeInt(world.provider.getDimensionType().getId());
 		for (int i = 0; i < blocks.length; i++) {
-			dos.writeShort(blocks[i]);
+			dos.writeShort(blocks[i] & 0xFFFF);
 		}
 		for (int i = 0; i < lightmap.length; i++) {
 			dos.writeInt(lightmap[i]);
 		}
 		for (int i = 0; i < biomemap.length; i++) {
-			dos.writeByte(biomemap[i]);
+			dos.writeByte(biomemap[i] & 0xFF);
 		}
 		
 		Deflater deflater = new Deflater(Deflater.BEST_COMPRESSION);
@@ -105,7 +105,7 @@ public class MenuWorldExporter {
 		}
 		Biome[] biomemap = new Biome[xSize * zSize];
 		for (int i = 0; i < biomemap.length; i++) {
-			biomemap[i] = Biome.getBiome(dis.readByte() & 0xF, Biomes.PLAINS);
+			biomemap[i] = Biome.getBiome(dis.readByte() & 0xFF, Biomes.PLAINS);
 		}
 		
 		return new FakeBlockAccess(blocks, lightmap, biomemap, xSize, ySize, zSize, ground, dimensionType);
