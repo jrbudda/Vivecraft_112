@@ -750,7 +750,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 			else {
 				if(isMultiMC && mmcinst != null)
 					if (profileCreated) finalMessage = "Installed successfully!. MultiMC Instance: " + mmcinst.toString();
-					else finalMessage = "Installed but failed to update instance.cfg, launch may fail. See vivecraft.org for manual configuration.";
+					else finalMessage = "Installed but failed to update instance, launch may fail. See vivecraft.org for manual configuration.";
 				else
 					finalMessage = "Installed successfully! Restart Minecraft" +
 							(profileCreated == false ? " and Edit Profile->Use Version " + minecriftVersionName : " and select the '" + profileName + "' profile.");
