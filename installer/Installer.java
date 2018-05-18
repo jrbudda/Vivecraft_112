@@ -549,6 +549,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 						mmcinst = sel;
 						isMultiMC = true;
 					}
+					break; // don't ask multiple times
 				}
 			}
 			//
