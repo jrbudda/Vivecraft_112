@@ -21,34 +21,33 @@ import net.minecraft.util.MovementInput;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
-public class JumpTracker {
+public class JumpTracker extends Tracker {
 
 	public Vec3d[] latchStart = new Vec3d[]{new Vec3d(0,0,0), new Vec3d(0,0,0)};
 	public Vec3d[] latchStartOrigin = new Vec3d[]{new Vec3d(0,0,0), new Vec3d(0,0,0)};
 	public Vec3d[] latchStartPlayer = new Vec3d[]{new Vec3d(0,0,0), new Vec3d(0,0,0)};
 	private boolean c0Latched = false;
 	private boolean c1Latched = false;
-	
-	private Minecraft mc;
 
-    public boolean isClimbeyJump(){
-    	if(!this.isActive(mc.player)) return false;
+	public JumpTracker(Minecraft mc) {
+		super(mc);
+	}
+
+	public boolean isClimbeyJump(){
+    	if(!this.isActive(Minecraft.getMinecraft().player)) return false;
     	return(isClimbeyJumpEquipped());
     }
     
     public boolean isClimbeyJumpEquipped(){
-    	return(NetworkHelper.serverAllowsClimbey && mc.player.isClimbeyJumpEquipped());
+    	return(NetworkHelper.serverAllowsClimbey && Minecraft.getMinecraft().player.isClimbeyJumpEquipped());
     }
-    
-	public JumpTracker(Minecraft minecraft) {
-		this.mc = minecraft;
-	}
+
 	public boolean isActive(EntityPlayerSP p){
-		if(mc.vrSettings.seated)
+		if(Minecraft.getMinecraft().vrSettings.seated)
 			return false;
-		if(!mc.vrPlayer.getFreeMove() && !Minecraft.getMinecraft().vrSettings.simulateFalling)
+		if(!Minecraft.getMinecraft().vrPlayer.getFreeMove() && !Minecraft.getMinecraft().vrSettings.simulateFalling)
 			return false;
-		if(!mc.vrSettings.realisticJumpEnabled)
+		if(!Minecraft.getMinecraft().vrSettings.realisticJumpEnabled)
 			return false;
 		if(p==null || p.isDead || !p.onGround)
 			return false;
@@ -64,12 +63,13 @@ public class JumpTracker {
 		return c1Latched || c0Latched;
 	}
 
+	@Override
+	public void reset(EntityPlayerSP player) {
+		c1Latched = false;
+		c0Latched = false;
+	}
+
 	public void doProcess(EntityPlayerSP player){
-		if(!isActive(player)) {
-			c1Latched = false;
-			c0Latched = false;
-			return;
-		}
 
 		if(isClimbeyJumpEquipped() && mc.vrPlayer.getFreeMove()){
 

@@ -85,6 +85,10 @@ public class Quaternion {
 		this(matrix.m00, matrix.m01, matrix.m02, matrix.m10, matrix.m11, matrix.m12, matrix.m20, matrix.m21, matrix.m22);
 	}
 
+	public Quaternion(de.fruitfly.ovr.structs.Matrix4f matrix){
+		this(matrix.M[0][0],matrix.M[0][1],matrix.M[0][2],matrix.M[1][0],matrix.M[1][1],matrix.M[1][2],matrix.M[2][0],matrix.M[2][1],matrix.M[2][2]);
+	}
+
 	private Quaternion(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22) {
 		float s;
 		float tr = m00 + m11 + m22;
@@ -243,11 +247,15 @@ public class Quaternion {
 		return matrix;
 	}
 
+	public Quaternion inverse(){
+		return new Quaternion(w,-x,-y,-z);
+	}
+
 	public static Quaternion createFromToVector(Vector3 from, Vector3 to){
 		Vector3 cross = from.cross(to);
 		float w=(float) (Math.sqrt(Math.pow(from.length(), 2) * Math.pow(to.length(), 2)) + from.dot(to));
 
-		return new Quaternion(w,cross.x,cross.y,cross.z);
+		return new Quaternion(w,cross.x,cross.y,cross.z).normalized();
 	}
 
 	@Override
@@ -302,6 +310,10 @@ public class Quaternion {
 	     result.y = (num7 + num12) * vec.x + (1f - (num4 + num6)) * vec.y + (num9 - num10) * vec.z;
 	     result.z = (num8 - num11) * vec.x + (num9 + num10) * vec.y + (1f - (num4 + num5)) * vec.z;
 	     return result;
+	 }
+
+	 public Vec3d multiply(Vec3d vec){
+		return multiply(new Vector3(vec)).toVec3d();
 	 }
 	
 	

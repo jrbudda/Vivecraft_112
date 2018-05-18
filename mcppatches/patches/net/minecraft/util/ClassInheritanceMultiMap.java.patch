@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/ClassInheritanceMultiMap.java
 +++ b/net/minecraft/util/ClassInheritanceMultiMap.java
-@@ -144,7 +144,7 @@
+@@ -151,7 +151,7 @@
  
      public Iterator<T> iterator()
      {

@@ -12,8 +12,12 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
-public class RunTracker {
+public class RunTracker extends Tracker {
 
+
+	public RunTracker(Minecraft mc) {
+		super(mc);
+	}
 
 	public boolean isActive(EntityPlayerSP p){
 		if(!Minecraft.getMinecraft().vrPlayer.getFreeMove() || Minecraft.getMinecraft().vrSettings.seated)
@@ -42,14 +46,16 @@ public class RunTracker {
 	public double getSpeed(){
 		return speed;
 	}
-	public void doProcess(Minecraft minecraft, EntityPlayerSP player){
-		if(!isActive(player)) {
-			speed = 0;
-			return;
-		}
 
-		Vec3d controllerR= minecraft.vrPlayer.vrdata_world_pre.getController(0).getPosition();
-		Vec3d controllerL= minecraft.vrPlayer.vrdata_world_pre.getController(1).getPosition();
+	@Override
+	public void reset(EntityPlayerSP player) {
+		speed = 0;
+	}
+
+	public void doProcess(EntityPlayerSP player){
+
+		Vec3d controllerR= mc.vrPlayer.vrdata_world_pre.getController(0).getPosition();
+		Vec3d controllerL= mc.vrPlayer.vrdata_world_pre.getController(1).getPosition();
 		
 		//Vec3d middle= controllerL.subtract(controllerR).scale(0.5).add(controllerR);
 
@@ -109,7 +115,7 @@ public class RunTracker {
 //		
 		//double ltor = Math.toDegrees(Math.atan2(-diff.x, diff.z));   
 		
-		Vec3d v = (minecraft.vrPlayer.vrdata_world_pre.getController(0).getDirection().add(minecraft.vrPlayer.vrdata_world_pre.getController(1).getDirection())).scale(0.5f);
+		Vec3d v = (mc.vrPlayer.vrdata_world_pre.getController(0).getDirection().add(mc.vrPlayer.vrdata_world_pre.getController(1).getDirection())).scale(0.5f);
 		direction =  (float)Math.toDegrees(Math.atan2(-v.x, v.z)); 
 		double spd = (c0move + c1move) / 2;	
 		this.speed = spd * 1 * 1.3;

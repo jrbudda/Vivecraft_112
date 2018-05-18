@@ -3,9 +3,11 @@ package com.mtbs3d.minecrift.gameplay;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.mtbs3d.minecrift.gameplay.trackers.*;
 import org.lwjgl.opengl.Display;
 
 import com.google.common.math.Quantiles.Scale;
@@ -13,7 +15,6 @@ import com.mtbs3d.minecrift.api.NetworkHelper;
 import com.mtbs3d.minecrift.api.NetworkHelper.PacketDiscriminators;
 import com.mtbs3d.minecrift.api.VRData;
 import com.mtbs3d.minecrift.control.VRButtonMapping;
-import com.mtbs3d.minecrift.gameplay.trackers.BowTracker;
 import com.mtbs3d.minecrift.provider.MCOpenVR;
 import com.mtbs3d.minecrift.settings.AutoCalibration;
 import com.mtbs3d.minecrift.settings.VRSettings;
@@ -98,6 +99,11 @@ public class OpenVRPlayer
 	public VRData vrdata_world_render; // using interpolated origin, scale, rotation
 	//loop end
 
+	ArrayList<Tracker> trackers=new ArrayList<>();
+	public void registerTracker(Tracker tracker){
+		trackers.add(tracker);
+	}
+
 	public OpenVRPlayer() {
 		this.vrdata_room_pre = new VRData(new Vec3d(0, 0, 0), mc.vrSettings.walkMultiplier, 1, 0);
 		this.vrdata_room_post = new VRData(new Vec3d(0, 0, 0), mc.vrSettings.walkMultiplier, 1, 0);
@@ -123,6 +129,9 @@ public class OpenVRPlayer
 	public float guiScale = 1.0f;
 	public Vec3d guiPos_room = new Vec3d(0,0,0);
 	public Matrix4f guiRotation_room = new Matrix4f();
+	
+	public Vec3d keyboardPos_room = new Vec3d(0,0,0);
+	public Matrix4f keyboardRotation_room = new Matrix4f();
 
 	public static OpenVRPlayer get()
 	{
@@ -144,6 +153,7 @@ public class OpenVRPlayer
 	public void postPoll(){
 		this.vrdata_room_pre = new VRData(new Vec3d(0, 0, 0), mc.vrSettings.walkMultiplier, 1, 0);
 		MCOpenVR.processGui();
+		MCOpenVR.processKeyboardGui();
 	}
 
 	public void preTick(){
@@ -203,7 +213,15 @@ public class OpenVRPlayer
 		this.vrdata_world_render = new VRData(interPolatedRoomOrigin, mc.vrSettings.walkMultiplier, interpolatedWorldScale, interpolatedWorldRotation_Radians);
 
 		//handle special items
-		mc.bowTracker.doProcess(mc, mc.player);
+		for (Tracker tracker : trackers) {
+			if (tracker.getEntryPoint() == Tracker.EntryPoint.SPECIAL_ITEMS) {
+				if (tracker.isActive(mc.player)){
+					tracker.doProcess(mc.player);
+				}else{
+					tracker.reset(mc.player);
+				}
+			}
+		}
 
 
 	}
@@ -313,9 +331,9 @@ public class OpenVRPlayer
 				if (e instanceof AbstractHorse) {
 					AbstractHorse el = (AbstractHorse) e;
 					end = el.renderYawOffset;
-					if (el.canBeSteered() && el.isHorseSaddled()){
-						return; 
-					}
+					//if (el.canBeSteered() && el.isHorseSaddled()){
+					//	return;
+					//}
 				}else if (e instanceof EntityLiving) {
 					EntityLiving el = (EntityLiving) e; //this is just pigs in vanilla
 					end = el.renderYawOffset;
@@ -431,27 +449,17 @@ public class OpenVRPlayer
 
 		AutoCalibration.logHeadPos(MCOpenVR.hmdPivotHistory.latest());
 
-		doPlayerMoveInRoom(player); 
+		doPlayerMoveInRoom(player);
 
-		mc.runTracker.doProcess(mc, player);
-
-		mc.rowTracker.doProcess(mc, player);
-
-		mc.jumpTracker.doProcess(player);
-
-		mc.sneakTracker.doProcess(mc, player);
-
-		mc.autoFood.doProcess(mc,player);
-
-		mc.backpackTracker.doProcess(mc, player);
-
-		mc.swimTracker.doProcess(mc,player);
-
-		mc.climbTracker.doProcess(player);
-
-		mc.teleportTracker.doProcess(mc, player);
-
-		mc.swingTracker.doProcess(mc, player);
+		for (Tracker tracker : trackers) {
+			if (tracker.getEntryPoint() == Tracker.EntryPoint.LIVING_UPDATE) {
+				if (tracker.isActive(mc.player)){
+					tracker.doProcess(mc.player);
+				}else{
+					tracker.reset(mc.player);
+				}
+			}
+		}
 
 		if(mc.vrSettings.vrAllowCrawling){         
 			//experimental
@@ -473,7 +481,7 @@ public class OpenVRPlayer
 			if (e instanceof AbstractHorse) {
 				AbstractHorse el = (AbstractHorse) e;
 				if (el.canBeSteered() && el.isHorseSaddled()){
-					el.renderYawOffset = vrdata_world_pre.getBodyYaw();
+					//  el.renderYawOffset = vrdata_world_pre.getBodyYaw();
 				}
 			}else if (e instanceof EntityLiving) {
 				EntityLiving el = (EntityLiving) e; //this is just pigs in vanilla

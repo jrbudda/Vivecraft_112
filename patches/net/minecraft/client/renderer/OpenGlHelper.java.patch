@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/OpenGlHelper.java
 +++ b/net/minecraft/client/renderer/OpenGlHelper.java
-@@ -940,20 +940,12 @@
+@@ -988,20 +988,12 @@
          }
      }
  
@@ -24,4 +24,4 @@
 +        //return Config.isFastRender() ? false : (Config.isAntialiasing() ? false : framebufferSupported && Minecraft.getMinecraft().gameSettings.fboEnable);
      }
  
-     public static String getCpu()
+     public static void glBufferData(int p_glBufferData_0_, long p_glBufferData_1_, int p_glBufferData_3_)

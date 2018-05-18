@@ -17,10 +17,14 @@ import net.minecraft.util.math.Vec3d;
 import java.util.Random;
 
 
-public class BackpackTracker {
+public class BackpackTracker extends Tracker {
 	public boolean[] wasIn = new boolean[2];
 	public int previousSlot = 0;
-	
+
+	public BackpackTracker(Minecraft mc) {
+		super(mc);
+	}
+
 	public boolean isActive(EntityPlayerSP p){
 		Minecraft mc = Minecraft.getMinecraft();
 		if(mc.vrSettings.seated) return false;
@@ -35,11 +39,8 @@ public class BackpackTracker {
 	
 	private Vec3d down = new Vec3d(0, -1, 0);
 	
-	public void doProcess(Minecraft minecraft, EntityPlayerSP player){
-		if(!isActive(player)) {
-			return;
-		}
-		OpenVRPlayer provider = minecraft.vrPlayer;
+	public void doProcess(EntityPlayerSP player){
+		OpenVRPlayer provider = mc.vrPlayer;
 
 		Vec3d hmdPos=provider.vrdata_room_pre.hmd.getPosition();
 

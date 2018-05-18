@@ -1,0 +1,47 @@
+--- a/net/minecraft/entity/passive/AbstractHorse.java
++++ b/net/minecraft/entity/passive/AbstractHorse.java
+@@ -9,6 +9,7 @@
+ import net.minecraft.block.SoundType;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.state.IBlockState;
++import net.minecraft.client.Minecraft;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityAgeable;
+ import net.minecraft.entity.EntityLiving;
+@@ -882,12 +883,12 @@
+         if (this.isBeingRidden() && this.canBeSteered() && this.isHorseSaddled())
+         {
+             EntityLivingBase entitylivingbase = (EntityLivingBase)this.getControllingPassenger();
+-            this.rotationYaw = entitylivingbase.rotationYaw;
++            //this.rotationYaw = entitylivingbase.rotationYaw;
+             this.prevRotationYaw = this.rotationYaw;
+-            this.rotationPitch = entitylivingbase.rotationPitch * 0.5F;
++            //this.rotationPitch = entitylivingbase.rotationPitch * 0.5F;
+             this.setRotation(this.rotationYaw, this.rotationPitch);
+-            this.renderYawOffset = this.rotationYaw;
+-            this.rotationYawHead = this.renderYawOffset;
++            //this.renderYawOffset = this.rotationYaw;
++            //this.rotationYawHead = this.renderYawOffset;
+             strafe = entitylivingbase.moveStrafing * 0.5F;
+             forward = entitylivingbase.moveForward;
+ 
+@@ -934,7 +935,7 @@
+                 this.setAIMoveSpeed((float)this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue());
+                 super.travel(strafe, vertical, forward);
+             }
+-            else if (entitylivingbase instanceof EntityPlayer)
++            else if (entitylivingbase instanceof EntityPlayer && !Minecraft.getMinecraft().horseTracker.isActive(Minecraft.getMinecraft().player))
+             {
+                 this.motionX = 0.0D;
+                 this.motionY = 0.0D;
+@@ -1190,7 +1191,9 @@
+             float f1 = 0.7F * this.prevRearingAmount;
+             float f2 = 0.15F * this.prevRearingAmount;
+             passenger.setPosition(this.posX + (double)(f1 * f3), this.posY + this.getMountedYOffset() + passenger.getYOffset() + (double)f2, this.posZ - (double)(f1 * f));
+-
++	        double yawDelta=rotationYaw-prevRotationYaw;
++	        passenger.rotationYaw+=yawDelta;
++	        passenger.setRotationYawHead((float)(passenger.getRotationYawHead()+yawDelta));
+             if (passenger instanceof EntityLivingBase)
+             {
+                 ((EntityLivingBase)passenger).renderYawOffset = this.renderYawOffset;

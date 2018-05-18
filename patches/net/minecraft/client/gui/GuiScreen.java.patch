@@ -238,17 +238,24 @@
      }
  
      /**
-@@ -760,4 +845,74 @@
+@@ -760,4 +845,88 @@
      {
          this.setWorldAndResolution(mcIn, w, h);
      }
 +    
 +    /** MINECRIFT ADDITIONS BELOW */
 +	public static boolean mouseDown;
-+    public void mouseDown( int rawX, int rawY, int button )
++    public void mouseDown( int rawX, int rawY, int button , boolean invertY)
 +    {
 +        int var1 = rawX * this.width / this.mc.displayWidth;
-+        int var2 = this.height - rawY * this.height / this.mc.displayHeight - 1;
++        int var2 = 0;
++        
++        if(invertY) { //need to figure out wtf is up with this some day.
++             var2 = this.height - rawY * this.height / this.mc.displayHeight - 1;
++        } else {
++             var2 =  rawY * this.height / this.mc.displayHeight - 1;
++        }
++       
 +        this.eventButton = button;
 +        this.lastMouseEvent = Minecraft.getSystemTime();
 +        try {
@@ -260,11 +267,18 @@
 +    	mouseDown = true;
 +    }
 +    
-+    public void mouseUp( int rawX, int rawY, int button )
++    public void mouseUp( int rawX, int rawY, int button, boolean invertY )
 +    {
 +    	mouseDown = false;
 +        int var1 = rawX * this.width / this.mc.displayWidth;
-+        int var2 = this.height - rawY * this.height / this.mc.displayHeight - 1;
++        
++        int var2 = 0;
++
++        if(invertY) { //need to figure out wtf is up with this some day.
++            var2 = this.height - rawY * this.height / this.mc.displayHeight - 1;
++       } else {
++            var2 =  rawY * this.height / this.mc.displayHeight - 1;
++       }
 +        mouseReleased(var1, var2, button);
 +    }
 +    

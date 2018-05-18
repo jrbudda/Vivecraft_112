@@ -16,6 +16,12 @@ public class Vector3 {
 	public Vector3() {
 	}
 
+	public Vector3(Vec3d vec3d){
+		this.x=(float) vec3d.x;
+		this.y=(float) vec3d.y;
+		this.z=(float) vec3d.z;
+	}
+
 	public Vector3(float x, float y, float z) {
 		this.x = x;
 		this.y = y;

@@ -1,20 +1,20 @@
 --- a/net/minecraft/src/ChunkUtils.java
 +++ b/net/minecraft/src/ChunkUtils.java
-@@ -42,7 +42,7 @@
-             p_findFieldHasEntities_0_.setHasEntities(false);
+@@ -69,7 +69,7 @@
+             chunk.setHasEntities(false);
              List list2 = new ArrayList();
  
 -            for (Field field1 : list)
 +            for (Field field1 : (List<Field>)list)
              {
-                 list2.add(field1.get(p_findFieldHasEntities_0_));
+                 list2.add(field1.get(chunk));
              }
-@@ -50,7 +50,7 @@
-             p_findFieldHasEntities_0_.setHasEntities(true);
+@@ -77,7 +77,7 @@
+             chunk.setHasEntities(true);
              List list3 = new ArrayList();
  
 -            for (Field field2 : list)
 +            for (Field field2 : (List<Field>)list)
              {
-                 list3.add(field2.get(p_findFieldHasEntities_0_));
+                 list3.add(field2.get(chunk));
              }

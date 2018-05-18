@@ -25,7 +25,7 @@ import net.minecraft.util.math.Vec3d;
 public class ModelPlayerVR extends ModelBiped
 {
     public ModelRenderer bipedLeftArmwear;
-    public ModelRenderer leftshoulder;
+    public ModelRenderer leftShoulder;
     public ModelRenderer rightShoulder;
     public ModelRenderer bipedRightArmwear;
     public ModelRenderer bipedLeftLegwear;
@@ -48,75 +48,78 @@ public class ModelPlayerVR extends ModelBiped
     public ModelPlayerVR(float modelSize, boolean smallArmsIn)
     {
     	super(modelSize, 0.0F, 64, 64);
-
-    	this.bipedCape = new ModelRenderer(this, 0, 0);
-    	this.bipedCape.setTextureSize(64, 32);
-    	this.bipedCape.addBox(-5.0F, 0.0F, -1.0F, 10, 16, 1, modelSize); 
     	this.smallArms = smallArmsIn;
     	this.bipedDeadmau5Head = new ModelRenderer(this, 24, 0);
-    	this.bipedDeadmau5Head.addBox(-3.0F, -6.0F, -1.0F, 6, 6, 1, modelSize);        	
-		this.bipedLeftArmwear = new ModelRenderer(this, 48, 48);
-		this.bipedRightArmwear = new ModelRenderer(this, 40, 32);
-        this.rightShoulder = new ModelRenderer(this, 24, 18);
-        this.rightShoulder.addBox(-3.0F, -2.0F, -2.0F, 4, 8, 4, modelSize);
-        this.rightShoulder.setRotationPoint(-5.0F, 2.0F , 0.0F);
-        this.leftshoulder = new ModelRenderer(this, 24, 18);
-        this.leftshoulder.mirror = true;
-        this.leftshoulder.addBox(-1.0F, -2.0F, -2.0F, 4, 8, 4, modelSize);
-        this.leftshoulder.setRotationPoint(5.0F, 2.0F, 0.0F);
-		this.bipedLeftLegwear = new ModelRenderer(this, 0, 48);	
-		this.bipedRightLegwear = new ModelRenderer(this, 0, 32);
-		this.bipedBodyWear = new ModelRenderer(this, 16, 32);
+    	this.bipedDeadmau5Head.addBox(-3.0F, -6.0F, -1.0F, 6, 6, 1, modelSize);
+    	this.bipedCape = new ModelRenderer(this, 0, 0);
+    	this.bipedCape.setTextureSize(64, 32);
+    	this.bipedCape.addBox(-5.0F, 0.0F, -1.0F, 10, 16, 1, modelSize);
         this.vrHMD = new ModelRenderer(this, 0, 0);
         this.vrHMD.setTextureSize(16, 16);
         this.vrHMD.addBox(-3.5F, -6.0F, -7.5F, 7, 4, 5, modelSize);
-        try {
+
+        try { // TODO: Should this be here?
             Minecraft.getMinecraft().getTextureManager().loadTexture(this.BLACK_HMD, new StaticTexture(this.BLACK_HMD));
             Minecraft.getMinecraft().getTextureManager().loadTexture(this.GOLD_HMD, new StaticTexture(this.GOLD_HMD));
             Minecraft.getMinecraft().getTextureManager().loadTexture(this.DIAMOND_HMD, new StaticTexture(this.DIAMOND_HMD));
 		} catch (Exception e) {
 		}
-
 		
-    		if (smallArmsIn)
-    		{
-    			this.bipedLeftArm = new ModelRenderer(this, 32, 48);
-    			this.bipedLeftArm.addBox(-1.0F, -2.0F, -2.0F, 3, 12, 4, modelSize);
-    			this.bipedLeftArm.setRotationPoint(5.0F, 2.5F, 0.0F);
-    			this.bipedRightArm = new ModelRenderer(this, 40, 16);
-    			this.bipedRightArm.addBox(-2.0F, -2.0F, -2.0F, 3, 12, 4, modelSize);
-    			this.bipedRightArm.setRotationPoint(-5.0F, 2.5F, 0.0F);
+		if (smallArmsIn)
+		{
+			this.bipedLeftArm = new ModelRenderer(this, 32, 48);
+			this.bipedLeftArm.addBox(-1.0F, -2.0F, -2.0F, 3, 12, 4, modelSize);
+			this.bipedLeftArm.setRotationPoint(5.0F, 2.5F, 0.0F);
+			this.bipedRightArm = new ModelRenderer(this, 40, 16);
+			this.bipedRightArm.addBox(-2.0F, -2.0F, -2.0F, 3, 12, 4, modelSize);
+			this.bipedRightArm.setRotationPoint(-5.0F, 2.5F, 0.0F);
+			this.bipedLeftArmwear = new ModelRenderer(this, 48, 48);
+			this.bipedLeftArmwear.addBox(-1.0F, -2.0F, -2.0F, 3, 12, 4, modelSize + 0.25F);
+			this.bipedLeftArmwear.setRotationPoint(5.0F, 2.5F, 0.0F);
+			this.bipedRightArmwear = new ModelRenderer(this, 40, 32);
+			this.bipedRightArmwear.addBox(-2.0F, -2.0F, -2.0F, 3, 12, 4, modelSize + 0.25F);
+			this.bipedRightArmwear.setRotationPoint(-5.0F, 2.5F, 10.0F);
+	        this.rightShoulder = new ModelRenderer(this, 24, 18);
+	        this.rightShoulder.addBox(-3.0F, -2.0F, -2.0F, 3, 8, 4, modelSize);
+	        this.rightShoulder.setRotationPoint(-5.0F, 2.5F , 0.0F);
+	        this.leftShoulder = new ModelRenderer(this, 24, 18);
+	        this.leftShoulder.mirror = true;
+	        this.leftShoulder.addBox(-1.0F, -2.0F, -2.0F, 3, 8, 4, modelSize);
+	        this.leftShoulder.setRotationPoint(5.0F, 2.5F, 0.0F);
+		}
+		else
+		{
+			this.bipedLeftArm = new ModelRenderer(this, 32, 48);
+			this.bipedLeftArm.addBox(-1.0F, -2.0F, -2.0F, 4, 12, 4, modelSize);
+			this.bipedLeftArm.setRotationPoint(5.0F, 2.0F, 0.0F);
+			this.bipedLeftArmwear = new ModelRenderer(this, 48, 48);
+			this.bipedLeftArmwear.addBox(-1.0F, -2.0F, -2.0F, 4, 12, 4, modelSize + 0.25F);
+			this.bipedLeftArmwear.setRotationPoint(5.0F, 2.0F, 0.0F);
+			this.bipedRightArmwear = new ModelRenderer(this, 40, 32);
+			this.bipedRightArmwear.addBox(-3.0F, -2.0F, -2.0F, 4, 12, 4, modelSize + 0.25F);
+			this.bipedRightArmwear.setRotationPoint(-5.0F, 2.0F, 10.0F);
+	        this.rightShoulder = new ModelRenderer(this, 24, 18);
+	        this.rightShoulder.addBox(-3.0F, -2.0F, -2.0F, 4, 8, 4, modelSize);
+	        this.rightShoulder.setRotationPoint(-5.0F, 2.0F , 0.0F);
+	        this.leftShoulder = new ModelRenderer(this, 24, 18);
+	        this.leftShoulder.mirror = true;
+	        this.leftShoulder.addBox(-1.0F, -2.0F, -2.0F, 4, 8, 4, modelSize);
+	        this.leftShoulder.setRotationPoint(5.0F, 2.0F, 0.0F);
+		}
 
-    			this.bipedLeftArmwear.addBox(-1.0F, -2.0F, -2.0F, 3, 12, 4, modelSize + 0.25F);
-    			this.bipedLeftArmwear.setRotationPoint(5.0F, 2.5F, 0.0F);
-    			this.bipedRightArmwear = new ModelRenderer(this, 40, 32);
-    			this.bipedRightArmwear.addBox(-2.0F, -2.0F, -2.0F, 3, 12, 4, modelSize + 0.25F);
-    			this.bipedRightArmwear.setRotationPoint(-5.0F, 2.5F, 10.0F);
-    		}
-    		else
-    		{
-    			this.bipedLeftArm = new ModelRenderer(this, 32, 48);
-    			this.bipedLeftArm.addBox(-1.0F, -2.0F, -2.0F, 4, 12, 4, modelSize);
-    			this.bipedLeftArm.setRotationPoint(5.0F, 2.0F, 0.0F);
-    			this.bipedLeftArmwear = new ModelRenderer(this, 48, 48);
-    			this.bipedLeftArmwear.addBox(-1.0F, -2.0F, -2.0F, 4, 12, 4, modelSize + 0.25F);
-    			this.bipedLeftArmwear.setRotationPoint(5.0F, 2.0F, 0.0F);
-
-    			this.bipedRightArmwear.addBox(-3.0F, -2.0F, -2.0F, 4, 12, 4, modelSize + 0.25F);
-    			this.bipedRightArmwear.setRotationPoint(-5.0F, 2.0F, 10.0F);
-    		}
-
-    		this.bipedLeftLeg = new ModelRenderer(this, 16, 48);
-    		this.bipedLeftLeg.addBox(-2.0F, 0.0F, -2.0F, 4, 12, 4, modelSize);
-    		this.bipedLeftLeg.setRotationPoint(1.9F, 12.0F, 0.0F);
-
-    		this.bipedLeftLegwear.addBox(-2.0F, 0.0F, -2.0F, 4, 12, 4, modelSize + 0.25F);
-    		this.bipedLeftLegwear.setRotationPoint(1.9F, 12.0F, 0.0F);
-    		this.bipedRightLegwear.addBox(-2.0F, 0.0F, -2.0F, 4, 12, 4, modelSize + 0.25F);
-    		this.bipedRightLegwear.setRotationPoint(-1.9F, 12.0F, 0.0F);
-    		this.bipedBodyWear.addBox(-4.0F, 0.0F, -2.0F, 8, 12, 4, modelSize + 0.25F);
-    		this.bipedBodyWear.setRotationPoint(0.0F, 0.0F, 0.0F);
-    	}
+		this.bipedLeftLeg = new ModelRenderer(this, 16, 48);
+		this.bipedLeftLeg.addBox(-2.0F, 0.0F, -2.0F, 4, 12, 4, modelSize);
+		this.bipedLeftLeg.setRotationPoint(1.9F, 12.0F, 0.0F);
+		this.bipedLeftLegwear = new ModelRenderer(this, 0, 48);
+		this.bipedLeftLegwear.addBox(-2.0F, 0.0F, -2.0F, 4, 12, 4, modelSize + 0.25F);
+		this.bipedLeftLegwear.setRotationPoint(1.9F, 12.0F, 0.0F);
+		this.bipedRightLegwear = new ModelRenderer(this, 0, 32);
+		this.bipedRightLegwear.addBox(-2.0F, 0.0F, -2.0F, 4, 12, 4, modelSize + 0.25F);
+		this.bipedRightLegwear.setRotationPoint(-1.9F, 12.0F, 0.0F);
+		this.bipedBodyWear = new ModelRenderer(this, 16, 32);
+		this.bipedBodyWear.addBox(-4.0F, 0.0F, -2.0F, 8, 12, 4, modelSize + 0.25F);
+		this.bipedBodyWear.setRotationPoint(0.0F, 0.0F, 0.0F);
+	}
 
     /**
      * Sets the models various rotation angles then renders the model.
@@ -151,7 +154,7 @@ public class ModelPlayerVR extends ModelBiped
             this.bipedBodyWear.render(scale);
         }
 
-        this.leftshoulder.render(scale);
+        this.leftShoulder.render(scale);
         this.rightShoulder.render(scale);
         
         this.vrHMD.render(scale);
@@ -238,18 +241,18 @@ public class ModelPlayerVR extends ModelBiped
     		//        				.rotateYaw((float) ((float)ltor));
     		//        		this.bipedLeftLeg.setRotationPoint((float)rotatedlleg.x, (float)rotatedlleg.y, (float)rotatedlleg.z);
     		//        		
-    		this.bipedLeftArm.setRotationPoint(5.0F, 2.0F , 0.0F);
+    		this.bipedLeftArm.setRotationPoint(5.0F, smallArms ? 2.5F : 2.0F, 0.0F);
     		Vec3d rotatedlarm = new Vec3d(bipedLeftArm.rotationPointX, bipedLeftArm.rotationPointY, bipedLeftArm.rotationPointZ);
 
     		this.bipedLeftArm.setRotationPoint((float)rotatedlarm.x, (float)rotatedlarm.y, (float)rotatedlarm.z);
 
-    		this.bipedRightArm.setRotationPoint(-5.0F, 2.0F , 0.0F);
+    		this.bipedRightArm.setRotationPoint(-5.0F, smallArms ? 2.5F : 2.0F, 0.0F);
     		Vec3d rotatedrarm = new Vec3d(bipedRightArm.rotationPointX, bipedRightArm.rotationPointY, bipedRightArm.rotationPointZ);
 
     		this.bipedRightArm.setRotationPoint((float)rotatedrarm.x, (float)rotatedrarm.y, (float)rotatedrarm.z);
 
     		rightShoulder.isHidden = rotInfo.seated;
-    		leftshoulder.isHidden = rotInfo.seated;
+    		leftShoulder.isHidden = rotInfo.seated;
 
     		if(!rotInfo.seated){
 
@@ -272,14 +275,14 @@ public class ModelPlayerVR extends ModelBiped
     				this.bipedLeftArm.rotateAngleX=(float) (-pitch3+ 3*Math.PI/2);
     				this.bipedLeftArm.rotateAngleY=(float) (Math.PI - yaw3 - ltor);
 
-    				Vec3d lsh = new Vec3d(leftshoulder.rotationPointX - larm.x, 
-    						leftshoulder.rotationPointY - larm.y,
-    						leftshoulder.rotationPointZ - larm.z);
+    				Vec3d lsh = new Vec3d(leftShoulder.rotationPointX - larm.x, 
+    						leftShoulder.rotationPointY - larm.y,
+    						leftShoulder.rotationPointZ - larm.z);
 
     				float yawls = (float) Math.atan2(-lsh.x, -lsh.z); 
     				float pitchls = (float) Math.asin(lsh.y/lsh.lengthVector()); 		
-    				leftshoulder.rotateAngleY = (float) (-yawls);
-    				leftshoulder.rotateAngleX = (float) (-pitchls+ 3*Math.PI/2);
+    				leftShoulder.rotateAngleY = (float) (-yawls);
+    				leftShoulder.rotateAngleX = (float) (-pitchls+ 3*Math.PI/2);
 
     				Vec3d rarm = rotInfo.rightArmPos.subtract(pos).addVector(0,minecraftBullshit,0);
     				rarm = rarm.rotateYaw((float)(-Math.PI + ltor)).add(rotInfo.rightArmRot.scale(-0.2)).scale(-1/scaleFactor);           
@@ -298,8 +301,8 @@ public class ModelPlayerVR extends ModelBiped
     				rightShoulder.rotateAngleX = (float) (-pitchrs+ 3*Math.PI/2);
 
 
-    				armor.bipedLeftArm.rotateAngleY = this.leftshoulder.rotateAngleY;  				
-    				armor.bipedLeftArm.rotateAngleX = this.leftshoulder.rotateAngleX;
+    				armor.bipedLeftArm.rotateAngleY = this.leftShoulder.rotateAngleY;  				
+    				armor.bipedLeftArm.rotateAngleX = this.leftShoulder.rotateAngleX;
     				armor.bipedRightArm.rotateAngleY = this.rightShoulder.rotateAngleY;  				
     				armor.bipedRightArm.rotateAngleX = this.rightShoulder.rotateAngleX;
     				this.bipedLeftArm.scaleY = 0.5f;
@@ -308,11 +311,11 @@ public class ModelPlayerVR extends ModelBiped
     				this.bipedRightArmwear.scaleY = 0.5f;	
 
     				if(rotInfo.reverse){
-    					this.rightShoulder.setRotationPoint(5.0F, 2.0F , 0.0F);
-    					this.leftshoulder.setRotationPoint(-5.0F, 2.0F , 0.0F);
+    					this.rightShoulder.setRotationPoint(5.0F, smallArms ? 2.5F : 2.0F, 0.0F);
+    					this.leftShoulder.setRotationPoint(-5.0F, smallArms ? 2.5F : 2.0F, 0.0F);
     				} else {
-    					this.rightShoulder.setRotationPoint(-5.0F, 2.0F , 0.0F);
-    					this.leftshoulder.setRotationPoint(5.0F, 2.0F , 0.0F);
+    					this.rightShoulder.setRotationPoint(-5.0F, smallArms ? 2.5F : 2.0F, 0.0F);
+    					this.leftShoulder.setRotationPoint(5.0F, smallArms ? 2.5F : 2.0F, 0.0F);
     				}
 
     			} 
@@ -321,8 +324,8 @@ public class ModelPlayerVR extends ModelBiped
     			this.bipedLeftArmwear.scaleY = 1;
     			this.bipedRightArm.scaleY =1;
     			this.bipedRightArmwear.scaleY =1;
-    			this.bipedLeftArm.setRotationPoint(5.0F, 2.0F, 0.0F);
-    			this.bipedRightArm.setRotationPoint(-5.0F, 2.0F, 0.0F);
+    			this.bipedLeftArm.setRotationPoint(5.0F, smallArms ? 2.5F : 2.0F, 0.0F);
+    			this.bipedRightArm.setRotationPoint(-5.0F, smallArms ? 2.5F : 2.0F, 0.0F);
 
     		}
     	}

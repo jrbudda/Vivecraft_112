@@ -8,9 +8,12 @@ import com.google.common.util.concurrent.Runnables;
 import com.mtbs3d.minecrift.gameplay.OpenVRPlayer;
 import com.mtbs3d.minecrift.provider.MCOpenVR;
 import com.mtbs3d.minecrift.settings.VRSettings;
+import com.mtbs3d.minecrift.settings.VRSettings.VrOptions;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiWinGame;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextComponentString;
 
 import org.lwjgl.input.Keyboard;
 
@@ -154,7 +157,9 @@ public class VRHotkeys {
 
 	public static void handleMRKeys() {
 		Minecraft mc = Minecraft.getMinecraft();
-		boolean gotKey;
+		
+		boolean gotKey = false;
+		
 		if (Keyboard.isKeyDown(Keyboard.KEY_LEFT) && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && !Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
 		{
 			mc.vrSettings.vrFixedCamposX -= 0.01;
@@ -185,36 +190,60 @@ public class VRHotkeys {
 			mc.vrSettings.vrFixedCamposY -= 0.01;
 			gotKey = true;
 		}
-		
+
 		if (Keyboard.isKeyDown(Keyboard.KEY_UP) && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
 		{
-			mc.vrSettings.vrFixedCamrotPitch -= 0.5;
+			if(MCOpenVR.mrMovingCamActive) {
+				mc.vrSettings.mrMovingCamOffsetPitch -= 90;
+			}else {
+				mc.vrSettings.vrFixedCamrotPitch -= 0.5;
+			}
 			gotKey = true;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_DOWN) && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
 		{
-			mc.vrSettings.vrFixedCamrotPitch += 0.5;	
+			if(MCOpenVR.mrMovingCamActive) {
+				mc.vrSettings.mrMovingCamOffsetPitch += 90;
+			}else {
+				mc.vrSettings.vrFixedCamrotPitch += 0.5;	
+			}
 			gotKey = true;
-		
+
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_LEFT) && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
 		{
-			mc.vrSettings.vrFixedCamrotYaw -= 0.5;
+			if(MCOpenVR.mrMovingCamActive) {
+				mc.vrSettings.mrMovingCamOffsetYaw -= 90;
+			}else {
+				mc.vrSettings.vrFixedCamrotYaw -= 0.5;
+			}
 			gotKey = true;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT) && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
 		{
-			mc.vrSettings.vrFixedCamrotYaw += 0.5;
+			if(MCOpenVR.mrMovingCamActive) {
+				mc.vrSettings.mrMovingCamOffsetYaw += 90;
+			}else {
+				mc.vrSettings.vrFixedCamrotYaw += 0.5;
+			}
 			gotKey = true;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_PRIOR) && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
 		{
-			mc.vrSettings.vrFixedCamrotRoll -= 0.05;
+			if(MCOpenVR.mrMovingCamActive) {
+				mc.vrSettings.mrMovingCamOffsetRoll -= 90;
+			}else {
+				mc.vrSettings.vrFixedCamrotRoll -= 0.05;
+			}
 			gotKey = true;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_NEXT) && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
 		{
-			mc.vrSettings.vrFixedCamrotRoll += 0.05;	
+			if(MCOpenVR.mrMovingCamActive) {
+				mc.vrSettings.mrMovingCamOffsetRoll += 90;
+			}else {
+				mc.vrSettings.vrFixedCamrotRoll += 0.05;	
+			}
 			gotKey = true;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_INSERT) && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL))
@@ -223,10 +252,18 @@ public class VRHotkeys {
 			gotKey = true;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_DELETE) && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL))
-
 		{
 			mc.gameSettings.fovSetting -=1 ;
 			gotKey = true;
+		}
+		
+		if(gotKey) {
+			mc.vrSettings.saveOptions();
+			if(MCOpenVR.mrMovingCamActive) { //todo print offsets
+				Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(new TextComponentString("pitch: " + mc.vrSettings.mrMovingCamOffsetPitch + " yaw: " + mc.vrSettings.mrMovingCamOffsetYaw + " roll: " + mc.vrSettings.mrMovingCamOffsetRoll));            
+			} else {
+				Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(new TextComponentString("pitch: " + mc.vrSettings.vrFixedCamrotPitch + " yaw: " + mc.vrSettings.vrFixedCamrotYaw + " roll: " + mc.vrSettings.vrFixedCamrotRoll));            
+			}
 		}
 	}
 	

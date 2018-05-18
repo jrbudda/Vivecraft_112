@@ -30,7 +30,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.util.math.Vec3d;
 
-public class SwingTracker {
+public class SwingTracker extends Tracker{
   
     //VIVECRAFT SWINGING SUPPORT
     private Vec3d[] lastWeaponEndAir = new Vec3d[]{new Vec3d(0, 0, 0), new Vec3d(0,0,0)};
@@ -42,8 +42,12 @@ public class SwingTracker {
     public boolean[] IAmLookingAtMyHand= new boolean[2];
     
     public int disableSwing = 3;
-	
-    public boolean isActive(EntityPlayerSP p){
+
+	public SwingTracker(Minecraft mc) {
+		super(mc);
+	}
+
+	public boolean isActive(EntityPlayerSP p){
     	if(p == null) return false;
     	if(p.isDead) return false;
     	if(p.isPlayerSleeping()) return false;
@@ -64,12 +68,8 @@ public class SwingTracker {
     }
 	
 
-	public void doProcess(Minecraft mc, EntityPlayerSP player){ //on tick
-       
-		if (!isActive(player))
-        {
-            return;
-        }
+	public void doProcess(EntityPlayerSP player){ //on tick
+
         
         mc.mcProfiler.startSection("updateSwingAttack");
         

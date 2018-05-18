@@ -1,0 +1,29 @@
+--- a/net/minecraft/client/renderer/debug/DebugRenderer.java
++++ b/net/minecraft/client/renderer/debug/DebugRenderer.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.client.renderer.debug;
+ 
++import com.mtbs3d.minecrift.utils.Debug;
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.client.gui.FontRenderer;
+ import net.minecraft.client.renderer.GlStateManager;
+@@ -36,7 +37,7 @@
+ 
+     public boolean shouldRender()
+     {
+-        return this.chunkBorderEnabled || this.pathfindingEnabled || this.waterEnabled || this.heightMapEnabled || this.collisionBoxEnabled || this.neighborsUpdateEnabled || this.solidFaceEnabled;
++        return this.chunkBorderEnabled || this.pathfindingEnabled || this.waterEnabled || this.heightMapEnabled || this.collisionBoxEnabled || this.neighborsUpdateEnabled || this.solidFaceEnabled || Debug.isEnabled;
+     }
+ 
+     /**
+@@ -84,6 +85,10 @@
+         {
+             this.solidFace.render(partialTicks, finishTimeNano);
+         }
++
++        if (Debug.isEnabled) {
++	        Debug.getRenderer().render(partialTicks, finishTimeNano);
++        }
+     }
+ 
+     public static void renderDebugText(String str, int x, int y, int z, float partialTicks, int color)

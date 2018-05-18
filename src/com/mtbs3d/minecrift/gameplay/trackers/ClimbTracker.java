@@ -35,7 +35,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
-public class ClimbTracker {
+public class ClimbTracker extends Tracker{
 
 	private boolean[] latched = new boolean[2];
 	private boolean[] wasinblock = new boolean[2];
@@ -47,8 +47,6 @@ public class ClimbTracker {
 	public byte serverblockmode = 0;
 	
 	private boolean gravityOverride=false;
-	
-	private Minecraft mc;
 
 	public Vec3d[] latchStart = new Vec3d[]{new Vec3d(0,0,0), new Vec3d(0,0,0)};
 	public Vec3d[] latchStart_room = new Vec3d[]{new Vec3d(0,0,0), new Vec3d(0,0,0)};
@@ -58,10 +56,11 @@ public class ClimbTracker {
 	boolean wantjump = false;
 	AxisAlignedBB box[] = new AxisAlignedBB[2];
 	AxisAlignedBB latchbox[] = new AxisAlignedBB[2];
-	public ClimbTracker(Minecraft minecraft) {
-		this.mc = minecraft;
+
+	public ClimbTracker(Minecraft mc) {
+		super(mc);
 	}
-	
+
 	public boolean isGrabbingLadder(){
 		return latched[0] || latched[1];
 	}
@@ -117,15 +116,16 @@ public class ClimbTracker {
 		return true;
 	}
 
-	
+	@Override
+	public void reset(EntityPlayerSP player) {
+		latchStartController = -1;
+		latched[0] = false;
+		latched[1] = false;
+		player.setNoGravity(false);
+	}
+
 	public void doProcess(EntityPlayerSP player){
-		if(!isActive(player)) {
-			latchStartController = -1;
-			latched[0] = false;
-			latched[1] = false;
-			player.setNoGravity(false);
-			return;
-		}
+
 
 		boolean[] button = new boolean[2];
 		boolean[] inblock = new boolean[2];

@@ -9,17 +9,29 @@
  import java.util.Collections;
  import java.util.Map;
  import javax.annotation.Nullable;
-@@ -122,7 +124,8 @@
+@@ -121,8 +123,10 @@
+ {
      private final Map < Class <? extends Entity > , Render <? extends Entity >> entityRenderMap = Maps. < Class <? extends Entity > , Render <? extends Entity >> newHashMap();
      private final Map<String, RenderPlayer> skinMap = Maps.<String, RenderPlayer>newHashMap();
++    private final Map<String, RenderPlayerVR> skinMapVR = Maps.<String, RenderPlayerVR>newHashMap();
      private final RenderPlayer playerRenderer;
 -
-+    RenderPlayerVR n;
++    private final RenderPlayerVR playerRendererVR;
 +    
      /** Renders fonts */
      private FontRenderer textRenderer;
      private double renderPosX;
-@@ -271,16 +274,22 @@
+@@ -240,6 +244,9 @@
+         this.playerRenderer = new RenderPlayer(this);
+         this.skinMap.put("default", this.playerRenderer);
+         this.skinMap.put("slim", new RenderPlayer(this, true));
++        this.playerRendererVR = new RenderPlayerVR(this);
++        this.skinMapVR.put("default", this.playerRendererVR);
++        this.skinMapVR.put("slim", new RenderPlayerVR(this, true));
+         PlayerItemsLayer.register(this.skinMap);
+ 
+         if (Reflector.RenderingRegistry_loadEntityRenderers.exists())
+@@ -271,16 +278,22 @@
      @Nullable
      public <T extends Entity> Render<T> getEntityRenderObject(Entity entityIn)
      {
@@ -40,8 +52,8 @@
 +
 +    		if(PlayerModelController.getInstance().isTracked(entityIn.getUniqueID()))
 +    		{
-+    			if(n==null) n = new RenderPlayerVR(this);
-+    			return (Render<T>) n;            	
++    			RenderPlayerVR renderplayervr = this.skinMapVR.get(s);
++    			return (Render<T>) (renderplayervr != null ? renderplayervr : this.playerRendererVR);            	
 +    		}  else 
 +    			return (Render<T>) (renderplayer != null ? renderplayer : this.playerRenderer);
 +    	}      
@@ -52,7 +64,7 @@
      }
  
      public void cacheActiveRenderInfo(World worldIn, FontRenderer textRendererIn, Entity livingPlayerIn, Entity pointedEntityIn, GameSettings optionsIn, float partialTicks)
-@@ -573,8 +582,10 @@
+@@ -573,8 +586,10 @@
          return this.entityRenderMap;
      }
  

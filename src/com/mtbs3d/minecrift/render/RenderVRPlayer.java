@@ -43,6 +43,10 @@ public class RenderVRPlayer extends RenderPlayer
 	public RenderVRPlayer(RenderManager renderManager) {
 		super(renderManager);
 	}
+
+	public RenderVRPlayer(RenderManager renderManager, boolean useSmallArms) {
+		super(renderManager, useSmallArms);
+	}
 	
 	@Override
     public void renderRightArm(AbstractClientPlayer clientPlayer)

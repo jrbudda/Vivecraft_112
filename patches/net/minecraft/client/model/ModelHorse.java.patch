@@ -1,0 +1,150 @@
+--- a/net/minecraft/client/model/ModelHorse.java
++++ b/net/minecraft/client/model/ModelHorse.java
+@@ -1,11 +1,23 @@
+ package net.minecraft.client.model;
+ 
++import com.mtbs3d.minecrift.gameplay.OpenVRPlayer;
++import com.mtbs3d.minecrift.gameplay.trackers.HorseTracker;
++import com.mtbs3d.minecrift.render.PlayerModelController;
++import com.mtbs3d.minecrift.settings.VRSettings;
++import com.mtbs3d.minecrift.utils.BezierCurve;
++import com.mtbs3d.minecrift.utils.Debug;
++import com.mtbs3d.minecrift.utils.Quaternion;
++import net.minecraft.client.Minecraft;
+ import net.minecraft.client.renderer.GlStateManager;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityLivingBase;
+ import net.minecraft.entity.passive.AbstractChestHorse;
+ import net.minecraft.entity.passive.AbstractHorse;
++import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.util.math.MathHelper;
++import net.minecraft.util.math.Vec3d;
++
++import java.awt.*;
+ 
+ public class ModelHorse extends ModelBase
+ {
+@@ -89,7 +101,7 @@
+         this.backLeftShin.addBox(-2.0F, 0.0F, -1.5F, 3, 5, 3);
+         this.backLeftShin.setRotationPoint(4.0F, 16.0F, 11.0F);
+         this.backLeftHoof = new ModelRenderer(this, 78, 51);
+-        this.backLeftHoof.addBox(-2.5F, 5.1F, -2.0F, 4, 3, 4);
++	    this.backLeftHoof.addBox(-2.5F, 5.1F, -2.0F, 4, 3, 4);
+         this.backLeftHoof.setRotationPoint(4.0F, 16.0F, 11.0F);
+         this.backRightLeg = new ModelRenderer(this, 96, 29);
+         this.backRightLeg.addBox(-1.5F, -2.0F, -2.5F, 4, 9, 5);
+@@ -104,10 +116,10 @@
+         this.frontLeftLeg.addBox(-1.9F, -1.0F, -2.1F, 3, 8, 4);
+         this.frontLeftLeg.setRotationPoint(4.0F, 9.0F, -8.0F);
+         this.frontLeftShin = new ModelRenderer(this, 44, 41);
+-        this.frontLeftShin.addBox(-1.9F, 0.0F, -1.6F, 3, 5, 3);
++	    this.frontLeftShin.addBox(-1.9F, 0.0F, -1.6F, 3, 5, 3);
+         this.frontLeftShin.setRotationPoint(4.0F, 16.0F, -8.0F);
+         this.frontLeftHoof = new ModelRenderer(this, 44, 51);
+-        this.frontLeftHoof.addBox(-2.4F, 5.1F, -2.1F, 4, 3, 4);
++	    this.frontLeftHoof.addBox(-2.4F, 5.1F, -2.1F, 4, 3, 4);
+         this.frontLeftHoof.setRotationPoint(4.0F, 16.0F, -8.0F);
+         this.frontRightLeg = new ModelRenderer(this, 60, 29);
+         this.frontRightLeg.addBox(-1.1F, -1.0F, -2.1F, 3, 8, 4);
+@@ -221,6 +233,8 @@
+         float f1 = abstracthorse.getHorseSize();
+         boolean flag4 = abstracthorse.isBeingRidden();
+ 
++	    BezierCurve rope=null;
++
+         if (flag1)
+         {
+             this.horseFaceRopes.render(scale);
+@@ -236,8 +250,77 @@
+ 
+             if (flag4)
+             {
+-                this.horseLeftRein.render(scale);
+-                this.horseRightRein.render(scale);
++                //this.horseLeftRein.render(scale);
++                //this.horseRightRein.render(scale);
++
++                //VIVECRAFT START
++	            if (abstracthorse.getControllingPassenger() instanceof EntityPlayer) {
++	            	Debug debugAbs=new Debug(Vec3d.ZERO);
++	            	Debug debug=new Debug(abstracthorse.getPositionVector());
++		            PlayerModelController.RotInfo rotInfo = PlayerModelController.getInstance().getRotationFromEntity((EntityPlayer) abstracthorse.getControllingPassenger());
++
++		            float partialTick=Minecraft.getMinecraft().timer.renderPartialTicks;
++
++		            Vec3d position=new Vec3d(abstracthorse.prevPosX+partialTick*(abstracthorse.posX-abstracthorse.prevPosX),
++				            abstracthorse.prevPosY+partialTick*(abstracthorse.posY-abstracthorse.prevPosY),
++				            abstracthorse.prevPosZ+partialTick*(abstracthorse.posZ-abstracthorse.prevPosZ));
++
++		            Vec3d delta=new Vec3d((partialTick-1)*(abstracthorse.posX-abstracthorse.prevPosX),
++				            (partialTick-1)*(abstracthorse.posY-abstracthorse.prevPosY),
++				            (partialTick-1)*(abstracthorse.posZ-abstracthorse.prevPosZ));
++
++		            float prevYaw=(abstracthorse.prevRenderYawOffset+360) % 360;
++		            float yaw=(abstracthorse.renderYawOffset+360) % 360;
++
++		            Quaternion bodyRot=new Quaternion(0,-(prevYaw + partialTick*(yaw-prevYaw)),0);
++
++
++		            Quaternion reinRot=new Quaternion((float) Math.toDegrees(horseLeftFaceMetal.rotateAngleX),
++				            (float) -Math.toDegrees(horseLeftFaceMetal.rotateAngleY),
++				            (float) Math.toDegrees(horseLeftFaceMetal.rotateAngleZ));
++
++		            Vec3d reinStart=new Vec3d(horseLeftFaceMetal.rotationPointX*scale,
++				            -horseLeftFaceMetal.rotationPointY*scale + abstracthorse.height -0.1,
++				            -horseLeftFaceMetal.rotationPointZ*scale);
++
++		            ModelBox cubeFaceMetalL=horseLeftFaceMetal.cubeList.get(0);
++		            ModelBox cubeFaceMetalR=horseRightFaceMetal.cubeList.get(0);
++
++		            Vec3d reinOffsetL=new Vec3d(cubeFaceMetalL.posX2*scale,-(cubeFaceMetalL.posY2-1)*scale,-(cubeFaceMetalL.posZ2-1)*scale);
++		            Vec3d reinOffsetR=new Vec3d((cubeFaceMetalR.posX2-1)*scale,-(cubeFaceMetalR.posY2-1)*scale,-(cubeFaceMetalR.posZ2-1)*scale);
++
++		            Vec3d attchL=position.add(bodyRot.multiply(reinStart).add(bodyRot.multiply(reinRot.multiply(reinOffsetL))));
++		            Vec3d attchR=position.add(bodyRot.multiply(reinStart).add(bodyRot.multiply(reinRot.multiply(reinOffsetR))));
++
++		            HorseTracker.ModelInfo info=Minecraft.getMinecraft().horseTracker.getModelInfo();
++		            info.leftReinPos=attchL;
++		            info.rightReinPos=attchR;
++
++
++		            Quaternion worldRot = new Quaternion(0, VRSettings.inst.vrWorldRotation, 0);
++
++		            Vec3d vtHoldL= OpenVRPlayer.get().roomOrigin.add(delta).add(worldRot.multiply(rotInfo.leftArmPos));
++		            Vec3d vtHoldR= OpenVRPlayer.get().roomOrigin.add(delta).add(worldRot.multiply(rotInfo.rightArmPos));
++
++
++		            Vec3d ropeAttachMiddle=attchL.add(attchR).scale(0.5);
++
++		            //Get the vector orthogonal to the vector pointing at the horse head
++		            Vec3d ctrDirL=new Vec3d(0,-1,0).crossProduct(ropeAttachMiddle.subtract(vtHoldL));
++		            Vec3d ctrDirR=new Vec3d(0,1,0).crossProduct(ropeAttachMiddle.subtract(vtHoldR));
++
++		            BezierCurve.Node lReinNode= new BezierCurve.Node(attchL,reinRot.multiply(new Vec3d(0,0,1)),0.1,0.1);
++		            BezierCurve.Node lArmNode=new BezierCurve.Node(vtHoldL, ctrDirL,0.1,0.1);
++		            BezierCurve.Node rArmNode=new BezierCurve.Node(vtHoldR, ctrDirR,-0.1,-0.1);
++		            BezierCurve.Node rReinNode= new BezierCurve.Node(attchR,reinRot.multiply(new Vec3d(0,0,-1)),0.1,0.1);
++
++		            rope=new BezierCurve(new BezierCurve.Node[]{
++		            		lReinNode, lArmNode, rArmNode, rReinNode
++		            },false);
++
++	            }
++                //VIVECRAFT END
++
+             }
+         }
+ 
+@@ -316,6 +399,12 @@
+             this.muleLeftChest.render(scale);
+             this.muleRightChest.render(scale);
+         }
++
++        if (rope!=null){
++        	GlStateManager.popMatrix();
++	        rope.render(80,Color.black,0);
++	        GlStateManager.pushMatrix();
++        }
+     }
+ 
+     /**

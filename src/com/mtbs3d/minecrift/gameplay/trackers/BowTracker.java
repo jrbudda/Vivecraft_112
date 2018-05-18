@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import com.mtbs3d.minecrift.api.NetworkHelper;
 import com.mtbs3d.minecrift.api.NetworkHelper.PacketDiscriminators;
 import com.mtbs3d.minecrift.gameplay.OpenVRPlayer;
+import com.mtbs3d.minecrift.gameplay.trackers.Tracker.EntryPoint;
 import com.mtbs3d.minecrift.provider.MCOpenVR;
 
 import de.fruitfly.ovr.structs.Matrix4f;
@@ -27,7 +28,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.Vec3d;
 
-public class BowTracker {
+public class BowTracker extends Tracker {
 	private double lastcontrollersDist;
 	private double lastcontrollersDot;	
 	private double controllersDist;
@@ -48,7 +49,11 @@ public class BowTracker {
 	private long maxDrawMillis=1100;
 
 	private Vec3d aim;
-	
+
+	public BowTracker(Minecraft mc) {
+		super(mc);
+	}
+
 	public Vec3d getAimVector(){
 		return aim;
 //		if(isDrawing)return aim;
@@ -97,16 +102,23 @@ public class BowTracker {
 	public boolean isCharged(){
 		return Minecraft.getSystemTime() - startDrawTime >= maxDrawMillis;
 	}
-	
-	public void doProcess(Minecraft minecraft, EntityPlayerSP player){
-		OpenVRPlayer provider = minecraft.vrPlayer;
-		if (!isActive(player)){			
-			isDrawing = false;
-			return;
-		}
 
-		if(minecraft.vrSettings.seated){
-			aim = minecraft.vrPlayer.vrdata_world_render.getController(0).getCustomVector(new Vec3d(0,0,1));
+	@Override
+	public void reset(EntityPlayerSP player) {
+		isDrawing = false;
+	}
+
+	@Override
+	public EntryPoint getEntryPoint() {
+		return EntryPoint.SPECIAL_ITEMS;
+	}
+
+	@Override
+	public void doProcess(EntityPlayerSP player){
+		OpenVRPlayer provider = mc.vrPlayer;
+
+		if(mc.vrSettings.seated){
+			aim = mc.vrPlayer.vrdata_world_render.getController(0).getCustomVector(new Vec3d(0,0,1));
 			return;
 		}
 		
@@ -116,7 +128,7 @@ public class BowTracker {
 		lastpressed = pressed;
 		lastDraw = currentDraw;
 		lastcanDraw = canDraw;
-		maxDraw = minecraft.player.height * 0.22;
+		maxDraw = mc.player.height * 0.22;
 
 		//these are wrong since this is called every frame but should be fine so long as they're only compared to each other.
 		Vec3d rightPos = provider.vrdata_world_render.getController(0).getPosition();
@@ -142,7 +154,7 @@ public class BowTracker {
 
 		controllersDot = 180 / Math.PI * Math.acos(leftforeward.dot(rightAim));
 
-		pressed = minecraft.gameSettings.keyBindAttack.isKeyDown();
+		pressed = mc.gameSettings.keyBindAttack.isKeyDown();
 
 		float notchDistThreshold = (float) (0.3 * provider.vrdata_world_render.worldScale);
 		
@@ -175,7 +187,7 @@ public class BowTracker {
 			if(!isDrawing){
 				player.setItemInUseClient(bow);
 				player.setItemInUseCountClient(bow.getMaxItemUseDuration() - 1 );
-				minecraft.playerController.processRightClick(player, player.world, hand);//server
+				mc.playerController.processRightClick(player, player.world, hand);//server
 
 			}
 
@@ -187,7 +199,7 @@ public class BowTracker {
 		if (!isDrawing && canDraw  && pressed && !lastpressed) {
 			//draw     	    	
 			isDrawing = true;
-			minecraft.playerController.processRightClick(player, player.world, hand);//server
+			mc.playerController.processRightClick(player, player.world, hand);//server
 		}
 
 		if(isDrawing && !pressed && lastpressed && getDrawPercent() > 0.0) {
@@ -196,7 +208,7 @@ public class BowTracker {
 			MCOpenVR.triggerHapticPulse(1, 3000); 	
 			CPacketCustomPayload pack =	NetworkHelper.getVivecraftClientPacket(PacketDiscriminators.DRAW, ByteBuffer.allocate(4).putFloat((float) getDrawPercent()).array());
 			Minecraft.getMinecraft().getConnection().sendPacket(pack);
-			minecraft.playerController.onStoppedUsingItem(player); //server
+			mc.playerController.onStoppedUsingItem(player); //server
 			pack =	NetworkHelper.getVivecraftClientPacket(PacketDiscriminators.DRAW, ByteBuffer.allocate(4).putFloat(0).array()); //reset to 0, in case user switches modes.
 			Minecraft.getMinecraft().getConnection().sendPacket(pack);
 			isDrawing = false;     	
@@ -314,6 +326,6 @@ public class BowTracker {
         	return stack.getItem() instanceof ItemArrow;
         }
     }
-	
+
 }
 

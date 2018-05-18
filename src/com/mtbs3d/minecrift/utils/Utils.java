@@ -146,6 +146,29 @@ public class Utils
 		return mat;
 	}
 
+	public static double lerp(double from, double to, double percent){
+		return from+(to-from)*percent;
+	}
+
+	public static double lerpMod(double from, double to, double percent, double mod){
+		if(Math.abs(to-from) < mod/2){
+			return from+(to-from)*percent;
+		}else{
+			return from+(to-from -Math.signum(to-from)*mod)*percent;
+		}
+	}
+
+	public static double absLerp(double value, double target, double stepSize){
+		double step=Math.abs(stepSize);
+		if (target-value>step){
+			return value+step;
+		}
+		else if (target-value<-step){
+			return value-step;
+		}else {
+			return target;
+		}
+	}
 	
 	public static Vector3f directionFromMatrix(Matrix4f matrix, float x, float y, float z) {
 		Vector4f vec = new Vector4f(x, y, z, 0);

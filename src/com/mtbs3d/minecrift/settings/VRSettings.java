@@ -20,13 +20,12 @@ import com.mtbs3d.minecrift.control.ButtonTuple;
 import com.mtbs3d.minecrift.control.ButtonType;
 import com.mtbs3d.minecrift.control.ControllerType;
 import com.mtbs3d.minecrift.control.LegacyButton;
-import com.mtbs3d.minecrift.control.VRButtonMapping;
 import com.mtbs3d.minecrift.control.TrackedControllerVive.TouchpadMode;
+import com.mtbs3d.minecrift.control.VRButtonMapping;
 import com.mtbs3d.minecrift.provider.MCOpenVR;
 import com.mtbs3d.minecrift.settings.profile.ProfileManager;
 import com.mtbs3d.minecrift.settings.profile.ProfileReader;
 import com.mtbs3d.minecrift.settings.profile.ProfileWriter;
-import com.mtbs3d.minecrift.utils.HardwareType;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
@@ -116,10 +115,11 @@ public class VRSettings
     public float manualCalibration=-1;
     public float playerEyeHeight = 1.62f;
 	public boolean alwaysSimulateKeyboard = false;
-    public int bowMode = BOW_MODE_ON;
+	public int bowMode = BOW_MODE_ON;
+	public String keyboardKeys =  "`1234567890-=qwertyuiop[]\\asdfghjkl;\':\"zxcvbnm,./?<>";
+	public String keyboardKeysShift ="~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL;\':\"ZXCVBNM,./?<>";
+	//
 
-    //
-    
     //Locomotion
     public int inertiaFactor = INERTIA_NORMAL;
     public boolean walkUpBlocks = true;     // VIVE default to enable climbing
@@ -669,6 +669,22 @@ public class VRSettings
                     
                     if(optionTokens[0].equals("hideGUI")){
                         this.mc.gameSettings.hideGUI = optionTokens[1].equals("true");
+                    }
+                    
+                    if(optionTokens[0].equals("keyboardKeys")){
+                    	String value = optionTokens[1];
+                    	for (int i = 2; i < optionTokens.length;i++) {
+                    		value += ":" + optionTokens[i];
+                    	}
+                        this.keyboardKeys = value;
+                    }
+                    
+                    if(optionTokens[0].equals("keyboardKeysShift")){
+                    	String value = optionTokens[1];
+                    	for (int i = 2; i < optionTokens.length;i++) {
+                    		value += ":" + optionTokens[i];
+                    	}
+                        this.keyboardKeysShift = value;
                     }
 
                     if (optionTokens[0].startsWith("BUTTON_") || optionTokens[0].startsWith("OCULUS_"))
@@ -1502,7 +1518,9 @@ public class VRSettings
             var5.println("analogMovement:" + this.analogMovement);
             var5.println("hideGUI:" + this.mc.gameSettings.hideGUI);
             var5.println("bowMode:" + this.bowMode);
-
+            var5.println("keyboardKeys:" + (this.keyboardKeys));
+            var5.println("keyboardKeysShift:" + (this.keyboardKeysShift));
+            
             if (vrQuickCommands == null) vrQuickCommands = getQuickCommandsDefaults(); //defaults
             
             for (int i = 0; i < 11 ; i++){

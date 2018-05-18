@@ -48,7 +48,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
 
-public class TeleportTracker {
+public class TeleportTracker extends Tracker{
     private float teleportEnergy;
     private Vec3d movementTeleportDestination = new Vec3d(0.0,0.0,0.0);
     private EnumFacing movementTeleportDestinationSideHit;
@@ -58,7 +58,11 @@ public class TeleportTracker {
     public int movementTeleportArcSteps = 0;
     public double lastTeleportArcDisplayOffset = 0;
     public VRMovementStyle vrMovementStyle = new VRMovementStyle();
-    
+
+	public TeleportTracker(Minecraft mc) {
+		super(mc);
+	}
+
 	public float getTeleportEnergy () {return teleportEnergy;	}
 
     public boolean isAiming(){
@@ -76,19 +80,18 @@ public class TeleportTracker {
 		if (Minecraft.getMinecraft().vrPlayer.getFreeMove()) return false;
 		return true;
 	}
-	
 
-	public void doProcess(Minecraft minecraft, EntityPlayerSP player){ //on tick
-       
-		if (!isActive(player))
-        {
-            movementTeleportDestination=new Vec3d(0,0,0);
-            movementTeleportArcSteps = 0;
-            movementTeleportProgress = 0;
-            return;
-        }
-        
-        Minecraft mc = Minecraft.getMinecraft();
+
+	@Override
+	public void reset(EntityPlayerSP player) {
+		movementTeleportDestination=new Vec3d(0,0,0);
+		movementTeleportArcSteps = 0;
+		movementTeleportProgress = 0;
+	}
+
+	public void doProcess(EntityPlayerSP player){ //on tick
+
+
 		Random rand = new Random();
 
         if (teleportEnergy < 100) { teleportEnergy++;}
@@ -640,6 +643,8 @@ public class TeleportTracker {
 
     	BlockPos bp = collision.getBlockPos();
     	IBlockState testClimb = player.world.getBlockState(bp);
+    	if (!mc.player.capabilities.allowFlying && mc.vrSettings.vrLimitedSurvivalTeleport && start.y - bp.getY() > 4)
+    		return false; // limit downward teleport
     	if (testClimb.getBlock() == Blocks.WATER){
     		Vec3d hitVec = new Vec3d(collision.hitVec.x, bp.getY(), collision.hitVec.z );
 

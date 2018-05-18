@@ -12,8 +12,12 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
-public class SneakTracker {
+public class SneakTracker extends Tracker {
 	public boolean sneakOverride=false;
+
+	public SneakTracker(Minecraft mc) {
+		super(mc);
+	}
 
 	public boolean isActive(EntityPlayerSP p){
 		if(Minecraft.getMinecraft().vrSettings.seated)
@@ -29,13 +33,14 @@ public class SneakTracker {
 		return true;
 	}
 
-	public void doProcess(Minecraft minecraft, EntityPlayerSP player){
-		if(!isActive(player)) {
-			sneakOverride = false;
-			return;
-		}
+	@Override
+	public void reset(EntityPlayerSP player) {
+		sneakOverride = false;
+	}
 
-	    if(( AutoCalibration.getPlayerHeight() - MCOpenVR.hmdPivotHistory.latest().y )> minecraft.vrSettings.sneakThreshold){
+	public void doProcess(EntityPlayerSP player){
+
+	    if(( AutoCalibration.getPlayerHeight() - MCOpenVR.hmdPivotHistory.latest().y )> mc.vrSettings.sneakThreshold){
 		   sneakOverride=true;
 	    }else{
 		    sneakOverride=false;

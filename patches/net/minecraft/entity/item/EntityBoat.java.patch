@@ -9,7 +9,25 @@
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityLivingBase;
  import net.minecraft.entity.MoverType;
-@@ -746,42 +748,105 @@
+@@ -704,7 +706,7 @@
+             if (this.status == EntityBoat.Status.IN_WATER)
+             {
+                 d2 = (this.waterLevel - this.getEntityBoundingBox().minY) / (double)this.height;
+-                this.momentum = 0.9F;
++                this.momentum = 0.95F;
+             }
+             else if (this.status == EntityBoat.Status.UNDER_FLOWING_WATER)
+             {
+@@ -732,7 +734,7 @@
+ 
+             this.motionX *= (double)this.momentum;
+             this.motionZ *= (double)this.momentum;
+-            this.deltaRotation *= this.momentum;
++            this.deltaRotation *= this.momentum*this.momentum;
+             this.motionY += d1;
+ 
+             if (d2 > 0.0D)
+@@ -746,42 +748,108 @@
      }
  
      private void controlBoat()
@@ -116,6 +134,8 @@
 +    					f = 0.005f;
 +    				}
 +
++    				f*=0.5;
++
 +    				this.motionX += (double)(MathHelper.sin(-this.rotationYaw* 0.017453292F) * f);
 +    				this.motionZ += (double)(MathHelper.cos(this.rotationYaw * 0.017453292F) * f);
 +    			} else {
@@ -128,18 +148,19 @@
 +    		} else {
 +    			//roomscale or vanilla behavior
 +    			if(mc.rowTracker.isRowing()){
-+    				this.deltaRotation += mc.rowTracker.LOar / 1.5;
-+    				this.deltaRotation -= mc.rowTracker.ROar / 1.5;
++    				this.deltaRotation += mc.rowTracker.forces[0] *50;
++    				this.deltaRotation -= mc.rowTracker.forces[1] *50;
 +    				
 +    				if (deltaRotation < 0) this.leftInputDown = true;
 +    				if (deltaRotation > 0) this.rightInputDown = true;
-+    				
-+    				f = 0.06f * mc.rowTracker.Foar;
-+    				
-+    				if(f > 0) this.forwardInputDown = true;
-+    				
++
++
++				    f=(float)(mc.rowTracker.forces[0] + mc.rowTracker.forces[1]);
++    				if(f > 0.005) this.forwardInputDown = true;
++
++
 +    				this.motionX += (double)(MathHelper.sin(-this.rotationYaw * 0.017453292F) * f);
-+    				this.motionZ += (double)(MathHelper.cos(this.rotationYaw * 0.017453292F) * f);            	
++    				this.motionZ += (double)(MathHelper.cos(this.rotationYaw * 0.017453292F) * f);
 +    			}else{
 +    				//default boat (seated mode)
 +    				this.motionX += (double)(MathHelper.sin(-this.rotationYaw * 0.017453292F) * f);

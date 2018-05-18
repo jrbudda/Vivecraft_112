@@ -145,14 +145,14 @@
              }
  
              if (!this.isRenderEntityOutlines() && (!list1.isEmpty() || this.entityOutlinesRendered))
-@@ -1142,10 +1166,12 @@
+@@ -1143,10 +1167,12 @@
          }
  
          this.mc.mcProfiler.endStartSection("culling");
--        BlockPos blockpos1 = new BlockPos(d3, d4 + (double)viewEntity.getEyeHeight(), d5);
+-        BlockPos blockpos = new BlockPos(d3, d4 + (double)viewEntity.getEyeHeight(), d5);
 +        //VIVE NO EYEHEIGHT
-+        BlockPos blockpos1 = new BlockPos(d3, d4, d5);
-         RenderChunk renderchunk = this.viewFrustum.getRenderChunk(blockpos1);
++        BlockPos blockpos = new BlockPos(d3, d4, d5);
+         RenderChunk renderchunk = this.viewFrustum.getRenderChunk(blockpos);
          new BlockPos(MathHelper.floor(d3 / 16.0D) * 16, MathHelper.floor(d4 / 16.0D) * 16, MathHelper.floor(d5 / 16.0D) * 16);
 -        this.displayListEntitiesDirty = this.displayListEntitiesDirty || !this.chunksToUpdate.isEmpty() || viewEntity.posX != this.lastViewEntityX || viewEntity.posY != this.lastViewEntityY || viewEntity.posZ != this.lastViewEntityZ || (double)viewEntity.rotationPitch != this.lastViewEntityPitch || (double)viewEntity.rotationYaw != this.lastViewEntityYaw;
 +        // VIVE FIX CULLING ISSUES WITH MIRROR
@@ -160,41 +160,39 @@
          this.lastViewEntityX = viewEntity.posX;
          this.lastViewEntityY = viewEntity.posY;
          this.lastViewEntityZ = viewEntity.posZ;
-@@ -1236,8 +1262,11 @@
+@@ -1244,9 +1270,12 @@
  
                  if (set1.size() == 1)
                  {
 -                    Vector3f vector3f = this.getViewVector(viewEntity, partialTicks);
--                    EnumFacing enumfacing = EnumFacing.getFacingFromVector(vector3f.x, vector3f.y, vector3f.z).getOpposite();
+-                    EnumFacing enumfacing2 = EnumFacing.getFacingFromVector(vector3f.x, vector3f.y, vector3f.z).getOpposite();
+-                    set1.remove(enumfacing2);
 +                	//VIVE
 +                    //Vector3f vector3f = this.getViewVector(viewEntity, partialTicks);
 +                	Vec3d dir = Minecraft.getMinecraft().vrPlayer.vrdata_world_render.hmd.getDirection();
 +                    EnumFacing enumfacing = EnumFacing.getFacingFromVector((float)dir.x, (float)dir.y, (float)dir.z).getOpposite();
 +                    //VIVE END
-                     set1.remove(enumfacing);
++                    set1.remove(enumfacing);
                  }
  
-@@ -1369,14 +1398,13 @@
-                     BlockPos blockpos2 = renderchunk4.getPosition();
-                     boolean flag4 = blockpos1.distanceSq((double)(blockpos2.getX() + 8), (double)(blockpos2.getY() + 8), (double)(blockpos2.getZ() + 8)) < 768.0D;
- 
--                    if (!flag4)
--                    {
-+                    if ((Reflector.forgeExists() && (Boolean)Reflector.getFieldValue(Reflector.ForgeModContainer_alwaysSetupTerrainOffThread)) || (!renderchunk4.needsImmediateUpdate() && !flag4))                    {
-                         this.chunksToUpdate.add(renderchunk4);
+                 if (set1.isEmpty())
+@@ -1377,10 +1406,11 @@
+                     {
+                         this.chunksToUpdate.add(renderchunk5);
                      }
--                    else if (!renderchunk4.isPlayerUpdate())
+-                    else if (!renderchunk5.isPlayerUpdate())
 -                    {
--                        this.chunksToUpdateForced.add(renderchunk4);
+-                        this.chunksToUpdateForced.add(renderchunk5);
 -                    }
-+                    //else if (!renderchunk4.isPlayerUpdate())
++                    //Vivecraft - why are we doing this?
++                    //else if (!renderchunk5.isPlayerUpdate())
 +                    //{
-+                    //    this.chunksToUpdateForced.add(renderchunk4);
++                    //    this.chunksToUpdateForced.add(renderchunk5);
 +                    //}
                      else
                      {
                          this.mc.mcProfiler.startSection("build near");
-@@ -1474,7 +1502,7 @@
+@@ -1470,7 +1500,7 @@
  
          for (int i = 0; i < 8; ++i)
          {
@@ -203,7 +201,7 @@
              this.debugTerrainMatrix[i].x /= this.debugTerrainMatrix[i].w;
              this.debugTerrainMatrix[i].y /= this.debugTerrainMatrix[i].w;
              this.debugTerrainMatrix[i].z /= this.debugTerrainMatrix[i].w;
-@@ -1482,22 +1510,22 @@
+@@ -1478,22 +1508,22 @@
          }
      }
  
@@ -242,7 +240,7 @@
  
      public int renderBlockLayer(BlockRenderLayer blockLayerIn, double partialTicks, int pass, Entity entityIn)
      {
-@@ -1516,14 +1544,13 @@
+@@ -1512,14 +1542,13 @@
                  this.prevRenderSortY = entityIn.posY;
                  this.prevRenderSortZ = entityIn.posZ;
                  int k = 0;
@@ -259,7 +257,7 @@
                  }
              }
  
-@@ -1560,7 +1587,7 @@
+@@ -1556,7 +1585,7 @@
                  GlStateManager.disableFog();
              }
  
@@ -268,7 +266,7 @@
              this.renderBlockLayer(blockLayerIn);
              this.mc.mcProfiler.endSection();
              return l;
-@@ -2363,9 +2390,9 @@
+@@ -2359,9 +2388,9 @@
  
      public void updateChunks(long finishTimeNano)
      {
@@ -280,7 +278,7 @@
          if (this.chunksToUpdateForced.size() > 0)
          {
              Iterator iterator = this.chunksToUpdateForced.iterator();
-@@ -2400,9 +2427,11 @@
+@@ -2396,9 +2425,11 @@
                  }
              }
          }
@@ -294,7 +292,7 @@
  
          if (!this.chunksToUpdate.isEmpty())
          {
-@@ -2430,7 +2459,8 @@
+@@ -2426,7 +2457,8 @@
  
                  renderchunk2.clearNeedsUpdate();
                  iterator1.remove();
@@ -304,7 +302,7 @@
                  if (!flag2)
                  {
                      ++k1;
-@@ -2440,8 +2470,11 @@
+@@ -2436,8 +2468,11 @@
                          break;
                      }
                  }
@@ -316,7 +314,7 @@
      }
  
      public void renderWorldBorder(Entity entityIn, float partialTicks)
-@@ -2856,9 +2889,9 @@
+@@ -2852,9 +2887,9 @@
      {
      }
  
@@ -328,7 +326,7 @@
      }
  
      public void spawnParticle(int id, boolean ignoreRange, boolean p_190570_3_, final double x, final double y, final double z, double xSpeed, double ySpeed, double zSpeed, int... parameters)
-@@ -3146,6 +3179,8 @@
+@@ -3142,6 +3177,8 @@
      public void playEvent(EntityPlayer player, int type, BlockPos blockPosIn, int data)
      {
          Random random = this.world.rand;
@@ -337,7 +335,7 @@
  
          switch (type)
          {
-@@ -3202,18 +3237,30 @@
+@@ -3198,18 +3235,30 @@
                  break;
  
              case 1011:
@@ -368,7 +366,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_FENCE_GATE_CLOSE, SoundCategory.BLOCKS, 1.0F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -3234,14 +3281,26 @@
+@@ -3230,14 +3279,26 @@
                  break;
  
              case 1019:
@@ -395,7 +393,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.ENTITY_ZOMBIE_BREAK_DOOR_WOOD, SoundCategory.HOSTILE, 2.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F, false);
                  break;
  
-@@ -3270,10 +3329,17 @@
+@@ -3266,10 +3327,17 @@
                  break;
  
              case 1030:
@@ -413,7 +411,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_ANVIL_LAND, SoundCategory.BLOCKS, 0.3F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -3294,6 +3360,9 @@
+@@ -3290,6 +3358,9 @@
                  break;
  
              case 1036:
@@ -423,7 +421,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_IRON_TRAPDOOR_CLOSE, SoundCategory.BLOCKS, 1.0F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -3333,6 +3402,9 @@
+@@ -3329,6 +3400,9 @@
                      {
                          soundtype = (SoundType)Reflector.call(block, Reflector.ForgeBlock_getSoundType, Block.getStateById(data), this.world, blockPosIn, null);
                      }

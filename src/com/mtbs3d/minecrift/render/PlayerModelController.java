@@ -1,21 +1,28 @@
 package com.mtbs3d.minecrift.render;
 
+import com.mtbs3d.minecrift.api.VRData;
+import com.mtbs3d.minecrift.gameplay.OpenVRPlayer;
+import com.mtbs3d.minecrift.provider.MCOpenVR;
+import com.mtbs3d.minecrift.settings.VRSettings;
 import com.mtbs3d.minecrift.utils.Angle;
 import com.mtbs3d.minecrift.utils.Quaternion;
 import com.mtbs3d.minecrift.utils.Utils;
 import com.mtbs3d.minecrift.utils.Vector3;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
@@ -186,6 +193,15 @@ public class PlayerModelController {
 		for (Map.Entry<UUID, RotInfo> entry : vivePlayersReceived.entrySet()) {
 			vivePlayers.put(entry.getKey(), entry.getValue());
 		}
+		for (Iterator<UUID> it = vivePlayers.keySet().iterator(); it.hasNext();) {
+			UUID uuid = it.next();
+			World world = Minecraft.getMinecraft().world;
+			if (world != null && world.getPlayerEntityByUUID(uuid) == null) {
+				it.remove();
+				vivePlayersLast.remove(uuid);
+				vivePlayersReceived.remove(uuid);
+			}
+		}
 	}
 	
 	private Map<UUID, Integer> donors = new HashMap<UUID, Integer>();
@@ -221,6 +237,35 @@ public class PlayerModelController {
 			return rotLerp;
 		}
 		return rot;
+	}
+
+	/**
+	 * gets the {@link RotInfo} for both SinglePlayer and Multiplayer {@link EntityPlayer}s
+	 * */
+	public RotInfo getRotationFromEntity(EntityPlayer player){
+		UUID playerId = player.getGameProfile().getId();
+		if (Minecraft.getMinecraft().player.getUniqueID().equals(playerId)) {
+			VRData data=Minecraft.getMinecraft().vrPlayer.vrdata_room_pre;
+			RotInfo rotInfo=new RotInfo();
+
+			Quaternion quatLeft=new Quaternion(data.getController(1).getMatrix());
+			Quaternion quatRight=new Quaternion(data.getController(0).getMatrix());
+			Quaternion quatHmd=new Quaternion(data.hmd.getMatrix());
+
+			rotInfo.headQuat=quatHmd;
+			rotInfo.leftArmQuat=quatLeft;
+			rotInfo.rightArmQuat=quatRight;
+			rotInfo.seated=Minecraft.getMinecraft().vrSettings.seated;
+
+			rotInfo.leftArmPos = MCOpenVR.controllerHistory[1].latest();
+			rotInfo.rightArmPos = MCOpenVR.controllerHistory[0].latest();
+			rotInfo.Headpos=MCOpenVR.hmdHistory.latest();
+
+			return rotInfo;
+
+		} else {
+			return PlayerModelController.getInstance().getRotationsForPlayer(playerId);
+		}
 	}
 
 	public boolean debug = false;

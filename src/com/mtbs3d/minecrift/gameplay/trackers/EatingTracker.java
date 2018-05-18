@@ -17,12 +17,16 @@ import net.minecraft.util.math.Vec3d;
 /**
  * Created by Hendrik on 02-Aug-16.
  */
-public class EatingTracker {
+public class EatingTracker extends Tracker{
 	float mouthtoEyeDistance=0.0f;
 	float threshold=0.25f;
 	public boolean[] eating= new boolean[2];
 	int eattime=2100;
 	long eatStart;
+
+	public EatingTracker(Minecraft mc) {
+		super(mc);
+	}
 
 	public boolean isEating(){
 		return eating[0] || eating[1];
@@ -47,14 +51,15 @@ public class EatingTracker {
 
 private Random r = new Random();
 
-	
-	public void doProcess(Minecraft minecraft, EntityPlayerSP player){
-		if(!isActive(player)) {
-			eating[0]=false;
-			eating[1]=false;
-			return;
-		}
-		OpenVRPlayer provider = minecraft.vrPlayer;
+	@Override
+	public void reset(EntityPlayerSP player) {
+		eating[0]=false;
+		eating[1]=false;
+	}
+
+	public void doProcess(EntityPlayerSP player){
+
+		OpenVRPlayer provider = mc.vrPlayer;
 		
 		Vec3d hmdPos=provider.vrdata_room_pre.hmd.getPosition();
 		Vec3d mouthPos=provider.vrdata_room_pre.getController(0).getCustomVector(new Vec3d(0,-mouthtoEyeDistance,0)).add(hmdPos);
@@ -62,7 +67,7 @@ private Random r = new Random();
 		for(int c=0;c<2;c++){
 
 			Vec3d controllerPos = MCOpenVR.controllerHistory[c].averagePosition(0.333).add(provider.vrdata_room_pre.getController(c).getCustomVector(new Vec3d(0,0,-0.1)));
-			controllerPos = controllerPos.add(minecraft.vrPlayer.vrdata_room_pre.getController(c).getDirection().scale(0.1));
+			controllerPos = controllerPos.add(mc.vrPlayer.vrdata_room_pre.getController(c).getDirection().scale(0.1));
 			
 			if(mouthPos.distanceTo(controllerPos)<threshold){
 				ItemStack is = c==0?player.getHeldItemMainhand():player.getHeldItemOffhand();
@@ -73,8 +78,8 @@ private Random r = new Random();
 				}
 
 				if(!eating[c]){
-					if(	Minecraft.getMinecraft().playerController.processRightClick(player, player.world,c==0?EnumHand.MAIN_HAND:EnumHand.OFF_HAND)==EnumActionResult.SUCCESS){
-						minecraft.entityRenderer.itemRenderer.resetEquippedProgress(c==0?EnumHand.MAIN_HAND:EnumHand.OFF_HAND);
+					if(	mc.playerController.processRightClick(player, player.world,c==0?EnumHand.MAIN_HAND:EnumHand.OFF_HAND)==EnumActionResult.SUCCESS){
+						mc.entityRenderer.itemRenderer.resetEquippedProgress(c==0?EnumHand.MAIN_HAND:EnumHand.OFF_HAND);
 						eating[c]=true;
 						eatStart=Minecraft.getSystemTime();
 					}

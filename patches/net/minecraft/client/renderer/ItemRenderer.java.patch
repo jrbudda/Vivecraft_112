@@ -1,8 +1,12 @@
 --- a/net/minecraft/client/renderer/ItemRenderer.java
 +++ b/net/minecraft/client/renderer/ItemRenderer.java
-@@ -2,12 +2,22 @@
+@@ -1,13 +1,26 @@
+ package net.minecraft.client.renderer;
  
  import com.google.common.base.MoreObjects;
++
++import java.util.HashMap;
++import java.util.Map;
  import java.util.Objects;
 +
 +import javax.annotation.Nullable;
@@ -23,7 +27,7 @@
  import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
  import net.minecraft.client.renderer.entity.Render;
  import net.minecraft.client.renderer.entity.RenderManager;
-@@ -16,11 +26,26 @@
+@@ -16,11 +29,26 @@
  import net.minecraft.client.renderer.texture.TextureMap;
  import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
  import net.minecraft.entity.EntityLivingBase;
@@ -50,7 +54,7 @@
  import net.minecraft.src.Config;
  import net.minecraft.src.DynamicLights;
  import net.minecraft.src.Reflector;
-@@ -32,9 +57,18 @@
+@@ -32,9 +60,18 @@
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.MathHelper;
@@ -69,12 +73,13 @@
  public class ItemRenderer
  {
      private static final ResourceLocation RES_MAP_BACKGROUND = new ResourceLocation("textures/map/map_background.png");
-@@ -50,20 +84,34 @@
+@@ -50,20 +87,37 @@
      private float prevEquippedProgressOffHand;
      private final RenderManager renderManager;
      private final RenderItem itemRenderer;
 -
-+    private RenderVRPlayer myRenderVRPlayer;
++    private final RenderVRPlayer myRenderVRPlayer;
++    private final Map<String, RenderVRPlayer> renderVRPlayerSkinMap = new HashMap<>();
 +    
 +    public float getEquipProgress(EnumHand hand, float partialTicks){
 +    	if(hand == EnumHand.MAIN_HAND)
@@ -89,6 +94,8 @@
          this.renderManager = mcIn.getRenderManager();
          this.itemRenderer = mcIn.getRenderItem();
 +        myRenderVRPlayer = new RenderVRPlayer(this.renderManager);
++        renderVRPlayerSkinMap.put("default", this.myRenderVRPlayer);
++        renderVRPlayerSkinMap.put("slim", new RenderVRPlayer(this.renderManager, true));
      }
  
      public void renderItem(EntityLivingBase entityIn, ItemStack heldStack, ItemCameraTransforms.TransformType transform)
@@ -107,7 +114,7 @@
      {
          if (!heldStack.isEmpty())
          {
-@@ -72,17 +120,17 @@
+@@ -72,17 +126,17 @@
              GlStateManager.pushMatrix();
              boolean flag = this.itemRenderer.shouldRenderItemIn3D(heldStack) && block.getBlockLayer() == BlockRenderLayer.TRANSLUCENT;
  
@@ -136,7 +143,7 @@
  
              GlStateManager.popMatrix();
          }
-@@ -100,7 +148,7 @@
+@@ -100,7 +154,7 @@
          GlStateManager.popMatrix();
      }
  
@@ -145,7 +152,7 @@
      {
          AbstractClientPlayer abstractclientplayer = this.mc.player;
          int i = this.mc.world.getCombinedLight(new BlockPos(abstractclientplayer.posX, abstractclientplayer.posY + (double)abstractclientplayer.getEyeHeight(), abstractclientplayer.posZ), 0);
-@@ -115,6 +163,7 @@
+@@ -115,6 +169,7 @@
          OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, f, f1);
      }
  
@@ -153,7 +160,7 @@
      private void rotateArm(float p_187458_1_)
      {
          EntityPlayerSP entityplayersp = this.mc.player;
-@@ -135,6 +184,7 @@
+@@ -135,6 +190,7 @@
          return f;
      }
  
@@ -161,7 +168,7 @@
      private void renderArms()
      {
          if (!this.mc.player.isInvisible())
-@@ -149,6 +199,7 @@
+@@ -149,6 +205,7 @@
          }
      }
  
@@ -169,7 +176,7 @@
      private void renderArm(EnumHandSide p_187455_1_)
      {
          this.mc.getTextureManager().bindTexture(this.mc.player.getLocationSkin());
-@@ -175,29 +226,31 @@
+@@ -175,29 +232,31 @@
  
      private void renderMapFirstPersonSide(float p_187465_1_, EnumHandSide hand, float p_187465_3_, ItemStack stack)
      {
@@ -223,7 +230,7 @@
      }
  
      private void renderMapFirstPerson(float p_187463_1_, float p_187463_2_, float p_187463_3_)
-@@ -205,14 +258,17 @@
+@@ -205,14 +264,17 @@
          float f = MathHelper.sqrt(p_187463_3_);
          float f1 = -0.2F * MathHelper.sin(p_187463_3_ * (float)Math.PI);
          float f2 = -0.4F * MathHelper.sin(f * (float)Math.PI);
@@ -247,7 +254,7 @@
          this.renderMapFirstPerson(this.itemStackMainHand);
      }
  
-@@ -243,76 +299,103 @@
+@@ -243,76 +305,105 @@
          GlStateManager.enableLighting();
      }
  
@@ -316,14 +323,16 @@
 +	        GlStateManager.rotate(-90, 1, 0,0);
 +	        
 +	        GlStateManager.rotate(180, 0, 1, 0);	
-+	        
++
++        	RenderVRPlayer renderVRPlayer = renderVRPlayerSkinMap.get(abstractclientplayer.getSkinType());
++        	if (renderVRPlayer == null) renderVRPlayer = myRenderVRPlayer;
 +	        if (flag)
 +	        {
-+	        	myRenderVRPlayer.renderRightArm(abstractclientplayer);
++	        	renderVRPlayer.renderRightArm(abstractclientplayer);
 +	        }
 +	        else
 +	        {
-+	        	myRenderVRPlayer.renderLeftArm(abstractclientplayer);
++	        	renderVRPlayer.renderLeftArm(abstractclientplayer);
 +	        }
 +        GlStateManager.popMatrix();
          GlStateManager.enableCull();
@@ -406,7 +415,7 @@
      }
  
      /**
-@@ -371,100 +454,344 @@
+@@ -371,100 +462,344 @@
          RenderHelper.disableStandardItemLighting();
      }
  
@@ -418,28 +427,6 @@
 -            boolean flag = hand == EnumHand.MAIN_HAND;
 -            EnumHandSide enumhandside = flag ? player.getPrimaryHand() : player.getPrimaryHand().opposite();
 -            GlStateManager.pushMatrix();
--
--            if (stack.isEmpty())
--            {
--                if (flag && !player.isInvisible())
--                {
--                    this.renderArmFirstPerson(p_187457_7_, p_187457_5_, enumhandside);
--                }
--            }
--            else if (stack.getItem() instanceof ItemMap)
--            {
--                if (flag && this.itemStackOffHand.isEmpty())
--                {
--                    this.renderMapFirstPerson(p_187457_3_, p_187457_7_, p_187457_5_);
--                }
--                else
--                {
--                    this.renderMapFirstPersonSide(p_187457_7_, enumhandside, p_187457_5_, stack);
--                }
--            }
--            else
--            {
--                boolean flag1 = enumhandside == EnumHandSide.RIGHT;
 +    	boolean mainHand = hand == EnumHand.MAIN_HAND;
 +    	EnumHandSide enumhandside = mainHand ? player.getPrimaryHand() : player.getPrimaryHand().opposite();
 +    	equippingprogress = getEquipProgress(hand, partialTicks);
@@ -774,6 +761,28 @@
 +    		GlStateManager.popMatrix();	
 +    	}   		
  
+-            if (stack.isEmpty())
+-            {
+-                if (flag && !player.isInvisible())
+-                {
+-                    this.renderArmFirstPerson(p_187457_7_, p_187457_5_, enumhandside);
+-                }
+-            }
+-            else if (stack.getItem() instanceof ItemMap)
+-            {
+-                if (flag && this.itemStackOffHand.isEmpty())
+-                {
+-                    this.renderMapFirstPerson(p_187457_3_, p_187457_7_, p_187457_5_);
+-                }
+-                else
+-                {
+-                    this.renderMapFirstPersonSide(p_187457_7_, enumhandside, p_187457_5_, stack);
+-                }
+-            }
+-            else
+-            {
+-                boolean flag1 = enumhandside == EnumHandSide.RIGHT;
+ 
 -                if (player.isHandActive() && player.getItemInUseCount() > 0 && player.getActiveHand() == hand)
 -                {
 -                    int j = flag1 ? 1 : -1;
@@ -832,7 +841,7 @@
 -                    this.transformSideFirstPerson(enumhandside, p_187457_7_);
 -                    this.transformFirstPerson(enumhandside, p_187457_5_);
 -                }
- 
+-
 -                this.renderItemSide(player, stack, flag1 ? ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !flag1);
 -            }
 -
@@ -841,7 +850,7 @@
      }
  
      /**
-@@ -472,84 +799,213 @@
+@@ -472,84 +807,213 @@
       */
      public void renderOverlays(float partialTicks)
      {
@@ -1106,7 +1115,7 @@
      }
  
      /**
-@@ -596,13 +1052,13 @@
+@@ -596,13 +1060,13 @@
          Tessellator tessellator = Tessellator.getInstance();
          BufferBuilder bufferbuilder = tessellator.getBuffer();
          GlStateManager.color(1.0F, 1.0F, 1.0F, 0.9F);
@@ -1123,7 +1132,7 @@
          {
              GlStateManager.pushMatrix();
              TextureAtlasSprite textureatlassprite = this.mc.getTextureMapBlocks().getAtlasSprite("minecraft:blocks/fire_layer_1");
-@@ -611,18 +1067,15 @@
+@@ -611,18 +1075,15 @@
              float f2 = textureatlassprite.getMaxU();
              float f3 = textureatlassprite.getMinV();
              float f4 = textureatlassprite.getMaxV();

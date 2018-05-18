@@ -18,7 +18,7 @@
              {
                  List<TileEntity> list3 = renderglobal$containerlocalrenderinformation1.renderChunk.getCompiledChunk().getTileEntities();
  
-@@ -1560,10 +1560,7 @@
+@@ -1556,10 +1556,7 @@
                  GlStateManager.disableFog();
              }
  

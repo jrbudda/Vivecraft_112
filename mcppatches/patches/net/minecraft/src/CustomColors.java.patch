@@ -18,7 +18,7 @@
          {
              String s2 = p_readCustomColormaps_0_.getProperty(s1);
  
-@@ -1372,7 +1372,7 @@
+@@ -1366,7 +1366,7 @@
          Set set = p_readSpawnEggColors_0_.keySet();
          int i = 0;
  
@@ -27,7 +27,7 @@
          {
              String s1 = p_readSpawnEggColors_0_.getProperty(s);
  
-@@ -1511,7 +1511,7 @@
+@@ -1505,7 +1505,7 @@
          float[][] afloat1 = new float[aenumdyecolor.length][];
          int k = 0;
  
@@ -36,7 +36,7 @@
          {
              String s1 = p_readDyeColors_0_.getProperty(s);
  
-@@ -1584,7 +1584,7 @@
+@@ -1578,7 +1578,7 @@
          Arrays.fill(aint, -1);
          int i = 0;
  
@@ -45,7 +45,7 @@
          {
              String s1 = p_readTextColors_0_.getProperty(s);
  
-@@ -1640,7 +1640,7 @@
+@@ -1634,7 +1634,7 @@
          Arrays.fill(aint, -1);
          int i = 0;
  
@@ -54,7 +54,7 @@
          {
              String s1 = p_readMapColors_0_.getProperty(s);
  
-@@ -1679,7 +1679,7 @@
+@@ -1673,7 +1673,7 @@
          Arrays.fill(aint, -1);
          int i = 0;
  
