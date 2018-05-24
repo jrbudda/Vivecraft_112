@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.mtbs3d.minecrift.gameplay.screenhandlers.GuiHandler;
+import com.mtbs3d.minecrift.gameplay.screenhandlers.KeyboardHandler;
+import com.mtbs3d.minecrift.gameplay.screenhandlers.RadialHandler;
 import com.mtbs3d.minecrift.gameplay.trackers.*;
 import org.lwjgl.opengl.Display;
 
@@ -80,6 +83,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 
 
@@ -98,6 +102,8 @@ public class OpenVRPlayer
 	//interpolate here between post and pre
 	public VRData vrdata_world_render; // using interpolated origin, scale, rotation
 	//loop end
+	
+	private long errorPrintTime = Minecraft.getSystemTime();
 
 	ArrayList<Tracker> trackers=new ArrayList<>();
 	public void registerTracker(Tracker tracker){
@@ -125,14 +131,7 @@ public class OpenVRPlayer
 	private int roomScaleMovementDelay = 0;
 	public float vrot = 0;
 	boolean initdone =false;
-
-	public float guiScale = 1.0f;
-	public Vec3d guiPos_room = new Vec3d(0,0,0);
-	public Matrix4f guiRotation_room = new Matrix4f();
 	
-	public Vec3d keyboardPos_room = new Vec3d(0,0,0);
-	public Matrix4f keyboardRotation_room = new Matrix4f();
-
 	public static OpenVRPlayer get()
 	{
 		return Minecraft.getMinecraft().vrPlayer;
@@ -152,8 +151,9 @@ public class OpenVRPlayer
 
 	public void postPoll(){
 		this.vrdata_room_pre = new VRData(new Vec3d(0, 0, 0), mc.vrSettings.walkMultiplier, 1, 0);
-		MCOpenVR.processGui();
-		MCOpenVR.processKeyboardGui();
+		GuiHandler.processGui();
+		KeyboardHandler.processGui();
+		RadialHandler.processGui();
 	}
 
 	public void preTick(){
@@ -238,8 +238,13 @@ public class OpenVRPlayer
 
 	public void setRoomOrigin(double x, double y, double z, boolean reset) { 
 
-		if(vrdata_world_render != null){
-			throw new RuntimeException("Too late!");
+		if(!reset && vrdata_world_render != null){
+			if (Minecraft.getSystemTime() - errorPrintTime >= 1000) { // Only print once per second, since this might happen every frame
+				System.out.println("Vivecraft Warning: Room origin set too late! Printing call stack:");
+				Thread.dumpStack();
+				errorPrintTime = Minecraft.getSystemTime();
+			}
+			return;
 		}
 
 		if (reset){
@@ -747,135 +752,6 @@ public class OpenVRPlayer
 				"\r\n \t world_pre " + this.vrdata_world_pre + 
 				"\r\n \t world_post " + this.vrdata_world_post + 
 				"\r\n \t world_render " + this.vrdata_world_render ;	
-	}
-
-	public void onGuiScreenChanged(GuiScreen previousScreen, GuiScreen newScreen, boolean unpressKeys)
-	{
-		if(unpressKeys){
-			KeyBinding.unPressAllKeys();
-			if(Display.isActive()){
-				KeyboardSimulator.robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-				KeyboardSimulator.robot.mouseRelease(InputEvent.BUTTON2_DOWN_MASK);
-				KeyboardSimulator.robot.mouseRelease(InputEvent.BUTTON3_DOWN_MASK);
-				KeyboardSimulator.robot.keyRelease(KeyEvent.VK_SHIFT);		
-				for (VRButtonMapping mapping : mc.vrSettings.buttonMappings.values()) {
-					mapping.actuallyUnpress();
-				}
-			}
-		}
-
-		if(newScreen == null) {
-			//just insurance
-			guiPos_room = null;
-			guiRotation_room = null;
-			guiScale=1;
-		}
-
-		// static main menu/win game/
-		if (!mc.vrSettings.seated && !mc.vrSettings.menuAlwaysFollowFace && (mc.world==null || newScreen instanceof GuiWinGame)) {
-			//TODO reset scale things
-			guiScale = 2.0f;
-			mc.vrSettings.vrWorldRotationCached = mc.vrSettings.vrWorldRotation;
-			mc.vrSettings.vrWorldRotation = 0;
-			float[] playArea = MCOpenVR.getPlayAreaSize();
-			guiPos_room = new Vec3d(
-					(float) (0),
-					(float) (1.3f),
-					(float) (playArea != null ? -playArea[1] / 2 : -1.5f) - 0.3f);			
-
-			guiRotation_room = new Matrix4f();
-			guiRotation_room.M[0][0] = guiRotation_room.M[1][1] = guiRotation_room.M[2][2] = guiRotation_room.M[3][3] = 1.0F;
-			guiRotation_room.M[0][1] = guiRotation_room.M[1][0] = guiRotation_room.M[2][3] = guiRotation_room.M[3][1] = 0.0F;
-			guiRotation_room.M[0][2] = guiRotation_room.M[1][2] = guiRotation_room.M[2][0] = guiRotation_room.M[3][2] = 0.0F;
-			guiRotation_room.M[0][3] = guiRotation_room.M[1][3] = guiRotation_room.M[2][1] = guiRotation_room.M[3][0] = 0.0F;
-
-			return;
-		} else { //these dont update when screen open.
-
-			if (mc.vrSettings.vrWorldRotationCached != 0) {
-				mc.vrSettings.vrWorldRotation = mc.vrSettings.vrWorldRotationCached;
-				mc.vrSettings.vrWorldRotationCached = 0;
-			}
-
-		}		
-
-		if( previousScreen==null && newScreen != null)		
-		{
-			Quatf controllerOrientationQuat;
-			boolean appearOverBlock = (newScreen instanceof GuiCrafting)
-					|| (newScreen instanceof GuiChest)
-					|| (newScreen instanceof GuiShulkerBox)
-					|| (newScreen instanceof GuiHopper)
-					|| (newScreen instanceof GuiFurnace)
-					|| (newScreen instanceof GuiBrewingStand)
-					|| (newScreen instanceof GuiBeacon)
-					|| (newScreen instanceof GuiDispenser)
-					|| (newScreen instanceof GuiEnchantment)
-					|| (newScreen instanceof GuiRepair)
-					;
-
-			if(appearOverBlock && mc.objectMouseOver != null && mc.objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK){	
-				//appear over block.
-				Vec3d temp =new Vec3d(mc.objectMouseOver.getBlockPos().getX() + 0.5f,
-						mc.objectMouseOver.getBlockPos().getY(),
-						mc.objectMouseOver.getBlockPos().getZ() + 0.5f);
-
-				Vec3d temp_room = mc.vrPlayer.world_to_room_pos(temp, mc.vrPlayer.vrdata_world_pre);			
-				Vec3d pos = mc.vrPlayer.vrdata_room_pre.hmd.getPosition();
-
-				double dist = temp_room.subtract(pos).lengthVector();
-				guiScale = (float) Math.sqrt(dist);
-
-
-				//idk it works.
-				Vec3d guiPosWorld = new Vec3d(temp.x, mc.objectMouseOver.getBlockPos().getY() + 1.1 + (0.5f * guiScale/2), temp.z);
-
-				guiPos_room = mc.vrPlayer.world_to_room_pos(guiPosWorld, mc.vrPlayer.vrdata_world_pre);	
-
-				Vector3f look = new Vector3f();
-				look.x = (float) (guiPos_room.x - pos.x);
-				look.y = (float) (guiPos_room.y - pos.y);
-				look.z = (float) (guiPos_room.z - pos.z);
-
-				float pitch = (float) Math.asin(look.y/look.length());
-				float yaw = (float) ((float) Math.PI + Math.atan2(look.x, look.z));    
-				guiRotation_room = Matrix4f.rotationY((float) yaw);
-				Matrix4f tilt = OpenVRUtil.rotationXMatrix(pitch);	
-				guiRotation_room = Matrix4f.multiply(guiRotation_room,tilt);		
-
-			}				
-			else{
-				//static screens like menu, inventory, and dead.
-				Vec3d adj = new Vec3d(0,0,-2);
-				if (newScreen instanceof GuiChat){
-					adj = new Vec3d(0.3,1,-2);
-				} else if (newScreen instanceof GuiScreenBook || newScreen instanceof GuiEditSign) {
-					adj = new Vec3d(0,1,-2);
-				}
-
-				Vec3d v = mc.vrPlayer.vrdata_room_pre.hmd.getPosition();
-				Vec3d e = mc.vrPlayer.vrdata_room_pre.hmd.getCustomVector(adj);
-				guiPos_room = new Vec3d(
-						(e.x  / 2 + v.x),
-						(e.y / 2 + v.y),
-						(e.z / 2 + v.z));
-
-				Vec3d pos = mc.vrPlayer.vrdata_room_pre.hmd.getPosition();
-				Vector3f look = new Vector3f();
-				look.x = (float) (guiPos_room.x - pos.x);
-				look.y = (float) (guiPos_room.y - pos.y);
-				look.z = (float) (guiPos_room.z - pos.z);
-
-				float pitch = (float) Math.asin(look.y/look.length());
-				float yaw = (float) ((float) Math.PI + Math.atan2(look.x, look.z));    
-				guiRotation_room = Matrix4f.rotationY((float) yaw);
-				Matrix4f tilt = OpenVRUtil.rotationXMatrix(pitch);	
-				guiRotation_room = Matrix4f.multiply(guiRotation_room,tilt);		
-
-			}
-		}
-
-
 	}
 
 

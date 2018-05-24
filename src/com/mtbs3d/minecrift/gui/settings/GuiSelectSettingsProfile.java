@@ -1,4 +1,4 @@
-package com.mtbs3d.minecrift.gui;
+package com.mtbs3d.minecrift.gui.settings;
 
 import java.util.ArrayList;
 import java.util.SortedSet;

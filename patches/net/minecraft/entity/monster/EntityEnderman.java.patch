@@ -74,7 +74,7 @@
              }
 -            else if (!this.enderman.world.getGameRules().getBoolean("mobGriefing"))
 +            else if ((!Reflector.forgeExists() && !this.enderman.world.getGameRules().getBoolean("mobGriefing")) ||
-+            		(Reflector.forgeExists() && !Reflector.callBoolean(Reflector.ForgeEventFactory_getMobGriefingEvent, this.enderman, this.enderman.world)))
++            		(Reflector.forgeExists() && !Reflector.callBoolean(Reflector.ForgeEventFactory_getMobGriefingEvent, this.enderman.world, this.enderman)))
              {
                  return false;
              }
@@ -84,7 +84,7 @@
              }
 -            else if (!this.enderman.world.getGameRules().getBoolean("mobGriefing"))
 +            else if ((!Reflector.forgeExists() && !this.enderman.world.getGameRules().getBoolean("mobGriefing")) ||
-+            		(Reflector.forgeExists() && !Reflector.callBoolean(Reflector.ForgeEventFactory_getMobGriefingEvent, this.enderman, this.enderman.world)))
++            		(Reflector.forgeExists() && !Reflector.callBoolean(Reflector.ForgeEventFactory_getMobGriefingEvent, this.enderman.world, this.enderman)))
              {
                  return false;
              }

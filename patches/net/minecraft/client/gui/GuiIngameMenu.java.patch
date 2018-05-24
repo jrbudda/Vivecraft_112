@@ -5,7 +5,7 @@
  
  import java.io.IOException;
 +
-+import com.mtbs3d.minecrift.gui.GuiQuickCommandsInGame;
++import com.mtbs3d.minecrift.gui.settings.GuiQuickCommandsInGame;
 +import com.mtbs3d.minecrift.settings.AutoCalibration;
 +import com.mtbs3d.minecrift.utils.jkatvr;
 +

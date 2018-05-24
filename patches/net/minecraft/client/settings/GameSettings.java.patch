@@ -27,6 +27,15 @@
      public boolean ofChunkUpdatesDynamic = false;
      public int ofTime = 0;
      public boolean ofClearWater = false;
+@@ -248,7 +248,7 @@
+     public int ofTranslucentBlocks = 0;
+     public boolean ofDynamicFov = true;
+     public boolean ofAlternateBlocks = true;
+-    public int ofDynamicLights = 3;
++    public int ofDynamicLights = 2;
+     public boolean ofCustomEntityModels = true;
+     public boolean ofCustomGuis = true;
+     public boolean ofShowGlErrors = true;
 @@ -467,7 +467,7 @@
                  this.mc.getTextureMapBlocks().setMipmapLevels(this.mipmapLevels);
                  this.mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);

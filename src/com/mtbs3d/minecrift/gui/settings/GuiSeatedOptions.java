@@ -1,4 +1,4 @@
-package com.mtbs3d.minecrift.gui;
+package com.mtbs3d.minecrift.gui.settings;
 
 import com.mtbs3d.minecrift.gui.framework.BaseGuiSettings;
 import com.mtbs3d.minecrift.gui.framework.GuiButtonEx;
@@ -27,7 +27,10 @@ public class GuiSeatedOptions extends BaseGuiSettings implements GuiEventEx
     static VRSettings.VrOptions[] teleportSettings = new VRSettings.VrOptions[]
     {
             VRSettings.VrOptions.LIMIT_TELEPORT,
-            VRSettings.VrOptions.SIMULATE_FALLING
+            VRSettings.VrOptions.SIMULATE_FALLING,
+            VRSettings.VrOptions.TELEPORT_UP_LIMIT,
+            VRSettings.VrOptions.TELEPORT_DOWN_LIMIT,
+            VRSettings.VrOptions.TELEPORT_HORIZ_LIMIT
 
     };
     static VRSettings.VrOptions[] freeMoveSettings = new VRSettings.VrOptions[]
@@ -75,7 +78,9 @@ public class GuiSeatedOptions extends BaseGuiSettings implements GuiEventEx
 
 			if (var8 == VRSettings.VrOptions.DUMMY)
 				continue;
-
+			
+			boolean show = true;
+			
 			if (var8.getEnumFloat())
 			{
 				float minValue = 0.0f;
@@ -105,13 +110,33 @@ public class GuiSeatedOptions extends BaseGuiSettings implements GuiEventEx
                     maxValue = 4f;
                     increment = 1f;
                 }
-                GuiSliderEx slider = new GuiSliderEx(var8.returnEnumOrdinal(), width, height - 20, var8, this.guivrSettings.getKeyBinding(var8), minValue, maxValue, increment, this.guivrSettings.getOptionFloatValue(var8));
-                slider.setEventHandler(this);
-                this.buttonList.add(slider);
+                else if(var8 == VrOptions.TELEPORT_DOWN_LIMIT){
+                    minValue = 0f;
+                    maxValue = 16f;
+                    increment = 1f;
+                    show = this.guivrSettings.vrLimitedSurvivalTeleport;
+                }
+                else if(var8 == VrOptions.TELEPORT_UP_LIMIT){
+                    minValue = 0f;
+                    maxValue = 4f;
+                    increment = 1f;
+                    show = this.guivrSettings.vrLimitedSurvivalTeleport;
+                }
+                else if(var8 == VrOptions.TELEPORT_HORIZ_LIMIT){
+                    minValue = 0f;
+                    maxValue = 32f;
+                    increment = 1f;
+                    show = this.guivrSettings.vrLimitedSurvivalTeleport;
+                }
+				if(show) {
+					GuiSliderEx slider = new GuiSliderEx(var8.returnEnumOrdinal(), width, height , var8, this.guivrSettings.getKeyBinding(var8), minValue, maxValue, increment, this.guivrSettings.getOptionFloatValue(var8));
+					slider.setEventHandler(this);
+					this.buttonList.add(slider);
+				}
 			}
 			else
 			{
-				this.buttonList.add(new GuiSmallButtonEx(var8.returnEnumOrdinal(), width, height, var8, this.guivrSettings.getKeyBinding(var8)));
+				this.buttonList.add(new GuiSmallButtonEx(var8.returnEnumOrdinal(), width, height , var8, this.guivrSettings.getKeyBinding(var8)));
 			}
 		}
 	}
@@ -140,6 +165,9 @@ public class GuiSeatedOptions extends BaseGuiSettings implements GuiEventEx
 				vrSettings.vrFreeMove = true;
 				vrSettings.seatedUseHMD = false;
 				vrSettings.seatedHudAltMode = false;
+				vrSettings.vrTeleportDownLimit = 4;
+				vrSettings.vrTeleportUpLimit = 1;
+				vrSettings.vrTeleportHorizLimit = 16;
 				mc.vrPlayer.setFreeMove(true);
 				Minecraft.getMinecraft().vrSettings.saveOptions();
 				this.reinit = true;
@@ -153,7 +181,10 @@ public class GuiSeatedOptions extends BaseGuiSettings implements GuiEventEx
                 
 				if(num == VRSettings.VrOptions.MOVE_MODE){
                 	this.reinit = true;
-                }            
+                }     
+				if(num == VRSettings.VrOptions.LIMIT_TELEPORT){
+                	this.reinit = true;
+                }  
 			}
 		}
 	}
@@ -214,6 +245,18 @@ public class GuiSeatedOptions extends BaseGuiSettings implements GuiEventEx
                         "How many degrees to rotate when",
                         "rotating the world."
                         
+                };
+            case TELEPORT_DOWN_LIMIT:
+                return new String[] {
+                        "Limit the number of blocks you can teleport below you"
+                };
+            case TELEPORT_UP_LIMIT:
+                return new String[] {
+                        "Limit the number of blocks you can teleport above you"
+                };
+            case TELEPORT_HORIZ_LIMIT:
+                return new String[] {
+                        "Limit the number of blocks you can teleport sideways you"
                 };
             default:
                 return null;

@@ -1,4 +1,4 @@
-package com.mtbs3d.minecrift.gui;
+package com.mtbs3d.minecrift.gui.settings;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,6 +18,7 @@ public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
 {
     static VRSettings.VrOptions[] locomotionSettings = new VRSettings.VrOptions[]
     {
+    		VRSettings.VrOptions.REVERSE_HANDS,
             VRSettings.VrOptions.WALK_UP_BLOCKS,
             VRSettings.VrOptions.VEHICLE_ROTATION,
             VRSettings.VrOptions.BCB_ON,
@@ -30,8 +31,10 @@ public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
     static VRSettings.VrOptions[] teleportSettings = new VRSettings.VrOptions[]
     {
             VRSettings.VrOptions.LIMIT_TELEPORT,
-            VRSettings.VrOptions.SIMULATE_FALLING
-
+            VRSettings.VrOptions.SIMULATE_FALLING,
+            VRSettings.VrOptions.TELEPORT_UP_LIMIT,
+            VRSettings.VrOptions.TELEPORT_DOWN_LIMIT,
+            VRSettings.VrOptions.TELEPORT_HORIZ_LIMIT
     };
     static VRSettings.VrOptions[] freeMoveSettings = new VRSettings.VrOptions[]
     {
@@ -104,6 +107,8 @@ public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
             if (var8 == VRSettings.VrOptions.FREEMOVE_WMR_STICK) 
             	if(!(hw.hasTouchpad && hw.hasStick)) continue;
            
+            boolean show = true;
+            
             if (var8.getEnumFloat())
             {
                 float minValue = 0.0f;
@@ -137,10 +142,30 @@ public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
                     maxValue = 0.5f;
                     increment = 0.01f;
                 }
-                // VIVE START - new options
-                GuiSliderEx slider = new GuiSliderEx(var8.returnEnumOrdinal(), width, height - 20, var8, this.guivrSettings.getKeyBinding(var8), minValue, maxValue, increment, this.guivrSettings.getOptionFloatValue(var8));
-                slider.setEventHandler(this);
-                this.buttonList.add(slider);
+                else if(var8 == VrOptions.TELEPORT_DOWN_LIMIT){
+                    minValue = 0f;
+                    maxValue = 16f;
+                    increment = 1f;
+                    show = this.guivrSettings.vrLimitedSurvivalTeleport;
+                }
+                else if(var8 == VrOptions.TELEPORT_UP_LIMIT){
+                    minValue = 0f;
+                    maxValue = 4f;
+                    increment = 1f;
+                    show = this.guivrSettings.vrLimitedSurvivalTeleport;
+                }
+                else if(var8 == VrOptions.TELEPORT_HORIZ_LIMIT){
+                    minValue = 0f;
+                    maxValue = 32f;
+                    increment = 1f;
+                    show = this.guivrSettings.vrLimitedSurvivalTeleport;
+                }
+                
+                if(show) {
+                	GuiSliderEx slider = new GuiSliderEx(var8.returnEnumOrdinal(), width, height - 20, var8, this.guivrSettings.getKeyBinding(var8), minValue, maxValue, increment, this.guivrSettings.getOptionFloatValue(var8));
+                	slider.setEventHandler(this);
+                	this.buttonList.add(slider);
+                }
                 
             }
             else
@@ -197,6 +222,9 @@ public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
                 vr.useFOVReduction = false;
                 vr.walkUpBlocks = true;
                 vr.analogMovement = true;
+                vr.vrTeleportDownLimit = 4;
+                vr.vrTeleportUpLimit = 1;
+                vr.vrTeleportHorizLimit = 16;
 
                 //end jrbudda
                 
@@ -215,6 +243,9 @@ public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
                     if(num == VRSettings.VrOptions.MOVE_MODE || num == VRSettings.VrOptions.FREEMOVE_MODE){
                     	this.reinit = true;
                     }
+    				if(num == VRSettings.VrOptions.LIMIT_TELEPORT){
+                    	this.reinit = true;
+                    }  
                     
             }
         }
@@ -360,6 +391,18 @@ public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
                             "Walking speed will be determined by the controller button",
                             "axis, if the bound button has a variable axis."    ,"",
                             "For full analog control it is better to use 'Joy/Pad mode"                      
+                    };
+                case TELEPORT_DOWN_LIMIT:
+                    return new String[] {
+                            "Limit the number of blocks you can teleport below you"
+                    };
+                case TELEPORT_UP_LIMIT:
+                    return new String[] {
+                            "Limit the number of blocks you can teleport above you"
+                    };
+                case TELEPORT_HORIZ_LIMIT:
+                    return new String[] {
+                            "Limit the number of blocks you can teleport sideways you"
                     };
                 default:
                     return null;

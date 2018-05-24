@@ -60,10 +60,11 @@ public class RenderPlayerVR extends RenderLivingBase<AbstractClientPlayer>
     public void doRender(AbstractClientPlayer entity, double x, double y, double z, float entityYaw, float partialTicks)
     {
     	//Forge - should this be in this one?
-    	if(Reflector.forgeExists()){
+    	// TODO: figure out a way to make this work
+    	/*if(Reflector.forgeExists()){
     		if(Reflector.postForgeBusEvent(Reflector.RenderPlayerEvent_Pre_Constructor, new Object[]{entity, this, partialTicks, x, y, z}))
     			return;
-    	}
+    	}*/
     	//
         if (!entity.isUser() || this.renderManager.renderViewEntity == entity)
         {
@@ -80,9 +81,10 @@ public class RenderPlayerVR extends RenderLivingBase<AbstractClientPlayer>
             GlStateManager.disableBlendProfile(GlStateManager.Profile.PLAYER_SKIN);
         }
         //Forge
-    	if(Reflector.forgeExists()){
+        // TODO: figure out a way to make this work
+    	/*if(Reflector.forgeExists()){
     		Reflector.postForgeBusEvent(Reflector.RenderPlayerEvent_Post_Constructor, new Object[]{entity, this, partialTicks, x, y, z});
-    	}
+    	}*/
     	//
     }
 

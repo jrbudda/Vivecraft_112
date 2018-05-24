@@ -18,6 +18,7 @@ public class PatreonReceiver implements IFileDownloadListener
     {
         this.player = p_i65_1_;
         this.p = p;
+    	PlayerModelController.getInstance().setHMD(p.getUniqueID(), 0);
     }
 
     public void fileDownloadFinished(String p_fileDownloadFinished_1_, byte[] p_fileDownloadFinished_2_, Throwable p_fileDownloadFinished_3_)
@@ -36,7 +37,10 @@ public class PatreonReceiver implements IFileDownloadListener
     						p.sendMessage(new TextComponentString("Welcome Patron " + player + "!"));
     		            	PlayerModelController.getInstance().setHMD(p.getUniqueID(), level );
     					}
-            		} catch(Exception e){continue;}
+        			} catch(Exception e){
+        				System.out.println("error with donors txt " + e.getMessage());
+        				continue;
+        			}
 				}
             }
             catch (Exception exception)

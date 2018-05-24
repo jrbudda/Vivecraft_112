@@ -1,4 +1,4 @@
-package com.mtbs3d.minecrift.gui;
+package com.mtbs3d.minecrift.gui.settings;
 
 import com.mtbs3d.minecrift.gameplay.trackers.BackpackTracker;
 import com.mtbs3d.minecrift.gameplay.trackers.BowTracker;

@@ -304,27 +304,27 @@ public class TeleportTracker extends Tracker{
         }
         else //non-arc modes.
         {
-            Vec3d start = mc.entityRenderer.getControllerRenderPos(1);
-            Vec3d aimDir = mc.vrPlayer.vrdata_world_render.getController(1).getDirection();
-            
-            // setup teleport forwards to the mouse cursor
-            double movementTeleportDistance = 250.0;
-            Vec3d movementTeleportPos = start.addVector(
-                    aimDir.x * movementTeleportDistance,
-                    aimDir.y * movementTeleportDistance,
-                    aimDir.z * movementTeleportDistance);
-            RayTraceResult collision = mc.world.rayTraceBlocks(start, movementTeleportPos, !mc.player.isInWater(), true, false);
-            Vec3d traceDir = start.subtract(movementTeleportPos).normalize();
-            Vec3d reverseEpsilon = new Vec3d(-traceDir.x * 0.02, -traceDir.y * 0.02, -traceDir.z * 0.02);
-
-            // don't update while charging up a teleport
-            if (movementTeleportProgress != 0)
-                return;
-
-            if (collision != null && collision.typeOfHit != Type.MISS)
-            {
-                checkAndSetTeleportDestination(mc, player, start, collision, reverseEpsilon);
-            }
+//            Vec3d start = mc.entityRenderer.getControllerRenderPos(1);
+//            Vec3d aimDir = mc.vrPlayer.vrdata_world_render.getController(1).getDirection();
+//            
+//            // setup teleport forwards to the mouse cursor
+//            double movementTeleportDistance = 250.0;
+//            Vec3d movementTeleportPos = start.addVector(
+//                    aimDir.x * movementTeleportDistance,
+//                    aimDir.y * movementTeleportDistance,
+//                    aimDir.z * movementTeleportDistance);
+//            RayTraceResult collision = mc.world.rayTraceBlocks(start, movementTeleportPos, !mc.player.isInWater(), true, false);
+//            Vec3d traceDir = start.subtract(movementTeleportPos).normalize();
+//            Vec3d reverseEpsilon = new Vec3d(-traceDir.x * 0.02, -traceDir.y * 0.02, -traceDir.z * 0.02);
+//
+//            // don't update while charging up a teleport
+//            if (movementTeleportProgress != 0)
+//                return;
+//
+//            if (collision != null && collision.typeOfHit != Type.MISS)
+//            {
+//                checkAndSetTeleportDestination(mc, player, start, collision, reverseEpsilon);
+//            }
         }
         mc.mcProfiler.endSection();
     }
@@ -418,6 +418,34 @@ public class TeleportTracker extends Tracker{
 
                 checkAndSetTeleportDestination(mc, player, start, collision, reverseEpsilon);
                           
+                
+    			Vec3d diff = mc.player.getPositionVector().subtract(movementTeleportDestination);
+       
+        		double yDiff = diff.y;
+        		movementTeleportDistance = diff.lengthVector();
+        		double xzdiff = Math.sqrt(diff.x * diff.x + diff.z*diff.z);
+        		
+        		boolean ok = true;
+        		
+            	if(mc.player.isSneaking()) {
+            		if(yDiff > 0.2)
+            			ok = false;
+            	}        	
+
+            	if (!mc.player.capabilities.allowFlying && mc.vrSettings.vrLimitedSurvivalTeleport) { //survival mode mode
+        			if(mc.vrSettings.vrTeleportDownLimit > 0 && yDiff > mc.vrSettings.vrTeleportDownLimit + 0.2)
+        	    		ok = false;
+        			else if(mc.vrSettings.vrTeleportUpLimit > 0 && -yDiff > mc.vrSettings.vrTeleportUpLimit + 0.2)
+        	    		ok = false;  			
+        			else if(mc.vrSettings.vrTeleportHorizLimit > 0 && xzdiff > mc.vrSettings.vrTeleportHorizLimit + 0.2)
+        	    		ok = false;
+            	}
+                
+            	if(!ok) { //u fail.
+            		movementTeleportDestination = new Vec3d(0, 0, 0);
+            		movementTeleportDistance = 0;
+            	}
+            	
                 break;
             }
 
@@ -643,8 +671,8 @@ public class TeleportTracker extends Tracker{
 
     	BlockPos bp = collision.getBlockPos();
     	IBlockState testClimb = player.world.getBlockState(bp);
-    	if (!mc.player.capabilities.allowFlying && mc.vrSettings.vrLimitedSurvivalTeleport && start.y - bp.getY() > 4)
-    		return false; // limit downward teleport
+    	
+    	
     	if (testClimb.getBlock() == Blocks.WATER){
     		Vec3d hitVec = new Vec3d(collision.hitVec.x, bp.getY(), collision.hitVec.z );
 
@@ -662,7 +690,6 @@ public class TeleportTracker extends Tracker{
     		if(mc.vrSettings.seated)ex = 0.5f;
     		if(emptySpotReq){
     			movementTeleportDestination = new Vec3d(bb.getCenter().x,bb.minY+ex, bb.getCenter().z);
-
     			movementTeleportDestinationSideHit = collision.sideHit;
     			return true;
     		}
@@ -678,11 +705,12 @@ public class TeleportTracker extends Tracker{
     			if(playerblock == testClimb.getBlock()) dest = dest.addVector(0,-1,0);
 
     			movementTeleportDestination = dest.scale(1);
-
     			movementTeleportDestinationSideHit = collision.sideHit;
+    			
     			return true; //really should check if the block above is passable. Maybe later.
     		} else {
-    			if (!mc.player.capabilities.allowFlying && mc.vrSettings.vrLimitedSurvivalTeleport) {return false;} //if creative, check if can hop on top.
+    			if (!mc.player.capabilities.allowFlying && mc.vrSettings.vrLimitedSurvivalTeleport) 
+    				return false; //if creative, check if can hop on top.
     		}
     	}
 
@@ -711,12 +739,10 @@ public class TeleportTracker extends Tracker{
 
     		if(emptySpotReq){
     			Vec3d dest = new Vec3d(bb.getCenter().x, hitBlock.getY() + testClimb.getBoundingBox(mc.world, hitBlock).maxY, bb.getCenter().z);
-    			float maxTeleportDist = 16.0f;		
 
-    			if (start.distanceTo(dest)  > maxTeleportDist) return false;
 
     			movementTeleportDestination = dest.scale(1);
-    			movementTeleportDistance = start.distanceTo(movementTeleportDestination);
+    			
     			return true;
     		}
 

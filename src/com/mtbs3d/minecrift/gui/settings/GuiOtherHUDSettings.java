@@ -1,4 +1,4 @@
-package com.mtbs3d.minecrift.gui;
+package com.mtbs3d.minecrift.gui.settings;
 
 import com.mtbs3d.minecrift.gui.framework.BaseGuiSettings;
 import com.mtbs3d.minecrift.gui.framework.GuiButtonEx;

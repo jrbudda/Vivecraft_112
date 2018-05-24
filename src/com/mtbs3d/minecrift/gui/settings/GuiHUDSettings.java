@@ -1,5 +1,6 @@
-package com.mtbs3d.minecrift.gui;
+package com.mtbs3d.minecrift.gui.settings;
 
+import com.mtbs3d.minecrift.gameplay.screenhandlers.GuiHandler;
 import com.mtbs3d.minecrift.gui.framework.BaseGuiSettings;
 import com.mtbs3d.minecrift.gui.framework.GuiButtonEx;
 import com.mtbs3d.minecrift.gui.framework.GuiSliderEx;
@@ -114,7 +115,7 @@ public class GuiHUDSettings extends BaseGuiSettings
                 this.guivrSettings.setOptionValue(((GuiSmallButtonEx)par1GuiButton).returnVrEnumOptions(), 1);
                 par1GuiButton.displayString = this.guivrSettings.getKeyBinding(VRSettings.VrOptions.getEnumOptions(par1GuiButton.id));
                 if(par1GuiButton.id == VrOptions.MENU_ALWAYS_FOLLOW_FACE.ordinal())
-                	mc.vrPlayer.onGuiScreenChanged(mc.currentScreen, mc.currentScreen, false);
+                	GuiHandler.onGuiScreenChanged(mc.currentScreen, mc.currentScreen, false);
             }
             else if (par1GuiButton.id == ID_GENERIC_DONE)
             {
@@ -229,10 +230,10 @@ public class GuiHUDSettings extends BaseGuiSettings
                     };
                 case AUTO_OPEN_KEYBOARD:
                     return new String[] {
-                    		"If disabled, SteamVR keyboard will only open when you",
+                    		"If disabled, the keyboard will only open when you",
                     		"click a text field, or if a text field can't lose focus.",
                     		"",
-                            "If enabled, SteamVR keyboard will open automatically",
+                            "If enabled, the keyboard will open automatically",
                             "any time a text field comes into focus. Enabling this will",
                             "cause it to open in unwanted situations with mods."
                     };

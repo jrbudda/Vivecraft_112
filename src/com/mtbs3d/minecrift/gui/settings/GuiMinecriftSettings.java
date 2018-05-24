@@ -2,8 +2,9 @@
   * Copyright 2013 Mark Browning, StellaArtois
  * Licensed under the LGPL 3.0 or later (See LICENSE.md for details)
  */
-package com.mtbs3d.minecrift.gui;
+package com.mtbs3d.minecrift.gui.settings;
 
+import com.mtbs3d.minecrift.gameplay.screenhandlers.GuiHandler;
 import com.mtbs3d.minecrift.gui.framework.BaseGuiSettings;
 import com.mtbs3d.minecrift.gui.framework.GuiButtonEx;
 import com.mtbs3d.minecrift.gui.framework.GuiEventEx;
@@ -39,7 +40,8 @@ public class GuiMinecriftSettings extends BaseGuiSettings implements GuiEventEx
                 new VROption(209,VROption.Position.POS_LEFT,   4f, VROption.ENABLED, "Locomotion Settings..."),
                 new VROption(221,VROption.Position.POS_RIGHT,   4f, VROption.ENABLED, "Interaction Settings..."),
                 new VROption(220,VROption.Position.POS_LEFT,   5f, VROption.ENABLED, "Controller Buttons..."),
-                new VROption(VRSettings.VrOptions.REVERSE_HANDS,   VROption.Position.POS_RIGHT,   5f, VROption.ENABLED, null),
+                new VROption(224,VROption.Position.POS_RIGHT,   5f, VROption.ENABLED, "Radial Menu..."),
+               // new VROption(VRSettings.VrOptions.REVERSE_HANDS,   VROption.Position.POS_RIGHT,   5f, VROption.ENABLED, null),
             };
     
     static VROption[] vrSeatedOptions = new VROption[]
@@ -176,7 +178,7 @@ public class GuiMinecriftSettings extends BaseGuiSettings implements GuiEventEx
                 par1GuiButton.displayString = this.guivrSettings.getKeyBinding(VRSettings.VrOptions.getEnumOptions(par1GuiButton.id));
 
             	if (num == VRSettings.VrOptions.PLAY_MODE_SEATED)
-            		mc.vrPlayer.onGuiScreenChanged(mc.currentScreen, mc.currentScreen, false);
+            		GuiHandler.onGuiScreenChanged(mc.currentScreen, mc.currentScreen, false);
 
             }
             else if (par1GuiButton.id == 201)
@@ -241,6 +243,11 @@ public class GuiMinecriftSettings extends BaseGuiSettings implements GuiEventEx
                 this.guivrSettings.saveOptions();
             	this.isConfirm = false;
             	this.reinit = true;
+            }
+            else if (par1GuiButton.id == 224)
+            {
+                this.guivrSettings.saveOptions();
+                this.mc.displayGuiScreen(new GuiRadialConfiguration(this,this.guivrSettings));
             }
             else if (par1GuiButton.id == 223)
             {

@@ -16,22 +16,12 @@
 +    private final Map<String, RenderPlayerVR> skinMapVR = Maps.<String, RenderPlayerVR>newHashMap();
      private final RenderPlayer playerRenderer;
 -
-+    private final RenderPlayerVR playerRendererVR;
++    private RenderPlayerVR playerRendererVR;
 +    
      /** Renders fonts */
      private FontRenderer textRenderer;
      private double renderPosX;
-@@ -240,6 +244,9 @@
-         this.playerRenderer = new RenderPlayer(this);
-         this.skinMap.put("default", this.playerRenderer);
-         this.skinMap.put("slim", new RenderPlayer(this, true));
-+        this.playerRendererVR = new RenderPlayerVR(this);
-+        this.skinMapVR.put("default", this.playerRendererVR);
-+        this.skinMapVR.put("slim", new RenderPlayerVR(this, true));
-         PlayerItemsLayer.register(this.skinMap);
- 
-         if (Reflector.RenderingRegistry_loadEntityRenderers.exists())
-@@ -271,16 +278,22 @@
+@@ -271,16 +275,27 @@
      @Nullable
      public <T extends Entity> Render<T> getEntityRenderObject(Entity entityIn)
      {
@@ -52,6 +42,11 @@
 +
 +    		if(PlayerModelController.getInstance().isTracked(entityIn.getUniqueID()))
 +    		{
++    			if (this.playerRendererVR == null) { // Needs to lazy load cause RenderGlobal
++    		        this.playerRendererVR = new RenderPlayerVR(this);
++    		        this.skinMapVR.put("default", this.playerRendererVR);
++    		        this.skinMapVR.put("slim", new RenderPlayerVR(this, true));
++    			}
 +    			RenderPlayerVR renderplayervr = this.skinMapVR.get(s);
 +    			return (Render<T>) (renderplayervr != null ? renderplayervr : this.playerRendererVR);            	
 +    		}  else 
@@ -64,7 +59,7 @@
      }
  
      public void cacheActiveRenderInfo(World worldIn, FontRenderer textRendererIn, Entity livingPlayerIn, Entity pointedEntityIn, GameSettings optionsIn, float partialTicks)
-@@ -573,8 +586,10 @@
+@@ -573,8 +588,10 @@
          return this.entityRenderMap;
      }
  

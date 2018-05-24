@@ -31,7 +31,7 @@ import java.util.UUID;
  * Created by Hendrik on 07-Aug-16.
  */
 public class PlayerModelController {
-	
+	private final Minecraft mc;
 	private Map<UUID, RotInfo> vivePlayers = new HashMap<UUID, RotInfo>();
 	private Map<UUID, RotInfo> vivePlayersLast = new HashMap<UUID, RotInfo>();
 	private Map<UUID, RotInfo> vivePlayersReceived = Collections.synchronizedMap(new HashMap<UUID, RotInfo>());
@@ -42,6 +42,10 @@ public class PlayerModelController {
 		if(instance==null)
 			instance=new PlayerModelController();
 		return instance;
+	}
+	
+	private PlayerModelController() {
+		this.mc = Minecraft.getMinecraft();
 	}
 
 	public static class RotInfo{ 
@@ -57,7 +61,9 @@ public class PlayerModelController {
 	
 	private Random rand = new Random();
 
-	public void Update(UUID uuid, byte[] hmddata, byte[] c0data, byte[] c1data){
+	public void Update(UUID uuid, byte[] hmddata, byte[] c0data, byte[] c1data, boolean localPlayer) {
+		if (!localPlayer && mc.player.getUniqueID().equals(uuid))
+			return; // Don't update local player from server packet
 	
 		Vec3d hmdpos = null, c0pos = null, c1pos = null;
 		Quaternion hmdq = null, c0q = null, c1q = null;
@@ -186,6 +192,10 @@ public class PlayerModelController {
 
 	}
 	
+	public void Update(UUID uuid, byte[] hmddata, byte[] c0data, byte[] c1data) {
+		Update(uuid, hmddata, c0data, c1data, false);
+	}
+	
 	public void tick() {
 		for (Map.Entry<UUID, RotInfo> entry : vivePlayers.entrySet()) {
 			vivePlayersLast.put(entry.getKey(), entry.getValue());
@@ -215,7 +225,7 @@ public class PlayerModelController {
 	}
 	
 	public RotInfo getRotationsForPlayer(UUID uuid){
-		if (debug) uuid = Minecraft.getMinecraft().player.getUniqueID();
+		if (debug) uuid = mc.player.getUniqueID();
 		RotInfo rot = vivePlayers.get(uuid);
 		if (rot != null && vivePlayersLast.containsKey(uuid)) {
 			RotInfo rotLast = vivePlayersLast.get(uuid);
@@ -244,7 +254,7 @@ public class PlayerModelController {
 	 * */
 	public RotInfo getRotationFromEntity(EntityPlayer player){
 		UUID playerId = player.getGameProfile().getId();
-		if (Minecraft.getMinecraft().player.getUniqueID().equals(playerId)) {
+		if (mc.player.getUniqueID().equals(playerId)) {
 			VRData data=Minecraft.getMinecraft().vrPlayer.vrdata_room_pre;
 			RotInfo rotInfo=new RotInfo();
 
@@ -255,7 +265,7 @@ public class PlayerModelController {
 			rotInfo.headQuat=quatHmd;
 			rotInfo.leftArmQuat=quatLeft;
 			rotInfo.rightArmQuat=quatRight;
-			rotInfo.seated=Minecraft.getMinecraft().vrSettings.seated;
+			rotInfo.seated=mc.vrSettings.seated;
 
 			rotInfo.leftArmPos = MCOpenVR.controllerHistory[1].latest();
 			rotInfo.rightArmPos = MCOpenVR.controllerHistory[0].latest();

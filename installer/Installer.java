@@ -60,9 +60,9 @@ public class Installer extends JPanel  implements PropertyChangeListener
 	private static final String OF_LIB_PATH       = "libraries/optifine/OptiFine/";
     private static final String OF_FILE_NAME      = "1.12.2_HD_U_D3";
     private static final String OF_JSON_NAME      = "1.12.2_HD_U_D3";
-    private static final String OF_MD5            = "dd67105d168dd74c8aba0c41ae5e6e53";
+    private static final String OF_MD5            = "374a1e03b490afc539dabc04b29b49e6";
     private static final String OF_VERSION_EXT    = ".jar";
-    private static String FORGE_VERSION     = "14.23.3.2698";
+    private static String FORGE_VERSION     = "14.23.3.2702";
 	/* END OF DO NOT RENAME */
 
 	private static final String DEFAULT_PROFILE_NAME = "ViveCraft " + MINECRAFT_VERSION;

@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.common.util;
+package com.mtbs3d.minecrift.utils;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.world.Teleporter;
@@ -33,7 +33,7 @@ import net.minecraft.world.WorldProvider;
  * See the {@link net.minecraft.world.Teleporter} class, which has
  * been patched to implement this interface, for a vanilla example.
  */
-public interface ITeleporter
+public interface ITeleporterDummy
 {
     /**
      * Called to handle placing the entity in the new world.
@@ -55,6 +55,6 @@ public interface ITeleporter
     // used internally to handle vanilla hardcoding
     default boolean isVanilla()
     {
-        return getClass() == Teleporter.class;
+        return true; //whatever
     }
 }

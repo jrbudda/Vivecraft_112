@@ -5,4 +5,6 @@ public class ObfNames {
 	public static final String GUICONTAINERCREATIVE = "bmp";
 	public static final String GLSTATEMANAGER = "bus";
 	public static final String SLOT = "agr";
+	public static final String ENTITY = "vg";
+	public static final String ENTITYPLAYERMP = "oq";
 }

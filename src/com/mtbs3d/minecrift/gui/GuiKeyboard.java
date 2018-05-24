@@ -1,23 +1,27 @@
 package com.mtbs3d.minecrift.gui;
 
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
 
 import com.mtbs3d.minecrift.gui.framework.GuiSmallButtonEx;
+import com.mtbs3d.minecrift.gui.framework.TwoHandedGuiScreen;
 import com.mtbs3d.minecrift.utils.InputInjector;
 import com.mtbs3d.minecrift.utils.KeyboardSimulator;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiLabel;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.src.Reflector;
 
-public class GuiKeyboard extends GuiScreen
+public class GuiKeyboard extends TwoHandedGuiScreen
 {
 
-	public float cursorX, cursorY;
 	private boolean isShift = false;
 
 	/**
@@ -57,10 +61,11 @@ public class GuiKeyboard extends GuiScreen
 				this.buttonList.add(butt);
 			}
 		}
-		this.buttonList.add(new GuiButton(201, margin, margin + rows * (20+spacing), 30, 20, "Shift"));
+		this.buttonList.add(new GuiButton(201, margin, margin + rows * (20 + spacing), 30, 20, "Shift"));
 		this.buttonList.add(new GuiButton(199, margin + 4 * (bwidth+spacing), margin + rows * (20+spacing), 5 * (bwidth+spacing), 20, " "));
 		this.buttonList.add(new GuiButton(202, cols * (bwidth+spacing) + margin, margin , 35 , 20, "BKSP"));
 		this.buttonList.add(new GuiButton(203, cols * (bwidth+spacing) + margin, margin + 2*(20 + spacing) , 35 , 20, "ENTER"));
+		this.buttonList.add(new GuiButton(204, 0, margin + (20 + spacing), 30, 20, "TAB"));
 
 	}
 
@@ -77,15 +82,18 @@ public class GuiKeyboard extends GuiScreen
 				for (char ch : c.toCharArray()) {
 					int[] codes = KeyboardSimulator.getLWJGLCodes(ch);
 					int code = codes.length > 0 ? codes[codes.length - 1] : 0;
-					if (InputInjector.isSupported()) InputInjector.typeKey(code, ch);
-					else mc.currentScreen.keyTypedPublic(ch, code);
+					if (InputInjector.isSupported()) 
+						InputInjector.typeKey(code, ch);
+					else 
+						mc.currentScreen.keyTypedPublic(ch, code);
 					break;
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} else {
-			KeyboardSimulator.type(c); //holy shit it works.
+			if(Display.isActive())
+				KeyboardSimulator.type(c); //holy shit it works.
 		}
 	}
 	
@@ -109,6 +117,9 @@ public class GuiKeyboard extends GuiScreen
 				else if(par1GuiButton.id == 203) {
 					pressKey(Character.toString((char) 13));
 				}
+				else if(par1GuiButton.id == 204) {
+					pressKey(Character.toString((char) 9));
+				}
 			}
 		}
 	}
@@ -119,110 +130,13 @@ public class GuiKeyboard extends GuiScreen
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
     	this.drawDefaultBackground();
-    	this.drawCenteredString(this.fontRenderer, "Keyboard", this.width / 2, 0, 16777215);
-        int mX = (int) (cursorX * this.width / this.mc.displayWidth);
-        int mY = (int) (cursorY * this.height / this.mc.displayHeight);
-    	super.drawScreen(mX, mY, partialTicks);
-    	this.mc.ingameGUI.drawMouseMenuQuad(mX, mY);
+    	this.drawCenteredString(this.fontRenderer, "Keyboard", this.width / 2, 2, 16777215);
+    	
+    	if(!Display.isActive() && (mc.currentScreen == null || mc.vrSettings.alwaysSimulateKeyboard))
+    		this.drawCenteredString(this.fontRenderer, "Warning: Desktop window needs focus!", this.width / 2, this.height - 25, 13777215);
 
-    }
-    
-	//    @Override
-	//    protected String[] getTooltipLines(String displayString, int buttonId)
-	//    {
-	//        VRSettings.VrOptions e = VRSettings.VrOptions.getEnumOptions(buttonId);
-	//        if( e != null )
-	//            switch(e)
-	//            {
-	//                case HUD_OPACITY:
-	//                    return new String[] {
-	//                            "How transparent to draw the in-game HUD and UI",
-	//                    };
-	//                case HUD_SCALE:
-	//                return new String[] {
-	//                        "Relative size HUD takes up in field-of-view",
-	//                        "  The units are just relative, not in degrees",
-	//                        "  or a fraction of FOV or anything"
-	//                };
-	//                case HUD_PITCH:
-	//                    return new String[] {
-	//                            "The vertical offset of the HUD, in degrees.",
-	//                            "  Negative values are down, positive up."
-	//                    };
-	//                case HUD_YAW:
-	//                    return new String[] {
-	//                            "The horizontal offset of the HUD, in degrees.",
-	//                            "  Negative values are to the left, positive to",
-	//                            "  the right."
-	//                    };
-	//                case HUD_DISTANCE:
-	//                    return new String[] {
-	//                            "Distance the floating HUD is drawn in front of your body",
-	//                            "  The relative size of the HUD is unchanged by this",
-	//                            "  Distance is in meters (though isn't obstructed by blocks)"
-	//                    };
-	//                case HUD_OCCLUSION:
-	//                    return new String[] {
-	//                            "Specifies whether the HUD is occluded by closer objects.",
-	//                            "  ON:  The HUD will be hidden by closer objects. May",
-	//                            "       be hidden completely in confined environments!",
-	//                            "  OFF: The HUD is always visible. Stereo depth issues",
-	//                            "       may be noticable."
-	//                    };
-	//                case MENU_ALWAYS_FOLLOW_FACE:
-	//                    return new String[] {
-	//                            "Specifies when the main menu follows your look direction.",
-	//                            "  SEATED: The main menu will only follow in seated mode.",
-	//                            "  ALWAYS The main menu will always follow."
-	//                    };
-	//                case RENDER_MENU_BACKGROUND:
-	//                    return new String[] {
-	//                            "Specifies whether the in game GUI menus have a ",
-	//                            "semi-transparent background or not.",
-	//                            "  ON:  Semi-transparent background on in-game menus.",
-	//                            "  OFF: No background on in-game menus."
-	//                    };
-	//                case HUD_LOCK_TO:
-	//                    return new String[] {
-	//                            "Specifies to which orientation the HUD is locked to.",
-	//                            "  HAND:  The HUD will appear just above your off-hand",
-	//                            "  HEAD:  The HUD will always appear in your field of view",
-	//                            "straight ahead",
-	//                            "  WRIST:  The HUD will appear on the inside of your off-hand",
-	//                            "arm. It will 'pop out' when looked at."
-	//                    };
-	//                case OTHER_HUD_SETTINGS:
-	//                    return new String[] {
-	//                            "Configure Crosshair and overlay settings."
-	//                    };
-	//                case TOUCH_HOTBAR:
-	//                    return new String[] {
-	//                            "If enabled allow you to touch the hotbar with",
-	//                            "your main hand to select an item."
-	//                    };
-	//                case AUTO_OPEN_KEYBOARD:
-	//                    return new String[] {
-	//                    		"If disabled, SteamVR keyboard will only open when you",
-	//                    		"click a text field, or if a text field can't lose focus.",
-	//                    		"",
-	//                            "If enabled, SteamVR keyboard will open automatically",
-	//                            "any time a text field comes into focus. Enabling this will",
-	//                            "cause it to open in unwanted situations with mods."
-	//                    };
-	//                default:
-	//                    return null;
-	//            }
-	//        else
-	//            switch(buttonId)
-	//            {
-	//                case 300:
-	//                    return new String[] {
-	//                            "Configure which controller buttons perform",
-	//                            "  which mouse or keyboard function while ",
-	//                            "  a GUI is visible."
-	//                    };
-	//                default:
-	//                    return null;
-	//            }
-	//    }
+    	super.drawScreen(0, 0, partialTicks);
+
+    }    
+
 }

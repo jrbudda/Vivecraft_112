@@ -141,7 +141,7 @@ public class NetworkHelper {
 			Minecraft.getMinecraft().getConnection().sendPacket(pack);
 		}
 		
-		PlayerModelController.getInstance().Update(Minecraft.getMinecraft().player.getUniqueID(), a, b, c);
+		PlayerModelController.getInstance().Update(Minecraft.getMinecraft().player.getUniqueID(), a, b, c, true);
 		
 	}
 	

@@ -7,13 +7,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiChat;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.inventory.GuiScreenHorseInventory;
-import net.minecraft.launchwrapper.IClassTransformer;
-import net.minecraft.launchwrapper.LaunchClassLoader;
-
 import com.google.common.base.Throwables;
 import com.mtbs3d.minecrift.asm.VivecraftASMTransformer;
 import com.mtbs3d.minecrift.tweaker.MinecriftClassTransformer;
@@ -21,12 +14,16 @@ import com.mtbs3d.minecrift.tweaker.MinecriftClassTransformer.Stage;
 //import com.mtbs3d.minecrift.tweaker.MinecriftForgeClassTransformer;
 //import com.mtbs3d.minecrift.tweaker.MinecriftForgeLateClassTransformer;
 
+import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraft.launchwrapper.LaunchClassLoader;
+
 public class VivecraftMain
 {
 	private static final String[] encapsulatedTransformers = new String[]{
 	};
 	private static final String[] removedTransformers = new String[]{
-		"guichaguri.betterfps.transformers.PatcherTransformer"
+		"guichaguri.betterfps.transformers.PatcherTransformer",
+		"sampler.asm.Transformer"
 	};
 	
 	public static void main(String[] p_main_0_)
@@ -71,7 +68,7 @@ public class VivecraftMain
 				}
 			}
 
-			transformers.add(2, new VivecraftASMTransformer());
+			transformers.add(2, new VivecraftASMTransformer(true));
 			transformers.add(2, new MinecriftClassTransformer(Stage.MAIN, null));
 			int forgeObfIndex = 0;
 			for (int i = 0; i < transformers.size(); i++) {
@@ -114,7 +111,6 @@ public class VivecraftMain
 		}
 
 		try {
-			GuiScreen v = new GuiChat();
 			final String launchTarget = "net.minecraft.client.main.Main";
        	 	final Class<?> clazz = Class.forName(launchTarget, false, load);
          	final Method mainMethod = clazz.getMethod("main", String[].class);

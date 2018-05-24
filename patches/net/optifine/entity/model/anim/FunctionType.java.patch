@@ -1,0 +1,20 @@
+--- a/net/optifine/entity/model/anim/FunctionType.java
++++ b/net/optifine/entity/model/anim/FunctionType.java
+@@ -72,14 +72,17 @@
+ 
+     private FunctionType(ExpressionType expressionType, String name, ExpressionType[] parameterTypes)
+     {
++    	this(0, expressionType, name, parameterTypes);
+     }
+ 
+     private FunctionType(int precedence, ExpressionType expressionType, String name, ExpressionType[] parameterTypes)
+     {
++        this(precedence, expressionType, name, new Parameters(parameterTypes));
+     }
+ 
+     private FunctionType(ExpressionType expressionType, String name, IParameters parameters)
+     {
++        this(0, expressionType, name, parameters);
+     }
+ 
+     private FunctionType(int precedence, ExpressionType expressionType, String name, IParameters parameters)

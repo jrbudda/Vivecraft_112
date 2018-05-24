@@ -7,15 +7,22 @@ import org.objectweb.asm.Type;
 
 import com.mtbs3d.minecrift.asm.handler.*;
 
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.launchwrapper.IClassTransformer;
 
 public class VivecraftASMTransformer implements IClassTransformer {
-	private static final List<ASMClassHandler> asmHandlers = new ArrayList<ASMClassHandler>();
-	static {
+	private final List<ASMClassHandler> asmHandlers = new ArrayList<ASMClassHandler>();
+	
+	public VivecraftASMTransformer() {
+		this(false);
+	}
+	
+	public VivecraftASMTransformer(boolean forge) {
 		asmHandlers.add(new ASMHandlerGuiContainer());
 		asmHandlers.add(new ASMHandlerGuiContainerCreative());
 		asmHandlers.add(new ASMHandlerGuiIngameForge());
+		if (forge) {
+			asmHandlers.add(new ASMHandlerFixITeleporter());
+		}
 	}
 
 	@Override

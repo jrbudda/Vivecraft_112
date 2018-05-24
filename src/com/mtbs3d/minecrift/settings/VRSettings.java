@@ -94,7 +94,9 @@ public class VRSettings
     //Jrbudda's Options
 
     public String[] vrQuickCommands;
-
+    public String[] vrRadialItems;
+    public String[] vrRadialItemsAlt;
+    
     //Control
     public boolean vrReverseHands = false;
     public boolean vrReverseShootingEye = false;
@@ -130,6 +132,11 @@ public class VRSettings
     public int vrFreeMoveMode = this.FREEMOVE_CONTROLLER;
     public boolean vrAllowLocoModeSwotch = true;
     public boolean vrLimitedSurvivalTeleport = true;
+   
+    public int vrTeleportUpLimit = 1;
+    public int vrTeleportDownLimit = 4;
+    public int vrTeleportHorizLimit = 16;
+
     public boolean seated = false;
     public boolean seatedUseHMD = false;
     public float jumpThreshold=0.05f;
@@ -200,6 +207,7 @@ public class VRSettings
 	public boolean seatedHudAltMode = true;
 	public boolean autoOpenKeyboard = false;
 	public int forceHardwareDetection = 0; // 0 = off, 1 = vive, 2 = oculus
+	public boolean radialModeHold = true;
     //
      	
     private Minecraft mc;
@@ -671,6 +679,19 @@ public class VRSettings
                         this.mc.gameSettings.hideGUI = optionTokens[1].equals("true");
                     }
                     
+                    if(optionTokens[0].equals("teleportLimitUp")){
+                        this.vrTeleportUpLimit = Integer.parseInt(optionTokens[1]);
+                    }
+                    
+                    if(optionTokens[0].equals("teleportLimitDown")){
+                        this.vrTeleportDownLimit = Integer.parseInt(optionTokens[1]);
+                    }
+                    
+                    if(optionTokens[0].equals("teleportLimitHoriz")){
+                        this.vrTeleportHorizLimit = Integer.parseInt(optionTokens[1]);
+                    }
+                    
+                    
                     if(optionTokens[0].equals("keyboardKeys")){
                     	String value = optionTokens[1];
                     	for (int i = 2; i < optionTokens.length;i++) {
@@ -722,17 +743,34 @@ public class VRSettings
                     }
 
                     if(optionTokens[0].startsWith("QUICKCOMMAND_")){
-                    	 String[] pts = optionTokens[0].split("_");
-                    	 int i = Integer.parseInt(pts[1]);
-                    	 if (optionTokens.length == 1) 
-                        	 vrQuickCommands[i] = "";
-                    	 else
-                        	 vrQuickCommands[i] = optionTokens[1];
-
+                    	String[] pts = optionTokens[0].split("_");
+                    	int i = Integer.parseInt(pts[1]);
+                    	if (optionTokens.length == 1) 
+                    		vrQuickCommands[i] = "";
+                    	else
+                    		vrQuickCommands[i] = optionTokens[1];
                     }
                     
+                    if(optionTokens[0].startsWith("RADIAL")){
+                    	String[] pts = optionTokens[0].split("_");
+                    	int i = Integer.parseInt(pts[1]);
+                    	if (optionTokens.length == 1) 
+                    		vrRadialItems[i] = "";
+                    	else
+                    		vrRadialItems[i] = optionTokens[1];
+                    }
+                    
+                    if(optionTokens[0].startsWith("RADIALALT")){
+                    	String[] pts = optionTokens[0].split("_");
+                    	int i = Integer.parseInt(pts[1]);
+                    	if (optionTokens.length == 1) 
+                    		vrRadialItemsAlt[i] = "";
+                    	else
+                    		vrRadialItemsAlt[i] = optionTokens[1];
+                    }
+
                     //END JRBUDDA
-         
+
                 }
                 catch (Exception var7)
                 {
@@ -845,19 +883,19 @@ public class VRSettings
                 }
                 return var4 + this.mixedRealityKeyColor.getRed() + " " + this.mixedRealityKeyColor.getGreen() + " " + this.mixedRealityKeyColor.getBlue();
              case MIXED_REALITY_RENDER_HANDS:
-                return this.mixedRealityRenderHands ? var4 + "YES" : var4 + "NO";
+                return this.mixedRealityRenderHands ? var4 + "ON" : var4 + "OFF";
             case MIXED_REALITY_UNITY_LIKE:
                  return this.mixedRealityUnityLike ? var4 + "Unity" : var4 + "Side-by-Side";
             case MIXED_REALITY_UNDISTORTED:
-                return this.mixedRealityMRPlusUndistorted ? var4 + "YES" : var4 + "NO";
+                return this.mixedRealityMRPlusUndistorted ? var4 + "ON" : var4 + "OFF";
             case MIXED_REALITY_ALPHA_MASK:
-                return this.mixedRealityAlphaMask ? var4 + "YES" : var4 + "NO";
+                return this.mixedRealityAlphaMask ? var4 + "ON" : var4 + "OFF";
             case MIXED_REALITY_FOV:
             	return var4 + String.format("%.0f\u00B0", this.mc.vrSettings.mixedRealityFov);
             case INSIDE_BLOCK_SOLID_COLOR:
             	return this.insideBlockSolidColor ? var4 + "Solid Color" : var4 + "Texture";
             case WALK_UP_BLOCKS:
-                return this.walkUpBlocks ? var4 + "YES" : var4 + "NO";
+                return this.walkUpBlocks ? var4 + "ON" : var4 + "OFF";
  	        case HUD_SCALE:
 	            return var4 + String.format("%.2f", this.hudScale);
             case HUD_LOCK_TO:
@@ -1002,11 +1040,13 @@ public class VRSettings
             case FOV_REDUCTION:
                 return this.useFOVReduction ? var4 + "ON" : var4 + "OFF";
             case AUTO_OPEN_KEYBOARD:
-                return this.autoOpenKeyboard ? var4 + "YES" : var4 + "NO";
+                return this.autoOpenKeyboard ? var4 + "ON" : var4 + "OFF";
             case BACKPACK_SWITCH:
-                return this.backpackSwitching ? var4 + "YES" : var4 + "NO";
+                return this.backpackSwitching ? var4 + "ON" : var4 + "OFF";
             case ANALOG_MOVEMENT:
-                return this.analogMovement ? var4 + "YES" : var4 + "NO";
+                return this.analogMovement ? var4 + "ON" : var4 + "OFF";
+            case RADIAL_MODE_HOLD:
+                return this.radialModeHold ? var4 + "HOLD" : var4 + "PRESS";
             case BOW_MODE:
             	if(this.bowMode == BOW_MODE_OFF)
             		return var4 + " OFF";
@@ -1015,6 +1055,13 @@ public class VRSettings
             	else if (this.bowMode == BOW_MODE_VANILLA)
             		return var4 + "VANILLA";
             	else return var4 + " wtf?";
+            case TELEPORT_UP_LIMIT:
+	            return var4 +  (this.vrTeleportUpLimit > 0 ? this.vrTeleportUpLimit+ " Blocks" :" OFF");
+            case TELEPORT_DOWN_LIMIT:
+	            return var4 +  (this.vrTeleportDownLimit > 0 ? this.vrTeleportDownLimit+ " Blocks" :" OFF");
+            case TELEPORT_HORIZ_LIMIT:
+	            return var4 +  (this.vrTeleportHorizLimit > 0 ? this.vrTeleportHorizLimit+ " Blocks" :" OFF");
+
  	        default:
 	        	return "";
         }
@@ -1085,6 +1132,13 @@ public class VRSettings
             	return this.analogDeadzone;
             case BOW_MODE:
             	return this.bowMode;
+            case TELEPORT_UP_LIMIT:          	
+            	return this.vrTeleportUpLimit;
+            case TELEPORT_DOWN_LIMIT:          	
+            	return this.vrTeleportDownLimit;
+            case TELEPORT_HORIZ_LIMIT:          	
+            	return this.vrTeleportHorizLimit;
+
             // VIVE END - new options
             default:
                 return 0.0f;
@@ -1302,6 +1356,9 @@ public class VRSettings
             	this.bowMode++;
             	if(this.bowMode>2) this.bowMode = 0;
             	break;
+            case RADIAL_MODE_HOLD:
+            	this.radialModeHold = !this.radialModeHold;
+            	break;
             default:
             	break;
     	}
@@ -1391,6 +1448,15 @@ public class VRSettings
             	break;
             case ANALOG_DEADZONE:
             	this.analogDeadzone = par2;
+            	break;
+            case TELEPORT_DOWN_LIMIT:
+            	this.vrTeleportDownLimit = (int) par2;
+            	break;
+            case TELEPORT_UP_LIMIT:
+            	this.vrTeleportUpLimit = (int) par2;
+            	break;
+            case TELEPORT_HORIZ_LIMIT:
+            	this.vrTeleportHorizLimit = (int) par2;
             	break;
             	// VIVE END - new options
             default:
@@ -1527,6 +1593,17 @@ public class VRSettings
             	var5.println("QUICKCOMMAND_" + i + ":" + vrQuickCommands[i]);
             }
    
+            if (vrRadialItems == null) 
+            	vrRadialItems = getRadialItemsDefault(); //defaults           
+            for (int i = 0; i < 8 ; i++){
+            	var5.println("RADIAL_" + i + ":" + vrRadialItems[i]);
+            }
+            
+            if (vrRadialItemsAlt == null) 
+            	vrRadialItemsAlt = new String[8]; //defaults           
+            for (int i = 0; i < 8 ; i++){
+            	var5.println("RADIALALT_" + i + ":" + vrRadialItemsAlt[i]);
+            }
            
             if (buttonMappings == null) resetBindings(); //defaults
               
@@ -1626,6 +1703,7 @@ public class VRSettings
         RENDER_FULL_FIRST_PERSON_MODEL_MODE("First Person Model", false, true),
         RENDER_PLAYER_OFFSET("View Body Offset", true, false),
         AUTO_OPEN_KEYBOARD("Always Open Keyboard", false, true),
+        RADIAL_MODE_HOLD("Radial Menu Mode", false, true),
 
 
         //HMD/render
@@ -1701,8 +1779,11 @@ public class VRSettings
         SEATED_HUD_XHAIR("HUD Follows",false,true), 
         BACKPACK_SWITCH("Backpack Switching",false,true),
         ANALOG_MOVEMENT("Analog Movement",false,true), 
-        BOW_MODE("Roomscale Bow Mode", false, true); 
-
+        BOW_MODE("Roomscale Bow Mode", false, true),
+        TELEPORT_DOWN_LIMIT("Teleport Down Limit", true, false ),
+        TELEPORT_UP_LIMIT("Teleport Up Limit", true, false ),
+        TELEPORT_HORIZ_LIMIT("Teleport Distance Limit", true, false );
+    	
 //        ANISOTROPIC_FILTERING("options.anisotropicFiltering", true, false, 1.0F, 16.0F, 0.0F)
 //                {
 //                    private static final String __OBFID = "CL_00000654";
@@ -1969,6 +2050,20 @@ public class VRSettings
 
     	return out;
     	
+    }
+    
+    public String[] getRadialItemsDefault(){  	
+    	String[] out = new String[8];
+    	out[0] = "key.drop";
+    	out[1] = "key.chat";
+    	out[2] = "Rotate Right";
+    	out[3] = "";
+    	out[4] = "";
+    	out[5] = "";
+    	out[6] = "Rotate Left";
+    	out[7] = "Quick Torch";
+
+    	return out;   	
     }
 
     public Map<String, VRButtonMapping> getBindingsDefaults() {

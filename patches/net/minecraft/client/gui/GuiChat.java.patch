@@ -10,7 +10,7 @@
  import net.minecraft.client.Minecraft;
  import net.minecraft.util.ITabCompleter;
  import net.minecraft.util.TabCompleter;
-@@ -10,11 +12,14 @@
+@@ -10,11 +12,15 @@
  import net.minecraft.util.math.RayTraceResult;
  import net.minecraft.util.text.ITextComponent;
  import net.minecraft.util.text.TextComponentString;
@@ -20,12 +20,13 @@
  import org.lwjgl.input.Keyboard;
  import org.lwjgl.input.Mouse;
  
++import com.mtbs3d.minecrift.gameplay.screenhandlers.KeyboardHandler;
 +import com.mtbs3d.minecrift.provider.MCOpenVR;
 +
  public class GuiChat extends GuiScreen implements ITabCompleter
  {
      private static final Logger LOGGER = LogManager.getLogger();
-@@ -55,9 +60,9 @@
+@@ -55,9 +61,9 @@
          this.inputField = new GuiTextField(0, this.fontRenderer, 4, this.height - 12, this.width - 4, 12);
          this.inputField.setMaxStringLength(256);
          this.inputField.setEnableBackgroundDrawing(false);
@@ -36,13 +37,13 @@
          this.tabCompleter = new GuiChat.ChatTabCompleter(this.inputField);
      }
  
-@@ -131,7 +136,12 @@
+@@ -131,7 +137,12 @@
                  this.sendChatMessage(s);
              }
  
 -            this.mc.displayGuiScreen((GuiScreen)null);
 +            // VIVE - don't close chat if using SteamVR keyboard
-+            if (MCOpenVR.keyboardShowing) {
++            if (KeyboardHandler.Showing) {
 +            	this.inputField.setText("");
 +            } else {
 +            	this.mc.displayGuiScreen((GuiScreen)null);
