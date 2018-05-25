@@ -120,6 +120,7 @@ public class VRSettings
 	public int bowMode = BOW_MODE_ON;
 	public String keyboardKeys =  "`1234567890-=qwertyuiop[]\\asdfghjkl;\':\"zxcvbnm,./?<>";
 	public String keyboardKeysShift ="~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL;\':\"ZXCVBNM,./?<>";
+	public boolean firstRun = true;
 	//
 
     //Locomotion
@@ -689,6 +690,10 @@ public class VRSettings
                     
                     if(optionTokens[0].equals("teleportLimitHoriz")){
                         this.vrTeleportHorizLimit = Integer.parseInt(optionTokens[1]);
+                    }
+
+                    if(optionTokens[0].equals("firstRun")){
+                        this.firstRun = optionTokens[1].equals("true");
                     }
                     
                     
@@ -1586,6 +1591,7 @@ public class VRSettings
             var5.println("bowMode:" + this.bowMode);
             var5.println("keyboardKeys:" + (this.keyboardKeys));
             var5.println("keyboardKeysShift:" + (this.keyboardKeysShift));
+            var5.println("firstRun:" + this.firstRun);
             
             if (vrQuickCommands == null) vrQuickCommands = getQuickCommandsDefaults(); //defaults
             
