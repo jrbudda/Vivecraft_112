@@ -1,15 +1,6 @@
 package com.mtbs3d.minecrift.utils;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -19,10 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Formatter;
-import java.util.List;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -45,37 +33,6 @@ import net.minecraft.util.math.Vec3d;
 
 public class Utils
 {
-	public static Field getDeclaredField(Class clazz, String unObfuscatedName, String obfuscatedName, String srgName)
-	{
-		Field field = null;
-		String s = clazz.getName();
-
-		try
-		{
-			field = clazz.getDeclaredField(unObfuscatedName);
-		}
-		catch (NoSuchFieldException e)
-		{
-			try
-			{
-				field = clazz.getDeclaredField(obfuscatedName);
-			}
-			catch (NoSuchFieldException e1)
-			{
-				try
-				{
-					field = clazz.getDeclaredField(srgName);
-				}
-				catch (NoSuchFieldException e2)
-				{
-					System.out.println("[Vivecraft] WARNING: could not reflect field :" + unObfuscatedName + "," + srgName + "," + obfuscatedName + " in " + clazz.toString());
-				};
-			};
-		}
-
-		return field;
-	}
-	
   	public static Vector3f convertVector(de.fruitfly.ovr.structs.Vector3f vector) {
 		return new Vector3f(vector.x, vector.y, vector.z);
 	}
@@ -476,7 +433,7 @@ public class Utils
 		in.close();
 		return out.toByteArray();
 	}
-	
+
 	public static Vec3d convertToVec3d(Vector3 vector) {
 		return new Vec3d(vector.getX(), vector.getY(), vector.getZ());
 	}

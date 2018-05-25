@@ -333,12 +333,12 @@ public class OpenVRPlayer
 				Entity e = mc.player.getRidingEntity();		
 				end = e.rotationYaw;
 
-				if (e instanceof AbstractHorse) {
+				if (e instanceof AbstractHorse && !mc.horseTracker.isActive(mc.player)) {
 					AbstractHorse el = (AbstractHorse) e;
 					end = el.renderYawOffset;
-					//if (el.canBeSteered() && el.isHorseSaddled()){
-					//	return;
-					//}
+					if (el.canBeSteered() && el.isHorseSaddled()){
+						return;
+					}
 				}else if (e instanceof EntityLiving) {
 					EntityLiving el = (EntityLiving) e; //this is just pigs in vanilla
 					end = el.renderYawOffset;
@@ -485,8 +485,8 @@ public class OpenVRPlayer
 			Entity e = mc.player.getRidingEntity();		
 			if (e instanceof AbstractHorse) {
 				AbstractHorse el = (AbstractHorse) e;
-				if (el.canBeSteered() && el.isHorseSaddled()){
-					//  el.renderYawOffset = vrdata_world_pre.getBodyYaw();
+				if (el.canBeSteered() && el.isHorseSaddled() && !mc.horseTracker.isActive((EntityPlayerSP)mc.player)){
+					  el.renderYawOffset = vrdata_world_pre.getBodyYaw();
 				}
 			}else if (e instanceof EntityLiving) {
 				EntityLiving el = (EntityLiving) e; //this is just pigs in vanilla

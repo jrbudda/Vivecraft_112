@@ -289,7 +289,7 @@
 +	 * The minecriftVerString will be automatically updated by the build scripts, do not modify here.
 +	 * Modify minecriftversion.py in root minecrift dir.
 +	 */
-+    public final String minecriftVerString = "Vivecraft 1.12.2 jrbudda-7-RC6";
++    public final String minecriftVerString = "Vivecraft 1.12.2 jrbudda-7";
 +	/* end version */
 +	/** END MINECRIFT */
 +    
@@ -1111,6 +1111,15 @@
      {
          if (this.mcProfiler.profilingEnabled)
          {
+@@ -1432,7 +1960,7 @@
+             GlStateManager.matrixMode(5889);
+             GlStateManager.enableColorMaterial();
+             GlStateManager.loadIdentity();
+-            GlStateManager.ortho(0.0D, (double)this.displayWidth, (double)this.displayHeight, 0.0D, 1000.0D, 3000.0D);
++            GlStateManager.ortho(displayWidth/2, (double)this.displayWidth, (double)this.displayHeight, dispLastHeight/3, 1000.0D, 3000.0D);
+             GlStateManager.matrixMode(5888);
+             GlStateManager.loadIdentity();
+             GlStateManager.translate(0.0F, 0.0F, -2000.0F);
 @@ -1559,7 +2087,8 @@
                  }
  

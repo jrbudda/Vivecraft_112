@@ -119,13 +119,11 @@ public class GuiRadial extends TwoHandedGuiScreen
 		{
 			if (par1GuiButton.id < 200 )
 			{
-				KeyBinding b = null;
-	    		for (KeyBinding kb: mc.gameSettings.keyBindings) {
-					if(kb.getKeyDescription().equalsIgnoreCase(arr[par1GuiButton.id]))
-						b = kb;				
+				VRButtonMapping vb = mc.vrSettings.buttonMappings.get(arr[par1GuiButton.id]);
+				if(vb!=null) {
+					vb.press();
+					vb.unpress();
 				}
-				if(b!=null)
-					VRButtonMapping.pressKey(b);
 			} else {
 				if(par1GuiButton.id == 201) {
 					setShift(!this.isShift);

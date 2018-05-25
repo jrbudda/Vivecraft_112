@@ -8,6 +8,7 @@ import com.mtbs3d.minecrift.utils.Vector3;
 
 import jopenvr.VRControllerAxis_t;
 import jopenvr.VRControllerState_t;
+import net.minecraft.client.Minecraft;
 
 public abstract class TrackedController {
 	protected VRControllerState_t.ByReference state;
@@ -63,6 +64,7 @@ public abstract class TrackedController {
 	}
 
 	public void triggerHapticPulse(int duration) {
+		if(Minecraft.getMinecraft().vrSettings.seated) return;
 		if (deviceIndex == -1) return;
 		if (duration < 0) return;
 		if (duration > 3999) duration = 3999;

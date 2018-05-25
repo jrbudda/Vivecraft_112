@@ -24,6 +24,7 @@ public class HorseTracker extends Tracker {
 
 	@Override
 	public boolean isActive(EntityPlayerSP p) {
+		if(true) return false;
 		if (Minecraft.getMinecraft().vrSettings.seated)
 			return false;
 		if (p == null || p.isDead)

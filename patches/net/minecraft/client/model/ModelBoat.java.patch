@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/model/ModelBoat.java
 +++ b/net/minecraft/client/model/ModelBoat.java
-@@ -1,114 +1,179 @@
+@@ -1,114 +1,175 @@
  package net.minecraft.client.model;
  
 +import com.mtbs3d.minecrift.gameplay.OpenVRPlayer;
@@ -223,6 +223,7 @@
 +
 +		Vec3d rArm = null;
 +		Vec3d lArm = null;
++		
 +		if (boat.getControllingPassenger() instanceof EntityPlayer) {
 +			UUID playerId = ((EntityPlayer) boat.getControllingPassenger()).getGameProfile().getId();
 +			if (Minecraft.getMinecraft().player.getUniqueID().equals(playerId)) {
@@ -231,19 +232,16 @@
 +			} else {
 +				PlayerModelController.RotInfo rotInfo = PlayerModelController.getInstance().getRotationsForPlayer(playerId);
 +				if (rotInfo != null) {
-+					//TODO get room origin
 +					rArm = rotInfo.rightArmPos;
 +					lArm = rotInfo.leftArmPos;
 +				}
 +			}
-+
 +		}
 +
-+		if (rArm != null && lArm != null) {
-+			Debug debug=new Debug(boat.getPositionVector());
++		if (rArm != null && lArm != null && Minecraft.getMinecraft().rowTracker.isActive(Minecraft.getMinecraft().player)) {
++			//Debug debug=new Debug(boat.getPositionVector());
 +			//Attachment point converted from Model coordinates to boat-relative World coordinates
 +			Vec3d attachmentPoint = new Vec3d(paddles[paddle].rotationPointZ * scale, (paddles[paddle].rotationPointY + 15) * scale, paddles[paddle].rotationPointX * scale);
-+
 +
 +			Vec3d arm = paddle == 0 ? lArm : rArm;
 +
@@ -259,9 +257,7 @@
 +			Vector3 checkDir = paddle == 0 ? new Vector3(1, 0, 0) : new Vector3(-1, 0, 0);
 +			Quaternion toForward=Quaternion.createFromToVector(checkDir,new Vector3(0,0,1));
 +
-+
 +			Quaternion rotation = Quaternion.createFromToVector(new Vector3(0,0,1), new Vector3(toForward.multiply(boatRot.inverse().multiply(armToPaddle.normalize()))));
-+
 +
 +			float mult = paddle == 0 ? -1 : 1;
 +

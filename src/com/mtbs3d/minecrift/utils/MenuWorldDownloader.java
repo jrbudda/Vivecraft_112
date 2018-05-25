@@ -1,5 +1,7 @@
 package com.mtbs3d.minecrift.utils;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -28,10 +30,8 @@ public class MenuWorldDownloader {
 	
 	public static InputStream getRandomWorld() throws IOException, NoSuchAlgorithmException {
 		init();
-		File customFile = new File("menuworlds/worldcustom.mmw");
-		if (customFile.exists()) {
-			return new FileInputStream(customFile);
-		}
+		InputStream customWorld = getCustomWorld();
+		if (customWorld != null) return customWorld;
 		if (worldCount == 0) {
 			return getRandomWorldFallback();
 		}
@@ -55,16 +55,34 @@ public class MenuWorldDownloader {
 			return getRandomWorldFallback();
 		}
 	}
+
+	private static InputStream getCustomWorld() throws IOException {
+		File dir = new File("menuworlds/custom");
+		if (dir.exists()) {
+			File file = getRandomFileInDirectory(dir);
+			if (file != null) return new FileInputStream(file);
+		}
+		File customFile = new File("menuworlds/worldcustom.mmw");
+		if (customFile.exists()) {
+			return new FileInputStream(customFile);
+		}
+		return null;
+	}
 	
 	private static InputStream getRandomWorldFallback() throws IOException {
 		System.out.println("Couldn't download a world, trying random file from directory");
 		File dir = new File("menuworlds");
 		if (dir.exists()) {
-			File[] files = dir.listFiles(file -> file.isFile() && file.getName().toLowerCase().endsWith(".mmw"));
-			if (files.length > 0) {
-				return new FileInputStream(files[rand.nextInt(files.length)]);
-			}
+			File file = getRandomFileInDirectory(dir);
+			if (file != null) return new FileInputStream(file);
 		}
+		return null;
+	}
+
+	private static File getRandomFileInDirectory(File dir) {
+		File[] files = dir.listFiles(file -> file.isFile() && file.getName().toLowerCase().endsWith(".mmw"));
+		if (files.length > 0)
+			return files[rand.nextInt(files.length)];
 		return null;
 	}
 }

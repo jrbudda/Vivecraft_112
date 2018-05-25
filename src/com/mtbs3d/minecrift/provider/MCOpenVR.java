@@ -967,20 +967,9 @@ public class MCOpenVR
 				if (binding.buttons.contains(new ButtonTuple(event.getButton(), event.getController().getType(), event.isButtonTouchEvent()))) {
 					if (event.getButtonState()) {
 						if ((mc.currentScreen != null || KeyboardHandler.Showing || RadialHandler.Showing) && (binding.isGUIBinding() || binding.isKeyboardBinding())) {
-							
 							binding.press();
-						
 							if (binding.keyBinding != null)
 								activeBindings.put(binding.keyBinding.getKeyDescription(), new ButtonTuple(event.getButton(), event.getController().getType()));
-						
-							if(KeyboardHandler.Showing && mc.currentScreen == null && GuiHandler.guiMenuButton.isPressed()) { //super special case.
-								KeyboardHandler.setOverlayShowing(false);
-							}
-							
-							if(RadialHandler.Showing && GuiHandler.guiMenuButton.isPressed()) { //super special case.
-								RadialHandler.setOverlayShowing(false, null);
-							}
-							
 							continue outer; // GUI bindings override in-game ones
 						}
 					} else {
@@ -1242,6 +1231,14 @@ public class MCOpenVR
 					e.printStackTrace();
 				}
 			}
+		}
+		
+		if(KeyboardHandler.Showing && mc.currentScreen == null && GuiHandler.guiMenuButton.isPressed()) { //super special case.
+			KeyboardHandler.setOverlayShowing(false);
+		}
+		
+		if(RadialHandler.Showing && GuiHandler.guiMenuButton.isPressed()) { //super special case.
+			RadialHandler.setOverlayShowing(false, null);
 		}
 
 		if (mc.currentScreen != null) 

@@ -146,12 +146,7 @@
      public boolean startRiding(Entity entityIn, boolean force)
      {
          if (!super.startRiding(entityIn, force))
-@@ -200,26 +270,51 @@
-                 this.mc.getSoundHandler().playSound(new MovingSoundMinecartRiding(this, (EntityMinecart)entityIn));
-             }
- 
--            if (entityIn instanceof EntityBoat)
-+            if (entityIn instanceof EntityBoat || entityIn instanceof AbstractHorse)
+@@ -204,22 +274,47 @@
              {
                  this.prevRotationYaw = entityIn.rotationYaw;
                  this.rotationYaw = entityIn.rotationYaw;

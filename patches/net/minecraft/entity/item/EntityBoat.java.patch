@@ -9,7 +9,27 @@
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityLivingBase;
  import net.minecraft.entity.MoverType;
-@@ -704,7 +706,7 @@
+@@ -23,6 +25,7 @@
+ import net.minecraft.network.datasync.DataSerializers;
+ import net.minecraft.network.datasync.EntityDataManager;
+ import net.minecraft.network.play.client.CPacketSteerBoat;
++import net.minecraft.src.Reflector;
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.EntityDamageSourceIndirect;
+ import net.minecraft.util.EntitySelectors;
+@@ -569,7 +572,10 @@
+ 
+                                 if (!list.isEmpty())
+                                 {
+-                                    f += iblockstate.getBlock().slipperiness;
++                                	if (Reflector.forgeExists())
++                                		f += Reflector.callFloat(iblockstate.getBlock(), Reflector.ForgeBlock_getSlipperiness, iblockstate, this.world, blockpos$pooledmutableblockpos, this);
++                                	else 
++                                		f += iblockstate.getBlock().slipperiness;
+                                     ++k1;
+                                 }
+ 
+@@ -704,7 +710,7 @@
              if (this.status == EntityBoat.Status.IN_WATER)
              {
                  d2 = (this.waterLevel - this.getEntityBoundingBox().minY) / (double)this.height;
@@ -18,7 +38,7 @@
              }
              else if (this.status == EntityBoat.Status.UNDER_FLOWING_WATER)
              {
-@@ -732,7 +734,7 @@
+@@ -732,7 +738,7 @@
  
              this.motionX *= (double)this.momentum;
              this.motionZ *= (double)this.momentum;
@@ -27,7 +47,7 @@
              this.motionY += d1;
  
              if (d2 > 0.0D)
-@@ -746,42 +748,108 @@
+@@ -746,42 +752,108 @@
      }
  
      private void controlBoat()
@@ -172,3 +192,24 @@
      }
  
      public void updatePassenger(Entity passenger)
+@@ -1081,4 +1153,20 @@
+             return values()[0];
+         }
+     }
++
++    // Forge: Fix MC-119811 by instantly completing lerp on board
++    @Override
++    protected void addPassenger(Entity passenger)
++    {
++        super.addPassenger(passenger);
++        if(this.canPassengerSteer() && this.lerpSteps > 0)
++        {
++            this.lerpSteps = 0;
++            this.posX = this.lerpX;
++            this.posY = this.lerpY;
++            this.posZ = this.lerpZ;
++            this.rotationYaw = (float)this.lerpYaw;
++            this.rotationPitch = (float)this.lerpPitch;
++        }
++    }
+ }

@@ -255,7 +255,7 @@ public class PlayerModelController {
 	public RotInfo getRotationFromEntity(EntityPlayer player){
 		UUID playerId = player.getGameProfile().getId();
 		if (mc.player.getUniqueID().equals(playerId)) {
-			VRData data=Minecraft.getMinecraft().vrPlayer.vrdata_room_pre;
+			VRData data=Minecraft.getMinecraft().vrPlayer.vrdata_world_render;
 			RotInfo rotInfo=new RotInfo();
 
 			Quaternion quatLeft=new Quaternion(data.getController(1).getMatrix());
@@ -267,9 +267,9 @@ public class PlayerModelController {
 			rotInfo.rightArmQuat=quatRight;
 			rotInfo.seated=mc.vrSettings.seated;
 
-			rotInfo.leftArmPos = MCOpenVR.controllerHistory[1].latest();
-			rotInfo.rightArmPos = MCOpenVR.controllerHistory[0].latest();
-			rotInfo.Headpos=MCOpenVR.hmdHistory.latest();
+			rotInfo.leftArmPos = data.getController(1).getPosition();
+			rotInfo.rightArmPos = data.getController(0).getPosition();
+			rotInfo.Headpos = data.hmd.getPosition(); 
 
 			return rotInfo;
 

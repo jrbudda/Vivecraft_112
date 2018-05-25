@@ -343,14 +343,17 @@ public class GuiHandler {
 	public static void onGuiScreenChanged(GuiScreen previousScreen, GuiScreen newScreen, boolean unpressKeys)
 	{
 		if(unpressKeys){
-			KeyBinding.unPressAllKeys();
-			if(Display.isActive()){
+			if(Display.isActive()){ //why do we do this again? something about awt.robot keys getting stuck?
 				KeyboardSimulator.robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
 				KeyboardSimulator.robot.mouseRelease(InputEvent.BUTTON2_DOWN_MASK);
 				KeyboardSimulator.robot.mouseRelease(InputEvent.BUTTON3_DOWN_MASK);
-				KeyboardSimulator.robot.keyRelease(KeyEvent.VK_SHIFT);		
+				KeyboardSimulator.robot.keyRelease(KeyEvent.VK_SHIFT);
 				for (VRButtonMapping mapping : mc.vrSettings.buttonMappings.values()) {
-					mapping.actuallyUnpress();
+					if(newScreen!=null) {
+						if(mapping.isGUIBinding())						
+							mapping.actuallyUnpress();
+					} else
+						mapping.actuallyUnpress();
 				}
 			}
 		}
