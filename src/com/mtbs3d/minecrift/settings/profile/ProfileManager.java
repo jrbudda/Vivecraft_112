@@ -73,15 +73,15 @@ public class ProfileManager
             }
 
             // Read in json (may be empty)
-            FileReader fr = new FileReader(vrProfileCfgFile);
+            InputStreamReader isr = new InputStreamReader(new FileInputStream(vrProfileCfgFile), "UTF-8");
             try {
-                JSONTokener jt = new JSONTokener(fr);
+                JSONTokener jt = new JSONTokener(isr);
                 jsonConfigRoot = new JSONObject(jt);
             }
             catch (Exception ex) {
                 jsonConfigRoot = new JSONObject();
             }
-            fr.close();
+            isr.close();
 
             // Read current profile (create if necessary)
             if (jsonConfigRoot.has(KEY_SELECTED_PROFILE))
@@ -344,11 +344,11 @@ public class ProfileManager
     public static synchronized void save()
     {
         try {
-            FileWriter fw = new FileWriter(vrProfileCfgFile);
+            OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(vrProfileCfgFile), "UTF-8");
             String s = jsonConfigRoot.toString(3);
-            fw.write(s);
-            fw.flush();
-            fw.close();
+			osw.write(s);
+			osw.flush();
+			osw.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

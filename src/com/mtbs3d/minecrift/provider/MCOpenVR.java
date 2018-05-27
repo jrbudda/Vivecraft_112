@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
+import net.minecraft.util.text.TextComponentString;
 import org.apache.commons.lang3.ArrayUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -1225,8 +1226,8 @@ public class MCOpenVR
 					} else {
 						MenuWorldExporter.saveAreaToFile(mc.world, pos.getX() - size / 2, pos.getZ() - size / 2, size, size, pos.getY(), file);
 					}
-					mc.player.sendChatMessage("World export complete... area size: " + size);
-					mc.player.sendChatMessage("Saved to " + file.getAbsolutePath());
+					mc.ingameGUI.getChatGUI().printChatMessage(new TextComponentString("World export complete... area size: " + size));
+					mc.ingameGUI.getChatGUI().printChatMessage(new TextComponentString("Saved to " + file.getAbsolutePath()));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

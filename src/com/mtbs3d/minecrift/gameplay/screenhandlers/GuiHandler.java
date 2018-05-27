@@ -397,7 +397,7 @@ public class GuiHandler {
 
 		}		
 
-		if( previousScreen==null && newScreen != null)		
+		if((previousScreen==null && newScreen != null) || (newScreen instanceof GuiChat || newScreen instanceof GuiScreenBook || newScreen instanceof GuiEditSign))		
 		{
 			Quatf controllerOrientationQuat;
 			boolean appearOverBlock = (newScreen instanceof GuiCrafting)
@@ -446,7 +446,7 @@ public class GuiHandler {
 				//static screens like menu, inventory, and dead.
 				Vec3d adj = new Vec3d(0,0,-2);
 				if (newScreen instanceof GuiChat){
-					adj = new Vec3d(0.3,1,-2);
+					adj = new Vec3d(0.3,0.75,-2);
 				} else if (newScreen instanceof GuiScreenBook || newScreen instanceof GuiEditSign) {
 					adj = new Vec3d(0,1,-2);
 				}

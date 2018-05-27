@@ -703,14 +703,34 @@ public class VRSettings
                     		value += ":" + optionTokens[i];
                     	}
                         this.keyboardKeys = value;
+                        
+                        int len = value.length();
+                        
+//                        System.out.println("Main Keys: " + value + " " + len);
+//
+//                        for (int i = 0; i < len; i++) {
+//                            System.out.println(value.charAt(i) + "|" + String.valueOf(value.charAt(i)) );
+//						}
+//                                               
                     }
                     
                     if(optionTokens[0].equals("keyboardKeysShift")){
                     	String value = optionTokens[1];
+                    	
                     	for (int i = 2; i < optionTokens.length;i++) {
                     		value += ":" + optionTokens[i];
                     	}
+                    	
                         this.keyboardKeysShift = value;
+                        
+//                        int len = value.length();
+//                        System.out.println("Shift Keys: " + value + " " + len);
+//                        
+//                        for (int i = 0; i < len; i++) {
+//                            System.out.println(value.charAt(i) + "|" + String.valueOf(value.charAt(i)) );
+//						}
+//                        
+                       
                     }
 
                     if (optionTokens[0].startsWith("BUTTON_") || optionTokens[0].startsWith("OCULUS_"))
@@ -799,8 +819,11 @@ public class VRSettings
 			VRButtonMapping vb = buttonMappings.get(keyBinding.getKeyDescription());
 	
 			if(vb == null) { //shouldn't
-		        vb = defaults.get(keyBinding.getKeyDescription());
-		        buttonMappings.put(keyBinding.getKeyDescription(), vb);
+				vb = defaults.get(keyBinding.getKeyDescription());
+				// TODO: Future code to replace the above line
+				//if (this.firstRun) vb = defaults.get(keyBinding.getKeyDescription());
+				//else vb = new VRButtonMapping(keyBinding.getKeyDescription());
+				buttonMappings.put(keyBinding.getKeyDescription(), vb);
 			}
 			
 			vb.keyBinding = keyBinding;
@@ -1610,7 +1633,8 @@ public class VRSettings
             for (int i = 0; i < 8 ; i++){
             	var5.println("RADIALALT_" + i + ":" + vrRadialItemsAlt[i]);
             }
-           
+
+            // TODO: This needs to change when we do proper first run defaults thing
             if (buttonMappings == null) resetBindings(); //defaults
               
             for (VRButtonMapping vb : buttonMappings.values()) {

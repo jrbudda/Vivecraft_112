@@ -61,7 +61,7 @@ public class GuiKeyboard extends TwoHandedGuiScreen
 				this.buttonList.add(butt);
 			}
 		}
-		this.buttonList.add(new GuiButton(201, margin, margin + rows * (20 + spacing), 30, 20, "Shift"));
+		this.buttonList.add(new GuiButton(201, 0, margin + 3* (20 + spacing), 30, 20, "Shift"));
 		this.buttonList.add(new GuiButton(199, margin + 4 * (bwidth+spacing), margin + rows * (20+spacing), 5 * (bwidth+spacing), 20, " "));
 		this.buttonList.add(new GuiButton(202, cols * (bwidth+spacing) + margin, margin , 35 , 20, "BKSP"));
 		this.buttonList.add(new GuiButton(203, cols * (bwidth+spacing) + margin, margin + 2*(20 + spacing) , 35 , 20, "ENTER"));
@@ -72,7 +72,7 @@ public class GuiKeyboard extends TwoHandedGuiScreen
 	public void setShift(boolean shift) {
 		if(shift != this.isShift) {
 			this.isShift = shift;
-			this.initGui();
+			this.reinit = true;
 		}
 	}
 	

@@ -23,7 +23,7 @@ public abstract class TwoHandedGuiScreen extends GuiScreen
 	public float cursorX1, cursorY1;
 	public float cursorX2, cursorY2;
 	private int lastHoveredButtonId1 = -1, lastHoveredButtonId2 = -1;
-	
+	protected boolean reinit;
 	
 	@Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException
@@ -170,6 +170,12 @@ public abstract class TwoHandedGuiScreen extends GuiScreen
 
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		
+        if (reinit)
+        {
+            initGui();
+            reinit = false;
+        }
 		
         int mX1 = (int) (cursorX1 * this.width / this.mc.displayWidth);
         int mY1 = (int) (cursorY1 * this.height / this.mc.displayHeight);
