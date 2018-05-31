@@ -80,7 +80,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 	private String[] forgeVersions = null;
 	private boolean forgeVersionInstalled = false;
 	private static String FULL_FORGE_VERSION = MINECRAFT_VERSION + "-" + FORGE_VERSION;
-	private String forge_url = "http://files.minecraftforge.net/maven/net/minecraftforge/forge/" + FULL_FORGE_VERSION + "/forge-" + FULL_FORGE_VERSION + "-installer.jar";
+	private String forge_url = "https://files.minecraftforge.net/maven/net/minecraftforge/forge/" + FULL_FORGE_VERSION + "/forge-" + FULL_FORGE_VERSION + "-installer.jar";
 	private File forgeInstaller;
 	private JTextField selectedDirText;
 	private JLabel infoLabel;
@@ -334,6 +334,9 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				"</html>");
 		ramAllocation.setAlignmentX(LEFT_ALIGNMENT);
 		ramAllocation.setMaximumSize( new Dimension((int)ramAllocation.getPreferredSize().getWidth(), 20));
+		AbstractAction actram = new updateActionRam();
+		actram.putValue(AbstractAction.NAME, "Profile Ram Allocation (GB)");
+		ramAllocation.setAction(actram);
 
 
 		JLabel ram = new JLabel("         Profile Ram Allocation (GB) ");
@@ -409,6 +412,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 						"If checked, install the drivers needed for KATVR Treadmill<br>" +
 				"DO NOT select this unless you have the KATVR runtime installed.</html>");
 		katvr.setAlignmentX(LEFT_ALIGNMENT);
+		katvr.setEnabled(isWindows);
 
 
 		kiosk = new JCheckBox("Kiosk Mode", false);
@@ -1536,6 +1540,8 @@ public class Installer extends JPanel  implements PropertyChangeListener
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
+			if (useForge.isSelected()) ramAllocation.setSelectedIndex(2);
+			else ramAllocation.setSelectedIndex(1);
 			updateInstructions();
 		}
 	}
@@ -1558,6 +1564,15 @@ public class Installer extends JPanel  implements PropertyChangeListener
 		}
 	}
 
+	private class updateActionRam extends AbstractAction
+	{
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			updateInstructions();
+		}
+	}
+
 
 	private void updateInstructions(){
 		String out = "<html>";
@@ -1566,10 +1581,11 @@ public class Installer extends JPanel  implements PropertyChangeListener
 			if(chkCustomProfileName.isSelected() == false){
 				txtCustomProfileName.setText(getMinecraftProfileName(useForge.isSelected(), useShadersMod.isSelected()));
 			}
+			if (ramAllocation.getSelectedIndex() == 0) {
+				out += "<br>Vivecraft may not run well with only 1 GB of memory!";
+			}
 		}
-		ramAllocation.setSelectedIndex(1);
 		if (useForge.isSelected()){
-			ramAllocation.setSelectedIndex(2);
 			if(optCustomForgeVersion.isSelected())
 				out += "<br>Custom Forge version NOT guaranteed to work!";
 		}
