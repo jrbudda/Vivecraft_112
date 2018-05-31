@@ -409,6 +409,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 						"If checked, install the drivers needed for KATVR Treadmill<br>" +
 				"DO NOT select this unless you have the KATVR runtime installed.</html>");
 		katvr.setAlignmentX(LEFT_ALIGNMENT);
+		katvr.setEnabled(isWindows);
 
 
 		kiosk = new JCheckBox("Kiosk Mode", false);
