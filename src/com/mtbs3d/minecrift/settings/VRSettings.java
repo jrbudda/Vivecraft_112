@@ -776,7 +776,7 @@ public class VRSettings
                     		vrQuickCommands[i] = optionTokens[1];
                     }
                     
-                    if(optionTokens[0].startsWith("RADIAL")){
+                    if(optionTokens[0].startsWith("RADIAL_")){
                     	String[] pts = optionTokens[0].split("_");
                     	int i = Integer.parseInt(pts[1]);
                     	if (optionTokens.length == 1) 
@@ -785,7 +785,7 @@ public class VRSettings
                     		vrRadialItems[i] = optionTokens[1];
                     }
                     
-                    if(optionTokens[0].startsWith("RADIALALT")){
+                    if(optionTokens[0].startsWith("RADIALALT_")){
                     	String[] pts = optionTokens[0].split("_");
                     	int i = Integer.parseInt(pts[1]);
                     	if (optionTokens.length == 1) 

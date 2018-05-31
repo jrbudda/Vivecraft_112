@@ -10,6 +10,6 @@ public class ClassTuple {
 	}
 	
 	public ClassTuple(String className) {
-		this(className, null);
+		this(className, ObfNames.resolve(className));
 	}
 }

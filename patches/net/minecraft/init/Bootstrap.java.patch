@@ -1,19 +1,6 @@
 --- a/net/minecraft/init/Bootstrap.java
 +++ b/net/minecraft/init/Bootstrap.java
-@@ -16,6 +16,8 @@
- import net.minecraft.block.BlockTNT;
- import net.minecraft.block.material.Material;
- import net.minecraft.block.state.IBlockState;
-+import net.minecraft.client.particle.ParticleBreaking.SlimeFactory;
-+import net.minecraft.creativetab.CreativeTabs;
- import net.minecraft.dispenser.BehaviorDefaultDispenseItem;
- import net.minecraft.dispenser.BehaviorProjectileDispense;
- import net.minecraft.dispenser.IBehaviorDispenseItem;
-@@ -44,15 +46,20 @@
- import net.minecraft.item.ItemArmor;
- import net.minecraft.item.ItemBucket;
- import net.minecraft.item.ItemDye;
-+import net.minecraft.item.ItemFoodWonder;
+@@ -47,12 +47,15 @@
  import net.minecraft.item.ItemMonsterPlacer;
  import net.minecraft.item.ItemStack;
  import net.minecraft.item.crafting.CraftingManager;
@@ -26,11 +13,10 @@
  import net.minecraft.potion.PotionType;
  import net.minecraft.server.DebugLoggingPrintStream;
 +import net.minecraft.src.Reflector;
-+import net.minecraft.src.ReflectorMethod;
  import net.minecraft.stats.StatList;
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.tileentity.TileEntityDispenser;
-@@ -60,6 +67,8 @@
+@@ -60,6 +63,8 @@
  import net.minecraft.tileentity.TileEntitySkull;
  import net.minecraft.util.EnumFacing;
  import net.minecraft.util.LoggingPrintStream;
@@ -39,7 +25,7 @@
  import net.minecraft.util.SoundCategory;
  import net.minecraft.util.SoundEvent;
  import net.minecraft.util.StringUtils;
-@@ -267,6 +276,11 @@
+@@ -267,6 +272,11 @@
          };
          BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(Items.LAVA_BUCKET, ibehaviordispenseitem);
          BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(Items.WATER_BUCKET, ibehaviordispenseitem);
@@ -51,24 +37,24 @@
          BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(Items.BUCKET, new BehaviorDefaultDispenseItem()
          {
              private final BehaviorDefaultDispenseItem dispenseBehavior = new BehaviorDefaultDispenseItem();
-@@ -501,7 +515,16 @@
+@@ -495,13 +505,15 @@
+         if (!alreadyRegistered)
+         {
+             alreadyRegistered = true;
+-            redirectOutputToLog();
++			if (!Reflector.FMLLog.exists())
++				redirectOutputToLog();
+             SoundEvent.registerSounds();
+             Block.registerBlocks();
              BlockFire.init();
              Potion.registerPotions();
              Enchantment.registerEnchantments();
-+            
-+            //VIVECRAFT Avoid edit to item.java, this has to be exactly here.
-+            Item.REGISTRY.register(22000, new ResourceLocation("eatme_cake"), (new ItemFoodWonder(2, 0.3F, false).setAlwaysEdible()).setUnlocalizedName("eatme_cake").setCreativeTab(CreativeTabs.BREWING));
-+            Item.REGISTRY.register(22001, new ResourceLocation("drinkme_bottle"), (new ItemFoodWonder(1, 0.3F, false).setAlwaysEdible()).setUnlocalizedName("drinkme_bottle").setCreativeTab(CreativeTabs.BREWING));
-+      //      Item.REGISTRY.register(22002, new ResourceLocation("jump_boots"), (new ItemArmorJump(ItemArmor.ArmorMaterial.LEATHER, 0, EntityEquipmentSlot.FEET)).setUnlocalizedName("jump_boots").setCreativeTab(CreativeTabs.TRANSPORTATION));    
-+      //      Item.REGISTRY.register(22003, new ResourceLocation("climb_claws"), (new ItemClimbClaws()).setUnlocalizedName("climb_claws").setCreativeTab(CreativeTabs.TRANSPORTATION));
-+            ///
-+            
              Item.registerItems();
 +            
              PotionType.registerPotionTypes();
              PotionHelper.init();
              EntityList.init();
-@@ -514,6 +537,32 @@
+@@ -514,6 +526,32 @@
                  LOGGER.error("Errors with built-in recipes!");
              }
  
@@ -101,11 +87,12 @@
              StatList.init();
  
              if (LOGGER.isDebugEnabled())
-@@ -530,6 +579,7 @@
+@@ -530,6 +568,8 @@
                      LOGGER.error("Errors with built-in loot tables");
                  }
              }
-+Reflector.callVoid(Reflector.GameData_vanillaSnapshot);
++
++			Reflector.callVoid(Reflector.GameData_vanillaSnapshot);
          }
      }
  

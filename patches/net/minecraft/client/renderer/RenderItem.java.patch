@@ -207,14 +207,3 @@
      {
          if (!stack.isEmpty())
          {
-@@ -1224,6 +1287,10 @@
-         this.registerItem(Items.DIAMOND_HORSE_ARMOR, "diamond_horse_armor");
-         this.registerItem(Items.LEAD, "lead");
-         this.registerItem(Items.NAME_TAG, "name_tag");
-+        this.registerItem(Items.EATME_CAKE, "cake");
-+        this.registerItem(Items.DRIINKME_BOTTLE, "bottle_drinkable");
-+    //  this.registerItem(Items.JUMP_BOOTS, "leather_boots");
-+    //  this.registerItem(Items.CLIMB_CLAWS, "shears");
-         this.itemModelMesher.register(Items.BANNER, new ItemMeshDefinition()
-         {
-             public ModelResourceLocation getModelLocation(ItemStack stack)

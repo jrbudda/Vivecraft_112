@@ -2,19 +2,7 @@ package com.mtbs3d.minecrift.asm;
 
 import java.util.Iterator;
 
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.IincInsnNode;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.IntInsnNode;
-import org.objectweb.asm.tree.JumpInsnNode;
-import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.LdcInsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.TypeInsnNode;
-import org.objectweb.asm.tree.VarInsnNode;
+import org.objectweb.asm.tree.*;
 
 public class ASMUtil {
 	private ASMUtil() {
@@ -45,6 +33,10 @@ public class ASMUtil {
 		for (int i = 0; i < count; i++) {
 			node.instructions.remove(node.instructions.get(index));
 		}
+	}
+
+	public static void insertInstructionsRelative(MethodNode node, AbstractInsnNode insn, int offset, InsnList list) {
+		node.instructions.insert(node.instructions.get(node.instructions.indexOf(insn) + offset), list);
 	}
 	
 	public static AbstractInsnNode findFirstOpcode(MethodNode node, int opcode) {

@@ -2937,7 +2937,7 @@
 +	
 +					///MAIN MENU ENVIRONMENT            
 +					if(inMenuRoom){		
-+						if (mc.menuWorldRenderer.isReady()) {
++						if (mc.menuWorldRenderer != null && mc.menuWorldRenderer.isReady()) {
 +							renderTechjarsAwesomeMainMenuRoom();
 +						} else {
 +							renderJrbuddasAwesomeMainMenuRoom();

@@ -1,6 +1,11 @@
 --- a/net/minecraft/client/gui/inventory/GuiContainerCreative.java
 +++ b/net/minecraft/client/gui/inventory/GuiContainerCreative.java
-@@ -9,6 +9,7 @@
+@@ -6,9 +6,12 @@
+ import java.util.Locale;
+ import java.util.Map;
+ import javax.annotation.Nullable;
++
++import com.mtbs3d.minecrift.utils.ASMDelegator;
  import net.minecraft.client.Minecraft;
  import net.minecraft.client.entity.EntityPlayerSP;
  import net.minecraft.client.gui.GuiButton;
@@ -8,7 +13,24 @@
  import net.minecraft.client.gui.GuiTextField;
  import net.minecraft.client.gui.achievement.GuiStats;
  import net.minecraft.client.renderer.GlStateManager;
-@@ -618,7 +619,7 @@
+@@ -383,6 +386,8 @@
+             guicontainercreative$containercreative.itemList.addAll(this.mc.getSearchTree(SearchTreeManager.ITEMS).search(this.searchField.getText().toLowerCase(Locale.ROOT)));
+         }
+ 
++        ASMDelegator.addCreativeSearch(this.searchField.getText(), guicontainercreative$containercreative.itemList);
++
+         this.currentScroll = 0.0F;
+         guicontainercreative$containercreative.scrollTo(0.0F);
+     }
+@@ -499,6 +504,7 @@
+         else if (tab != CreativeTabs.SEARCH)
+         {
+             tab.displayAllRelevantItems(guicontainercreative$containercreative.itemList);
++			ASMDelegator.addCreativeItems(tab, guicontainercreative$containercreative.itemList);
+         }
+ 
+         if (tab == CreativeTabs.INVENTORY)
+@@ -618,7 +624,7 @@
      public void drawScreen(int mouseX, int mouseY, float partialTicks)
      {
          this.drawDefaultBackground();

@@ -60,10 +60,14 @@ public class MenuWorldDownloader {
 		File dir = new File("menuworlds/custom");
 		if (dir.exists()) {
 			File file = getRandomFileInDirectory(dir);
-			if (file != null) return new FileInputStream(file);
+			if (file != null) {
+				System.out.println("Using custom world menuworlds/custom/" + file.getName());
+				return new FileInputStream(file);
+			}
 		}
 		File customFile = new File("menuworlds/worldcustom.mmw");
 		if (customFile.exists()) {
+			System.out.println("Using custom world menuworlds/worldcustom.mmw");
 			return new FileInputStream(customFile);
 		}
 		return null;
@@ -74,7 +78,10 @@ public class MenuWorldDownloader {
 		File dir = new File("menuworlds");
 		if (dir.exists()) {
 			File file = getRandomFileInDirectory(dir);
-			if (file != null) return new FileInputStream(file);
+			if (file != null) {
+				System.out.println("Using world menuworlds/" + file.getName());
+				return new FileInputStream(file);
+			}
 		}
 		return null;
 	}

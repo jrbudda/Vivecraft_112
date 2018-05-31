@@ -8,14 +8,12 @@
  import net.minecraft.client.gui.Gui;
  import net.minecraft.client.gui.ScaledResolution;
  import net.minecraft.client.renderer.BufferBuilder;
-@@ -222,7 +224,9 @@
-                     this.mc.fontRenderer.drawStringWithShadow(this.message, (float)((k - this.mc.fontRenderer.getStringWidth(this.message)) / 2), (float)(l / 2 - 4 + 8), 16777215);
-                 }
- 
--                this.framebuffer.unbindFramebuffer();
-+                // Render to GUI framebuffer if it's created, otherwise render to window.
-+                if (GuiHandler.guiFramebuffer != null) GuiHandler.guiFramebuffer.bindFramebuffer(true);
-+                else this.framebuffer.unbindFramebuffer();
+@@ -226,7 +228,7 @@
  
                  if (OpenGlHelper.isFramebufferEnabled())
                  {
+-                    this.framebuffer.framebufferRender(k * j, l * j);
++                    this.framebuffer.framebufferRender(mc.displayWidth, mc.displayHeight);
+                 }
+ 
+                 this.mc.updateDisplay();

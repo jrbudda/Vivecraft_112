@@ -1,8 +1,12 @@
 package com.mtbs3d.minecrift.render;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import org.lwjgl.opengl.GL11;
 
 import com.google.common.base.Throwables;
@@ -73,6 +77,7 @@ public class MenuWorldRenderer {
     private VertexBuffer skyVBO;
     private VertexBuffer sky2VBO;
     public MenuCloudRenderer cloudRenderer;
+    public Set<TextureAtlasSprite> visibleTextures = new HashSet<>();
     private Random rand;
     private boolean init;
     private boolean ready;
@@ -141,7 +146,6 @@ public class MenuWorldRenderer {
 			BlockRendererDispatcher blockRenderer = mc.getBlockRendererDispatcher();
 			int ground = rand.nextInt(1000) == 0 ? blockAccess.getGround() + 100 : blockAccess.getGround(); // lol
 			for (int i = 0; i < 3; i++) {
-
 				BufferBuilder vertBuffer = new BufferBuilder(2097152);
 				vertBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 				vertBuffer.setTranslation(-blockAccess.getXSize() / 2, -ground, -blockAccess.getZSize() / 2);
@@ -178,6 +182,7 @@ public class MenuWorldRenderer {
 			mc.gameSettings.ambientOcclusion = ao;
 			Shaders.shaderPackLoaded = shaders;
 			DefaultVertexFormats.updateVertexFormats();
+			copyVisibleTextures();
 			ready = true;
 		}
 	}
@@ -217,6 +222,22 @@ public class MenuWorldRenderer {
 	public boolean isReady() {
 		return ready;
 	}
+
+	// VanillaFix support
+	@SuppressWarnings("unchecked")
+	private void copyVisibleTextures() {
+		if (Reflector.VFTemporaryStorage.exists())
+			visibleTextures.addAll((Collection<TextureAtlasSprite>)Reflector.getFieldValue(Reflector.VFTemporaryStorage_texturesUsed));
+	}
+
+	@SuppressWarnings("unchecked")
+	public void pushVisibleTextures() {
+		if (Reflector.VFTemporaryStorage.exists()) {
+			Collection<TextureAtlasSprite> coll = (Collection<TextureAtlasSprite>)Reflector.getFieldValue(Reflector.VFTemporaryStorage_texturesUsed);
+			coll.addAll(visibleTextures);
+		}
+	}
+	// End VanillaFix support
 	
     public void renderSky(float x, float y, float z, int pass)
     {

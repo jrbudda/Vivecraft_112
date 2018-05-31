@@ -427,6 +427,28 @@
 -            boolean flag = hand == EnumHand.MAIN_HAND;
 -            EnumHandSide enumhandside = flag ? player.getPrimaryHand() : player.getPrimaryHand().opposite();
 -            GlStateManager.pushMatrix();
+-
+-            if (stack.isEmpty())
+-            {
+-                if (flag && !player.isInvisible())
+-                {
+-                    this.renderArmFirstPerson(p_187457_7_, p_187457_5_, enumhandside);
+-                }
+-            }
+-            else if (stack.getItem() instanceof ItemMap)
+-            {
+-                if (flag && this.itemStackOffHand.isEmpty())
+-                {
+-                    this.renderMapFirstPerson(p_187457_3_, p_187457_7_, p_187457_5_);
+-                }
+-                else
+-                {
+-                    this.renderMapFirstPersonSide(p_187457_7_, enumhandside, p_187457_5_, stack);
+-                }
+-            }
+-            else
+-            {
+-                boolean flag1 = enumhandside == EnumHandSide.RIGHT;
 +    	boolean mainHand = hand == EnumHand.MAIN_HAND;
 +    	EnumHandSide enumhandside = mainHand ? player.getPrimaryHand() : player.getPrimaryHand().opposite();
 +    	equippingprogress = getEquipProgress(hand, partialTicks);
@@ -761,28 +783,6 @@
 +    		GlStateManager.popMatrix();	
 +    	}   		
  
--            if (stack.isEmpty())
--            {
--                if (flag && !player.isInvisible())
--                {
--                    this.renderArmFirstPerson(p_187457_7_, p_187457_5_, enumhandside);
--                }
--            }
--            else if (stack.getItem() instanceof ItemMap)
--            {
--                if (flag && this.itemStackOffHand.isEmpty())
--                {
--                    this.renderMapFirstPerson(p_187457_3_, p_187457_7_, p_187457_5_);
--                }
--                else
--                {
--                    this.renderMapFirstPersonSide(p_187457_7_, enumhandside, p_187457_5_, stack);
--                }
--            }
--            else
--            {
--                boolean flag1 = enumhandside == EnumHandSide.RIGHT;
- 
 -                if (player.isHandActive() && player.getItemInUseCount() > 0 && player.getActiveHand() == hand)
 -                {
 -                    int j = flag1 ? 1 : -1;
@@ -844,13 +844,13 @@
 -
 -                this.renderItemSide(player, stack, flag1 ? ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !flag1);
 -            }
--
+ 
 -            GlStateManager.popMatrix();
 -        }
      }
  
      /**
-@@ -472,84 +807,213 @@
+@@ -472,55 +807,205 @@
       */
      public void renderOverlays(float partialTicks)
      {
@@ -868,68 +868,66 @@
 -            IBlockState iblockstate = this.mc.world.getBlockState(new BlockPos(this.mc.player));
 -            BlockPos blockpos = new BlockPos(this.mc.player);
 -            EntityPlayer entityplayer = this.mc.player;
--
++        	TextureAtlasSprite tex = this.mc.getBlockRendererDispatcher().getBlockModelShapes().getTexture(this.mc.world.getBlockState(new BlockPos(pos)));
++        	this.renderFaceInBlock();
++        	mc.entityRenderer.inblock = true;
++        	mc.entityRenderer.renderGuiLayer(partialTicks);
++        }
+ 
 -            for (int i = 0; i < 8; ++i)
--            {
++        if (!this.mc.player.isSpectator())
++        {
++            if (isInsideOfMaterial(pos, Material.WATER) )
+             {
 -                double d0 = entityplayer.posX + (double)(((float)((i >> 0) % 2) - 0.5F) * entityplayer.width * 0.8F);
 -                double d1 = entityplayer.posY + (double)(((float)((i >> 1) % 2) - 0.5F) * 0.1F);
 -                double d2 = entityplayer.posZ + (double)(((float)((i >> 2) % 2) - 0.5F) * entityplayer.width * 0.8F);
 -                BlockPos blockpos1 = new BlockPos(d0, d1 + (double)entityplayer.getEyeHeight(), d2);
 -                IBlockState iblockstate1 = this.mc.world.getBlockState(blockpos1);
-+        	this.renderBlockInHand();
-+        	mc.entityRenderer.inblock = true;
- 
+-
 -                if (iblockstate1.causesSuffocation())
 -                {
 -                    iblockstate = iblockstate1;
 -                    blockpos = blockpos1;
 -                }
--            }
--
++            	mc.entityRenderer.inwater = true;
++              //  this.renderWaterOverlayTexture(partialTicks);
+             }
+ 
 -            if (iblockstate.getRenderType() != EnumBlockRenderType.INVISIBLE)
--            {
++            
++            if (this.mc.player.isBurning() && !Reflector.callBoolean(Reflector.ForgeEventFactory_renderFireOverlay, new Object[] {this.mc.player, Float.valueOf(partialTicks)}))
+             {
 -                Object object = Reflector.getFieldValue(Reflector.RenderBlockOverlayEvent_OverlayType_BLOCK);
 -
 -                if (!Reflector.callBoolean(Reflector.ForgeEventFactory_renderBlockOverlay, this.mc.player, partialTicks, object, iblockstate, blockpos))
 -                {
 -                    this.renderBlockInHand(this.mc.getBlockRendererDispatcher().getBlockModelShapes().getTexture(iblockstate));
 -                }
--            }
-+		
-+        	mc.entityRenderer.renderGuiLayer(partialTicks);
-+        	
-         }
- 
-         if (!this.mc.player.isSpectator())
-         {
--            if (this.mc.player.isInsideOfMaterial(Material.WATER) && !Reflector.callBoolean(Reflector.ForgeEventFactory_renderWaterOverlay, this.mc.player, partialTicks))
-+            if (isInsideOfMaterial(pos, Material.WATER) )
-             {
--                this.renderWaterOverlayTexture(partialTicks);
-+            	mc.entityRenderer.inwater = true;
-+              //  this.renderWaterOverlayTexture(partialTicks);
-             }
- 
--            if (this.mc.player.isBurning() && !Reflector.callBoolean(Reflector.ForgeEventFactory_renderFireOverlay, this.mc.player, partialTicks))
-+            
-+            if (this.mc.player.isBurning() && !Reflector.callBoolean(Reflector.ForgeEventFactory_renderFireOverlay, new Object[] {this.mc.player, Float.valueOf(partialTicks)}))
-             {
-                 this.renderFireInFirstPerson();
++                this.renderFireInFirstPerson();
 +                mc.entityRenderer.onfire = true;
              }
          }
  
+-        if (!this.mc.player.isSpectator())
 +		
 +        if (!this.mc.player.isPotionActive(MobEffects.NAUSEA))
-+        {
+         {
+-            if (this.mc.player.isInsideOfMaterial(Material.WATER) && !Reflector.callBoolean(Reflector.ForgeEventFactory_renderWaterOverlay, this.mc.player, partialTicks))
+-            {
+-                this.renderWaterOverlayTexture(partialTicks);
+-            }
 +            float f = this.mc.player.prevTimeInPortal + (this.mc.player.timeInPortal - this.mc.player.prevTimeInPortal) * partialTicks;
-+
+ 
+-            if (this.mc.player.isBurning() && !Reflector.callBoolean(Reflector.ForgeEventFactory_renderFireOverlay, this.mc.player, partialTicks))
 +            if (f > 0.0F)
-+            {
+             {
+-                this.renderFireInFirstPerson();
 +            	mc.entityRenderer.inportal = true;
 +               // this.renderPortal(f, new ScaledResolution(mc));
-+            }
-+        }
+             }
+         }
+-
 +		
 +                
          GlStateManager.enableAlpha();
@@ -1052,40 +1050,15 @@
 +    	
 +    }
 +
- 
-     /**
-      * Render the block in the player's hand
-      */
--    private void renderBlockInHand(TextureAtlasSprite sprite)
-+    private void renderBlockInHand()
-     {
--        this.mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-+     //   this.mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-+    	
-         Tessellator tessellator = Tessellator.getInstance();
-         BufferBuilder bufferbuilder = tessellator.getBuffer();
--        float f = 0.1F;
--        GlStateManager.color(0.1F, 0.1F, 0.1F, 0.5F);
++
++    private void renderFaceInBlock() {
++        Tessellator tessellator = Tessellator.getInstance();
++        BufferBuilder bufferbuilder = tessellator.getBuffer();
 +        
 +        GlStateManager.color(0f, 0F, 0F, mc.entityRenderer.inBlock);
 +        
 +        GlStateManager.matrixMode(GL11.GL_PROJECTION);
-         GlStateManager.pushMatrix();
--        float f1 = -1.0F;
--        float f2 = 1.0F;
--        float f3 = -1.0F;
--        float f4 = 1.0F;
--        float f5 = -0.5F;
--        float f6 = sprite.getMinU();
--        float f7 = sprite.getMaxU();
--        float f8 = sprite.getMinV();
--        float f9 = sprite.getMaxV();
--        bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
--        bufferbuilder.pos(-1.0D, -1.0D, -0.5D).tex((double)f7, (double)f9).endVertex();
--        bufferbuilder.pos(1.0D, -1.0D, -0.5D).tex((double)f6, (double)f9).endVertex();
--        bufferbuilder.pos(1.0D, 1.0D, -0.5D).tex((double)f6, (double)f8).endVertex();
--        bufferbuilder.pos(-1.0D, 1.0D, -0.5D).tex((double)f7, (double)f8).endVertex();
--        tessellator.draw();
++        GlStateManager.pushMatrix();
 +	        GlStateManager.ortho(0.0D, 1, 0, 1, 0, 100);
 +	        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
 +	        GlStateManager.pushMatrix();
@@ -1106,16 +1079,25 @@
 +	        GlStateManager.matrixMode(GL11.GL_PROJECTION);
 +	        GlStateManager.popMatrix();
 +        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-         GlStateManager.popMatrix();
++        GlStateManager.popMatrix();
 +        
 +        //GlStateManager.enableDepth();
 +        GlStateManager.enableTexture2D();
-         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-+
-     }
++        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
++    }
  
      /**
-@@ -596,13 +1060,13 @@
+      * Render the block in the player's hand
+@@ -551,7 +1036,7 @@
+         GlStateManager.popMatrix();
+         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+     }
+-
++    
+     /**
+      * Renders a texture that warps around based on the direction the player is looking. Texture needs to be bound
+      * before being called. Used for the water overlay.
+@@ -596,13 +1081,13 @@
          Tessellator tessellator = Tessellator.getInstance();
          BufferBuilder bufferbuilder = tessellator.getBuffer();
          GlStateManager.color(1.0F, 1.0F, 1.0F, 0.9F);
@@ -1132,7 +1114,7 @@
          {
              GlStateManager.pushMatrix();
              TextureAtlasSprite textureatlassprite = this.mc.getTextureMapBlocks().getAtlasSprite("minecraft:blocks/fire_layer_1");
-@@ -611,18 +1075,15 @@
+@@ -611,18 +1096,15 @@
              float f2 = textureatlassprite.getMaxU();
              float f3 = textureatlassprite.getMinV();
              float f4 = textureatlassprite.getMaxV();

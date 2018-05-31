@@ -23,7 +23,7 @@ import net.minecraft.src.Reflector;
 public class ASMHandlerFixITeleporter extends ASMClassHandler {
 	@Override
 	public ClassTuple getDesiredClass() {
-		return new ClassTuple("net.minecraft.entity.player.EntityPlayerMP", ObfNames.ENTITYPLAYERMP);
+		return new ClassTuple("net.minecraft.entity.player.EntityPlayerMP");
 	}
 
 	@Override
@@ -39,7 +39,7 @@ public class ASMHandlerFixITeleporter extends ASMClassHandler {
 	public static class ChangeClassRefMethodHandler implements ASMMethodHandler {
 		@Override
 		public MethodTuple getDesiredMethod() {
-			return new MethodTuple("changeDimension", "(ILcom/mtbs3d/minecrift/utils/ITeleporterDummy;)Lnet/minecraft/entity/Entity;", "changeDimension", "(ILcom/mtbs3d/minecrift/utils/ITeleporterDummy;)L" + ObfNames.ENTITY + ";");
+			return new MethodTuple("changeDimension", "(ILcom/mtbs3d/minecrift/utils/ITeleporterDummy;)Lnet/minecraft/entity/Entity;", "changeDimension");
 		}
 
 		@Override

@@ -22,7 +22,7 @@ import com.mtbs3d.minecrift.asm.ObfNames;
 public class ASMHandlerGuiContainer extends ASMClassHandler {
 	@Override
 	public ClassTuple getDesiredClass() {
-		return new ClassTuple("net.minecraft.client.gui.inventory.GuiContainer", ObfNames.GUICONTAINER);
+		return new ClassTuple("net.minecraft.client.gui.inventory.GuiContainer");
 	}
 
 	@Override
@@ -47,7 +47,7 @@ public class ASMHandlerGuiContainer extends ASMClassHandler {
 			JumpInsnNode jumpInsn = (JumpInsnNode)methodNode.instructions.get(methodNode.instructions.indexOf(insn) - 2);
 			InsnList insnList = new InsnList();
 			insnList.add(new JumpInsnNode(Opcodes.IFNE, jumpInsn.label));
-			insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, obfuscated ? ObfNames.GUICONTAINER : "net/minecraft/client/gui/inventory/GuiContainer", "isFakeShift", "()Z", false));
+			insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, ObfNames.resolve("net/minecraft/client/gui/inventory/GuiContainer", obfuscated), "isFakeShift", "()Z", false));
 			methodNode.instructions.insert(insn, insnList);
 			System.out.println("Inserted pressShiftFake check");
 		}
@@ -61,23 +61,23 @@ public class ASMHandlerGuiContainer extends ASMClassHandler {
 
 		@Override
 		public void patchMethod(MethodNode methodNode, ClassNode classNode, boolean obfuscated) {
-			AbstractInsnNode findInsn = ASMUtil.findFirstInstruction(methodNode, Opcodes.INVOKEVIRTUAL, obfuscated ? ObfNames.SLOT : "net/minecraft/inventory/Slot", obfuscated ? "b" : "canBeHovered", "()Z", false);
+			AbstractInsnNode findInsn = ASMUtil.findFirstInstruction(methodNode, Opcodes.INVOKEVIRTUAL, ObfNames.resolve("net/minecraft/inventory/Slot", obfuscated), obfuscated ? "b" : "canBeHovered", "()Z", false);
 			AbstractInsnNode insn = methodNode.instructions.get(methodNode.instructions.indexOf(findInsn) + 1);
 			InsnList insnList = new InsnList();
 			insnList.add(new InsnNode(Opcodes.ICONST_1));
 			insnList.add(new InsnNode(Opcodes.ICONST_1));
 			insnList.add(new InsnNode(Opcodes.ICONST_1));
 			insnList.add(new InsnNode(Opcodes.ICONST_0));
-			insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, obfuscated ? ObfNames.GLSTATEMANAGER : "net/minecraft/client/renderer/GlStateManager", obfuscated ? "a" : "colorMask", "(ZZZZ)V", false));
+			insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, ObfNames.resolve("net/minecraft/client/renderer/GlStateManager", obfuscated), obfuscated ? "a" : "colorMask", "(ZZZZ)V", false));
 			methodNode.instructions.insert(insn, insnList);
-			insn = (MethodInsnNode)ASMUtil.findFirstInstruction(methodNode, Opcodes.INVOKESPECIAL, obfuscated ? ObfNames.GUICONTAINER : "net/minecraft/client/gui/inventory/GuiContainer", obfuscated ? "a" : "drawSlot", obfuscated ? "(L" + ObfNames.SLOT + ";)V" : "(Lnet/minecraft/inventory/Slot;)V", false);
+			insn = (MethodInsnNode)ASMUtil.findFirstInstruction(methodNode, Opcodes.INVOKESPECIAL, ObfNames.resolve("net/minecraft/client/gui/inventory/GuiContainer", obfuscated), obfuscated ? "a" : "drawSlot", ObfNames.resolveDescriptor("(Lnet/minecraft/inventory/Slot;)V", obfuscated), false);
 			insnList.clear();
 			insnList.add(new InsnNode(Opcodes.ICONST_1));
 			insnList.add(new InsnNode(Opcodes.ICONST_1));
 			insnList.add(new InsnNode(Opcodes.ICONST_1));
 			insnList.add(new InsnNode(Opcodes.ICONST_1));
-			insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, obfuscated ? ObfNames.GLSTATEMANAGER : "net/minecraft/client/renderer/GlStateManager", obfuscated ? "a" : "colorMask", "(ZZZZ)V", false));
-			insn = ASMUtil.findFirstInstruction(methodNode, Opcodes.INVOKESTATIC, obfuscated ? ObfNames.GLSTATEMANAGER : "net/minecraft/inventory/GlStateManager", obfuscated ? "H" : "popMatrix", "()V", false);
+			insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, ObfNames.resolve("net/minecraft/client/renderer/GlStateManager", obfuscated), obfuscated ? "a" : "colorMask", "(ZZZZ)V", false));
+			insn = ASMUtil.findFirstInstruction(methodNode, Opcodes.INVOKESTATIC, ObfNames.resolve("net/minecraft/inventory/GlStateManager", obfuscated), obfuscated ? "H" : "popMatrix", "()V", false);
 			methodNode.instructions.insert(insn, insnList); // same call
 			System.out.println("Inserted colorMask calls");
 		}

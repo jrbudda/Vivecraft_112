@@ -1,0 +1,23 @@
+--- a/net/minecraft/item/ItemPotion.java
++++ b/net/minecraft/item/ItemPotion.java
+@@ -3,6 +3,8 @@
+ import java.util.List;
+ import javax.annotation.Nullable;
+ import net.minecraft.advancements.CriteriaTriggers;
++import net.minecraft.client.Minecraft;
++import net.minecraft.client.entity.EntityPlayerSP;
+ import net.minecraft.client.util.ITooltipFlag;
+ import net.minecraft.creativetab.CreativeTabs;
+ import net.minecraft.entity.EntityLivingBase;
+@@ -85,6 +87,11 @@
+             }
+         }
+ 
++		if (entityLiving instanceof EntityPlayerSP && stack.getDisplayName().equals("DRINK ME")) {
++			Minecraft.getMinecraft().vrPlayer.wfMode = -0.1;
++			Minecraft.getMinecraft().vrPlayer.wfCount = 400;
++		}
++
+         return stack;
+     }
+ 

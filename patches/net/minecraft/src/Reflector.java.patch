@@ -263,7 +263,7 @@
      public static ReflectorClass WorldEvent_Load = new ReflectorClass("net.minecraftforge.event.world.WorldEvent$Load");
      public static ReflectorConstructor WorldEvent_Load_Constructor = new ReflectorConstructor(WorldEvent_Load, new Class[] {World.class});
      private static boolean logVanilla = logEntry("*** Reflector Vanilla ***");
-@@ -494,6 +614,68 @@
+@@ -494,6 +614,75 @@
      public static ReflectorField TileEntitySkullRenderer_dragonHead = new ReflectorField(TileEntitySkullRenderer, ModelDragonHead.class, 0);
      public static ReflectorField TileEntitySkullRenderer_skeletonHead = new ReflectorField(TileEntitySkullRenderer, ModelSkeletonHead.class, 0);
      public static ReflectorField TileEntitySkullRenderer_humanoidHead = new ReflectorField(TileEntitySkullRenderer, ModelSkeletonHead.class, 1);
@@ -317,6 +317,8 @@
 +	public static ReflectorMethod FMLCommonHandler_onPlayerPostTick = new ReflectorMethod(FMLCommonHandler, "onPlayerPostTick");
 +	public static ReflectorMethod FMLCommonHandler_getModName = new ReflectorMethod(FMLCommonHandler, "getModName");
 +
++	public static ReflectorClass FMLLog = new ReflectorClass("net.minecraftforge.fml.common.FMLLog");
++
 +	public static ReflectorClass ForgeInitGuiEvent_Pre = new ReflectorClass("net.minecraftforge.client.event.GuiScreenEvent$InitGuiEvent$Pre");
 +	public static ReflectorConstructor ForgeInitGuiEvent_Pre_Constructor = new ReflectorConstructor(ForgeInitGuiEvent_Pre, new Class[] {GuiScreen.class, List.class});
 +	public static ReflectorClass ForgeInitGuiEvent_Post = new ReflectorClass("net.minecraftforge.client.event.GuiScreenEvent$InitGuiEvent$Post");
@@ -324,6 +326,11 @@
 +	public static ReflectorClass ForgeGuiOpenEvent = new ReflectorClass("net.minecraftforge.client.event.GuiOpenEvent");
 +	public static ReflectorConstructor ForgeGuiOpenEvent_Constructor = new ReflectorConstructor(ForgeGuiOpenEvent, new Class[] {GuiScreen.class});
 +	public static ReflectorField ForgeGuiOpenEvent_gui = new ReflectorField(ForgeGuiOpenEvent, "gui");
++
++	// VanillaFix support
++	public static ReflectorClass VFTemporaryStorage = new ReflectorClass("org.dimdev.vanillafix.textures.TemporaryStorage");
++	public static ReflectorField VFTemporaryStorage_texturesUsed = new ReflectorField(VFTemporaryStorage, "texturesUsed");
++	// End VanillaFix support
 +
 +	public static boolean forgeExists()
 +	{

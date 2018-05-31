@@ -1,0 +1,23 @@
+--- a/net/minecraft/item/ItemFood.java
++++ b/net/minecraft/item/ItemFood.java
+@@ -1,6 +1,8 @@
+ package net.minecraft.item;
+ 
+ import net.minecraft.advancements.CriteriaTriggers;
++import net.minecraft.client.Minecraft;
++import net.minecraft.client.entity.EntityPlayerSP;
+ import net.minecraft.creativetab.CreativeTabs;
+ import net.minecraft.entity.EntityLivingBase;
+ import net.minecraft.entity.player.EntityPlayer;
+@@ -83,6 +85,11 @@
+         {
+             player.addPotionEffect(new PotionEffect(this.potionId));
+         }
++
++		if (player instanceof EntityPlayerSP && stack.getDisplayName().equals("EAT ME")) {
++			Minecraft.getMinecraft().vrPlayer.wfMode = 1;
++			Minecraft.getMinecraft().vrPlayer.wfCount = 400;
++		}
+     }
+ 
+     /**
