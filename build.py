@@ -123,6 +123,8 @@ def create_install(mcp_dir):
                 in_file= os.path.join(a,cur_file) 
                 arcname =  arc_path + cur_file
                 zipout.write(in_file, arcname)
+        print "Packaging mappings..."
+        zipout.write(os.path.join(mcp_dir, "conf", "joined.srg"), "mappings/vivecraft/joined.srg")
     os.chdir( base_dir )
 
     
