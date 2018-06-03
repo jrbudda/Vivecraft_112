@@ -35,7 +35,7 @@ public class ASMHandlerGuiIngameForge extends ASMClassHandler {
 	public static class RemoveCrosshairMethodHandler implements ASMMethodHandler {
 		@Override
 		public MethodTuple getDesiredMethod() {
-			return new MethodTuple("renderGameOverlay", "(F)V", "a", "(F)V");
+			return new MethodTuple("func_175180_a", "(F)V"); //renderGameOverlay
 		}
 
 		@Override

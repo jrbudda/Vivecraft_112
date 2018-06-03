@@ -8,8 +8,11 @@ public class ClassTuple {
 		this.className = className;
 		this.classNameObf = classNameObf;
 	}
-	
+
+	/**
+	 * This constructor will automatically resolve the obfuscated class name.
+	 */
 	public ClassTuple(String className) {
-		this(className, ObfNames.resolve(className));
+		this(className, ObfNames.resolveClass(className, true).replace('/', '.'));
 	}
 }

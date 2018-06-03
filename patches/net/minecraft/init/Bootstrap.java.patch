@@ -42,7 +42,7 @@
          {
              alreadyRegistered = true;
 -            redirectOutputToLog();
-+			if (!Reflector.FMLLog.exists())
++			if (!forgeExistsSafe()) // We're too early in init to load Reflector, so we gotta do this differently
 +				redirectOutputToLog();
              SoundEvent.registerSounds();
              Block.registerBlocks();
@@ -96,3 +96,20 @@
          }
      }
  
+@@ -550,6 +590,16 @@
+         }
+     }
+ 
++    public static boolean forgeExistsSafe() {
++		try {
++			// This should be something safe to load really early during init, ideally having no imports at all
++			Class.forName("net.minecraftforge.fml.common.versioning.InvalidVersionSpecificationException");
++		} catch (ClassNotFoundException e) {
++			return false;
++		}
++		return true;
++	}
++
+     public static void printToSYSOUT(String message)
+     {
+         SYSOUT.println(message);

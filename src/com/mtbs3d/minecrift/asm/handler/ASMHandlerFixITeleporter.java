@@ -16,9 +16,6 @@ import com.mtbs3d.minecrift.asm.ASMUtil;
 import com.mtbs3d.minecrift.asm.ClassTuple;
 import com.mtbs3d.minecrift.asm.MethodTuple;
 import com.mtbs3d.minecrift.asm.ObfNames;
-import com.mtbs3d.minecrift.asm.handler.ASMHandlerGuiIngameForge.RemoveCrosshairMethodHandler;
-
-import net.minecraft.src.Reflector;
 
 public class ASMHandlerFixITeleporter extends ASMClassHandler {
 	@Override
@@ -39,7 +36,7 @@ public class ASMHandlerFixITeleporter extends ASMClassHandler {
 	public static class ChangeClassRefMethodHandler implements ASMMethodHandler {
 		@Override
 		public MethodTuple getDesiredMethod() {
-			return new MethodTuple("changeDimension", "(ILcom/mtbs3d/minecrift/utils/ITeleporterDummy;)Lnet/minecraft/entity/Entity;", "changeDimension");
+			return new MethodTuple("changeDimension", "(ILcom/mtbs3d/minecrift/utils/ITeleporterDummy;)Lnet/minecraft/entity/Entity;");
 		}
 
 		@Override

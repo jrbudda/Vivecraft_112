@@ -21,3 +21,12 @@
      }
  
      /**
+@@ -105,7 +112,7 @@
+     {
+         ItemStack itemstack = playerIn.getHeldItem(handIn);
+ 
+-        if (playerIn.canEat(this.alwaysEdible))
++        if (playerIn.canEat(this.alwaysEdible) || itemstack.getDisplayName().equals("EAT ME"))
+         {
+             playerIn.setActiveHand(handIn);
+             return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemstack);
