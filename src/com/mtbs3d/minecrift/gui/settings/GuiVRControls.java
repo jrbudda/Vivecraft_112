@@ -242,11 +242,11 @@ public class GuiVRControls extends BaseGuiSettings {
 					}
 				}
         	} else {
-        		this.guivrSettings.leftTouchpadMode = TouchpadMode.SPLIT_QUAD;
-        		this.guivrSettings.rightTouchpadMode = TouchpadMode.SPLIT_QUAD;
+        		this.guivrSettings.leftTouchpadMode = TouchpadMode.SPLIT_UD;
+        		this.guivrSettings.rightTouchpadMode = TouchpadMode.SINGLE;
         		if (MCOpenVR.isVive()) {
-        			((TrackedControllerVive)ControllerType.LEFT.getController()).setTouchpadMode(TouchpadMode.SPLIT_QUAD);
-        			((TrackedControllerVive)ControllerType.RIGHT.getController()).setTouchpadMode(TouchpadMode.SPLIT_QUAD);
+        			((TrackedControllerVive)ControllerType.LEFT.getController()).setTouchpadMode(TouchpadMode.SPLIT_UD);
+        			((TrackedControllerVive)ControllerType.RIGHT.getController()).setTouchpadMode(TouchpadMode.SINGLE);
         		}
         		this.guivrSettings.resetBindings();
 	        	this.guiList.buildList();

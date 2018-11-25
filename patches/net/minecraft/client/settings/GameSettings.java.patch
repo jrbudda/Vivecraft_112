@@ -91,6 +91,22 @@
                      }
  
                      if (astring[0].equals("ofChunkUpdatesDynamic") && astring.length >= 2)
+@@ -3165,13 +3165,13 @@
+ 
+                     if (astring[0].equals("ofFastMath") && astring.length >= 2)
+                     {
+-                        this.ofFastMath = Boolean.valueOf(astring[1]).booleanValue();
++                        this.ofFastMath = false;//Boolean.valueOf(astring[1]).booleanValue();
+                         MathHelper.fastMath = this.ofFastMath;
+                     }
+ 
+                     if (astring[0].equals("ofFastRender") && astring.length >= 2)
+                     {
+-                        this.ofFastRender = Boolean.valueOf(astring[1]).booleanValue();
++                        this.ofFastRender = false;//Boolean.valueOf(astring[1]).booleanValue();
+                     }
+ 
+                     if (astring[0].equals("ofTranslucentBlocks") && astring.length >= 2)
 @@ -3332,7 +3332,7 @@
          this.guiScale = 0;
          this.particleSetting = 0;

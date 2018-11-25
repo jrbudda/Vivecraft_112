@@ -62,7 +62,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
     private static final String OF_JSON_NAME      = "1.12.2_HD_U_D3";
     private static final String OF_MD5            = "374a1e03b490afc539dabc04b29b49e6";
     private static final String OF_VERSION_EXT    = ".jar";
-    private static String FORGE_VERSION     = "14.23.4.2705";
+    private static String FORGE_VERSION     = "14.23.5.2784";
 	/* END OF DO NOT RENAME */
 
 	private static final String DEFAULT_PROFILE_NAME = "ViveCraft " + MINECRAFT_VERSION;
@@ -549,9 +549,12 @@ public class Installer extends JPanel  implements PropertyChangeListener
 					}	
 					JComboBox icb = new JComboBox(ilist.toArray());
 					File sel =(File) JOptionPane.showInputDialog(null,"Select MultiMC Instance.","MultiMC Detected", JOptionPane.PLAIN_MESSAGE, null, ilist.toArray(), null);
-					if(sel !=null){
+					if(sel != null){
 						mmcinst = sel;
 						isMultiMC = true;
+					} else {
+						finalMessage = "Install Cancelled. ";
+					    return null;
 					}
 					break; // don't ask multiple times
 				}

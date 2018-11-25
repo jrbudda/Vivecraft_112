@@ -101,8 +101,8 @@ public class VRSettings
     public boolean vrReverseHands = false;
     public boolean vrReverseShootingEye = false;
     public Map<String, VRButtonMapping> buttonMappings = new HashMap();
-	public TouchpadMode leftTouchpadMode = TouchpadMode.SPLIT_QUAD;
-	public TouchpadMode rightTouchpadMode = TouchpadMode.SPLIT_QUAD;
+	public TouchpadMode leftTouchpadMode = TouchpadMode.SPLIT_UD;
+	public TouchpadMode rightTouchpadMode = TouchpadMode.SINGLE;
 	public boolean freemoveWMRStick = true;
 	public float analogDeadzone = 0.05F;
     public float vrWorldScale = 1.0f;
@@ -691,6 +691,10 @@ public class VRSettings
                     if(optionTokens[0].equals("teleportLimitHoriz")){
                         this.vrTeleportHorizLimit = Integer.parseInt(optionTokens[1]);
                     }
+
+					if(optionTokens[0].equals("radialModeHold")){
+						this.radialModeHold = optionTokens[1].equals("true");
+					}
 
                     if(optionTokens[0].equals("firstRun")){
                         this.firstRun = optionTokens[1].equals("true");
@@ -1612,8 +1616,9 @@ public class VRSettings
             var5.println("analogMovement:" + this.analogMovement);
             var5.println("hideGUI:" + this.mc.gameSettings.hideGUI);
             var5.println("bowMode:" + this.bowMode);
-            var5.println("keyboardKeys:" + (this.keyboardKeys));
-            var5.println("keyboardKeysShift:" + (this.keyboardKeysShift));
+            var5.println("keyboardKeys:" + this.keyboardKeys);
+            var5.println("keyboardKeysShift:" + this.keyboardKeysShift);
+            var5.println("radialModeHold:" + this.radialModeHold);
             var5.println("firstRun:" + this.firstRun);
             
             if (vrQuickCommands == null) vrQuickCommands = getQuickCommandsDefaults(); //defaults

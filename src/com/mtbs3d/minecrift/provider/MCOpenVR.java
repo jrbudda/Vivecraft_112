@@ -1,12 +1,10 @@
 package com.mtbs3d.minecrift.provider;
 
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.IntBuffer;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -35,13 +33,11 @@ import com.mtbs3d.minecrift.control.VRInputEvent;
 import com.mtbs3d.minecrift.gameplay.screenhandlers.GuiHandler;
 import com.mtbs3d.minecrift.gameplay.screenhandlers.KeyboardHandler;
 import com.mtbs3d.minecrift.gameplay.screenhandlers.RadialHandler;
-import com.mtbs3d.minecrift.gui.GuiKeyboard;
 import com.mtbs3d.minecrift.gui.settings.GuiVRControls;
 import com.mtbs3d.minecrift.render.renderPass;
 import com.mtbs3d.minecrift.settings.VRHotkeys;
 import com.mtbs3d.minecrift.settings.VRSettings;
 import com.mtbs3d.minecrift.utils.HardwareType;
-import com.mtbs3d.minecrift.utils.InputInjector;
 import com.mtbs3d.minecrift.utils.KeyboardSimulator;
 import com.mtbs3d.minecrift.utils.MCReflection;
 import com.mtbs3d.minecrift.utils.MenuWorldExporter;
@@ -79,11 +75,7 @@ import jopenvr.VR_IVRRenderModels_FnTable;
 import jopenvr.VR_IVRSettings_FnTable;
 import jopenvr.VR_IVRSystem_FnTable;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiChat;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.GuiWinGame;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.main.Main;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.ItemStack;
@@ -169,6 +161,8 @@ public class MCOpenVR
 	private static VRControllerState_t.ByReference[] inputStateRefernceArray = new VRControllerState_t.ByReference[3];
 	private static VRControllerState_t[] lastControllerState = new VRControllerState_t[3];
 	private static VRControllerState_t[] controllerStateReference = new VRControllerState_t[3];
+
+	private static Queue<VREvent_t> vrEvents = new LinkedList<>();
 
 	private static Queue<VRInputEvent> vrInputEvents = new LinkedList<>();
 	private static Map<String, ButtonTuple> activeBindings = new HashMap<>();
@@ -396,7 +390,7 @@ public class MCOpenVR
 
 
 		//TODO: Forge?
-				Map<String, Integer> co = (Map<String, Integer>) MCReflection.getField(MCReflection.KeyBinding_Category_Order, null);
+				Map<String, Integer> co = (Map<String, Integer>) MCReflection.KeyBinding_CATEGORY_ORDER.get(null);
 				co.put("Vivecraft", Integer.valueOf(8));
 				co.put("Vivecraft GUI", Integer.valueOf(9));
 	}
@@ -619,7 +613,7 @@ public class MCOpenVR
 				Pointer s=new Memory(buffsize);
 
 
-				debugOut(0);
+				//debugOut(0);
 
 				System.out.println("TrackingSpace: "+vrCompositor.GetTrackingSpace.apply());
 
@@ -704,12 +698,15 @@ public class MCOpenVR
 
 	public static void poll(long frameIndex)
 	{
-		Minecraft.getMinecraft().mcProfiler.startSection("input");
-		boolean sleeping = (mc.world !=null && mc.player != null && mc.player.isPlayerSleeping());		
+		boolean sleeping = (mc.world !=null && mc.player != null && mc.player.isPlayerSleeping());
 
 		paused = vrsystem.ShouldApplicationPause.apply() != 0;
 
+		mc.mcProfiler.startSection("events");
+		pollVREvents();
+
 		if(!mc.vrSettings.seated){
+			mc.mcProfiler.endStartSection("controllers");
 
 			for (TrackedController controller : controllers) {
 				controller.updateState();
@@ -732,19 +729,22 @@ public class MCOpenVR
 
 			// GUI controls
 
-			Minecraft.getMinecraft().mcProfiler.endStartSection("gui");
+			mc.mcProfiler.startSection("gui");
 
 			if(mc.currentScreen == null && mc.vrSettings.vrTouchHotbar && mc.vrSettings.vrHudLockMode != mc.vrSettings.HUD_LOCK_HEAD && hudPopup){
 				processHotbar();
 			}
+
+			mc.mcProfiler.endSection();
 		}
 
-		Minecraft.getMinecraft().mcProfiler.endStartSection("pollEvents");
-		pollInputEvents();
+		mc.mcProfiler.endStartSection("processEvents");
+		processVREvents();
 
-		Minecraft.getMinecraft().mcProfiler.endStartSection("updatePose");
+		mc.mcProfiler.endStartSection("updatePose");
 		updatePose();
-		Minecraft.getMinecraft().mcProfiler.endSection();
+
+		mc.mcProfiler.endSection();
 	}
 
 	private static int quickTorchPreviousSlot;
@@ -821,8 +821,8 @@ public class MCOpenVR
 				initialized = false;
 				if(Main.katvr)
 					jkatvr.Halt();
-			} catch (Exception e) {
-				// TODO: handle exception
+			} catch (Throwable e) { // wtf valve
+				e.printStackTrace();
 			}
 
 		}
@@ -980,7 +980,7 @@ public class MCOpenVR
 							if (!button.isTouch && controllers[button.controller.ordinal()].isButtonPressed(button.button))
 								continue;
 						}
-						binding.unpress();
+						binding.scheduleUnpress(1);
 					}
 				}
 			}
@@ -1002,7 +1002,7 @@ public class MCOpenVR
 							if (!button.isTouch && controllers[button.controller.ordinal()].isButtonPressed(button.button))
 								continue;
 						}
-						binding.unpress();
+						binding.scheduleUnpress(1);
 					}
 				}
 			}
@@ -1296,79 +1296,83 @@ public class MCOpenVR
 		return "";
 	}
 
-	//jrbuda:: oh hello there you are.
-	private static void pollInputEvents()
+	// Valve why do we have to poll events before we can get updated controller state?
+	private static void pollVREvents()
 	{
-		if(vrsystem == null) return;
+		if (vrsystem == null) return;
+		for (VREvent_t event = new VREvent_t(); vrsystem.PollNextEvent.apply(event, event.size()) > 0; event = new VREvent_t()) {
+			vrEvents.add(event);
+		}
+	}
 
-		//TODO: use this for everything, maybe.
-		jopenvr.VREvent_t event = new jopenvr.VREvent_t();
+	//jrbuda:: oh hello there you are.
+	private static void processVREvents() {
+		while (!vrEvents.isEmpty()) {
+			VREvent_t event = vrEvents.poll();
+			//System.out.println("SteamVR Event: " + findEvent(event.eventType));
 
-		while (vrsystem.PollNextEvent.apply(event, event.size() ) > 0)
-		{
-			//	System.out.println("SteamVR Event: " + findEvent(event.eventType));
 			switch (event.eventType) {
-//			case EVREventType.EVREventType_VREvent_KeyboardClosed:
-//				//'huzzah'
-//				keyboardShowing = false;
-//				if (mc.currentScreen instanceof GuiChat && !mc.vrSettings.seated) {
-//					GuiTextField field = (GuiTextField)MCReflection.getField(MCReflection.GuiChat_inputField, mc.currentScreen);
-//					if (field != null) {
-//						String s = field.getText().trim();
-//						if (!s.isEmpty()) {
-//							mc.currentScreen.sendChatMessage(s);
-//						}
-//					}
-//					//mc.displayGuiScreen((GuiScreen)null);
-//				}
-//				break;
-//			case EVREventType.EVREventType_VREvent_KeyboardCharInput:
-//				byte[] inbytes = event.data.getPointer().getByteArray(0, 8);	
-//				int len = 0;			
-//				for (byte b : inbytes) {
-//					if(b>0)len++;
-//				}
-//				String str = new String(inbytes,0,len, StandardCharsets.UTF_8);
-//				if (mc.currentScreen != null && !mc.vrSettings.alwaysSimulateKeyboard) { // experimental, needs testing
-//					try {
-//						for (char ch : str.toCharArray()) {
-//							int[] codes = KeyboardSimulator.getLWJGLCodes(ch);
-//							int code = codes.length > 0 ? codes[codes.length - 1] : 0;
-//							if (InputInjector.isSupported()) InputInjector.typeKey(code, ch);
-//							else mc.currentScreen.keyTypedPublic(ch, code);
-//							break;
-//						}
-//					} catch (Exception e) {
-//						e.printStackTrace();
-//					}
-//				} else {
-//					KeyboardSimulator.type(str); //holy shit it works.
-//				}
-//				break;
-			case EVREventType.EVREventType_VREvent_ButtonTouch:
-				if (!mc.vrSettings.seated) handleButtonEvent(event, true, false);
-				break;
-			case EVREventType.EVREventType_VREvent_ButtonPress:
-				if (!mc.vrSettings.seated) handleButtonEvent(event, true, true);
-				break;
-			case EVREventType.EVREventType_VREvent_ButtonUntouch:
-				if (!mc.vrSettings.seated) handleButtonEvent(event, false, false);
-				break;
-			case EVREventType.EVREventType_VREvent_ButtonUnpress:
-				if (!mc.vrSettings.seated) handleButtonEvent(event, false, true);
-				break;
-			case EVREventType.EVREventType_VREvent_Quit:
-				mc.shutdown();
-				break;
-			case EVREventType.EVREventType_VREvent_TrackedDeviceActivated:
-			case EVREventType.EVREventType_VREvent_TrackedDeviceDeactivated:
-			case EVREventType.EVREventType_VREvent_TrackedDeviceRoleChanged:
-			case EVREventType.EVREventType_VREvent_TrackedDeviceUpdated:
-			case EVREventType.EVREventType_VREvent_ModelSkinSettingsHaveChanged:
-				getXforms = true;
-				break;
-			default:
-				break;
+				/*case EVREventType.EVREventType_VREvent_KeyboardClosed:
+					//'huzzah'
+					keyboardShowing = false;
+					if (mc.currentScreen instanceof GuiChat && !mc.vrSettings.seated) {
+						GuiTextField field = (GuiTextField)MCReflection.getField(MCReflection.GuiChat_inputField, mc.currentScreen);
+						if (field != null) {
+							String s = field.getText().trim();
+							if (!s.isEmpty()) {
+								mc.currentScreen.sendChatMessage(s);
+							}
+						}
+						//mc.displayGuiScreen((GuiScreen)null);
+					}
+					break;
+				case EVREventType.EVREventType_VREvent_KeyboardCharInput:
+					byte[] inbytes = event.data.getPointer().getByteArray(0, 8);
+					int len = 0;
+					for (byte b : inbytes) {
+						if(b>0)len++;
+					}
+					String str = new String(inbytes,0,len, StandardCharsets.UTF_8);
+					if (mc.currentScreen != null && !mc.vrSettings.alwaysSimulateKeyboard) { // experimental, needs testing
+						try {
+							for (char ch : str.toCharArray()) {
+								int[] codes = KeyboardSimulator.getLWJGLCodes(ch);
+								int code = codes.length > 0 ? codes[codes.length - 1] : 0;
+								if (InputInjector.isSupported()) InputInjector.typeKey(code, ch);
+								else mc.currentScreen.keyTypedPublic(ch, code);
+								break;
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					} else {
+						KeyboardSimulator.type(str); //holy shit it works.
+					}
+					break;*/
+				case EVREventType.EVREventType_VREvent_ButtonTouch:
+					if (!mc.vrSettings.seated) handleButtonEvent(event, true, false);
+					break;
+				case EVREventType.EVREventType_VREvent_ButtonPress:
+					if (!mc.vrSettings.seated) handleButtonEvent(event, true, true);
+					break;
+				case EVREventType.EVREventType_VREvent_ButtonUntouch:
+					if (!mc.vrSettings.seated) handleButtonEvent(event, false, false);
+					break;
+				case EVREventType.EVREventType_VREvent_ButtonUnpress:
+					if (!mc.vrSettings.seated) handleButtonEvent(event, false, true);
+					break;
+				case EVREventType.EVREventType_VREvent_Quit:
+					mc.shutdown();
+					break;
+				case EVREventType.EVREventType_VREvent_TrackedDeviceActivated:
+				case EVREventType.EVREventType_VREvent_TrackedDeviceDeactivated:
+				case EVREventType.EVREventType_VREvent_TrackedDeviceRoleChanged:
+				case EVREventType.EVREventType_VREvent_TrackedDeviceUpdated:
+				case EVREventType.EVREventType_VREvent_ModelSkinSettingsHaveChanged:
+					getXforms = true;
+					break;
+				default:
+					break;
 			}
 		}
 	}

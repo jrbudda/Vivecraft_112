@@ -1,10 +1,7 @@
 package com.mtbs3d.minecrift.render;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import org.lwjgl.opengl.GL11;
@@ -142,6 +139,7 @@ public class MenuWorldRenderer {
 			Blocks.LEAVES.setGraphicsLevel(true);
 			Blocks.LEAVES2.setGraphicsLevel(true);
 			TextureUtils.resourcesReloaded(Config.getResourceManager());
+			visibleTextures.clear();
 			vertexBuffers = new VertexBuffer[3];
 			BlockRendererDispatcher blockRenderer = mc.getBlockRendererDispatcher();
 			int ground = rand.nextInt(1000) == 0 ? blockAccess.getGround() + 100 : blockAccess.getGround(); // lol
@@ -205,8 +203,8 @@ public class MenuWorldRenderer {
 		this.blockAccess = blockAccess;
 		if (blockAccess != null) {
 			this.worldProvider = blockAccess.getDimensionType().createDimension();
-			MCReflection.setField(MCReflection.WorldProvider_terrainType, this.worldProvider, WorldType.DEFAULT);
-			MCReflection.invokeMethod(MCReflection.WorldProvider_generateLightBrightnessTable, this.worldProvider);
+			MCReflection.WorldProvider_terrainType.set(this.worldProvider, WorldType.DEFAULT);
+			MCReflection.WorldProvider_generateLightBrightnessTable.invoke(this.worldProvider);
 	        this.lightmapUpdateNeeded = true;
 		}
 	}
@@ -226,15 +224,28 @@ public class MenuWorldRenderer {
 	// VanillaFix support
 	@SuppressWarnings("unchecked")
 	private void copyVisibleTextures() {
-		if (Reflector.VFTemporaryStorage.exists())
-			visibleTextures.addAll((Collection<TextureAtlasSprite>)Reflector.getFieldValue(Reflector.VFTemporaryStorage_texturesUsed));
+		if (Reflector.VFTemporaryStorage.exists()) {
+			if (Reflector.VFTemporaryStorage_texturesUsed.exists()) {
+				visibleTextures.addAll((Collection<TextureAtlasSprite>)Reflector.getFieldValue(Reflector.VFTemporaryStorage_texturesUsed));
+			} else if (Reflector.VFTextureAtlasSprite_needsAnimationUpdate.exists()) {
+				for (TextureAtlasSprite texture : (Collection<TextureAtlasSprite>)MCReflection.TextureMap_listAnimatedSprites.get(mc.getTextureMapBlocks())) {
+					if (Reflector.callBoolean(texture, Reflector.VFTextureAtlasSprite_needsAnimationUpdate))
+						visibleTextures.add(texture);
+				}
+			}
+		}
 	}
 
 	@SuppressWarnings("unchecked")
 	public void pushVisibleTextures() {
 		if (Reflector.VFTemporaryStorage.exists()) {
-			Collection<TextureAtlasSprite> coll = (Collection<TextureAtlasSprite>)Reflector.getFieldValue(Reflector.VFTemporaryStorage_texturesUsed);
-			coll.addAll(visibleTextures);
+			if (Reflector.VFTemporaryStorage_texturesUsed.exists()) {
+				Collection<TextureAtlasSprite> coll = (Collection<TextureAtlasSprite>)Reflector.getFieldValue(Reflector.VFTemporaryStorage_texturesUsed);
+				coll.addAll(visibleTextures);
+			} else if (Reflector.VFTextureAtlasSprite_markNeedsAnimationUpdate.exists()) {
+				for (TextureAtlasSprite texture : visibleTextures)
+					Reflector.call(texture, Reflector.VFTextureAtlasSprite_markNeedsAnimationUpdate);
+			}
 		}
 	}
 	// End VanillaFix support

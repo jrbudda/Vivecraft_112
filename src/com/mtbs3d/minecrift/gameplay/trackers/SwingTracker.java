@@ -294,12 +294,12 @@ public class SwingTracker extends Tracker{
     }
 
 	private boolean getIsHittingBlock(){
-		return (Boolean)MCReflection.getField(MCReflection.PlayerControllerMP_isHittingBlock, Minecraft.getMinecraft().playerController);
+		return (Boolean)MCReflection.PlayerControllerMP_isHittingBlock.get(Minecraft.getMinecraft().playerController);
 	}
 	
     // VIVE START - function to allow damaging blocks immediately
-	private void clearBlockHitDelay() { 
-		MCReflection.setField(MCReflection.PlayerControllerMP_blockHitDelay, Minecraft.getMinecraft().playerController, 0);
+	private void clearBlockHitDelay() {
+		MCReflection.PlayerControllerMP_blockHitDelay.set(Minecraft.getMinecraft().playerController, 0);
 	}
 	
 }

@@ -92,7 +92,7 @@ public class GuiRadialConfiguration extends BaseGuiSettings
         	}    
 
         	int numButts = 8;
-        	int buttonwidth = 120;
+        	int buttonwidthMin = 120;
         	int degreesPerButt = 360 / numButts;
         	int dist = 48;
         	int centerx = this.width / 2;
@@ -113,7 +113,10 @@ public class GuiRadialConfiguration extends BaseGuiSettings
         		
         		String str = ""; 
         		if(b!=null)		
+        			
         			str = I18n.format(b.getKeyDescription());
+        		int buttonwidth =  Math.max(buttonwidthMin, fontRenderer.getStringWidth(str));
+
         		int x=0,y=0;
         		if(i==0) {
         			x = 0;
@@ -176,10 +179,6 @@ public class GuiRadialConfiguration extends BaseGuiSettings
     			Minecraft.getMinecraft().vrSettings.saveOptions();
     			this.reinit = true;
     		}
-    		else if(par1GuiButton.id == 201) {
-    			this.isShift = !this.isShift;
-    			this.reinit = true;
-    		}            
     		else if(par1GuiButton.id == 201) {
     			this.isShift = !this.isShift;
     			this.reinit = true;

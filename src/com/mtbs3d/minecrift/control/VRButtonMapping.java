@@ -3,9 +3,9 @@ package com.mtbs3d.minecrift.control;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
+import net.minecraft.client.resources.I18n;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 
@@ -25,7 +25,7 @@ public class VRButtonMapping implements Comparable<VRButtonMapping> {
 	public final char functionExt;
 	public KeyBinding keyBinding;
 	public Set<ButtonTuple> buttons;
-	protected boolean unpress;
+	protected int unpress;
 	protected boolean pressed;
 	
 	public VRButtonMapping(String functionId, ButtonTuple... buttons) {
@@ -61,6 +61,10 @@ public class VRButtonMapping implements Comparable<VRButtonMapping> {
 			return 1;
 		if (!functionId.startsWith("keyboard") && other.functionId.startsWith("keyboard"))
 			return -1;
+		if (keyBinding != null)
+			return I18n.format(keyBinding.getKeyDescription()).compareTo(other.functionId);
+		if (other.keyBinding != null)
+			return functionId.compareTo(I18n.format(other.keyBinding.getKeyDescription()));
 		return functionId.compareTo(other.functionId);
 	}
 	
@@ -75,9 +79,10 @@ public class VRButtonMapping implements Comparable<VRButtonMapping> {
 	}
 	
 	public void tick() {
-		if (this.unpress) {
-			actuallyUnpress();
-			this.unpress = false;
+		if (this.unpress > 0) {
+			this.unpress -= 1;
+			if(this.unpress <= 0)
+				actuallyUnpress();
 		}
 	}
 	
@@ -86,7 +91,8 @@ public class VRButtonMapping implements Comparable<VRButtonMapping> {
 	}
 
 	public void press(){	
-		this.unpress = false;
+		this.unpress = 0;
+		if (this.pressed) return;
 		if(keyBinding != null){
 			pressKey(keyBinding);
 			this.pressed = true;
@@ -118,8 +124,8 @@ public class VRButtonMapping implements Comparable<VRButtonMapping> {
 		}
 	}
 	
-	public void unpress(){
-		this.unpress = true;
+	public void scheduleUnpress(int unpressInTicks){
+		this.unpress = unpressInTicks;
 	}
 	
 	public void actuallyUnpress() {
@@ -153,8 +159,8 @@ public class VRButtonMapping implements Comparable<VRButtonMapping> {
 
     public static void setKeyBindState(KeyBinding kb, boolean pressed) {
         if (kb != null) {
-            MCReflection.setField(MCReflection.KeyBinding_pressed, kb, pressed); //kb.pressed = pressed;
-            MCReflection.setField(MCReflection.KeyBinding_pressTime, kb, (Integer)MCReflection.getField(MCReflection.KeyBinding_pressTime, kb) + 1); //++kb.pressTime;
+			MCReflection.KeyBinding_pressed.set(kb, pressed); //kb.pressed = pressed;
+			MCReflection.KeyBinding_pressTime.set(kb, (Integer)MCReflection.KeyBinding_pressTime.get(kb) + 1); //++kb.pressTime;
         }       
     }
     
@@ -163,13 +169,17 @@ public class VRButtonMapping implements Comparable<VRButtonMapping> {
     	boolean flag = Display.isActive() && awtCode != Keyboard.KEY_NONE && !MCOpenVR.isVivecraftBinding(kb) && (!Reflector.forgeExists() || Reflector.call(kb, Reflector.ForgeKeyBinding_getKeyModifier) == Reflector.getFieldValue(Reflector.KeyModifier_NONE));
     	if (flag) {
     		try { // because apparently java is just stupid
+    		//	System.out.println("Keyboard Simulator keyPress: " + ", LWJGL code: " + kb.getKeyCode() + ", AWT code: " + awtCode);
     			KeyboardSimulator.robot.keyPress(awtCode);
     		} catch (Exception e) {
     			System.out.println("Key error: " + e.toString() + ", LWJGL code: " + kb.getKeyCode() + ", AWT code: " + awtCode);
     			flag = false;
     		}
     	}
-    	if (!flag) setKeyBindState(kb, true);
+    	if (!flag) {
+		//	System.out.println("setKeyBindState true: " + ", LWJGL code: " + kb.getKeyCode() + ", AWT code: " + awtCode);
+    		setKeyBindState(kb, true);
+    	}
     }
     
     public static void unpressKey(KeyBinding kb) {
@@ -177,12 +187,17 @@ public class VRButtonMapping implements Comparable<VRButtonMapping> {
     	boolean flag = Display.isActive() && awtCode != Keyboard.KEY_NONE && !MCOpenVR.isVivecraftBinding(kb) && (!Reflector.forgeExists() || Reflector.call(kb, Reflector.ForgeKeyBinding_getKeyModifier) == Reflector.getFieldValue(Reflector.KeyModifier_NONE));
     	if (flag) {
     		try { // because apparently java is just stupid
+    		//	System.out.println("Keyboard Simulator keyRelease: " + ", LWJGL code: " + kb.getKeyCode() + ", AWT code: " + awtCode);
     			KeyboardSimulator.robot.keyRelease(awtCode);
     		} catch (Exception e) {
-    			System.out.println("Key error: " + e.toString() + ", LWJGL code: " + kb.getKeyCode() + ", AWT code: " + awtCode);
+    		//	System.out.println("Key error: " + e.toString() + ", LWJGL code: " + kb.getKeyCode() + ", AWT code: " + awtCode);
     			flag = false;
     		}
     	}
-    	if (!flag) MCReflection.invokeMethod(MCReflection.KeyBinding_unpressKey, kb);
+    	
+    	if (!flag) {
+			//System.out.println("unpressKey: " + ", LWJGL code: " + kb.getKeyCode() + ", AWT code: " + awtCode);
+			MCReflection.KeyBinding_unpressKey.invoke(kb);
+    	}
     }
 }

@@ -56,7 +56,7 @@ public class RenderVRPlayer extends RenderPlayer
         GlStateManager.color(1.0F, 1.0F, 1.0F, f);
         float f1 = 0.0625F;
         ModelPlayer modelplayer = this.getMainModel();
-        MCReflection.invokeMethod(MCReflection.RenderPlayer_setModelVisibilities, this, clientPlayer);
+		MCReflection.RenderPlayer_setModelVisibilities.invoke(this, clientPlayer);
         GlStateManager.enableBlend();
         GlStateManager.enableCull();
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
@@ -93,7 +93,7 @@ public class RenderVRPlayer extends RenderPlayer
         GlStateManager.color(1.0F, 1.0F, 1.0f, f);
         float f1 = 0.0625F;
         ModelPlayer modelplayer = this.getMainModel();
-        MCReflection.invokeMethod(MCReflection.RenderPlayer_setModelVisibilities, this, clientPlayer);
+		MCReflection.RenderPlayer_setModelVisibilities.invoke(this, clientPlayer);
         GlStateManager.enableBlend();
         GlStateManager.enableCull();
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);

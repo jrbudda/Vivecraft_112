@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/player/EntityPlayerMP.java
 +++ b/net/minecraft/entity/player/EntityPlayerMP.java
-@@ -2,10 +2,18 @@
+@@ -2,10 +2,19 @@
  
  import com.google.common.collect.Lists;
  import com.mojang.authlib.GameProfile;
@@ -8,6 +8,7 @@
 +import com.mtbs3d.minecrift.api.VivePlayer;
 +import com.mtbs3d.minecrift.utils.ITeleporterDummy;
 +
++import com.mtbs3d.minecrift.utils.MCReflection;
  import io.netty.buffer.Unpooled;
 +
 +import java.util.ArrayList;
@@ -19,7 +20,7 @@
  import javax.annotation.Nullable;
  import net.minecraft.advancements.CriteriaTriggers;
  import net.minecraft.advancements.PlayerAdvancements;
-@@ -15,16 +23,19 @@
+@@ -15,16 +24,19 @@
  import net.minecraft.block.BlockWall;
  import net.minecraft.block.material.Material;
  import net.minecraft.block.state.IBlockState;
@@ -39,7 +40,7 @@
  import net.minecraft.init.SoundEvents;
  import net.minecraft.inventory.Container;
  import net.minecraft.inventory.ContainerChest;
-@@ -33,6 +44,7 @@
+@@ -33,6 +45,7 @@
  import net.minecraft.inventory.IContainerListener;
  import net.minecraft.inventory.IInventory;
  import net.minecraft.inventory.SlotCrafting;
@@ -47,7 +48,7 @@
  import net.minecraft.item.Item;
  import net.minecraft.item.ItemMapBase;
  import net.minecraft.item.ItemStack;
-@@ -68,6 +80,7 @@
+@@ -68,6 +81,7 @@
  import net.minecraft.network.play.server.SPacketWindowItems;
  import net.minecraft.network.play.server.SPacketWindowProperty;
  import net.minecraft.potion.PotionEffect;
@@ -55,7 +56,7 @@
  import net.minecraft.scoreboard.IScoreCriteria;
  import net.minecraft.scoreboard.Score;
  import net.minecraft.scoreboard.ScoreObjective;
-@@ -76,6 +89,7 @@
+@@ -76,6 +90,7 @@
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.server.management.PlayerInteractionManager;
  import net.minecraft.server.management.UserListOpsEntry;
@@ -63,7 +64,7 @@
  import net.minecraft.stats.RecipeBookServer;
  import net.minecraft.stats.StatBase;
  import net.minecraft.stats.StatList;
-@@ -89,6 +103,7 @@
+@@ -89,6 +104,7 @@
  import net.minecraft.util.EntityDamageSource;
  import net.minecraft.util.EnumHand;
  import net.minecraft.util.EnumHandSide;
@@ -71,7 +72,7 @@
  import net.minecraft.util.NonNullList;
  import net.minecraft.util.ReportedException;
  import net.minecraft.util.ResourceLocation;
-@@ -111,6 +126,7 @@
+@@ -111,6 +127,7 @@
  import net.minecraft.world.ILockableContainer;
  import net.minecraft.world.WorldServer;
  import net.minecraft.world.storage.loot.ILootContainer;
@@ -79,7 +80,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-@@ -182,7 +198,7 @@
+@@ -182,7 +199,7 @@
      /**
       * The currently in use window ID. Incremented every time a window is opened.
       */
@@ -88,7 +89,7 @@
  
      /**
       * set to true when player is moving quantity of items from one inventory to another(crafting) but item in either
-@@ -201,9 +217,15 @@
+@@ -201,9 +218,15 @@
          super(worldIn, profile);
          interactionManagerIn.player = this;
          this.interactionManager = interactionManagerIn;
@@ -106,7 +107,7 @@
          {
              int i = Math.max(0, server.getSpawnRadius(worldIn));
              int j = MathHelper.floor(worldIn.getWorldBorder().getClosestDistance((double)blockpos.getX(), (double)blockpos.getZ()));
-@@ -220,7 +242,8 @@
+@@ -220,7 +243,8 @@
  
              blockpos = worldIn.getTopSolidOrLiquidBlock(blockpos.add(this.rand.nextInt(i * 2 + 1) - i, 0, this.rand.nextInt(i * 2 + 1) - i));
          }
@@ -116,7 +117,7 @@
          this.mcServer = server;
          this.statsFile = server.getPlayerList().getPlayerStatsFile(this);
          this.advancements = server.getPlayerList().getPlayerAdvancements(this);
-@@ -231,6 +254,7 @@
+@@ -231,6 +255,7 @@
          {
              this.setPosition(this.posX, this.posY + 1.0D, this.posZ);
          }
@@ -124,7 +125,7 @@
      }
  
      /**
-@@ -336,9 +360,24 @@
+@@ -336,9 +361,24 @@
          this.lastExperience = -1;
      }
  
@@ -150,7 +151,7 @@
      }
  
      /**
-@@ -384,7 +423,8 @@
+@@ -384,7 +424,8 @@
  
          this.openContainer.detectAndSendChanges();
  
@@ -160,7 +161,7 @@
          {
              this.closeScreen();
              this.openContainer = this.inventoryContainer;
-@@ -535,6 +575,12 @@
+@@ -535,6 +576,12 @@
       */
      public void onDeath(DamageSource cause)
      {
@@ -173,7 +174,7 @@
          boolean flag = this.world.getGameRules().getBoolean("showDeathMessages");
          this.connection.sendPacket(new SPacketCombatEvent(this.getCombatTracker(), SPacketCombatEvent.Event.ENTITY_DIED, flag));
  
-@@ -563,8 +609,32 @@
+@@ -563,8 +610,32 @@
  
          if (!this.world.getGameRules().getBoolean("keepInventory") && !this.isSpectator())
          {
@@ -206,7 +207,7 @@
          }
  
          for (ScoreObjective scoreobjective : this.world.getScoreboard().getObjectivesFromCriteria(IScoreCriteria.DEATH_COUNT))
-@@ -717,6 +787,11 @@
+@@ -717,6 +788,11 @@
      @Nullable
      public Entity changeDimension(int dimensionIn)
      {
@@ -218,7 +219,7 @@
          this.invulnerableDimensionChange = true;
  
          if (this.dimension == 0 && dimensionIn == -1)
-@@ -757,6 +832,54 @@
+@@ -757,6 +833,54 @@
          }
      }
  
@@ -273,7 +274,7 @@
      public boolean isSpectatedByPlayer(EntityPlayerMP player)
      {
          if (player.isSpectator())
-@@ -893,7 +1016,13 @@
+@@ -893,7 +1017,13 @@
          BlockPos blockpos = new BlockPos(i, j, k);
          IBlockState iblockstate = this.world.getBlockState(blockpos);
  
@@ -288,7 +289,7 @@
          {
              BlockPos blockpos1 = blockpos.down();
              IBlockState iblockstate1 = this.world.getBlockState(blockpos1);
-@@ -918,7 +1047,7 @@
+@@ -918,7 +1048,7 @@
      /**
       * get the next window id to use
       */
@@ -297,7 +298,7 @@
      {
          this.currentWindowId = this.currentWindowId % 100 + 1;
      }
-@@ -931,11 +1060,17 @@
+@@ -931,11 +1061,17 @@
          }
          else
          {
@@ -320,7 +321,7 @@
          }
      }
  
-@@ -982,6 +1117,12 @@
+@@ -982,6 +1118,12 @@
  
              this.openContainer.windowId = this.currentWindowId;
              this.openContainer.addListener(this);
@@ -333,7 +334,7 @@
          }
      }
  
-@@ -991,6 +1132,12 @@
+@@ -991,6 +1133,12 @@
          this.openContainer = new ContainerMerchant(this.inventory, villager, this.world);
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addListener(this);
@@ -346,7 +347,7 @@
          IInventory iinventory = ((ContainerMerchant)this.openContainer).getMerchantInventory();
          ITextComponent itextcomponent = villager.getDisplayName();
          this.connection.sendPacket(new SPacketOpenWindow(this.currentWindowId, "minecraft:villager", itextcomponent, iinventory.getSizeInventory()));
-@@ -1115,6 +1262,12 @@
+@@ -1115,6 +1263,12 @@
      public void closeContainer()
      {
          this.openContainer.onContainerClosed(this);
@@ -359,7 +360,7 @@
          this.openContainer = this.inventoryContainer;
      }
  
-@@ -1143,7 +1296,7 @@
+@@ -1143,7 +1297,7 @@
      public void addStat(StatBase stat, int amount)
      {
          if (stat != null)
@@ -368,7 +369,7 @@
              this.statsFile.increaseStat(this, stat, amount);
  
              for (ScoreObjective scoreobjective : this.getWorldScoreboard().getObjectivesFromCriteria(stat.getCriteria()))
-@@ -1203,7 +1356,7 @@
+@@ -1203,7 +1357,7 @@
      {
          return this.disconnected;
      }
@@ -377,7 +378,31 @@
      /**
       * this function is called when a players inventory is sent to him, lastHealth is updated on any dimension
       * transitions, then reset.
-@@ -1611,4 +1764,156 @@
+@@ -1266,6 +1420,23 @@
+         this.enteredNetherPosition = that.enteredNetherPosition;
+         this.setLeftShoulderEntity(that.getLeftShoulderEntity());
+         this.setRightShoulderEntity(that.getRightShoulderEntity());
++
++        if (Reflector.forgeExists()) {
++        	Reflector.setFieldValue(this, Reflector.ForgeEntityPlayer_spawnChunkMap, Reflector.getFieldValue(that, Reflector.ForgeEntityPlayer_spawnChunkMap));
++			Reflector.setFieldValue(this, Reflector.ForgeEntityPlayer_spawnForcedMap, Reflector.getFieldValue(that, Reflector.ForgeEntityPlayer_spawnForcedMap));
++			if (that.dimension != 0) {
++				MCReflection.EntityPlayer_spawnChunk.set(this, MCReflection.EntityPlayer_spawnChunk.get(that));
++				MCReflection.EntityPlayer_spawnForced.set(this, MCReflection.EntityPlayer_spawnForced.get(that));
++			}
++
++			// FORGE: Copy over a section of the Entity Data from the old player.
++			// Allows mods to specify data that persists after players respawn.
++			NBTTagCompound old = (NBTTagCompound)Reflector.call(that, Reflector.ForgeEntity_getEntityData);
++			if (old.hasKey("PlayerPersisted")) {
++				((NBTTagCompound)Reflector.call(this, Reflector.ForgeEntity_getEntityData)).setTag("PlayerPersisted", old.getCompoundTag("PlayerPersisted"));
++			}
++			Reflector.callVoid(Reflector.ForgeEventFactory_onPlayerClone, this, that, !keepEverything);
++		}
+     }
+ 
+     protected void onNewPotionEffect(PotionEffect id)
+@@ -1611,4 +1782,156 @@
      {
          return this.enteredNetherPosition;
      }

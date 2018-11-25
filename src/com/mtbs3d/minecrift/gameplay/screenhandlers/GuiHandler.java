@@ -350,7 +350,7 @@ public class GuiHandler {
 				KeyboardSimulator.robot.keyRelease(KeyEvent.VK_SHIFT);
 				for (VRButtonMapping mapping : mc.vrSettings.buttonMappings.values()) {
 					if(newScreen!=null) {
-						if(mapping.isGUIBinding())						
+						if(mapping.isGUIBinding() && mapping.keyBinding != mc.gameSettings.keyBindInventory)
 							mapping.actuallyUnpress();
 					} else
 						mapping.actuallyUnpress();

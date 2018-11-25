@@ -38,7 +38,7 @@ public class GuiRadial extends TwoHandedGuiScreen
 		this.buttonList.clear();
 
 		int numButts = 8;
-    	int buttonwidth = 120;
+    	int buttonwidthMin = 120;
     	int degreesPerButt = 360 / numButts;
     	int dist = 48;
     	int centerx = this.width / 2;
@@ -60,6 +60,8 @@ public class GuiRadial extends TwoHandedGuiScreen
     		
     		if(b!=null)		
     			str = I18n.format(b.getKeyDescription());
+    		
+    		int buttonwidth =  Math.max(buttonwidthMin, fontRenderer.getStringWidth(str));
     		
     		int x=0,y=0;
 
@@ -122,7 +124,7 @@ public class GuiRadial extends TwoHandedGuiScreen
 				VRButtonMapping vb = mc.vrSettings.buttonMappings.get(arr[par1GuiButton.id]);
 				if(vb!=null) {
 					vb.press();
-					vb.unpress();
+					vb.scheduleUnpress(2);
 				}
 			} else {
 				if(par1GuiButton.id == 201) {

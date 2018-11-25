@@ -63,14 +63,14 @@ public class TrackedControllerVive extends TrackedController {
 	@Override
 	public void processInput() {
 		// button touch
-		if ((state.ulButtonTouched & k_buttonTouchpad) > 0 && getTouchpadButton() != lastTouchedTouchpadButton) {
+		if ((state.ulButtonTouched & k_buttonTouchpad) > 0 && getTouchpadButton() != lastTouchedTouchpadButton && lastTouchedTouchpadButton != null) {
 			MCOpenVR.queueInputEvent(this, lastTouchedTouchpadButton, null, false, false, null);
 			MCOpenVR.queueInputEvent(this, getTouchpadButton(), null, true, false, null);
 			lastTouchedTouchpadButton = getTouchpadButton();
 		}
 
 		// button press
-		if ((state.ulButtonPressed & k_buttonTouchpad) > 0 && getTouchpadButton() != lastPressedTouchpadButton) {
+		if ((state.ulButtonPressed & k_buttonTouchpad) > 0 && getTouchpadButton() != lastPressedTouchpadButton && lastPressedTouchpadButton != null) {
 			MCOpenVR.queueInputEvent(this, lastPressedTouchpadButton, null, false, true, null);
 			MCOpenVR.queueInputEvent(this, getTouchpadButton(), null, true, true, null);
 			lastPressedTouchpadButton = getTouchpadButton();
@@ -136,6 +136,7 @@ public class TrackedControllerVive extends TrackedController {
 						lastPressedTouchpadButton = getTouchpadButton();
 					} else {
 						MCOpenVR.queueInputEvent(this, lastPressedTouchpadButton, null, false, true, null);
+						lastPressedTouchpadButton = null;
 					}
 				} else {
 					if (state) {
@@ -143,6 +144,7 @@ public class TrackedControllerVive extends TrackedController {
 						lastTouchedTouchpadButton = getTouchpadButton();
 					} else {
 						MCOpenVR.queueInputEvent(this, lastTouchedTouchpadButton, null, false, false, null);
+						lastTouchedTouchpadButton = null;
 					}
 				}
 				break;

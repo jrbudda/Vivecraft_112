@@ -1,8 +1,6 @@
 package com.mtbs3d.minecrift.asm;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -14,26 +12,54 @@ public class ObfNames {
 	private static final Map<String, String> classMappings = new HashMap<>();
 	private static final Map<String, String> fieldMappings = new HashMap<>();
 	private static final Map<String, String> methodMappings = new HashMap<>();
+	private static final Map<String, String> devMappings = new HashMap<>();
 
 	static {
-		try (BufferedReader br = new BufferedReader(new InputStreamReader(ObfNames.class.getResourceAsStream("/mappings/vivecraft/joined.srg")))) {
-			br.lines().forEach(line -> {
-				String[] split = line.split(": ");
-				String[] values = split[1].split(" ");
-				switch (split[0]) {
-					case "CL":
-						classMappings.put(values[1], values[0]);
-						break;
-					case "FD":
-						fieldMappings.put(values[1].substring(values[1].lastIndexOf('/') + 1), values[0].substring(values[0].lastIndexOf('/') + 1));
-						break;
-					case "MD":
-						methodMappings.put(values[2].substring(values[2].lastIndexOf('/') + 1), values[0].substring(values[0].lastIndexOf('/') + 1));
-						break;
-				}
-			});
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+		String prop = System.getProperty("vivecraft.mcpconfdir");
+		File mcpDir = new File(prop == null ? "../conf" : prop);
+		boolean inDev = new File(mcpDir, "joined.srg").exists();
+
+		if (!inDev) {
+			try (BufferedReader br = new BufferedReader(new InputStreamReader(ObfNames.class.getResourceAsStream("/mappings/vivecraft/joined.srg")))) {
+				System.out.println("Loading obf mappings...");
+				br.lines().forEach(line -> {
+					String[] split = line.split(": ");
+					String[] values = split[1].split(" ");
+					switch (split[0]) {
+						case "CL":
+							classMappings.put(values[1], values[0]);
+							break;
+						case "FD":
+							fieldMappings.put(values[1].substring(values[1].lastIndexOf('/') + 1), values[0].substring(values[0].lastIndexOf('/') + 1));
+							break;
+						case "MD":
+							methodMappings.put(values[2].substring(values[2].lastIndexOf('/') + 1), values[0].substring(values[0].lastIndexOf('/') + 1));
+							break;
+					}
+				});
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		} else {
+			System.out.println("MCP conf found! Loading dev mappings...");
+			try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(mcpDir, "fields.csv"))))) {
+				br.lines().forEach(line -> {
+					String[] split = line.split(",");
+					if (!split[0].equals("searge")) // Ignore header
+						devMappings.put(split[0], split[1]);
+				});
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(mcpDir, "methods.csv"))))) {
+				br.lines().forEach(line -> {
+					String[] split = line.split(",");
+					if (!split[0].equals("searge")) // Ignore header
+						devMappings.put(split[0], split[1]);
+				});
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -46,7 +72,7 @@ public class ObfNames {
 			if (classMappings.containsKey(canon))
 				return classMappings.get(canon);
 			else if (DEBUG)
-				System.out.println("No mapping found for " + name);
+				System.out.println("No obf mapping found for " + name);
 		}
 		return name;
 	}
@@ -56,7 +82,7 @@ public class ObfNames {
 			if (fieldMappings.containsKey(name))
 				return fieldMappings.get(name);
 			else if (DEBUG)
-				System.out.println("No mapping found for " + name);
+				System.out.println("No obf mapping found for " + name);
 		}
 		return name;
 	}
@@ -66,7 +92,7 @@ public class ObfNames {
 			if (methodMappings.containsKey(name))
 				return methodMappings.get(name);
 			else if (DEBUG)
-				System.out.println("No mapping found for " + name);
+				System.out.println("No obf mapping found for " + name);
 		}
 		return name;
 	}
@@ -82,5 +108,13 @@ public class ObfNames {
 			return sb.toString();
 		}
 		return desc;
+	}
+
+	public static String getDevMapping(String name) {
+		if (devMappings.containsKey(name))
+			return devMappings.get(name);
+		else if (DEBUG)
+			System.out.println("No dev mapping found for " + name);
+		return name;
 	}
 }
