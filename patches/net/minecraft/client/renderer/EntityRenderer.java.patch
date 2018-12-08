@@ -108,15 +108,15 @@
  import net.minecraft.init.MobEffects;
  import net.minecraft.init.SoundEvents;
  import net.minecraft.inventory.IInventory;
-@@ -74,6 +118,7 @@
- import net.minecraft.src.TimedEvent;
+@@ -66,6 +110,7 @@
+ import net.minecraft.src.Config;
  import net.minecraft.util.BlockRenderLayer;
  import net.minecraft.util.EntitySelectors;
 +import net.minecraft.util.EnumHand;
  import net.minecraft.util.EnumFacing;
  import net.minecraft.util.EnumParticleTypes;
  import net.minecraft.util.MouseFilter;
-@@ -85,10 +130,13 @@
+@@ -77,10 +122,13 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.math.RayTraceResult;
@@ -130,14 +130,14 @@
  import net.minecraft.world.GameType;
  import net.minecraft.world.World;
  import net.minecraft.world.WorldProvider;
-@@ -104,6 +152,7 @@
- import org.lwjgl.util.glu.Project;
- import shadersmod.client.Shaders;
- import shadersmod.client.ShadersRender;
-+import shadersmod.client.ShadersTex;
- 
- public class EntityRenderer implements IResourceManagerReloadListener
- {
+@@ -91,6 +139,7 @@
+ import net.optifine.gui.GuiChatOF;
+ import net.optifine.reflect.Reflector;
+ import net.optifine.reflect.ReflectorForge;
++import net.optifine.shaders.Program;
+ import net.optifine.shaders.Shaders;
+ import net.optifine.shaders.ShadersRender;
+ import net.optifine.util.TextureUtils;
 @@ -115,6 +164,26 @@
      /** Anaglyph field (0=R, 1=GB) */
      public static int anaglyphField;
@@ -1531,7 +1531,7 @@
 +			if(mc.currentPass != renderPass.Third && mc.currentPass != renderPass.Center && mc.vrSettings.vrUseStencil && MCOpenVR.isHMDTracking()){
 +				if(shadersMod){
 +					GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, Shaders.dfb);
-+					Shaders.useProgram(0);
++					Shaders.useProgram(Shaders.ProgramNone);
 +				}
 +				mc.doStencilForEye(mc.currentPass == renderPass.Left? 0 : 1); //TODO: dont render this every damn frame.				
 +			}
@@ -1717,8 +1717,8 @@
          {
              ShadersRender.beginTerrainCutoutMipped();
          }
-@@ -1731,7 +1778,7 @@
-         renderglobal.renderBlockLayer(BlockRenderLayer.CUTOUT_MIPPED, (double)partialTicks, pass, entity);
+@@ -1733,7 +1780,7 @@
+         this.mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
          this.mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
  
 -        if (flag)
@@ -1726,7 +1726,7 @@
          {
              ShadersRender.beginTerrainCutout();
          }
-@@ -1739,7 +1786,7 @@
+@@ -1741,7 +1788,7 @@
          renderglobal.renderBlockLayer(BlockRenderLayer.CUTOUT, (double)partialTicks, pass, entity);
          this.mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
  
@@ -1735,7 +1735,7 @@
          {
              ShadersRender.endTerrain();
          }
-@@ -1748,40 +1795,36 @@
+@@ -1750,40 +1797,36 @@
          GlStateManager.shadeModel(7424);
          GlStateManager.alphaFunc(516, 0.1F);
  
@@ -1787,7 +1787,7 @@
              {
                  renderglobal.drawSelectionBox(entityplayer, this.mc.objectMouseOver, 0, partialTicks);
              }
-@@ -1791,32 +1834,83 @@
+@@ -1793,32 +1836,83 @@
  
          if (this.mc.debugRenderer.shouldRender())
          {
@@ -1818,12 +1818,12 @@
 +		  this.mc.mcProfiler.endStartSection("VR");
 +		    
 +	        if(shadersMod)
-+	        	Shaders.useProgram(16); //entities
++	        	Shaders.useProgram(Shaders.ProgramEntities); //entities
 +
 +	        renderCrosshairAtDepth();
 +	        
 +	        if(shadersMod)
-+	        	Shaders.useProgram(16); //entities
++	        	Shaders.useProgram(Shaders.ProgramEntities); //entities
 +
 +			renderGuiLayer(partialTicks);  
 +    		if(KeyboardHandler.Showing)
@@ -1879,7 +1879,7 @@
              {
                  Shaders.beginLitParticles();
              }
-@@ -1824,16 +1918,17 @@
+@@ -1826,16 +1920,17 @@
              particlemanager.renderLitParticles(entity, partialTicks);
              RenderHelper.disableStandardItemLighting();
              this.setupFog(0, partialTicks);
@@ -1899,7 +1899,7 @@
              {
                  Shaders.endParticles();
              }
-@@ -1851,14 +1946,14 @@
+@@ -1853,14 +1948,14 @@
          GlStateManager.enableCull();
          this.mc.mcProfiler.endStartSection("weather");
  
@@ -1916,7 +1916,7 @@
          {
              Shaders.endWeather();
          }
-@@ -1866,9 +1961,9 @@
+@@ -1868,9 +1963,9 @@
          GlStateManager.depthMask(true);
          renderglobal.renderWorldBorder(entity, partialTicks);
  
@@ -1928,7 +1928,7 @@
              Shaders.preWater();
          }
  
-@@ -1883,26 +1978,27 @@
+@@ -1885,26 +1980,27 @@
          GlStateManager.shadeModel(7425);
          this.mc.mcProfiler.endStartSection("translucent");
  
@@ -1961,7 +1961,7 @@
              RenderHelper.disableStandardItemLighting();
          }
  
-@@ -1912,44 +2008,52 @@
+@@ -1914,44 +2010,52 @@
          GlStateManager.disableBlend();
          GlStateManager.disableFog();
  
@@ -2035,7 +2035,7 @@
      }
  
      private void renderCloudsCheck(RenderGlobal renderGlobalIn, float partialTicks, int pass, double x, double y, double z)
-@@ -1959,7 +2063,12 @@
+@@ -1961,7 +2065,12 @@
              this.mc.mcProfiler.endStartSection("clouds");
              GlStateManager.matrixMode(5889);
              GlStateManager.loadIdentity();
@@ -2049,7 +2049,7 @@
              GlStateManager.matrixMode(5888);
              GlStateManager.pushMatrix();
              this.setupFog(0, partialTicks);
-@@ -1968,7 +2077,11 @@
+@@ -1970,7 +2079,11 @@
              GlStateManager.popMatrix();
              GlStateManager.matrixMode(5889);
              GlStateManager.loadIdentity();
@@ -2062,7 +2062,7 @@
              GlStateManager.matrixMode(5888);
          }
      }
-@@ -2117,8 +2230,8 @@
+@@ -2119,8 +2232,8 @@
                  for (int l1 = i - i1; l1 <= i + i1; ++l1)
                  {
                      int i2 = (k1 - k + 16) * 32 + l1 - i + 16;
@@ -2073,7 +2073,7 @@
                      blockpos$mutableblockpos.setPos(l1, 0, k1);
                      Biome biome = world.getBiome(blockpos$mutableblockpos);
  
-@@ -2267,7 +2380,7 @@
+@@ -2269,7 +2382,7 @@
              double d0 = MathHelper.sin(world.getCelestialAngleRadians(partialTicks)) > 0.0F ? -1.0D : 1.0D;
              Vec3d vec3d2 = new Vec3d(d0, 0.0D, 0.0D);
              float f5 = (float)entity.getLook(partialTicks).dotProduct(vec3d2);
@@ -2082,7 +2082,7 @@
              if (f5 < 0.0F)
              {
                  f5 = 0.0F;
-@@ -2311,26 +2424,30 @@
+@@ -2313,26 +2426,30 @@
              this.fogColorBlue *= f11;
          }
  
@@ -2122,7 +2122,7 @@
          {
              float f12 = 0.0F;
  
-@@ -2349,14 +2466,14 @@
+@@ -2351,14 +2468,14 @@
              this.fogColorGreen = 0.02F + f12;
              this.fogColorBlue = 0.2F + f12;
          }
@@ -2139,7 +2139,7 @@
          {
              Vec3d vec3d6 = CustomColors.getUnderwaterColor(this.mc.world, this.mc.getRenderViewEntity().posX, this.mc.getRenderViewEntity().posY + 1.0D, this.mc.getRenderViewEntity().posZ);
  
-@@ -2367,7 +2484,7 @@
+@@ -2369,7 +2486,7 @@
                  this.fogColorBlue = (float)vec3d6.z;
              }
          }
@@ -2148,7 +2148,7 @@
          {
              Vec3d vec3d7 = CustomColors.getUnderlavaColor(this.mc.world, this.mc.getRenderViewEntity().posX, this.mc.getRenderViewEntity().posY + 1.0D, this.mc.getRenderViewEntity().posZ);
  
-@@ -2457,7 +2574,7 @@
+@@ -2459,7 +2576,7 @@
  
          if (Reflector.EntityViewRenderEvent_FogColors_Constructor.exists())
          {
@@ -2157,7 +2157,7 @@
              Reflector.postForgeBusEvent(object);
              this.fogColorRed = Reflector.callFloat(object, Reflector.EntityViewRenderEvent_FogColors_getRed);
              this.fogColorGreen = Reflector.callFloat(object, Reflector.EntityViewRenderEvent_FogColors_getGreen);
-@@ -2471,14 +2588,20 @@
+@@ -2473,14 +2590,20 @@
       * Sets up the fog to be rendered. If the arg passed in is -1 the fog starts at 0 and goes to 80% of far plane
       * distance and is used for sky rendering.
       */
@@ -2180,7 +2180,7 @@
          float f = -1.0F;
  
          if (Reflector.ForgeHooksClient_getFogDensity.exists())
-@@ -2509,7 +2632,7 @@
+@@ -2511,7 +2634,7 @@
                  GlStateManager.setFog(GlStateManager.FogMode.LINEAR);
              }
  
@@ -2189,7 +2189,7 @@
              {
                  GlStateManager.setFogStart(0.0F);
                  GlStateManager.setFogEnd(f4 * 0.8F);
-@@ -2538,7 +2661,7 @@
+@@ -2540,7 +2663,7 @@
  
              GlStateManager.setFogDensity(0.1F);
          }
@@ -2198,7 +2198,7 @@
          {
              if (Config.isShaders())
              {
-@@ -2568,7 +2691,7 @@
+@@ -2570,7 +2693,7 @@
                  GlStateManager.setFogDensity(f1);
              }
          }
@@ -2207,7 +2207,7 @@
          {
              if (Config.isShaders())
              {
-@@ -2595,7 +2718,7 @@
+@@ -2597,7 +2720,7 @@
                  GlStateManager.setFog(GlStateManager.FogMode.LINEAR);
              }
  
@@ -2216,7 +2216,7 @@
              {
                  GlStateManager.setFogStart(0.0F);
                  GlStateManager.setFogEnd(f3);
-@@ -2627,7 +2750,7 @@
+@@ -2629,7 +2752,7 @@
  
              if (Reflector.ForgeHooksClient_onFogRender.exists())
              {
@@ -2225,7 +2225,7 @@
              }
          }
  
-@@ -2808,17 +2931,19 @@
+@@ -2810,17 +2933,19 @@
  
          if (this.updatedWorld != world)
          {
@@ -2250,7 +2250,7 @@
  
          if (this.mc.currentScreen != null && this.mc.currentScreen.getClass() == GuiChat.class)
          {
-@@ -2841,39 +2966,6 @@
+@@ -2843,39 +2968,6 @@
          }
      }
  
@@ -2290,7 +2290,7 @@
      public boolean setFxaaShader(int p_setFxaaShader_1_)
      {
          if (!OpenGlHelper.isFramebufferEnabled())
-@@ -3078,8 +3170,9 @@
+@@ -3080,8 +3172,9 @@
          this.itemActivationOffY = this.random.nextFloat() * 2.0F - 1.0F;
      }
  
@@ -2302,7 +2302,7 @@
          if (this.itemActivationItem != null && this.itemActivationTicks > 0)
          {
              int i = 40 - this.itemActivationTicks;
-@@ -3088,26 +3181,2457 @@
+@@ -3090,26 +3183,2458 @@
              float f2 = f * f1;
              float f3 = 10.25F * f2 * f1 + -24.95F * f1 * f1 + 25.5F * f2 + -13.8F * f1 + 4.0F * f;
              float f4 = f3 * (float)Math.PI;
@@ -4424,7 +4424,8 @@
 +		GL11.glTranslatef((float)(mc.vrPlayer.vrdata_world_render.origin.x - eye.x), (float)(mc.vrPlayer.vrdata_world_render.origin.y - eye.y), (float)(mc.vrPlayer.vrdata_world_render.origin.z - eye.z));
 +	}
 +    
-+	private int polyblendsrc, polyblenddst, prog;
++	private int polyblendsrc, polyblenddst;
++	private Program prog;
 +	private boolean polyblend, polytex, polylight, polycull;
 +    
 +	private void setupPolyRendering(boolean enable){
@@ -4445,7 +4446,7 @@
 +	        GlStateManager.disableCull();
 +			if(shadersMod){
 +				prog  = Shaders.activeProgram;
-+				Shaders.useProgram(0);
++				Shaders.useProgram(Shaders.ProgramNone);
 +			}
 +		} else {
 +            GlStateManager.blendFunc(polyblendsrc, polyblenddst);

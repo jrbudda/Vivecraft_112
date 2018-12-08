@@ -1,0 +1,15 @@
+--- a/net/optifine/gui/GuiPerformanceSettingsOF.java
++++ b/net/optifine/gui/GuiPerformanceSettingsOF.java
+@@ -43,6 +43,12 @@
+             {
+                 this.buttonList.add(new GuiOptionSliderOF(gamesettings$options.getOrdinal(), j, k, gamesettings$options));
+             }
++            if (gamesettings$options == GameSettings.Options.SMOOTH_FPS || gamesettings$options == GameSettings.Options.SMOOTH_WORLD
++					|| gamesettings$options == GameSettings.Options.CHUNK_UPDATES || gamesettings$options == GameSettings.Options.CHUNK_UPDATES_DYNAMIC
++					|| gamesettings$options == GameSettings.Options.LAZY_CHUNK_LOADING || gamesettings$options == GameSettings.Options.FAST_RENDER
++					|| gamesettings$options == GameSettings.Options.FAST_MATH) {
++            	this.buttonList.get(i).enabled = false;
++            }
+         }
+ 
+         this.buttonList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168 + 11, I18n.format("gui.done")));

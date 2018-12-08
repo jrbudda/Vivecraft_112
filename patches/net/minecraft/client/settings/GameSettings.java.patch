@@ -18,7 +18,7 @@
      public TutorialSteps tutorialStep = TutorialSteps.MOVEMENT;
      public KeyBinding keyBindForward = new KeyBinding("key.forward", 17, "key.categories.movement");
      public KeyBinding keyBindLeft = new KeyBinding("key.left", 30, "key.categories.movement");
-@@ -226,7 +226,7 @@
+@@ -227,7 +227,7 @@
      public boolean ofStars = true;
      public boolean ofSunMoon = true;
      public int ofVignette = 0;
@@ -27,7 +27,7 @@
      public boolean ofChunkUpdatesDynamic = false;
      public int ofTime = 0;
      public boolean ofClearWater = false;
-@@ -248,7 +248,7 @@
+@@ -249,7 +249,7 @@
      public int ofTranslucentBlocks = 0;
      public boolean ofDynamicFov = true;
      public boolean ofAlternateBlocks = true;
@@ -36,7 +36,7 @@
      public boolean ofCustomEntityModels = true;
      public boolean ofCustomGuis = true;
      public boolean ofShowGlErrors = true;
-@@ -467,7 +467,7 @@
+@@ -468,7 +468,7 @@
                  this.mc.getTextureMapBlocks().setMipmapLevels(this.mipmapLevels);
                  this.mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
                  this.mc.getTextureMapBlocks().setBlurMipmapDirect(false, this.mipmapLevels > 0);
@@ -45,7 +45,7 @@
              }
          }
  
-@@ -2028,7 +2028,7 @@
+@@ -2029,7 +2029,7 @@
          {
              ++this.ofChunkUpdates;
  
@@ -54,7 +54,7 @@
              {
                  this.ofChunkUpdates = 1;
              }
-@@ -2138,18 +2138,18 @@
+@@ -2139,18 +2139,18 @@
  
          if (p_setOptionValueOF_1_ == GameSettings.Options.FAST_RENDER)
          {
@@ -82,7 +82,7 @@
  
              Config.updateFramebufferSize();
          }
-@@ -3019,7 +3019,7 @@
+@@ -3030,7 +3030,7 @@
                      if (astring[0].equals("ofChunkUpdates") && astring.length >= 2)
                      {
                          this.ofChunkUpdates = Integer.valueOf(astring[1]).intValue();
@@ -91,7 +91,7 @@
                      }
  
                      if (astring[0].equals("ofChunkUpdatesDynamic") && astring.length >= 2)
-@@ -3165,13 +3165,13 @@
+@@ -3181,13 +3181,13 @@
  
                      if (astring[0].equals("ofFastMath") && astring.length >= 2)
                      {
@@ -107,7 +107,7 @@
                      }
  
                      if (astring[0].equals("ofTranslucentBlocks") && astring.length >= 2)
-@@ -3332,7 +3332,7 @@
+@@ -3349,7 +3349,7 @@
          this.guiScale = 0;
          this.particleSetting = 0;
          this.heldItemTooltips = true;
@@ -116,7 +116,7 @@
          this.forceUnicodeFont = false;
          this.ofFogType = 1;
          this.ofFogStart = 0.8F;
-@@ -3344,7 +3344,7 @@
+@@ -3362,7 +3362,7 @@
          this.ofLazyChunkLoading = false;
          this.ofRenderRegions = false;
          this.ofFastMath = false;
@@ -125,7 +125,7 @@
          this.ofTranslucentBlocks = 0;
          this.ofDynamicFov = true;
          this.ofAlternateBlocks = true;
-@@ -3370,7 +3370,7 @@
+@@ -3388,7 +3388,7 @@
          this.ofStars = true;
          this.ofSunMoon = true;
          this.ofVignette = 0;
@@ -134,7 +134,7 @@
          this.ofChunkUpdatesDynamic = false;
          this.ofTime = 0;
          this.ofClearWater = false;
-@@ -3516,6 +3516,7 @@
+@@ -3534,6 +3534,7 @@
          }
      }
  
@@ -142,7 +142,7 @@
      public void onGuiClosed()
      {
          if (this.needsResourceRefresh)
-@@ -3524,6 +3525,7 @@
+@@ -3542,6 +3543,7 @@
              this.needsResourceRefresh = false;
          }
      }

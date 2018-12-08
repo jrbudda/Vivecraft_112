@@ -32,7 +32,7 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.scoreboard.Score;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.src.Reflector;
+import net.optifine.reflect.Reflector;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 import org.lwjgl.opengl.GL11;

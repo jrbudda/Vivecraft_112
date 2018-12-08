@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/texture/TextureUtil.java
 +++ b/net/minecraft/client/renderer/texture/TextureUtil.java
-@@ -282,9 +282,9 @@
+@@ -283,9 +283,9 @@
              if (bufferedimage != null)
              {
                  int j = bufferedimage.getWidth();

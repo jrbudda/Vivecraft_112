@@ -16,7 +16,7 @@
  import net.minecraft.entity.player.EntityPlayer;
  import net.minecraft.init.Blocks;
  import net.minecraft.nbt.NBTTagCompound;
-+import net.minecraft.src.Reflector;
++import net.optifine.reflect.Reflector;
  import net.minecraft.util.EnumParticleTypes;
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.datafix.DataFixer;

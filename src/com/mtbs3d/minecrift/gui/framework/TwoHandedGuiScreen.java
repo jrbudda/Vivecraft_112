@@ -16,7 +16,7 @@ import net.minecraft.client.gui.GuiLabel;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.src.Reflector;
+import net.optifine.reflect.Reflector;
 
 public abstract class TwoHandedGuiScreen extends GuiScreen
 {

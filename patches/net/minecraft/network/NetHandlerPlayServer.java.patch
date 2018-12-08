@@ -37,7 +37,7 @@
  import net.minecraft.network.play.server.SPacketSetSlot;
  import net.minecraft.network.play.server.SPacketTabComplete;
  import net.minecraft.server.MinecraftServer;
-+import net.minecraft.src.Reflector;
++import net.optifine.reflect.Reflector;
  import net.minecraft.tileentity.CommandBlockBaseLogic;
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.tileentity.TileEntityCommandBlock;

@@ -17,7 +17,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.src.Reflector;
+import net.optifine.reflect.Reflector;
 
 public class GuiKeyboard extends TwoHandedGuiScreen
 {

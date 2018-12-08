@@ -10,7 +10,7 @@
  import net.minecraft.block.Block;
  import net.minecraft.block.BlockDirt;
  import net.minecraft.block.BlockDoublePlant;
-@@ -56,6 +59,7 @@
+@@ -52,6 +55,7 @@
  import net.minecraft.tileentity.TileEntityStructure;
  import net.minecraft.util.BlockRenderLayer;
  import net.minecraft.util.EnumFacing;
@@ -97,7 +97,7 @@
      private void renderEffect(IBakedModel model)
      {
          if (!Config.isCustomItems() || CustomItems.isUseGlint())
-@@ -309,35 +353,54 @@
+@@ -310,35 +354,54 @@
          this.putQuadNormal(renderer, quad);
      }
  
@@ -178,7 +178,7 @@
      }
  
      public boolean shouldRenderItemIn3D(ItemStack stack)
-@@ -351,7 +414,7 @@
+@@ -352,7 +415,7 @@
          if (!stack.isEmpty())
          {
              IBakedModel ibakedmodel = this.getItemModelWithOverrides(stack, (World)null, (EntityLivingBase)null);
@@ -187,7 +187,7 @@
          }
      }
  
-@@ -390,16 +453,16 @@
+@@ -391,16 +454,16 @@
          }
      }
  

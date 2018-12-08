@@ -9,17 +9,15 @@
  import java.io.File;
  import javax.annotation.Nullable;
  import net.minecraft.client.Minecraft;
-@@ -17,6 +19,9 @@
- import net.minecraft.init.Items;
- import net.minecraft.src.CapeUtils;
- import net.minecraft.src.Config;
-+import net.minecraft.src.FileDownloadThread;
-+import net.minecraft.src.PlayerConfiguration;
-+import net.minecraft.src.PlayerConfigurationReceiver;
- import net.minecraft.src.PlayerConfigurations;
- import net.minecraft.src.Reflector;
- import net.minecraft.util.ResourceLocation;
-@@ -48,6 +53,11 @@
+@@ -20,6 +22,7 @@
+ import net.minecraft.util.StringUtils;
+ import net.minecraft.world.GameType;
+ import net.minecraft.world.World;
++import net.optifine.http.FileDownloadThread;
+ import net.optifine.player.CapeUtils;
+ import net.optifine.player.PlayerConfigurations;
+ import net.optifine.reflect.Reflector;
+@@ -48,6 +51,11 @@
  
          CapeUtils.downloadCape(this);
          PlayerConfigurations.getPlayerConfiguration(this);

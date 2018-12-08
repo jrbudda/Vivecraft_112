@@ -1,0 +1,401 @@
+--- a/net/optifine/shaders/Shaders.java
++++ b/net/optifine/shaders/Shaders.java
+@@ -109,6 +109,8 @@
+ import org.lwjgl.opengl.GLContext;
+ import org.lwjgl.util.glu.GLU;
+ 
++import com.mtbs3d.minecrift.render.renderPass;
++
+ public class Shaders
+ {
+     static Minecraft mc;
+@@ -142,7 +144,9 @@
+     public static boolean itemToRenderMainTranslucent = false;
+     public static boolean itemToRenderOffTranslucent = false;
+     static float[] sunPosition = new float[4];
++    static float[] sunPositionT = new float[4];
+     static float[] moonPosition = new float[4];
++    static float[] moonPositionT = new float[4];
+     static float[] shadowLightPosition = new float[4];
+     static float[] upPosition = new float[4];
+     static float[] shadowLightPositionVector = new float[4];
+@@ -198,7 +202,7 @@
+     public static boolean useMidTexCoordAttrib = false;
+     public static boolean useTangentAttrib = false;
+     public static boolean progUseEntityAttrib = false;
+-    public static boolean progUseMidTexCoordAttrib = false;
++    public static boolean progUseMidTexAttrib = false;
+     public static boolean progUseTangentAttrib = false;
+     private static boolean progArbGeometryShader4 = false;
+     private static int progMaxVerticesOut = 3;
+@@ -325,7 +329,7 @@
+     static int usedShadowDepthBuffers = 0;
+     static int usedColorAttachs = 0;
+     static int usedDrawBuffers = 0;
+-    static int dfb = 0;
++    public static int dfb = 0;
+     static int sfb = 0;
+     private static int[] gbuffersFormat = new int[8];
+     public static boolean[] gbuffersClear = new boolean[8];
+@@ -489,10 +493,10 @@
+     static final FloatBuffer tempMatrixDirectBuffer = nextFloatBuffer(16);
+     static final FloatBuffer tempDirectFloatBuffer = nextFloatBuffer(16);
+     static final IntBuffer dfbColorTextures = nextIntBuffer(16);
+-    static final IntBuffer dfbDepthTextures = nextIntBuffer(3);
++    public static final IntBuffer dfbDepthTextures = nextIntBuffer(3);
+     static final IntBuffer sfbColorTextures = nextIntBuffer(8);
+     static final IntBuffer sfbDepthTextures = nextIntBuffer(2);
+-    static final IntBuffer dfbDrawBuffers = nextIntBuffer(8);
++        static final IntBuffer dfbDrawBuffers = nextIntBuffer(8);
+     static final IntBuffer sfbDrawBuffers = nextIntBuffer(8);
+     static final IntBuffer drawBuffersNone = nextIntBuffer(8);
+     static final IntBuffer drawBuffersAll = nextIntBuffer(8);
+@@ -829,11 +833,11 @@
+             flag2 = true;
+         }
+ 
+-        if (Config.isFastRender())
+-        {
+-            SMCLog.info("Shaders can not be loaded, Fast Render is enabled.");
+-            flag2 = true;
+-        }
++//        if (Config.isFastRender())
++//        {
++//            SMCLog.info("Shaders can not be loaded, Fast Render is enabled.");
++//            flag2 = true;
++//        }
+ 
+         String s = shadersConfig.getProperty(EnumShaderOption.SHADER_PACK.getPropertyKey(), "(internal)");
+ 
+@@ -1845,11 +1849,10 @@
+         SMCLog.info(stringbuilder.toString());
+     }
+ 
+-    public static void startup(Minecraft mc)
++    public static void startup(Minecraft mcin)
+     {
+         checkShadersModInstalled();
+-        mc = mc;
+-        mc = Minecraft.getMinecraft();
++        mc = mcin;
+         capabilities = GLContext.getCapabilities();
+         glVersionString = GL11.glGetString(GL11.GL_VERSION);
+         glVendorString = GL11.glGetString(GL11.GL_VENDOR);
+@@ -2381,7 +2384,7 @@
+         if (i != 0)
+         {
+             progUseEntityAttrib = false;
+-            progUseMidTexCoordAttrib = false;
++            progUseMidTexAttrib = false;
+             progUseTangentAttrib = false;
+             int j = createVertShader(program, vShaderPath);
+             int k = createGeomShader(program, gShaderPath);
+@@ -2428,10 +2431,10 @@
+                     checkGLError("mc_Entity");
+                 }
+ 
+-                if (progUseMidTexCoordAttrib)
++                if (progUseMidTexAttrib)
+                 {
+-                    ARBVertexShader.glBindAttribLocationARB(i, midTexCoordAttrib, "mc_midTexCoord");
+-                    checkGLError("mc_midTexCoord");
++                    ARBVertexShader.glBindAttribLocationARB(i, midTexCoordAttrib, "mc_midTex");
++                    checkGLError("mc_midTex");
+                 }
+ 
+                 if (progUseTangentAttrib)
+@@ -2547,7 +2550,7 @@
+                                 else if (shaderline.isAttribute("mc_midTexCoord"))
+                                 {
+                                     useMidTexCoordAttrib = true;
+-                                    progUseMidTexCoordAttrib = true;
++                                    progUseMidTexAttrib = true;
+                                 }
+                                 else if (shaderline.isAttribute("at_tangent"))
+                                 {
+@@ -3321,8 +3324,15 @@
+                 setProgramUniform1f(uniform_viewHeight, (float)renderHeight);
+                 setProgramUniform1f(uniform_near, 0.05F);
+                 setProgramUniform1f(uniform_far, (float)(mc.gameSettings.renderDistanceChunks * 16));
+-                setProgramUniform3f(uniform_sunPosition, sunPosition[0], sunPosition[1], sunPosition[2]);
+-                setProgramUniform3f(uniform_moonPosition, moonPosition[0], moonPosition[1], moonPosition[2]);
++                
++                if(Minecraft.getMinecraft().currentPass == renderPass.Third) {
++                    setProgramUniform3f(uniform_sunPosition, sunPositionT[0], sunPositionT[1], sunPositionT[2]);
++                    setProgramUniform3f(uniform_moonPosition, moonPositionT[0], moonPositionT[1], moonPositionT[2]);
++                }else {
++                    setProgramUniform3f(uniform_sunPosition, sunPosition[0], sunPosition[1], sunPosition[2]);
++                    setProgramUniform3f(uniform_moonPosition, moonPosition[0], moonPosition[1], moonPosition[2]);
++                }
++                
+                 setProgramUniform3f(uniform_shadowLightPosition, shadowLightPosition[0], shadowLightPosition[1], shadowLightPosition[2]);
+                 setProgramUniform3f(uniform_upPosition, upPosition[0], upPosition[1], upPosition[2]);
+                 setProgramUniform3f(uniform_previousCameraPosition, (float)previousCameraPositionX, (float)previousCameraPositionY, (float)previousCameraPositionZ);
+@@ -3688,11 +3698,12 @@
+ 
+     private static void resize()
+     {
+-        renderDisplayWidth = mc.displayWidth;
+-        renderDisplayHeight = mc.displayHeight;
+-        renderWidth = Math.round((float)renderDisplayWidth * configRenderResMul);
+-        renderHeight = Math.round((float)renderDisplayHeight * configRenderResMul);
+-        setupFrameBuffer();
++        renderDisplayWidth = mc.displayFBWidth;
++        renderDisplayHeight = mc.displayFBHeight;
++        // VIVE: NO! Doing scaling here breaks everything! We have our own scaled rendering so this is unnecessary.
++        renderWidth = renderDisplayWidth; //Math.round((float)renderDisplayWidth * configRenderResMul);
++        renderHeight = renderDisplayHeight; //Math.round((float)renderDisplayHeight * configRenderResMul);
++        dfb = setupFrameBuffer(dfb, renderWidth, renderHeight);
+     }
+ 
+     private static void resizeShadow()
+@@ -3700,25 +3711,25 @@
+         needResizeShadow = false;
+         shadowMapWidth = Math.round((float)spShadowMapWidth * configShadowResMul);
+         shadowMapHeight = Math.round((float)spShadowMapHeight * configShadowResMul);
+-        setupShadowFrameBuffer();
++        sfb = setupShadowFrameBuffer(sfb, shadowMapHeight, shadowMapWidth);
+     }
+ 
+-    private static void setupFrameBuffer()
++    private static int setupFrameBuffer(int id, int w, int h)
+     {
+-        if (dfb != 0)
++        if (id != 0)
+         {
+-            EXTFramebufferObject.glDeleteFramebuffersEXT(dfb);
++            EXTFramebufferObject.glDeleteFramebuffersEXT(id);
+             GlStateManager.deleteTextures(dfbDepthTextures);
+             GlStateManager.deleteTextures(dfbColorTextures);
+         }
+ 
+-        dfb = EXTFramebufferObject.glGenFramebuffersEXT();
++        id = EXTFramebufferObject.glGenFramebuffersEXT();
+         GL11.glGenTextures((IntBuffer)dfbDepthTextures.clear().limit(usedDepthBuffers));
+         GL11.glGenTextures((IntBuffer)dfbColorTextures.clear().limit(16));
+         dfbDepthTextures.position(0);
+         dfbColorTextures.position(0);
+         dfbColorTextures.get(dfbColorTexturesA).position(0);
+-        EXTFramebufferObject.glBindFramebufferEXT(36160, dfb);
++        EXTFramebufferObject.glBindFramebufferEXT(36160, id);
+         GL20.glDrawBuffers(0);
+         GL11.glReadBuffer(0);
+ 
+@@ -3791,23 +3802,25 @@
+         }
+         else
+         {
+-            SMCLog.info("Framebuffer created.");
++            SMCLog.info("Framebuffer created." + id + ": " + w + " " + h + " " + i1);
+         }
++        return id;
++        
+     }
+ 
+-    private static void setupShadowFrameBuffer()
++    private static int setupShadowFrameBuffer(int id, int w, int h)
+     {
+         if (usedShadowDepthBuffers != 0)
+         {
+-            if (sfb != 0)
++            if (id != 0)
+             {
+-                EXTFramebufferObject.glDeleteFramebuffersEXT(sfb);
++                EXTFramebufferObject.glDeleteFramebuffersEXT(id);
+                 GlStateManager.deleteTextures(sfbDepthTextures);
+                 GlStateManager.deleteTextures(sfbColorTextures);
+             }
+ 
+-            sfb = EXTFramebufferObject.glGenFramebuffersEXT();
+-            EXTFramebufferObject.glBindFramebufferEXT(36160, sfb);
++            id = EXTFramebufferObject.glGenFramebuffersEXT();
++            EXTFramebufferObject.glBindFramebufferEXT(36160, id);
+             GL11.glDrawBuffer(0);
+             GL11.glReadBuffer(0);
+             GL11.glGenTextures((IntBuffer)sfbDepthTextures.clear().limit(usedShadowDepthBuffers));
+@@ -3866,13 +3879,15 @@
+                 SMCLog.info("Shadow framebuffer created.");
+             }
+         }
++        
++        return id;
+     }
+ 
+     public static void beginRender(Minecraft minecraft, float partialTicks, long finishTimeNano)
+     {
+         checkGLError("pre beginRender");
+-        checkWorldChanged(mc.world);
+         mc = minecraft;
++        checkWorldChanged(mc.world);
+         mc.mcProfiler.startSection("init");
+         entityRenderer = mc.entityRenderer;
+ 
+@@ -3894,10 +3909,23 @@
+             }
+         }
+ 
+-        if (mc.displayWidth != renderDisplayWidth || mc.displayHeight != renderDisplayHeight)
+-        {
+-            resize();
+-        }
++        if(mc.reinitflag || (mc.displayFBWidth != renderDisplayWidth || mc.displayFBHeight != renderDisplayHeight)){
++        	resize();
++        	mc.reinitflag = false;
++        }
++        
++        //Vive use right sizes and buffers
++//        if(mc.currentPass == renderPass.Center){
++//        	dfb = dfbU;
++//        	renderWidth = Math.round(mc.mirrorFBWidth * configRenderResMul);
++//        	renderHeight = Math.round(mc.mirrorFBHeight * configRenderResMul);
++//        }else{
++        //NOPE!
++//        	dfb = dfbR;
++//        	renderWidth = Math.round(mc.displayFBWidth * configRenderResMul);
++//        	renderHeight = Math.round(mc.displayFBHeight * configRenderResMul);
++//        }
++        
+ 
+         if (needResizeShadow)
+         {
+@@ -3997,6 +4025,7 @@
+         skipRenderHandMain = false;
+         skipRenderHandOff = false;
+ 
++                
+         if (usedShadowDepthBuffers >= 1)
+         {
+             GlStateManager.setActiveTexture(33988);
+@@ -4124,7 +4153,7 @@
+     }
+ 
+     public static void setViewport(int vx, int vy, int vw, int vh)
+-    {
++    { //nice parameters u got there.....
+         GlStateManager.colorMask(true, true, true, true);
+ 
+         if (isShadowPass)
+@@ -4172,7 +4201,7 @@
+         {
+             checkGLError("shadow clear pre");
+             EXTFramebufferObject.glFramebufferTexture2DEXT(36160, 36096, 3553, sfbDepthTextures.get(0), 0);
+-            GL11.glClearColor(1.0F, 1.0F, 1.0F, 1.0F);
++            GlStateManager.clearColor(1.0F, 1.0F, 1.0F, 1.0F);
+             GL20.glDrawBuffers(ProgramShadow.getDrawBuffers());
+             checkFramebufferStatus("shadow clear");
+             GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+@@ -4191,7 +4220,7 @@
+             if (gbuffersClear[1])
+             {
+                 GL20.glDrawBuffers(36065);
+-                GL11.glClearColor(1.0F, 1.0F, 1.0F, 1.0F);
++                GlStateManager.clearColor(1.0F, 1.0F, 1.0F, 1.0F);
+                 GL11.glClear(16384);
+             }
+ 
+@@ -4200,7 +4229,7 @@
+                 if (gbuffersClear[i])
+                 {
+                     GL20.glDrawBuffers(36064 + i);
+-                    GL11.glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
++                    GlStateManager.clearColor(0.0F, 0.0F, 0.0F, 0.0F);
+                     GL11.glClear(16384);
+                 }
+             }
+@@ -4368,23 +4397,34 @@
+ 
+     public static void postCelestialRotate()
+     {
+-        FloatBuffer floatbuffer = tempMatrixDirectBuffer;
+-        floatbuffer.clear();
+-        GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, floatbuffer);
+-        floatbuffer.get(tempMat, 0, 16);
+-        SMath.multiplyMat4xVec4(sunPosition, tempMat, sunPosModelView);
+-        SMath.multiplyMat4xVec4(moonPosition, tempMat, moonPosModelView);
+-        System.arraycopy(shadowAngle == sunAngle ? sunPosition : moonPosition, 0, shadowLightPosition, 0, 3);
+-        setProgramUniform3f(uniform_sunPosition, sunPosition[0], sunPosition[1], sunPosition[2]);
+-        setProgramUniform3f(uniform_moonPosition, moonPosition[0], moonPosition[1], moonPosition[2]);
+-        setProgramUniform3f(uniform_shadowLightPosition, shadowLightPosition[0], shadowLightPosition[1], shadowLightPosition[2]);
+-
+-        if (customUniforms != null)
+-        {
+-            customUniforms.update();
+-        }
++    	FloatBuffer floatbuffer = tempMatrixDirectBuffer;
++    	floatbuffer.clear();
++    	GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, floatbuffer);
++    	floatbuffer.get(tempMat, 0, 16);
++    	
++    	if(Minecraft.getMinecraft().currentPass == renderPass.Third) {
++    		SMath.multiplyMat4xVec4(sunPositionT, tempMat, sunPosModelView);
++    		SMath.multiplyMat4xVec4(moonPositionT, tempMat, moonPosModelView);
++        	System.arraycopy(shadowAngle == sunAngle ? sunPositionT : moonPosition, 0, shadowLightPosition, 0, 3);
++        	setProgramUniform3f(uniform_sunPosition, sunPositionT[0], sunPositionT[1], sunPositionT[2]);
++        	setProgramUniform3f(uniform_moonPosition, moonPositionT[0], moonPositionT[1], moonPositionT[2]);
++        	setProgramUniform3f(uniform_shadowLightPosition, shadowLightPosition[0], shadowLightPosition[1], shadowLightPosition[2]);
++    	}
++    	else {
++    		SMath.multiplyMat4xVec4(sunPosition, tempMat, sunPosModelView);
++    		SMath.multiplyMat4xVec4(moonPosition, tempMat, moonPosModelView);
++        	System.arraycopy(shadowAngle == sunAngle ? sunPosition : moonPosition, 0, shadowLightPosition, 0, 3);
++        	setProgramUniform3f(uniform_sunPosition, sunPosition[0], sunPosition[1], sunPosition[2]);
++        	setProgramUniform3f(uniform_moonPosition, moonPosition[0], moonPosition[1], moonPosition[2]);
++        	setProgramUniform3f(uniform_shadowLightPosition, shadowLightPosition[0], shadowLightPosition[1], shadowLightPosition[2]);
++    	}   		
++
++    	if (customUniforms != null)
++    	{
++    		customUniforms.update();
++    	}
+ 
+-        checkGLError("postCelestialRotate");
++    	checkGLError("postCelestialRotate");
+     }
+ 
+     public static void setUpPosition()
+@@ -4422,7 +4462,7 @@
+ 
+     public static void drawComposite()
+     {
+-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
++        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+         GL11.glBegin(GL11.GL_QUADS);
+         GL11.glTexCoord2f(0.0F, 0.0F);
+         GL11.glVertex3f(0.0F, 0.0F, 0.0F);
+@@ -4461,7 +4501,7 @@
+             GL11.glPushMatrix();
+             GL11.glLoadIdentity();
+             GL11.glOrtho(0.0D, 1.0D, 0.0D, 1.0D, 0.0D, 1.0D);
+-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
++            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+             GlStateManager.enableTexture2D();
+             GlStateManager.disableAlpha();
+             GlStateManager.disableBlend();
+@@ -4664,7 +4704,7 @@
+         isRenderingDfb = false;
+         mc.getFramebuffer().bindFramebuffer(true);
+         OpenGlHelper.glFramebufferTexture2D(OpenGlHelper.GL_FRAMEBUFFER, OpenGlHelper.GL_COLOR_ATTACHMENT0, 3553, mc.getFramebuffer().framebufferTexture, 0);
+-        GL11.glViewport(0, 0, mc.displayWidth, mc.displayHeight);
++        //Nope. GL11.glViewport(0, 0, mc.displayWidth, mc.displayHeight);
+ 
+         if (EntityRenderer.anaglyphEnable)
+         {
+@@ -4673,9 +4713,9 @@
+         }
+ 
+         GlStateManager.depthMask(true);
+-        GL11.glClearColor(clearColorR, clearColorG, clearColorB, 1.0F);
++        GlStateManager.clearColor(clearColorR, clearColorG, clearColorB, 1.0F);
+         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
++        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+         GlStateManager.enableTexture2D();
+         GlStateManager.disableAlpha();
+         GlStateManager.disableBlend();
+@@ -5637,4 +5677,4 @@
+         drawBuffersNone.limit(0);
+         drawBuffersColorAtt0.put(36064).position(0).limit(1);
+     }
+-}
++}
+\ No newline at end of file

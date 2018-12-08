@@ -1,0 +1,38 @@
+--- a/net/optifine/CustomItems.java
++++ b/net/optifine/CustomItems.java
+@@ -505,11 +505,11 @@
+ 
+         for (int i = 0; i < list.size(); ++i)
+         {
+-            List list = (List)list.get(i);
++            List sublist = (List)list.get(i);
+ 
+-            if (list != null)
++            if (sublist != null)
+             {
+-                CustomItemProperties[] acustomitemproperties1 = (CustomItemProperties[])list.toArray(new CustomItemProperties[list.size()]);
++                CustomItemProperties[] acustomitemproperties1 = (CustomItemProperties[])sublist.toArray(new CustomItemProperties[sublist.size()]);
+                 Arrays.sort(acustomitemproperties1, new CustomItemsComparator());
+                 acustomitemproperties[i] = acustomitemproperties1;
+             }
+@@ -562,15 +562,15 @@
+             list.add((Object)null);
+         }
+ 
+-        List list = (List)list.get(id);
++        List sublist = (List)list.get(id);
+ 
+-        if (list == null)
++        if (sublist == null)
+         {
+-            list = new ArrayList();
+-            list.set(id, list);
++            sublist = new ArrayList();
++            list.set(id, sublist);
+         }
+ 
+-        list.add(cp);
++        sublist.add(cp);
+     }
+ 
+     public static IBakedModel getCustomItemModel(ItemStack itemStack, IBakedModel model, ResourceLocation modelLocation, boolean fullModel)

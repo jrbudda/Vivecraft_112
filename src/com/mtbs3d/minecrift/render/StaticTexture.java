@@ -15,7 +15,7 @@ import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.data.TextureMetadataSection;
 import net.minecraft.src.Config;
 import net.minecraft.util.ResourceLocation;
-import shadersmod.client.ShadersTex;
+import net.optifine.shaders.ShadersTex;
 
 public class StaticTexture extends SimpleTexture{
 	

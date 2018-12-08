@@ -1,0 +1,11 @@
+--- a/net/optifine/CustomBlockLayers.java
++++ b/net/optifine/CustomBlockLayers.java
+@@ -114,7 +114,7 @@
+                     {
+                         while (listLayers.size() < j + 1)
+                         {
+-                            listLayers.add((Object)null);
++                            listLayers.add((BlockRenderLayer)null);
+                         }
+ 
+                         if (listLayers.get(j) != null)

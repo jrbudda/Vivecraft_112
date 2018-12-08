@@ -1,0 +1,19 @@
+--- a/net/optifine/util/FontUtils.java
++++ b/net/optifine/util/FontUtils.java
+@@ -4,6 +4,7 @@
+ import java.io.IOException;
+ import java.io.InputStream;
+ import java.util.Properties;
++import java.util.Set;
+ import net.minecraft.src.Config;
+ import net.minecraft.util.ResourceLocation;
+ 
+@@ -51,7 +52,7 @@
+ 
+     public static void readCustomCharWidths(Properties props, float[] charWidth)
+     {
+-        for (String s : props.keySet())
++        for (String s : (Set<String>)(Set<?>)props.keySet())
+         {
+             String s1 = "width.";
+ 

@@ -14,7 +14,7 @@
  import net.minecraft.entity.EntityLiving;
  import net.minecraft.src.Config;
 +import net.minecraft.util.math.Vec3d;
- import shadersmod.client.Shaders;
+ import net.optifine.shaders.Shaders;
  
  public abstract class RenderLiving<T extends EntityLiving> extends RenderLivingBase<T>
 @@ -77,6 +81,7 @@

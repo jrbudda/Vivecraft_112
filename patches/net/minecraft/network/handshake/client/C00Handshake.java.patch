@@ -9,7 +9,7 @@
  import net.minecraft.network.Packet;
  import net.minecraft.network.PacketBuffer;
  import net.minecraft.network.handshake.INetHandlerHandshakeServer;
-+import net.minecraft.src.Reflector;
++import net.optifine.reflect.Reflector;
  
  public class C00Handshake implements Packet<INetHandlerHandshakeServer>
  {

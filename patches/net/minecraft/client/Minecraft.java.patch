@@ -147,16 +147,17 @@
  import net.minecraft.client.tutorial.Tutorial;
  import net.minecraft.client.util.ISearchTree;
  import net.minecraft.client.util.ITooltipFlag;
-@@ -163,6 +226,8 @@
+@@ -163,6 +226,9 @@
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.server.integrated.IntegratedServer;
  import net.minecraft.server.management.PlayerProfileCache;
 +import net.minecraft.src.Config;
-+import net.minecraft.src.Reflector;
++import net.optifine.reflect.Reflector;
++import net.optifine.shaders.Shaders;
  import net.minecraft.stats.RecipeBook;
  import net.minecraft.stats.StatisticsManager;
  import net.minecraft.tileentity.TileEntity;
-@@ -187,13 +252,16 @@
+@@ -187,13 +253,16 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.math.RayTraceResult;
@@ -173,7 +174,7 @@
  import net.minecraft.world.WorldProviderEnd;
  import net.minecraft.world.WorldProviderHell;
  import net.minecraft.world.WorldSettings;
-@@ -201,25 +269,106 @@
+@@ -201,25 +270,105 @@
  import net.minecraft.world.storage.ISaveFormat;
  import net.minecraft.world.storage.ISaveHandler;
  import net.minecraft.world.storage.WorldInfo;
@@ -194,7 +195,6 @@
 -import org.lwjgl.opengl.PixelFormat;
 -import org.lwjgl.util.glu.GLU;
 +import paulscode.sound.SoundSystem;
-+import shadersmod.client.Shaders;
  
  public class Minecraft implements IThreadListener, ISnooperInfo
  {
@@ -289,7 +289,7 @@
 +	 * The minecriftVerString will be automatically updated by the build scripts, do not modify here.
 +	 * Modify minecriftversion.py in root minecrift dir.
 +	 */
-+    public final String minecriftVerString = "Vivecraft 1.12.2 jrbudda-7-r7";
++    public final String minecriftVerString = "Vivecraft 1.12.2 jrbudda-7-r8";
 +	/* end version */
 +	/** END MINECRIFT */
 +    
@@ -1853,7 +1853,7 @@
          int i = Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey();
  
          if (i != 0 && !Keyboard.isRepeatEvent())
-@@ -3582,4 +4280,1214 @@
+@@ -3582,4 +4280,1216 @@
      {
          return this.tutorial;
      }
@@ -2449,6 +2449,8 @@
 +				//shaderGroup = this.entityRenderer.initShaderGroup(framebuffer);
 +			}
 +
++			this.loadingScreen = new LoadingScreenRenderer(this);
++			
 +			this.lastDisplayFBWidth = this.displayFBWidth;
 +			this.lastDisplayFBHeight = this.displayFBHeight;
 +			this.lastEnableVsync = this.gameSettings.enableVsync;

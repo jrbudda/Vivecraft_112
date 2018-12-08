@@ -79,7 +79,7 @@ import net.minecraft.client.gui.GuiWinGame;
 import net.minecraft.client.main.Main;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.ItemStack;
-import net.minecraft.src.Reflector;
+import net.optifine.reflect.Reflector;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;

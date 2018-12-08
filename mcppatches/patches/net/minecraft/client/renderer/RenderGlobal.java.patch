@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/RenderGlobal.java
 +++ b/net/minecraft/client/renderer/RenderGlobal.java
-@@ -743,7 +743,7 @@
+@@ -746,7 +746,7 @@
              List<Entity> list2 = Lists.<Entity>newArrayList();
              BlockPos.PooledMutableBlockPos blockpos$pooledmutableblockpos = BlockPos.PooledMutableBlockPos.retain();
  
@@ -9,16 +9,16 @@
              {
                  Chunk chunk = renderglobal$containerlocalrenderinformation.renderChunk.getChunk();
                  ClassInheritanceMultiMap<Entity> classinheritancemultimap = chunk.getEntityLists()[renderglobal$containerlocalrenderinformation.renderChunk.getPosition().getY() / 16];
-@@ -908,7 +908,7 @@
- 
-             label251:
+@@ -914,7 +914,7 @@
+             double d9 = d8 * d8;
+             label255:
  
 -            for (RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation1 : this.renderInfosTileEntities)
 +            for (RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation1 : (Iterable<RenderGlobal.ContainerLocalRenderInformation>)this.renderInfosTileEntities)
              {
                  List<TileEntity> list3 = renderglobal$containerlocalrenderinformation1.renderChunk.getCompiledChunk().getTileEntities();
  
-@@ -1556,10 +1556,7 @@
+@@ -1568,10 +1568,7 @@
                  GlStateManager.disableFog();
              }
  

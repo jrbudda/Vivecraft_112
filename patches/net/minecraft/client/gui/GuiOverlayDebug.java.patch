@@ -11,15 +11,15 @@
  import java.util.Collection;
  import java.util.List;
  import java.util.Map.Entry;
-@@ -27,6 +31,7 @@
- import net.minecraft.world.WorldType;
- import net.minecraft.world.chunk.Chunk;
+@@ -30,6 +34,7 @@
+ import net.optifine.TextureAnimations;
+ import net.optifine.reflect.Reflector;
  import org.lwjgl.opengl.Display;
 +import org.lwjgl.util.vector.Matrix4f;
  
  public class GuiOverlayDebug extends Gui
  {
-@@ -276,11 +281,29 @@
+@@ -299,11 +304,29 @@
                  }
              }
  

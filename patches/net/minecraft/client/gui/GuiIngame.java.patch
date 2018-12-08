@@ -60,41 +60,18 @@
  
          if (this.mc.playerController.isSpectator())
          {
-@@ -205,20 +204,28 @@
-         {
-             this.renderHotbar(scaledresolution, partialTicks);
-         }
--
-+        
+@@ -209,8 +208,8 @@
          GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
          this.mc.getTextureManager().bindTexture(ICONS);
          GlStateManager.enableBlend();
 -        this.renderAttackIndicator(partialTicks, scaledresolution);
--        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-+        
-+       
-+        //VIVE NOPE
-+        //this.renderAttackIndicator(partialTicks, scaledresolution);
-+        //NOPE
-+        
-+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
-+        
+-        GlStateManager.enableAlpha();
++        //Vivecraft Nope this.renderAttackIndicator(partialTicks, scaledresolution);
++        GlStateManager.enableAlpha();        
+         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
          this.mc.mcProfiler.startSection("bossHealth");
--        this.overlayBoss.renderBossHealth();
-+        	this.overlayBoss.renderBossHealth();
-         this.mc.mcProfiler.endSection();
-+          
-         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-         this.mc.getTextureManager().bindTexture(ICONS);
- 
-+        
-         if (this.mc.playerController.shouldDrawHUD())
--        {
-+        {      	
-             this.renderPlayerStats(scaledresolution);
-         }
- 
-@@ -400,7 +407,7 @@
+         this.overlayBoss.renderBossHealth();
+@@ -401,7 +400,7 @@
          GlStateManager.enableAlpha();
      }
  
@@ -103,7 +80,7 @@
      {
          GameSettings gamesettings = this.mc.gameSettings;
  
-@@ -591,6 +598,7 @@
+@@ -592,6 +591,7 @@
              int j = 182;
              int k = 91;
              this.zLevel = -90.0F;
@@ -111,7 +88,7 @@
              this.drawTexturedModalRect(i - 91, sr.getScaledHeight() - 22, 0, 0, 182, 22);
              this.drawTexturedModalRect(i - 91 - 1 + entityplayer.inventory.currentItem * 20, sr.getScaledHeight() - 22 - 1, 0, 22, 24, 22);
  
-@@ -609,7 +617,7 @@
+@@ -610,7 +610,7 @@
              this.zLevel = f;
              GlStateManager.enableRescaleNormal();
              GlStateManager.enableBlend();
@@ -120,7 +97,7 @@
              RenderHelper.enableGUIStandardItemLighting();
              CustomItems.setRenderOffHand(false);
  
-@@ -787,7 +795,7 @@
+@@ -788,7 +788,7 @@
          this.mc.mcProfiler.endSection();
      }
  
@@ -129,7 +106,7 @@
      {
          Scoreboard scoreboard = objective.getScoreboard();
          Collection<Score> collection = scoreboard.getSortedScores(objective);
-@@ -845,11 +853,11 @@
+@@ -846,11 +846,11 @@
          }
      }
  
@@ -143,7 +120,7 @@
              int i = MathHelper.ceil(entityplayer.getHealth());
              boolean flag = this.healthUpdateCounter > (long)this.updateCounter && (this.healthUpdateCounter - (long)this.updateCounter) / 3L % 2L == 1L;
  
-@@ -1004,7 +1012,7 @@
+@@ -1005,7 +1005,7 @@
                      }
                  }
              }
@@ -152,7 +129,7 @@
              Entity entity = entityplayer.getRidingEntity();
  
              if (entity == null || !(entity instanceof EntityLivingBase))
-@@ -1068,7 +1076,7 @@
+@@ -1069,7 +1069,7 @@
          }
      }
  
@@ -161,7 +138,7 @@
      {
          if (this.mc.getRenderViewEntity() instanceof EntityPlayer)
          {
-@@ -1122,7 +1130,7 @@
+@@ -1123,7 +1123,7 @@
          }
      }
  
@@ -170,7 +147,7 @@
      {
          GlStateManager.disableDepth();
          GlStateManager.depthMask(false);
-@@ -1149,6 +1157,8 @@
+@@ -1150,6 +1150,8 @@
       */
      private void renderVignette(float lightLevel, ScaledResolution scaledRes)
      {
@@ -179,7 +156,7 @@
          if (!Config.isVignetteEnabled())
          {
              GlStateManager.enableDepth();
-@@ -1202,38 +1212,9 @@
+@@ -1203,38 +1205,9 @@
          }
      }
  
@@ -220,7 +197,7 @@
      }
  
      private void renderHotbarItem(int p_184044_1_, int p_184044_2_, float p_184044_3_, EntityPlayer player, ItemStack stack)
-@@ -1428,4 +1409,43 @@
+@@ -1429,4 +1402,43 @@
      {
          return this.overlayBoss;
      }

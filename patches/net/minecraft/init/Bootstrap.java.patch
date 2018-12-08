@@ -12,7 +12,7 @@
  import net.minecraft.potion.PotionHelper;
  import net.minecraft.potion.PotionType;
  import net.minecraft.server.DebugLoggingPrintStream;
-+import net.minecraft.src.Reflector;
++import net.optifine.reflect.Reflector;
  import net.minecraft.stats.StatList;
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.tileentity.TileEntityDispenser;

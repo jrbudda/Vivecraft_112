@@ -29,16 +29,15 @@
  import java.util.Arrays;
  import java.util.Collection;
  import java.util.Iterator;
-@@ -224,6 +235,8 @@
+@@ -224,6 +235,7 @@
  import net.minecraft.scoreboard.Scoreboard;
  import net.minecraft.scoreboard.Team;
  import net.minecraft.stats.RecipeBook;
-+import net.minecraft.src.Reflector;
-+import net.minecraft.src.ReflectorMethod;
++import net.optifine.reflect.Reflector;
  import net.minecraft.stats.StatBase;
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.tileentity.TileEntityBanner;
-@@ -246,6 +259,7 @@
+@@ -246,6 +258,7 @@
  import net.minecraft.util.StringUtils;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.MathHelper;
@@ -46,7 +45,7 @@
  import net.minecraft.util.text.ITextComponent;
  import net.minecraft.util.text.TextComponentTranslation;
  import net.minecraft.util.text.TextFormatting;
-@@ -256,6 +270,8 @@
+@@ -256,6 +269,8 @@
  import net.minecraft.world.WorldSettings;
  import net.minecraft.world.chunk.Chunk;
  import net.minecraft.world.storage.MapData;
@@ -55,7 +54,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-@@ -309,6 +325,12 @@
+@@ -309,6 +324,12 @@
          this.netManager = networkManagerIn;
          this.profile = profileIn;
          this.advancementManager = new ClientAdvancementManager(mcIn);
@@ -68,7 +67,7 @@
      }
  
      /**
-@@ -327,7 +349,19 @@
+@@ -327,7 +348,19 @@
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
          this.gameController.playerController = new PlayerControllerMP(this.gameController, this);
@@ -89,7 +88,7 @@
          this.gameController.gameSettings.difficulty = packetIn.getDifficulty();
          this.gameController.loadWorld(this.clientWorldController);
          this.gameController.player.dimension = packetIn.getDimension();
-@@ -338,6 +372,17 @@
+@@ -338,6 +371,17 @@
          this.gameController.playerController.setGameType(packetIn.getGameType());
          this.gameController.gameSettings.sendSettingsToServer();
          this.netManager.sendPacket(new CPacketCustomPayload("MC|Brand", (new PacketBuffer(Unpooled.buffer())).writeString(ClientBrandRetriever.getClientModName())));
@@ -107,7 +106,7 @@
      }
  
      /**
-@@ -837,10 +882,15 @@
+@@ -837,10 +881,15 @@
              BlockPos blockpos = new BlockPos(nbttagcompound.getInteger("x"), nbttagcompound.getInteger("y"), nbttagcompound.getInteger("z"));
              TileEntity tileentity = this.clientWorldController.getTileEntity(blockpos);
  
@@ -124,7 +123,7 @@
          }
      }
  
-@@ -865,6 +915,10 @@
+@@ -865,6 +914,10 @@
      public void handleDisconnect(SPacketDisconnect packetIn)
      {
          this.netManager.closeChannel(packetIn.getReason());
@@ -135,7 +134,7 @@
      }
  
      /**
-@@ -916,8 +970,8 @@
+@@ -916,8 +969,8 @@
              else
              {
                  this.clientWorldController.playSound(entity.posX, entity.posY, entity.posZ, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, (this.avRandomizer.nextFloat() - this.avRandomizer.nextFloat()) * 1.4F + 2.0F, false);
@@ -146,7 +145,7 @@
              if (entity instanceof EntityItem)
              {
                  ((EntityItem)entity).getItem().setCount(packetIn.getAmount());
-@@ -934,7 +988,24 @@
+@@ -934,7 +987,24 @@
      public void handleChat(SPacketChat packetIn)
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
@@ -172,7 +171,7 @@
      }
  
      /**
-@@ -1077,7 +1148,14 @@
+@@ -1077,7 +1147,14 @@
  
                      if (entity1 == this.gameController.player && !flag)
                      {
@@ -188,7 +187,7 @@
                      }
                  }
              }
-@@ -1160,7 +1238,8 @@
+@@ -1160,7 +1237,8 @@
          {
              this.doneLoadingTerrain = false;
              Scoreboard scoreboard = this.clientWorldController.getScoreboard();
@@ -198,7 +197,7 @@
              this.clientWorldController.setWorldScoreboard(scoreboard);
              this.gameController.loadWorld(this.clientWorldController);
              this.gameController.player.dimension = packetIn.getDimensionID();
-@@ -1355,7 +1434,19 @@
+@@ -1355,7 +1433,19 @@
              {
                  tileentity.readFromNBT(packetIn.getNbtCompound());
              }
@@ -219,7 +218,7 @@
              if (flag && this.gameController.currentScreen instanceof GuiCommandBlock)
              {
                  ((GuiCommandBlock)this.gameController.currentScreen).updateGui();
-@@ -1469,15 +1560,41 @@
+@@ -1469,15 +1559,41 @@
              }
              else if (f == 101.0F)
              {
@@ -264,7 +263,7 @@
              }
          }
          else if (i == 6)
-@@ -1647,7 +1764,7 @@
+@@ -1647,7 +1763,7 @@
  
          if (entity instanceof EntityLivingBase)
          {
@@ -273,7 +272,7 @@
  
              if (potion != null)
              {
-@@ -2029,6 +2146,7 @@
+@@ -2029,6 +2145,7 @@
              }
              finally
              {
@@ -281,7 +280,7 @@
                  packetbuffer.release();
              }
          }
-@@ -2068,6 +2186,111 @@
+@@ -2068,6 +2185,111 @@
              String s1 = packetbuffer3.readString(256);
              this.gameController.getSoundHandler().stop(s1, SoundCategory.getByName(s));
          }
@@ -393,7 +392,7 @@
      }
  
      /**
-@@ -2358,4 +2581,12 @@
+@@ -2358,4 +2580,12 @@
      {
          return this.advancementManager;
      }

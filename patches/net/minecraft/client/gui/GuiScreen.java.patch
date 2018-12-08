@@ -30,7 +30,7 @@
  import net.minecraft.nbt.NBTBase;
  import net.minecraft.nbt.NBTException;
  import net.minecraft.nbt.NBTTagCompound;
-+import net.minecraft.src.Reflector;
++import net.optifine.reflect.Reflector;
  import net.minecraft.util.text.ITextComponent;
  import net.minecraft.util.text.TextFormatting;
  import net.minecraft.util.text.event.ClickEvent;

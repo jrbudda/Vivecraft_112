@@ -17,7 +17,7 @@ import com.mtbs3d.minecrift.utils.MCReflection;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.src.Reflector;
+import net.optifine.reflect.Reflector;
 
 public class VRButtonMapping implements Comparable<VRButtonMapping> {
 	public final String functionId;

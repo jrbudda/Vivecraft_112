@@ -1,0 +1,101 @@
+--- a/net/optifine/CustomColors.java
++++ b/net/optifine/CustomColors.java
+@@ -330,7 +330,7 @@
+ 
+         if (ainteger.length <= 0)
+         {
+-            return new ImmutablePair<LightMapPack[], Integer>((Object)null, Integer.valueOf(0));
++            return new ImmutablePair<LightMapPack[], Integer>((LightMapPack[])null, Integer.valueOf(0));
+         }
+         else
+         {
+@@ -468,7 +468,7 @@
+         String s = "palette.block.";
+         Map map = new HashMap();
+ 
+-        for (String s1 : props.keySet())
++        for (String s1 : (Set<String>)(Set<?>)props.keySet())
+         {
+             String s2 = props.getProperty(s1);
+ 
+@@ -622,15 +622,15 @@
+             list.add((Object)null);
+         }
+ 
+-        List list = (List)list.get(id);
++        List sublist = (List)list.get(id);
+ 
+-        if (list == null)
++        if (sublist == null)
+         {
+-            list = new ArrayList();
+-            list.set(id, list);
++            sublist = new ArrayList();
++            list.set(id, sublist);
+         }
+ 
+-        list.add(cm);
++        sublist.add(cm);
+     }
+ 
+     private static CustomColormap[][] blockListToArray(List list)
+@@ -639,11 +639,11 @@
+ 
+         for (int i = 0; i < list.size(); ++i)
+         {
+-            List list = (List)list.get(i);
++            List sublist = (List)list.get(i);
+ 
+-            if (list != null)
++            if (sublist != null)
+             {
+-                CustomColormap[] acustomcolormap1 = (CustomColormap[])list.toArray(new CustomColormap[list.size()]);
++                CustomColormap[] acustomcolormap1 = (CustomColormap[])sublist.toArray(new CustomColormap[sublist.size()]);
+                 acustomcolormap[i] = acustomcolormap1;
+             }
+         }
+@@ -1375,7 +1375,7 @@
+         Set set = props.keySet();
+         int i = 0;
+ 
+-        for (String s : set)
++        for (String s : (Set<String>)(Set<?>)set)
+         {
+             String s1 = props.getProperty(s);
+ 
+@@ -1514,7 +1514,7 @@
+         float[][] afloat1 = new float[aenumdyecolor.length][];
+         int k = 0;
+ 
+-        for (String s : props.keySet())
++        for (String s : (Set<String>)(Set<?>)props.keySet())
+         {
+             String s1 = props.getProperty(s);
+ 
+@@ -1587,7 +1587,7 @@
+         Arrays.fill(aint, -1);
+         int i = 0;
+ 
+-        for (String s : props.keySet())
++        for (String s : (Set<String>)(Set<?>)props.keySet())
+         {
+             String s1 = props.getProperty(s);
+ 
+@@ -1643,7 +1643,7 @@
+         Arrays.fill(aint, -1);
+         int i = 0;
+ 
+-        for (String s : props.keySet())
++        for (String s : (Set<String>)(Set<?>)props.keySet())
+         {
+             String s1 = props.getProperty(s);
+ 
+@@ -1682,7 +1682,7 @@
+         Arrays.fill(aint, -1);
+         int i = 0;
+ 
+-        for (String s : props.keySet())
++        for (String s : (Set<String>)(Set<?>)props.keySet())
+         {
+             String s1 = props.getProperty(s);
+ 

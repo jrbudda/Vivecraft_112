@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/texture/TextureMap.java
 +++ b/net/minecraft/client/renderer/texture/TextureMap.java
-@@ -106,7 +106,9 @@
+@@ -109,7 +109,9 @@
          this.missingImage.setIconHeight(i);
          int[][] aint1 = new int[this.mipmapLevels + 1][];
          aint1[0] = aint;
@@ -11,7 +11,7 @@
          this.missingImage.setIndexInMap(this.counterIndexInMap.nextValue());
      }
  
-@@ -770,7 +772,7 @@
+@@ -831,7 +833,7 @@
      {
          Map map1 = new HashMap();
  

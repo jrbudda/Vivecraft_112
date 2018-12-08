@@ -1,0 +1,53 @@
+--- a/net/optifine/CustomItemProperties.java
++++ b/net/optifine/CustomItemProperties.java
+@@ -3,6 +3,7 @@
+ import java.util.ArrayList;
+ import java.util.Collection;
+ import java.util.HashMap;
++import java.util.Iterator;
+ import java.util.LinkedHashMap;
+ import java.util.List;
+ import java.util.Map;
+@@ -350,11 +351,12 @@
+             Set set = map.keySet();
+             Map map1 = new LinkedHashMap();
+ 
+-            for (String s1 : set)
++            for (Iterator it = set.iterator(); it.hasNext();)
+             {
+-                String s2 = (String)map.get(s1);
++            	String key = (String)it.next();
++                String s2 = (String)map.get(key);
+                 s2 = fixTextureName(s2, basePath);
+-                map1.put(s1, s2);
++                map1.put(key, s2);
+             }
+ 
+             return map1;
+@@ -431,7 +433,7 @@
+             Set set = map.keySet();
+             Map map1 = new LinkedHashMap();
+ 
+-            for (String s1 : set)
++            for (String s1 : (Set<String>)(Set<?>)set)
+             {
+                 String s2 = (String)map.get(s1);
+                 s2 = fixModelName(s2, basePath);
+@@ -639,7 +641,7 @@
+         {
+             List list = new ArrayList();
+ 
+-            for (String s1 : map.keySet())
++            for (String s1 : (Set<String>)(Set<?>)map.keySet())
+             {
+                 String s2 = (String)map.get(s1);
+                 String s3 = s1.substring(s.length());
+@@ -656,7 +658,7 @@
+     {
+         Map map = new LinkedHashMap();
+ 
+-        for (String s : props.keySet())
++        for (String s : (Set<String>)(Set<?>)props.keySet())
+         {
+             String s1 = props.getProperty(s);
+ 

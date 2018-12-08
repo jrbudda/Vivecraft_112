@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/chunk/RenderChunk.java
 +++ b/net/minecraft/client/renderer/chunk/RenderChunk.java
-@@ -153,6 +153,7 @@
+@@ -154,6 +154,7 @@
              this.chunk = null;
              this.boundingBoxParent = null;
              this.initModelviewMatrix();
@@ -8,7 +8,7 @@
          }
      }
  
-@@ -168,7 +169,7 @@
+@@ -169,7 +170,7 @@
              this.postRenderBlocks(BlockRenderLayer.TRANSLUCENT, x, y, z, bufferbuilder, compiledchunk);
          }
      }
@@ -17,7 +17,7 @@
      public void rebuildChunk(float x, float y, float z, ChunkCompileTaskGenerator generator)
      {
          CompiledChunk compiledchunk = new CompiledChunk();
-@@ -295,7 +296,7 @@
+@@ -296,7 +297,7 @@
  
                  if (flag1)
                  {

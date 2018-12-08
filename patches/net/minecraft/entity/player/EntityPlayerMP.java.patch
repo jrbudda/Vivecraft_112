@@ -60,7 +60,7 @@
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.server.management.PlayerInteractionManager;
  import net.minecraft.server.management.UserListOpsEntry;
-+import net.minecraft.src.Reflector;
++import net.optifine.reflect.Reflector;
  import net.minecraft.stats.RecipeBookServer;
  import net.minecraft.stats.StatBase;
  import net.minecraft.stats.StatList;

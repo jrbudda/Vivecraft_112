@@ -1,0 +1,11 @@
+--- a/net/optifine/shaders/ShadersTex.java
++++ b/net/optifine/shaders/ShadersTex.java
+@@ -903,7 +903,7 @@
+         int k = 0;
+         int[] aint = null;
+ 
+-        for (String s : list)
++        for (String s : (List<String>)list)
+         {
+             if (s != null)
+             {

@@ -1,0 +1,11 @@
+--- a/net/optifine/CustomGuis.java
++++ b/net/optifine/CustomGuis.java
+@@ -309,7 +309,7 @@
+ 
+             while (listProps.size() <= i)
+             {
+-                listProps.add((Object)null);
++                listProps.add((List<CustomGuiProperties>)null);
+             }
+ 
+             List<CustomGuiProperties> list = (List)listProps.get(i);

@@ -1,0 +1,11 @@
+--- a/net/optifine/CustomGuiProperties.java
++++ b/net/optifine/CustomGuiProperties.java
+@@ -211,7 +211,7 @@
+ 
+         String s5 = property + ".";
+ 
+-        for (String s1 : props.keySet())
++        for (String s1 : (Set<String>)(Set<?>)props.keySet())
+         {
+             if (s1.startsWith(s5))
+             {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/chunk/RenderChunk.java
 +++ b/net/minecraft/client/renderer/chunk/RenderChunk.java
-@@ -204,7 +204,7 @@
+@@ -205,7 +205,7 @@
              boolean flag = Reflector.ForgeBlock_canRenderInLayer.exists();
              boolean flag1 = Reflector.ForgeHooksClient_setRenderLayer.exists();
  

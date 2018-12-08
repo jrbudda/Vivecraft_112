@@ -6,8 +6,8 @@ import com.mtbs3d.minecrift.render.PlayerModelController;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.src.Config;
-import net.minecraft.src.IFileDownloadListener;
 import net.minecraft.util.text.TextComponentString;
+import net.optifine.http.IFileDownloadListener;
 
 public class PatreonReceiver implements IFileDownloadListener
 {

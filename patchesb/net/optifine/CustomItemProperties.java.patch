@@ -1,0 +1,11 @@
+--- a/net/optifine/CustomItemProperties.java
++++ b/net/optifine/CustomItemProperties.java
+@@ -656,7 +656,7 @@
+     {
+         Map map = new LinkedHashMap();
+ 
+-        for (String s : props.keySet())
++        for (String s : (Set<String>)(Set<?>)props.keySet())
+         {
+             String s1 = props.getProperty(s);
+ 

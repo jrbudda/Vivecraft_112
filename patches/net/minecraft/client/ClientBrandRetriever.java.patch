@@ -3,7 +3,7 @@
 @@ -1,9 +1,14 @@
  package net.minecraft.client;
  
-+import net.minecraft.src.Reflector;
++import net.optifine.reflect.Reflector;
 +
  public class ClientBrandRetriever
  {

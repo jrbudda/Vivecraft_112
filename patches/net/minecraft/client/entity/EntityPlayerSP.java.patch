@@ -60,7 +60,7 @@
  import net.minecraft.network.play.client.CPacketVehicleMove;
  import net.minecraft.potion.Potion;
  import net.minecraft.potion.PotionEffect;
-+import net.minecraft.src.Reflector;
++import net.optifine.reflect.Reflector;
  import net.minecraft.stats.RecipeBook;
  import net.minecraft.stats.StatBase;
  import net.minecraft.stats.StatisticsManager;

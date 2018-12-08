@@ -1,0 +1,85 @@
+--- a/net/optifine/shaders/Shaders.java
++++ b/net/optifine/shaders/Shaders.java
+@@ -95,6 +95,7 @@
+ import net.optifine.util.TimedEvent;
+ import org.apache.commons.io.IOUtils;
+ import org.lwjgl.BufferUtils;
++import org.lwjgl.opengl.ARBFragmentShader;
+ import org.lwjgl.opengl.ARBGeometryShader4;
+ import org.lwjgl.opengl.ARBShaderObjects;
+ import org.lwjgl.opengl.ARBVertexShader;
+@@ -790,6 +791,7 @@
+ 
+     public static void loadShaderPack()
+     {
++    	mc = Minecraft.getMinecraft();
+         boolean flag = shaderPackLoaded;
+         boolean flag1 = isOldLighting();
+         shaderPackLoaded = false;
+@@ -1048,7 +1050,7 @@
+         Set set = props.keySet();
+         List<ICustomTexture> list = new ArrayList<ICustomTexture>();
+ 
+-        for (String s1 : set)
++        for (String s1 : (Set<String>)(Set<?>)set)
+         {
+             if (s1.startsWith(s))
+             {
+@@ -1392,7 +1394,7 @@
+ 
+                     if (shaderoption == null)
+                     {
+-                        list.add((Object)null);
++                        list.add((ShaderOption)null);
+                     }
+                     else if (shaderoption instanceof ShaderOptionRest)
+                     {
+@@ -2264,11 +2266,11 @@
+ 
+     private static int getDrawBuffer(Program p, String str, int i)
+     {
+-        int i = 0;
++        int d = 0;
+ 
+         if (i >= str.length())
+         {
+-            return i;
++            return d;
+         }
+         else
+         {
+@@ -4087,13 +4089,13 @@
+     {
+         if (currentWorld != world)
+         {
+-            World world = currentWorld;
++        	World oldworld = currentWorld;
+             currentWorld = world;
+             setCameraOffset(mc.getRenderViewEntity());
+ 
+-            if (world != null && world != null)
++            if (world != null && oldworld != null)
+             {
+-                int i = world.provider.getDimensionType().getId();
++                int i = oldworld.provider.getDimensionType().getId();
+                 int j = world.provider.getDimensionType().getId();
+                 boolean flag = shaderPackDimensions.contains(Integer.valueOf(i));
+                 boolean flag1 = shaderPackDimensions.contains(Integer.valueOf(j));
+@@ -5252,8 +5254,6 @@
+     public static void setFog(GlStateManager.FogMode fogMode)
+     {
+         GlStateManager.setFog(fogMode);
+-        fogMode = fogMode.capabilityId;
+-
+         if (fogEnabled)
+         {
+             setProgramUniform1i(uniform_fogMode, fogMode.capabilityId);
+@@ -5434,7 +5434,7 @@
+                         Lang.loadLocaleData(inputstream, properties);
+                         inputstream.close();
+ 
+-                        for (String s4 : properties.keySet())
++                        for (String s4 : (Set<String>)(Set<?>)properties.keySet())
+                         {
+                             String s5 = properties.getProperty(s4);
+                             shaderPackResources.put(s4, s5);

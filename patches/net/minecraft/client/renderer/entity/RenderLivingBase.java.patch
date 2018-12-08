@@ -17,14 +17,14 @@
  import net.minecraft.client.model.ModelSpider;
  import net.minecraft.client.renderer.GLAllocation;
  import net.minecraft.client.renderer.GlStateManager;
-@@ -20,6 +25,7 @@
- import net.minecraft.src.EmissiveTextures;
- import net.minecraft.src.Reflector;
+@@ -18,6 +23,7 @@
+ import net.minecraft.scoreboard.Team;
+ import net.minecraft.src.Config;
  import net.minecraft.util.math.MathHelper;
 +import net.minecraft.util.math.Vec3d;
  import net.minecraft.util.text.TextFormatting;
+ import net.optifine.EmissiveTextures;
  import net.optifine.entity.model.CustomEntityModels;
- import org.apache.logging.log4j.LogManager;
 @@ -48,6 +54,7 @@
      private boolean renderLayersPushMatrix;
      public static final boolean animateModelLiving = Boolean.getBoolean("animate.model.living");
