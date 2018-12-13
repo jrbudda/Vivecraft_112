@@ -18,7 +18,7 @@
  import net.minecraft.util.ReportedException;
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.math.MathHelper;
-@@ -164,16 +168,46 @@
+@@ -165,16 +169,46 @@
          }
      }
  
@@ -67,7 +67,7 @@
                  GlStateManager.enableRescaleNormal();
  
                  if (Reflector.ForgeItem_getTileEntityItemStackRenderer.exists())
-@@ -195,7 +229,8 @@
+@@ -196,7 +230,8 @@
                  }
  
                  this.renderModelHasEmissive = false;
@@ -77,7 +77,7 @@
  
                  if (this.renderModelHasEmissive)
                  {
-@@ -214,10 +249,19 @@
+@@ -215,10 +250,19 @@
                  }
              }
  
@@ -97,7 +97,7 @@
      private void renderEffect(IBakedModel model)
      {
          if (!Config.isCustomItems() || CustomItems.isUseGlint())
-@@ -310,35 +354,54 @@
+@@ -311,35 +355,54 @@
          this.putQuadNormal(renderer, quad);
      }
  
@@ -178,7 +178,7 @@
      }
  
      public boolean shouldRenderItemIn3D(ItemStack stack)
-@@ -352,7 +415,7 @@
+@@ -353,7 +416,7 @@
          if (!stack.isEmpty())
          {
              IBakedModel ibakedmodel = this.getItemModelWithOverrides(stack, (World)null, (EntityLivingBase)null);
@@ -187,7 +187,7 @@
          }
      }
  
-@@ -391,16 +454,16 @@
+@@ -392,16 +455,16 @@
          }
      }
  

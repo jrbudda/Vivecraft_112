@@ -289,7 +289,7 @@
 +	 * The minecriftVerString will be automatically updated by the build scripts, do not modify here.
 +	 * Modify minecriftversion.py in root minecrift dir.
 +	 */
-+    public final String minecriftVerString = "Vivecraft 1.12.2 jrbudda-7-r8";
++    public final String minecriftVerString = "Vivecraft 1.12.2 jrbudda-7-r9";
 +	/* end version */
 +	/** END MINECRIFT */
 +    
@@ -1617,7 +1617,7 @@
 +        	{
 +        		this.clickMouse();
 +        		lastClick = true;
-+        	} else {
++        	} else if (!this.gameSettings.keyBindAttack.isKeyDown()){
 +        		this.leftClickCounter = 0;
 +        		if (lastClick)
 +        		{

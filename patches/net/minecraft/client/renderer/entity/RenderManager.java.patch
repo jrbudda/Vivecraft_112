@@ -21,7 +21,7 @@
      /** Renders fonts */
      private FontRenderer textRenderer;
      private double renderPosX;
-@@ -271,16 +275,27 @@
+@@ -270,16 +274,27 @@
      @Nullable
      public <T extends Entity> Render<T> getEntityRenderObject(Entity entityIn)
      {
@@ -59,7 +59,7 @@
      }
  
      public void cacheActiveRenderInfo(World worldIn, FontRenderer textRendererIn, Entity livingPlayerIn, Entity pointedEntityIn, GameSettings optionsIn, float partialTicks)
-@@ -573,8 +588,10 @@
+@@ -571,8 +586,10 @@
          return this.entityRenderMap;
      }
  

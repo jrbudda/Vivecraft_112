@@ -17,12 +17,3 @@
      public void rebuildChunk(float x, float y, float z, ChunkCompileTaskGenerator generator)
      {
          CompiledChunk compiledchunk = new CompiledChunk();
-@@ -296,7 +297,7 @@
- 
-                 if (flag1)
-                 {
--                    Reflector.callVoid(Reflector.ForgeHooksClient_setRenderLayer, null);
-+                    Reflector.callVoid(Reflector.ForgeHooksClient_setRenderLayer, (BlockRenderLayer)null);
-                 }
-             }
- 

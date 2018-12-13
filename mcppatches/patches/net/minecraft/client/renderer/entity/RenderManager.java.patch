@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/entity/RenderManager.java
 +++ b/net/minecraft/client/renderer/entity/RenderManager.java
-@@ -261,7 +261,7 @@
+@@ -260,7 +260,7 @@
  
          if (render == null && entityClass != Entity.class)
          {
@@ -9,7 +9,7 @@
              this.entityRenderMap.put(entityClass, render);
          }
  
-@@ -568,7 +568,7 @@
+@@ -566,7 +566,7 @@
          this.renderOutlines = renderOutlinesIn;
      }
  

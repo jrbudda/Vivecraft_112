@@ -213,6 +213,9 @@ public class SwingTracker extends Tracker{
         		// and damage the block it collides with... 
 
         		RayTraceResult col = mc.world.rayTraceBlocks(lastWeaponEndAir[c], weaponEnd[c], true, false, true);
+        		
+        		mc.playerController.hitVecOverride = col.hitVec;
+        		
         		boolean flag = col!=null && col.getBlockPos().equals(bp); //fix ladder but prolly break everything else.
         		if (flag && (shouldIlookatMyHand[c] || (col != null && col.typeOfHit == Type.BLOCK)))
         		{
@@ -263,6 +266,7 @@ public class SwingTracker extends Tracker{
         								mc.effectRenderer.addBlockHitEffects(col.getBlockPos(), col.sideHit);
 
         							}
+        							
         						}
         						mc.vrPlayer.blockDust(col.hitVec.x, col.hitVec.y, col.hitVec.z, 3*p, block);
 
@@ -274,6 +278,7 @@ public class SwingTracker extends Tracker{
         				}
         			}
         		}
+        		mc.playerController.hitVecOverride = null;
         	}
 
             if ((!inAnEntity && !insolidBlock ) || lastWeaponEndAir[c].lengthVector() ==0)

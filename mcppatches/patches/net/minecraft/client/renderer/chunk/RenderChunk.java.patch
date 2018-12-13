@@ -9,3 +9,12 @@
              {
                  IBlockState iblockstate = chunkcacheof.getBlockState(blockposm);
                  Block block = iblockstate.getBlock();
+@@ -296,7 +296,7 @@
+ 
+                 if (flag1)
+                 {
+-                    Reflector.callVoid(Reflector.ForgeHooksClient_setRenderLayer, null);
++                    Reflector.callVoid(Reflector.ForgeHooksClient_setRenderLayer);
+                 }
+             }
+ 

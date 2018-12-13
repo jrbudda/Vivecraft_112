@@ -29,6 +29,7 @@ public enum HardwareType {
 	static {
 		for (HardwareType hw : values()) {
 			for (String str : hw.manufacturers) {
+				assert !map.containsKey(str) : "Duplicate manufacturer: " + str;
 				map.put(str, hw);
 			}
 		}

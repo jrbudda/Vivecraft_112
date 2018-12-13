@@ -8,7 +8,7 @@
  import net.minecraft.block.properties.IProperty;
  import net.minecraft.block.state.IBlockState;
  import net.minecraft.client.Minecraft;
-@@ -480,7 +481,7 @@
+@@ -473,7 +474,7 @@
  
      public static IProperty getProperty(String key, Collection properties)
      {

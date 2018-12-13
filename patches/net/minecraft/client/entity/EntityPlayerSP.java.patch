@@ -528,8 +528,8 @@
 +    	//Forge
 +    	if(Reflector.forgeExists()){
 +    		Object event = Reflector.call(Reflector.ForgeEventFactory_onPlaySoundAtEntity, new Object[]{this, soundIn, this.getSoundCategory(), volume, pitch});
-+    		if ((Boolean)(Reflector.call(event, Reflector.Event_isCanceled)) ||
-+    				(Reflector.call(event, Reflector.PlaySoundAtEntityEvent_getSound) == null)) return;
++    		if (Reflector.callBoolean(event, Reflector.Event_isCanceled) ||
++    				Reflector.call(event, Reflector.PlaySoundAtEntityEvent_getSound) == null) return;
 +    		soundIn = (SoundEvent) Reflector.call(event, Reflector.PlaySoundAtEntityEvent_getSound);
 +    		volume = (Float) Reflector.call(event, Reflector.PlaySoundAtEntityEvent_getVolume);
 +    		pitch = (Float) Reflector.call(event, Reflector.PlaySoundAtEntityEvent_getPitch);

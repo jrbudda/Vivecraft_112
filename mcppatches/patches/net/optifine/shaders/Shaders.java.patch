@@ -34,7 +34,7 @@
                      }
                      else if (shaderoption instanceof ShaderOptionRest)
                      {
-@@ -2264,11 +2266,11 @@
+@@ -2258,11 +2260,11 @@
  
      private static int getDrawBuffer(Program p, String str, int i)
      {
@@ -48,7 +48,7 @@
          }
          else
          {
-@@ -4087,13 +4089,13 @@
+@@ -4081,13 +4083,13 @@
      {
          if (currentWorld != world)
          {
@@ -65,7 +65,7 @@
                  int j = world.provider.getDimensionType().getId();
                  boolean flag = shaderPackDimensions.contains(Integer.valueOf(i));
                  boolean flag1 = shaderPackDimensions.contains(Integer.valueOf(j));
-@@ -5252,8 +5254,6 @@
+@@ -5246,8 +5248,6 @@
      public static void setFog(GlStateManager.FogMode fogMode)
      {
          GlStateManager.setFog(fogMode);
@@ -74,7 +74,7 @@
          if (fogEnabled)
          {
              setProgramUniform1i(uniform_fogMode, fogMode.capabilityId);
-@@ -5434,7 +5434,7 @@
+@@ -5428,7 +5428,7 @@
                          Lang.loadLocaleData(inputstream, properties);
                          inputstream.close();
  
