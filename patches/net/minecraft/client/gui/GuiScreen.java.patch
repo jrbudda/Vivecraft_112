@@ -20,7 +20,7 @@
  import net.minecraft.client.Minecraft;
  import net.minecraft.client.renderer.BufferBuilder;
  import net.minecraft.client.renderer.GlStateManager;
-@@ -24,15 +30,18 @@
+@@ -24,20 +30,24 @@
  import net.minecraft.client.renderer.Tessellator;
  import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
  import net.minecraft.client.util.ITooltipFlag;
@@ -39,7 +39,13 @@
  import org.apache.commons.lang3.StringUtils;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-@@ -46,7 +55,7 @@
+ import org.lwjgl.input.Keyboard;
+ import org.lwjgl.input.Mouse;
++import org.lwjgl.opengl.Display;
+ 
+ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
+ {
+@@ -46,7 +56,7 @@
      private static final Splitter NEWLINE_SPLITTER = Splitter.on('\n');
  
      /** Reference to the Minecraft object. */
@@ -48,7 +54,7 @@
  
      /**
       * Holds a instance of RenderItem, used to draw the achievement icons on screen (is based on ItemStack)
-@@ -77,6 +86,13 @@
+@@ -77,6 +87,13 @@
      private URI clickedLinkURI;
      private boolean focused;
  
@@ -62,7 +68,7 @@
      /**
       * Draws the screen and all the components in it.
       */
-@@ -101,6 +117,10 @@
+@@ -101,6 +118,10 @@
      {
          if (keyCode == 1)
          {
@@ -73,7 +79,7 @@
              this.mc.displayGuiScreen((GuiScreen)null);
  
              if (this.mc.currentScreen == null)
-@@ -109,6 +129,10 @@
+@@ -109,6 +130,10 @@
              }
          }
      }
@@ -84,7 +90,7 @@
  
      protected <T extends GuiButton> T addButton(T buttonIn)
      {
-@@ -204,7 +228,16 @@
+@@ -204,7 +229,16 @@
       */
      public void drawHoveringText(List<String> textLines, int x, int y)
      {
@@ -102,7 +108,7 @@
          {
              GlStateManager.disableRescaleNormal();
              RenderHelper.disableStandardItemLighting();
-@@ -449,10 +482,17 @@
+@@ -449,10 +483,17 @@
  
      public void sendChatMessage(String msg, boolean addToChat)
      {
@@ -120,7 +126,7 @@
  
          this.mc.player.sendChatMessage(msg);
      }
-@@ -470,9 +510,19 @@
+@@ -470,9 +511,19 @@
  
                  if (guibutton.mousePressed(this.mc, mouseX, mouseY))
                  {
@@ -140,7 +146,7 @@
                  }
              }
          }
-@@ -516,8 +566,11 @@
+@@ -516,8 +567,11 @@
          this.fontRenderer = mc.fontRenderer;
          this.width = width;
          this.height = height;
@@ -152,7 +158,7 @@
      }
  
      /**
-@@ -546,7 +599,16 @@
+@@ -546,7 +600,16 @@
          {
              while (Mouse.next())
              {
@@ -169,7 +175,7 @@
              }
          }
  
-@@ -554,7 +616,10 @@
+@@ -554,7 +617,10 @@
          {
              while (Keyboard.next())
              {
@@ -180,7 +186,7 @@
              }
          }
      }
-@@ -568,6 +633,13 @@
+@@ -568,6 +634,13 @@
          int j = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
          int k = Mouse.getEventButton();
  
@@ -194,7 +200,7 @@
          if (Mouse.getEventButtonState())
          {
              if (this.mc.gameSettings.touchscreen && this.touchValue++ > 0)
-@@ -601,9 +673,14 @@
+@@ -601,9 +674,14 @@
       */
      public void handleKeyboardInput() throws IOException
      {
@@ -210,7 +216,7 @@
          {
              this.keyTyped(c0, Keyboard.getEventKey());
          }
-@@ -631,13 +708,23 @@
+@@ -631,13 +709,23 @@
      public void drawDefaultBackground()
      {
          this.drawWorldBackground(0);
@@ -235,7 +241,7 @@
          }
          else
          {
-@@ -722,7 +809,7 @@
+@@ -722,7 +810,7 @@
       */
      public static boolean isShiftKeyDown()
      {
@@ -244,7 +250,7 @@
      }
  
      /**
-@@ -760,4 +847,88 @@
+@@ -760,4 +848,91 @@
      {
          this.setWorldAndResolution(mcIn, w, h);
      }
@@ -322,14 +328,17 @@
 +
 +    public int getMouseXPos()
 +    {
-+        int mX = Mouse.getX() * this.mc.currentScreen.width / this.mc.displayWidth;
-+        return mX;
++     	if(Display.isActive())
++    		return Mouse.getX() * this.mc.currentScreen.width / this.mc.displayWidth;
++    	else
++    		return (int) GuiHandler.controllerMouseX  * this.mc.currentScreen.width / this.mc.displayWidth;
 +    }
 +
 +    public int getMouseYPos()
 +    {
-+        int mY = this.mc.currentScreen.height - Mouse.getY() * this.mc.currentScreen.height / this.mc.displayHeight - 1;
-+        return mY;
++    	if(Display.isActive())
++    		return this.mc.currentScreen.height - Mouse.getY() * this.mc.currentScreen.height / this.mc.displayHeight - 1;
++    	else
++    		return  (int) (this.mc.currentScreen.height - GuiHandler.controllerMouseY * this.mc.currentScreen.height / this.mc.displayHeight - 1);
 +    }
-+
  }

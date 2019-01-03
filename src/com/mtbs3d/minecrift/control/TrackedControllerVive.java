@@ -474,38 +474,38 @@ public class TrackedControllerVive extends TrackedController {
 		int i = this.type == ControllerType.RIGHT ? 0 : 1;
 		long butt = -1;
 		switch (button) {
-		case VIVE_APPMENU:
-			butt = k_buttonAppMenu;
-			break;
-		case VIVE_GRIP:
-			butt = k_buttonGrip;
-			break;
-		case VIVE_TOUCHPAD:
-		case VIVE_TOUCHPAD_U:
-		case VIVE_TOUCHPAD_D:
-		case VIVE_TOUCHPAD_L:
-		case VIVE_TOUCHPAD_R:
-		case VIVE_TOUCHPAD_UL:
-		case VIVE_TOUCHPAD_UR:
-		case VIVE_TOUCHPAD_LR:
-		case VIVE_TOUCHPAD_LL:
-		case VIVE_TOUCHPAD_S1:
-		case VIVE_TOUCHPAD_S2:
-		case VIVE_TOUCHPAD_S3:
-		case VIVE_TOUCHPAD_S4:
-		case VIVE_TOUCHPAD_S5:
-		case VIVE_TOUCHPAD_S6:
-		case VIVE_TOUCHPAD_S7:
-		case VIVE_TOUCHPAD_S8:
-		case VIVE_TOUCHPAD_C:
-			butt = k_buttonTouchpad;
-			break;
-		case VIVE_TRIGGER:
-		case VIVE_TRIGGER_CLICK:
-			butt = k_buttonTrigger;
-			break;
-		default:
-			break;
+			case VIVE_APPMENU:
+				butt = k_buttonAppMenu;
+				break;
+			case VIVE_GRIP:
+				butt = k_buttonGrip;
+				break;
+			case VIVE_TOUCHPAD:
+			case VIVE_TOUCHPAD_U:
+			case VIVE_TOUCHPAD_D:
+			case VIVE_TOUCHPAD_L:
+			case VIVE_TOUCHPAD_R:
+			case VIVE_TOUCHPAD_UL:
+			case VIVE_TOUCHPAD_UR:
+			case VIVE_TOUCHPAD_LR:
+			case VIVE_TOUCHPAD_LL:
+			case VIVE_TOUCHPAD_S1:
+			case VIVE_TOUCHPAD_S2:
+			case VIVE_TOUCHPAD_S3:
+			case VIVE_TOUCHPAD_S4:
+			case VIVE_TOUCHPAD_S5:
+			case VIVE_TOUCHPAD_S6:
+			case VIVE_TOUCHPAD_S7:
+			case VIVE_TOUCHPAD_S8:
+			case VIVE_TOUCHPAD_C:
+				butt = k_buttonTouchpad;
+				break;
+			case VIVE_TRIGGER:
+			case VIVE_TRIGGER_CLICK:
+				butt = k_buttonTrigger;
+				break;
+			default:
+				break;
 		}
 		de.fruitfly.ovr.structs.Matrix4f mat = MCOpenVR.getControllerComponentTransformFromButton(i, butt);
 		Vector3f v = mat.transform(MCOpenVR.forward);

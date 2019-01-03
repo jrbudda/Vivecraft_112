@@ -787,6 +787,8 @@ public class Installer extends JPanel  implements PropertyChangeListener
 
 			try {
 				File fod = new File(targetDir,OF_LIB_PATH+OF_JSON_NAME);
+				if(isMultiMC)
+					fod = new File(mmcinst,"libraries");
 				fod.mkdirs();
 				File fo = new File(fod,"OptiFine-"+OF_JSON_NAME+".jar");
 
@@ -1238,6 +1240,8 @@ public class Installer extends JPanel  implements PropertyChangeListener
 
 						// Extract new lib
 						File lib_dir = new File(targetDir,"libraries/com/mtbs3d/minecrift/"+version);
+						if(isMultiMC)
+							lib_dir = new File(mmcinst,"libraries");
 						lib_dir.mkdirs();
 						File ver_file = new File (lib_dir, "minecrift-"+version+".jar");
 						FileOutputStream ver_jar = new FileOutputStream(ver_file);

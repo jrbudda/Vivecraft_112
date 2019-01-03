@@ -214,7 +214,7 @@ public class SwingTracker extends Tracker{
 
         		RayTraceResult col = mc.world.rayTraceBlocks(lastWeaponEndAir[c], weaponEnd[c], true, false, true);
         		
-        		mc.playerController.hitVecOverride = col.hitVec;
+        		if (col != null) mc.playerController.hitVecOverride = col.hitVec;
         		
         		boolean flag = col!=null && col.getBlockPos().equals(bp); //fix ladder but prolly break everything else.
         		if (flag && (shouldIlookatMyHand[c] || (col != null && col.typeOfHit == Type.BLOCK)))

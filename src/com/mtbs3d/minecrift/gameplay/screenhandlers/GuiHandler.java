@@ -50,8 +50,8 @@ public class GuiHandler {
 	static boolean lastPressedAlt;
 	
 	// For mouse menu emulation
-	private static float controllerMouseX = -1.0f;
-	private static float controllerMouseY = -1.0f;
+	public static float controllerMouseX = -1.0f;
+	public static float controllerMouseY = -1.0f;
 	public static boolean controllerMouseValid;
 	public static int controllerMouseTicks;
 
@@ -175,8 +175,12 @@ public class GuiHandler {
 
 			if (MCOpenVR.controllerDeviceIndex[MCOpenVR.RIGHT_CONTROLLER] != -1)
 			{
-				InputInjector.mouseMoveEvent(mouseX, mouseY); // Needs to be called first, since it only puts an event if delta != 0
-				Mouse.setCursorPosition(mouseX, mouseY);
+				
+				if(Display.isActive()){
+					InputInjector.mouseMoveEvent(mouseX, mouseY); // Needs to be called first, since it only puts an event if delta != 0
+					 Mouse.setCursorPosition(mouseX, mouseY);
+					 }
+		
 				controllerMouseValid = true;
 
 			}

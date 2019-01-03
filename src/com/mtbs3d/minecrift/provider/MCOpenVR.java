@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
+import jopenvr.VR_IVROCSystem_FnTable;
 import net.minecraft.util.text.TextComponentString;
 import org.apache.commons.lang3.ArrayUtils;
 import org.lwjgl.input.Keyboard;
@@ -97,6 +98,7 @@ public class MCOpenVR
 	static VR_IVRSettings_FnTable vrSettings;
 	static VR_IVRRenderModels_FnTable vrRenderModels;
 	static VR_IVRChaperone_FnTable vrChaperone;
+	public static VR_IVROCSystem_FnTable vrOpenComposite;
 
 	private static IntByReference hmdErrorStore = new IntByReference();
 	private static IntBuffer hmdErrorStoreBuf;
@@ -296,6 +298,7 @@ public class MCOpenVR
 			initOpenVRSettings();
 			initOpenVRRenderModels();
 			initOpenVRChaperone();
+			initOpenComposite();
 		} catch (Exception e) {
 			e.printStackTrace();
 			initSuccess = false;
@@ -479,7 +482,7 @@ public class MCOpenVR
 	public static void initOpenVRSettings() throws Exception
 	{
 		vrSettings = new VR_IVRSettings_FnTable(JOpenVRLibrary.VR_GetGenericInterface(JOpenVRLibrary.IVRSettings_Version, hmdErrorStoreBuf));
-		if (vrSettings != null &&  !isError()) {     		
+		if (!isError()) {
 			vrSettings.setAutoSynch(false);
 			vrSettings.read();					
 			System.out.println("OpenVR Settings initialized OK");
@@ -497,7 +500,7 @@ public class MCOpenVR
 	public static void initOpenVRRenderModels() throws Exception
 	{
 		vrRenderModels = new VR_IVRRenderModels_FnTable(JOpenVRLibrary.VR_GetGenericInterface(JOpenVRLibrary.IVRRenderModels_Version, hmdErrorStoreBuf));
-		if (vrRenderModels != null && !isError()) {
+		if (!isError()) {
 			vrRenderModels.setAutoSynch(false);
 			vrRenderModels.read();			
 			System.out.println("OpenVR RenderModels initialized OK");
@@ -513,7 +516,7 @@ public class MCOpenVR
 
 	private static void initOpenVRChaperone() throws Exception {
 		vrChaperone = new VR_IVRChaperone_FnTable(JOpenVRLibrary.VR_GetGenericInterface(JOpenVRLibrary.IVRChaperone_Version, hmdErrorStoreBuf));
-		if (vrChaperone != null && hmdErrorStore.getValue() == 0) {
+		if (!isError()) {
 			vrChaperone.setAutoSynch(false);
 			vrChaperone.read();
 			System.out.println("OpenVR chaperone initialized.");
@@ -524,6 +527,18 @@ public class MCOpenVR
 			} else {
 				throw new Exception(jopenvr.JOpenVRLibrary.VR_GetVRInitErrorAsEnglishDescription(getError()).getString(0));
 			}
+		}
+	}
+
+	private static void initOpenComposite() throws Exception {
+		vrOpenComposite = new VR_IVROCSystem_FnTable(JOpenVRLibrary.VR_GetGenericInterface(VR_IVROCSystem_FnTable.Version, hmdErrorStoreBuf));
+		if (!isError()) {
+			vrOpenComposite.setAutoSynch(false);
+			vrOpenComposite.read();
+			System.out.println("OpenComposite initialized.");
+		} else {
+			System.out.println("OpenComposite init failed: " + jopenvr.JOpenVRLibrary.VR_GetVRInitErrorAsEnglishDescription(getError()).getString(0));
+			vrOpenComposite = null;
 		}
 	}
 
@@ -597,6 +612,10 @@ public class MCOpenVR
 			return getControllerComponentTransform(controllerIndex, "status");
 
 		return getControllerComponentTransform(controllerIndex, controllerComponentNames.get(button));
+	}
+
+	public static boolean hasOpenComposite() {
+		return vrOpenComposite != null;
 	}
 
 	public static void initOpenVRCompositor(boolean set) throws Exception
