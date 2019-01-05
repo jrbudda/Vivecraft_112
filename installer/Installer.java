@@ -754,7 +754,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 						(profileCreated == false ? " and Edit Profile->Use Version " + minecriftVersionName : " and select the '" + getMinecraftProfileName(useForge.isSelected(), useShadersMod.isSelected()) + "' profile.") +
 						"\nPlease download OptiFine " + OF_FILE_NAME + " from https://optifine.net/downloads before attempting to play." +
 						"\nDo not run and install it, instead rename the file to OptiFine-" + OF_FILE_NAME + " (note the hyphen) and manually place it into the following directory:" +
-						"\n" + new File(targetDir, OF_LIB_PATH + OF_JSON_NAME).getAbsolutePath();
+						"\n" + (isMultiMC ? new File(mmcinst, "libraries").getAbsolutePath() : new File(targetDir, OF_LIB_PATH + OF_JSON_NAME).getAbsolutePath());
 			}
 			else {
 				if(isMultiMC && mmcinst != null)
