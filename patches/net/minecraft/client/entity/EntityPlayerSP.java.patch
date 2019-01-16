@@ -541,15 +541,41 @@
      }
  
      /**
-@@ -975,6 +1178,7 @@
+@@ -975,6 +1178,9 @@
          float f = 0.8F;
          boolean flag2 = this.movementInput.moveForward >= 0.8F;
          this.movementInput.updatePlayerMoveState();
++        if (Reflector.forgeExists())
++        	Reflector.callVoid(Reflector.ForgeHooksClient_onInputUpdate, this, this.movementInput);
 +        this.mc.vrPlayer.doLookOverride(mc.vrPlayer.vrdata_world_pre);
          this.mc.getTutorial().handleMovement(this.movementInput);
  
          if (this.isHandActive() && !this.isRiding())
-@@ -1032,7 +1236,7 @@
+@@ -994,10 +1200,19 @@
+         }
+ 
+         AxisAlignedBB axisalignedbb = this.getEntityBoundingBox();
+-        this.pushOutOfBlocks(this.posX - (double)this.width * 0.35D, axisalignedbb.minY + 0.5D, this.posZ + (double)this.width * 0.35D);
+-        this.pushOutOfBlocks(this.posX - (double)this.width * 0.35D, axisalignedbb.minY + 0.5D, this.posZ - (double)this.width * 0.35D);
+-        this.pushOutOfBlocks(this.posX + (double)this.width * 0.35D, axisalignedbb.minY + 0.5D, this.posZ - (double)this.width * 0.35D);
+-        this.pushOutOfBlocks(this.posX + (double)this.width * 0.35D, axisalignedbb.minY + 0.5D, this.posZ + (double)this.width * 0.35D);
++        boolean pushOutOfBlocks = true;
++        if (Reflector.forgeExists()) {
++        	Object event = Reflector.newInstance(Reflector.ForgePlayerSPPushOutOfBlocksEvent_Constructor, this, axisalignedbb);
++        	pushOutOfBlocks = !Reflector.postForgeBusEvent(event);
++        	if (pushOutOfBlocks)
++        		axisalignedbb = (AxisAlignedBB)Reflector.call(event, Reflector.ForgePlayerSPPushOutOfBlocksEvent_getEntityBoundingBox);
++		}
++        if (pushOutOfBlocks) {
++			this.pushOutOfBlocks(this.posX - (double) this.width * 0.35D, axisalignedbb.minY + 0.5D, this.posZ + (double) this.width * 0.35D);
++			this.pushOutOfBlocks(this.posX - (double) this.width * 0.35D, axisalignedbb.minY + 0.5D, this.posZ - (double) this.width * 0.35D);
++			this.pushOutOfBlocks(this.posX + (double) this.width * 0.35D, axisalignedbb.minY + 0.5D, this.posZ - (double) this.width * 0.35D);
++			this.pushOutOfBlocks(this.posX + (double) this.width * 0.35D, axisalignedbb.minY + 0.5D, this.posZ + (double) this.width * 0.35D);
++		}
+         boolean flag4 = (float)this.getFoodStats().getFoodLevel() > 6.0F || this.capabilities.allowFlying;
+ 
+         if (this.onGround && !flag1 && !flag2 && this.movementInput.moveForward >= 0.8F && !this.isSprinting() && flag4 && !this.isHandActive() && !this.isPotionActive(MobEffects.BLINDNESS))
+@@ -1032,7 +1247,7 @@
                      this.sendPlayerAbilities();
                  }
              }
@@ -558,7 +584,7 @@
              {
                  if (this.flyToggleTimer == 0)
                  {
-@@ -1120,6 +1324,10 @@
+@@ -1120,6 +1335,10 @@
  
          super.onLivingUpdate();
  
@@ -569,7 +595,7 @@
          if (this.onGround && this.capabilities.isFlying && !this.mc.playerController.isSpectatorMode())
          {
              this.capabilities.isFlying = false;
-@@ -1139,7 +1347,7 @@
+@@ -1139,7 +1358,7 @@
          {
              EntityBoat entityboat = (EntityBoat)this.getRidingEntity();
              entityboat.updateInputs(this.movementInput.leftKeyDown, this.movementInput.rightKeyDown, this.movementInput.forwardKeyDown, this.movementInput.backKeyDown);
@@ -578,7 +604,7 @@
          }
      }
  
-@@ -1170,10 +1378,47 @@
+@@ -1170,10 +1389,47 @@
       */
      public void move(MoverType type, double x, double y, double z)
      {
@@ -630,7 +656,7 @@
      }
  
      public boolean isAutoJumpEnabled()
-@@ -1199,12 +1444,16 @@
+@@ -1199,12 +1455,16 @@
                      float f = this.getAIMoveSpeed();
                      float f1 = (float)vec3d2.lengthSquared();
  
@@ -649,7 +675,7 @@
                          vec3d2 = new Vec3d((double)(f2 * f5 - f3 * f4), vec3d2.y, (double)(f3 * f5 + f2 * f4));
                          f1 = (float)vec3d2.lengthSquared();
  
-@@ -1324,4 +1573,381 @@
+@@ -1324,4 +1584,394 @@
              }
          }
      }
@@ -1029,5 +1055,18 @@
 +                this.world.playSound((EntityPlayer)null, soundPos.x, soundPos.y, soundPos.z, soundIn, this.getSoundCategory(), volume, pitch);
 +            }
 +        }
-+        
++
++	// FORGE
++    public void updateSyncFields(EntityPlayerSP old)
++    {
++        this.lastReportedPosX = old.lastReportedPosX;
++        this.lastReportedPosY = old.lastReportedPosY;
++        this.lastReportedPosZ = old.lastReportedPosZ;
++        this.lastReportedYaw = old.lastReportedYaw;
++        this.lastReportedPitch = old.lastReportedPitch;
++        this.prevOnGround = old.prevOnGround;
++        this.serverSneakState = old.serverSneakState;
++        this.serverSprintState = old.serverSprintState;
++        this.positionUpdateTicks = old.positionUpdateTicks;
++    }
  }

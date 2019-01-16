@@ -194,17 +194,6 @@
      /** Entity renderer update count */
      private int rendererUpdateCount;
  
-@@ -192,8 +248,8 @@
- 
-     /** Rain sound counter */
-     private int rainSoundCounter;
--    private final float[] rainXCoords = new float[1024];
--    private final float[] rainYCoords = new float[1024];
-+    private final float[] rainxs = new float[1024];
-+    private final float[] rainYs = new float[1024];
- 
-     /** Fog color buffer */
-     private final FloatBuffer fogColorBuffer = GLAllocation.createDirectFloatBuffer(16);
 @@ -224,7 +280,6 @@
      private boolean initialized = false;
      private World updatedWorld = null;
@@ -222,14 +211,8 @@
      public EntityRenderer(Minecraft mcIn, IResourceManager resourceManagerIn)
      {
          this.shaderIndex = SHADER_COUNT;
-@@ -253,10 +310,16 @@
-                 float f = (float)(j - 16);
-                 float f1 = (float)(i - 16);
-                 float f2 = MathHelper.sqrt(f * f + f1 * f1);
--                this.rainXCoords[i << 5 | j] = -f1 / f2;
--                this.rainYCoords[i << 5 | j] = f / f2;
-+                this.rainxs[i << 5 | j] = -f1 / f2;
-+                this.rainYs[i << 5 | j] = f / f2;
+@@ -257,6 +314,12 @@
+                 this.rainYCoords[i << 5 | j] = f / f2;
              }
          }
 +        
@@ -305,14 +288,6 @@
 -            this.pointedEntity = null;
 -            Vec3d vec3d3 = null;
 -            float f = 1.0F;
--            List<Entity> list = this.mc.world.getEntitiesInAABBexcluding(entity, entity.getEntityBoundingBox().expand(vec3d1.x * d0, vec3d1.y * d0, vec3d1.z * d0).grow(1.0D, 1.0D, 1.0D), Predicates.and(EntitySelectors.NOT_SPECTATING, new Predicate<Entity>()
--            {
--                public boolean apply(@Nullable Entity p_apply_1_)
--                {
--                    return p_apply_1_ != null && p_apply_1_.canBeCollidedWith();
--                }
--            }));
--            double d2 = d1;
 +		if (entity != null && this.mc.world != null)
 +		{
 +			this.mc.mcProfiler.startSection("pick");
@@ -344,7 +319,14 @@
 +			this.pointedEntity = null;
 +			Vec3d vec3d3 = null;
 +			float f = 1.0F;
-+			List<Entity> list = this.mc.world.getEntitiesInAABBexcluding(entity, entity.getEntityBoundingBox().grow(vec3d1.x * d0, vec3d1.y * d0, vec3d1.z * d0).expand(1.0D, 1.0D, 1.0D), Predicates.and(EntitySelectors.NOT_SPECTATING, new Predicate<Entity>()
+             List<Entity> list = this.mc.world.getEntitiesInAABBexcluding(entity, entity.getEntityBoundingBox().expand(vec3d1.x * d0, vec3d1.y * d0, vec3d1.z * d0).grow(1.0D, 1.0D, 1.0D), Predicates.and(EntitySelectors.NOT_SPECTATING, new Predicate<Entity>()
+-            {
+-                public boolean apply(@Nullable Entity p_apply_1_)
+-                {
+-                    return p_apply_1_ != null && p_apply_1_.canBeCollidedWith();
+-                }
+-            }));
+-            double d2 = d1;
 +			{
 +				public boolean apply(@Nullable Entity p_apply_1_)
 +				{
@@ -352,13 +334,71 @@
 +				}
 +			}));
 +			double d2 = d1;
-+
+ 
+-            for (int j = 0; j < list.size(); ++j)
+-            {
 +			for (int j = 0; j < list.size(); ++j)
 +			{
-+				Entity entity1 = (Entity)list.get(j);
-+				AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().expand(entity1.getCollisionBorderSize(), entity1.getCollisionBorderSize(), entity1.getCollisionBorderSize());
+                 Entity entity1 = list.get(j);
+                 AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().grow((double)entity1.getCollisionBorderSize());
+-                RayTraceResult raytraceresult = axisalignedbb.calculateIntercept(vec3d, vec3d2);
+-
+-                if (axisalignedbb.contains(vec3d))
+-                {
+-                    if (d2 >= 0.0D)
+-                    {
+-                        this.pointedEntity = entity1;
+-                        vec3d3 = raytraceresult == null ? vec3d : raytraceresult.hitVec;
+-                        d2 = 0.0D;
+-                    }
+-                }
+-                else if (raytraceresult != null)
+-                {
+-                    double d3 = vec3d.distanceTo(raytraceresult.hitVec);
+-
+-                    if (d3 < d2 || d2 == 0.0D)
+-                    {
+-                        boolean flag1 = false;
+-
+-                        if (Reflector.ForgeEntity_canRiderInteract.exists())
+-                        {
+-                            flag1 = Reflector.callBoolean(entity1, Reflector.ForgeEntity_canRiderInteract);
+-                        }
+-
+-                        if (!flag1 && entity1.getLowestRidingEntity() == entity.getLowestRidingEntity())
+-                        {
+-                            if (d2 == 0.0D)
+-                            {
+-                                this.pointedEntity = entity1;
+-                                vec3d3 = raytraceresult.hitVec;
+-                            }
+-                        }
+-                        else
+-                        {
+-                            this.pointedEntity = entity1;
+-                            vec3d3 = raytraceresult.hitVec;
+-                            d2 = d3;
+-                        }
+-                    }
+-                }
+-            }
+-
+-            if (this.pointedEntity != null && flag && vec3d.distanceTo(vec3d3) > 3.0D)
+-            {
+-                this.pointedEntity = null;
+-                this.mc.objectMouseOver = new RayTraceResult(RayTraceResult.Type.MISS, vec3d3, (EnumFacing)null, new BlockPos(vec3d3));
+-            }
+-
+-            if (this.pointedEntity != null && (d2 < d1 || this.mc.objectMouseOver == null))
+-            {
+-                this.mc.objectMouseOver = new RayTraceResult(this.pointedEntity, vec3d3);
 +				RayTraceResult raytraceresult = axisalignedbb.calculateIntercept(vec3d, vec3d2);
-+
+ 
+-                if (this.pointedEntity instanceof EntityLivingBase || this.pointedEntity instanceof EntityItemFrame)
+-                {
+-                    this.mc.pointedEntity = this.pointedEntity;
+-                }
+-            }
 +				if (axisalignedbb.contains(vec3d))
 +				{
 +					if (d2 >= 0.0D)
@@ -415,68 +455,6 @@
 +				}
 +			}
  
--            for (int j = 0; j < list.size(); ++j)
--            {
--                Entity entity1 = list.get(j);
--                AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().grow((double)entity1.getCollisionBorderSize());
--                RayTraceResult raytraceresult = axisalignedbb.calculateIntercept(vec3d, vec3d2);
--
--                if (axisalignedbb.contains(vec3d))
--                {
--                    if (d2 >= 0.0D)
--                    {
--                        this.pointedEntity = entity1;
--                        vec3d3 = raytraceresult == null ? vec3d : raytraceresult.hitVec;
--                        d2 = 0.0D;
--                    }
--                }
--                else if (raytraceresult != null)
--                {
--                    double d3 = vec3d.distanceTo(raytraceresult.hitVec);
--
--                    if (d3 < d2 || d2 == 0.0D)
--                    {
--                        boolean flag1 = false;
--
--                        if (Reflector.ForgeEntity_canRiderInteract.exists())
--                        {
--                            flag1 = Reflector.callBoolean(entity1, Reflector.ForgeEntity_canRiderInteract);
--                        }
--
--                        if (!flag1 && entity1.getLowestRidingEntity() == entity.getLowestRidingEntity())
--                        {
--                            if (d2 == 0.0D)
--                            {
--                                this.pointedEntity = entity1;
--                                vec3d3 = raytraceresult.hitVec;
--                            }
--                        }
--                        else
--                        {
--                            this.pointedEntity = entity1;
--                            vec3d3 = raytraceresult.hitVec;
--                            d2 = d3;
--                        }
--                    }
--                }
--            }
--
--            if (this.pointedEntity != null && flag && vec3d.distanceTo(vec3d3) > 3.0D)
--            {
--                this.pointedEntity = null;
--                this.mc.objectMouseOver = new RayTraceResult(RayTraceResult.Type.MISS, vec3d3, (EnumFacing)null, new BlockPos(vec3d3));
--            }
--
--            if (this.pointedEntity != null && (d2 < d1 || this.mc.objectMouseOver == null))
--            {
--                this.mc.objectMouseOver = new RayTraceResult(this.pointedEntity, vec3d3);
--
--                if (this.pointedEntity instanceof EntityLivingBase || this.pointedEntity instanceof EntityItemFrame)
--                {
--                    this.mc.pointedEntity = this.pointedEntity;
--                }
--            }
--
 -            this.mc.mcProfiler.endSection();
 -        }
 +			this.mc.mcProfiler.endSection();
@@ -769,7 +747,8 @@
 +    public void setupCameraTransform(float partialTicks, int pass, boolean isClouds)
      {
 -        this.farPlaneDistance = (float)(this.mc.gameSettings.renderDistanceChunks * 16);
--
++		/** MINECRIFT */
+ 
 -        if (Config.isFogFancy())
 -        {
 -            this.farPlaneDistance *= 0.95F;
@@ -812,8 +791,7 @@
 -        }
 -
 -        this.hurtCameraEffect(partialTicks);
-+		/** MINECRIFT */
- 
+-
 -        if (this.mc.gameSettings.viewBobbing)
 -        {
 -            this.applyBobbing(partialTicks);
@@ -1442,7 +1420,7 @@
  
          if (this.mc.getRenderViewEntity() == null)
          {
-@@ -1541,15 +1494,9 @@
+@@ -1541,12 +1494,6 @@
          }
  
          this.getMouseOver(partialTicks);
@@ -1454,11 +1432,7 @@
 -
          GlStateManager.enableDepth();
          GlStateManager.enableAlpha();
--        GlStateManager.alphaFunc(516, 0.1F);
-+        GlStateManager.alphaFunc(516, 0.5F);
-         this.mc.mcProfiler.startSection("center");
- 
-         if (this.mc.gameSettings.anaglyph)
+         GlStateManager.alphaFunc(516, 0.1F);
 @@ -1572,64 +1519,134 @@
  
      private void renderWorldPass(int pass, float partialTicks, long finishTimeNano)
@@ -1771,7 +1745,7 @@
              if (Reflector.ForgeHooksClient_setRenderPass.exists())
              {
 -                Reflector.callVoid(Reflector.ForgeHooksClient_setRenderPass, Integer.valueOf(0));
-+	                Reflector.callVoid(Reflector.ForgeHooksClient_setRenderPass, new Object[] {Integer.valueOf(0)});
++	                Reflector.callVoid(Reflector.ForgeHooksClient_setRenderPass, Integer.valueOf(0));
              }
  
              renderglobal.renderEntities(entity, icamera, partialTicks);
@@ -1779,8 +1753,8 @@
              if (Reflector.ForgeHooksClient_setRenderPass.exists())
 -            {
 -                Reflector.callVoid(Reflector.ForgeHooksClient_setRenderPass, Integer.valueOf(-1));
-+	            {//uhh forge diff sets this to 0, optifine had it as -1 ...
-+	                Reflector.callVoid(Reflector.ForgeHooksClient_setRenderPass, new Object[] {Integer.valueOf(0)});
++	            {//forge diff sets this to 0, optifine has it as -1 ...
++	                Reflector.callVoid(Reflector.ForgeHooksClient_setRenderPass, Integer.valueOf(-1));
              }
  
 -            RenderHelper.disableStandardItemLighting();
@@ -1971,11 +1945,11 @@
              RenderHelper.enableStandardItemLighting();
 -            this.mc.mcProfiler.endStartSection("entities");
 -            Reflector.callVoid(Reflector.ForgeHooksClient_setRenderPass, Integer.valueOf(1));
-+            	Reflector.callVoid(Reflector.ForgeHooksClient_setRenderPass, new Object[] {Integer.valueOf(1)});
++            	Reflector.callVoid(Reflector.ForgeHooksClient_setRenderPass,Integer.valueOf(1));
              this.mc.renderGlobal.renderEntities(entity, icamera, partialTicks);
              GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 -            Reflector.callVoid(Reflector.ForgeHooksClient_setRenderPass, Integer.valueOf(-1));
-+            	Reflector.callVoid(Reflector.ForgeHooksClient_setRenderPass, new Object[] {Integer.valueOf(-1)});
++            	Reflector.callVoid(Reflector.ForgeHooksClient_setRenderPass, Integer.valueOf(-1));
              RenderHelper.disableStandardItemLighting();
          }
  
@@ -1992,12 +1966,12 @@
              this.renderCloudsCheck(renderglobal, partialTicks, pass, d0, d1, d2);
          }
  
-+        this.mc.mcProfiler.endStartSection("forge_render_last");
          if (Reflector.ForgeHooksClient_dispatchRenderLast.exists())
          {
 -            this.mc.mcProfiler.endStartSection("forge_render_last");
 -            Reflector.callVoid(Reflector.ForgeHooksClient_dispatchRenderLast, renderglobal, partialTicks);
-+	            Reflector.callVoid(Reflector.ForgeHooksClient_dispatchRenderLast, new Object[] {renderglobal, Float.valueOf(partialTicks)});
++                this.mc.mcProfiler.endStartSection("forge_render_last");
++	            Reflector.callVoid(Reflector.ForgeHooksClient_dispatchRenderLast, renderglobal, partialTicks);
          }
  
 -        this.mc.mcProfiler.endStartSection("hand");
@@ -2080,17 +2054,6 @@
              GlStateManager.matrixMode(5888);
          }
      }
-@@ -2119,8 +2215,8 @@
-                 for (int l1 = i - i1; l1 <= i + i1; ++l1)
-                 {
-                     int i2 = (k1 - k + 16) * 32 + l1 - i + 16;
--                    double d3 = (double)this.rainXCoords[i2] * 0.5D;
--                    double d4 = (double)this.rainYCoords[i2] * 0.5D;
-+                    double d3 = (double)this.rainxs[i2] * 0.5D;
-+                    double d4 = (double)this.rainYs[i2] * 0.5D;
-                     blockpos$mutableblockpos.setPos(l1, 0, k1);
-                     Biome biome = world.getBiome(blockpos$mutableblockpos);
- 
 @@ -2269,7 +2365,7 @@
              double d0 = MathHelper.sin(world.getCelestialAngleRadians(partialTicks)) > 0.0F ? -1.0D : 1.0D;
              Vec3d vec3d2 = new Vec3d(d0, 0.0D, 0.0D);
@@ -2175,15 +2138,7 @@
              Reflector.postForgeBusEvent(object);
              this.fogColorRed = Reflector.callFloat(object, Reflector.EntityViewRenderEvent_FogColors_getRed);
              this.fogColorGreen = Reflector.callFloat(object, Reflector.EntityViewRenderEvent_FogColors_getGreen);
-@@ -2473,14 +2573,20 @@
-      * Sets up the fog to be rendered. If the arg passed in is -1 the fog starts at 0 and goes to 80% of far plane
-      * distance and is used for sky rendering.
-      */
--    private void setupFog(int startCoords, float partialTicks)
-+    private void setupFog(int starts, float partialTicks)
-     {
-         this.fogStandard = false;
-         Entity entity = this.mc.getRenderViewEntity();
+@@ -2480,7 +2580,13 @@
          this.setupFogColor(false);
          GlStateManager.glNormal3f(0.0F, -1.0F, 0.0F);
          GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
@@ -2198,15 +2153,6 @@
          float f = -1.0F;
  
          if (Reflector.ForgeHooksClient_getFogDensity.exists())
-@@ -2511,7 +2617,7 @@
-                 GlStateManager.setFog(GlStateManager.FogMode.LINEAR);
-             }
- 
--            if (startCoords == -1)
-+            if (starts == -1)
-             {
-                 GlStateManager.setFogStart(0.0F);
-                 GlStateManager.setFogEnd(f4 * 0.8F);
 @@ -2540,7 +2646,7 @@
  
              GlStateManager.setFogDensity(0.1F);
@@ -2225,24 +2171,6 @@
          {
              if (Config.isShaders())
              {
-@@ -2597,7 +2703,7 @@
-                 GlStateManager.setFog(GlStateManager.FogMode.LINEAR);
-             }
- 
--            if (startCoords == -1)
-+            if (starts == -1)
-             {
-                 GlStateManager.setFogStart(0.0F);
-                 GlStateManager.setFogEnd(f3);
-@@ -2629,7 +2735,7 @@
- 
-             if (Reflector.ForgeHooksClient_onFogRender.exists())
-             {
--                Reflector.callVoid(Reflector.ForgeHooksClient_onFogRender, this, entity, iblockstate, partialTicks, startCoords, f3);
-+                Reflector.callVoid(Reflector.ForgeHooksClient_onFogRender, this, entity, iblockstate, partialTicks, starts, f3);
-             }
-         }
- 
 @@ -2810,17 +2916,19 @@
  
          if (this.updatedWorld != world)

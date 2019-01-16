@@ -289,7 +289,7 @@
 +	 * The minecriftVerString will be automatically updated by the build scripts, do not modify here.
 +	 * Modify minecriftversion.py in root minecrift dir.
 +	 */
-+    public final String minecriftVerString = "Vivecraft 1.12.2 jrbudda-7-r10";
++    public final String minecriftVerString = "Vivecraft 1.12.2 jrbudda-7-r11";
 +	/* end version */
 +	/** END MINECRIFT */
 +    
@@ -1798,7 +1798,15 @@
          }
  
          this.mcSoundHandler.stopSounds();
-@@ -2701,6 +3386,7 @@
+@@ -2665,6 +3350,7 @@
+         EntityPlayerSP entityplayersp = this.player;
+         this.player = this.playerController.createPlayer(this.world, this.player == null ? new StatisticsManager() : this.player.getStatFileWriter(), this.player == null ? new RecipeBook() : this.player.getRecipeBook());
+         this.player.getDataManager().setEntryValues(entityplayersp.getDataManager().getAll());
++		this.player.updateSyncFields(entityplayersp); // Forge: fix MC-10657
+         this.player.dimension = dimension;
+         this.renderViewEntity = this.player;
+         this.player.preparePlayerToSpawn();
+@@ -2701,6 +3387,7 @@
          return instance == null || !instance.gameSettings.hideGUI;
      }
  
@@ -1806,7 +1814,7 @@
      public static boolean isFancyGraphicsEnabled()
      {
          return instance != null && instance.gameSettings.fancyGraphics;
-@@ -2717,8 +3403,14 @@
+@@ -2717,8 +3404,14 @@
      /**
       * Called when user clicked he's mouse middle button (pick block)
       */
@@ -1822,7 +1830,7 @@
          if (this.objectMouseOver != null && this.objectMouseOver.typeOfHit != RayTraceResult.Type.MISS)
          {
              boolean flag = this.player.capabilities.isCreativeMode;
-@@ -2882,7 +3574,8 @@
+@@ -2882,7 +3575,8 @@
          }
      }
  
@@ -1832,7 +1840,7 @@
      {
          NBTTagCompound nbttagcompound = te.writeToNBT(new NBTTagCompound());
  
-@@ -3212,6 +3905,11 @@
+@@ -3212,6 +3906,11 @@
       */
      public static int getGLMaximumTextureSize()
      {
@@ -1844,7 +1852,7 @@
          for (int i = 16384; i > 0; i >>= 1)
          {
              GlStateManager.glTexImage2D(32868, 0, 6408, i, i, 0, 6408, 5121, (IntBuffer)null);
-@@ -3400,7 +4098,7 @@
+@@ -3400,7 +4099,7 @@
      }
  
      public void dispatchKeypresses()
@@ -1853,7 +1861,7 @@
          int i = Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey();
  
          if (i != 0 && !Keyboard.isRepeatEvent())
-@@ -3582,4 +4280,1216 @@
+@@ -3582,4 +4281,1216 @@
      {
          return this.tutorial;
      }

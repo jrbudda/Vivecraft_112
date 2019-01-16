@@ -97,7 +97,7 @@
      private void renderEffect(IBakedModel model)
      {
          if (!Config.isCustomItems() || CustomItems.isUseGlint())
-@@ -311,35 +355,54 @@
+@@ -311,35 +355,56 @@
          this.putQuadNormal(renderer, quad);
      }
  
@@ -171,14 +171,16 @@
 +
 +    		}
 +
-+    		if (Reflector.forgeExists()) Reflector.callVoid(Reflector.LightUtil_renderQuadColor, renderer, bakedquad, k);
-+    		else this.renderQuad(renderer, bakedquad, k);
++    		//Optifine ignores this Forge call since it modifies renderQuad heavily.
++    		//if (Reflector.forgeExists()) Reflector.callVoid(Reflector.LightUtil_renderQuadColor, renderer, bakedquad, k);
++    		//else 		
++    		this.renderQuad(renderer, bakedquad, k);
 +    	}
 +    	   	
      }
  
      public boolean shouldRenderItemIn3D(ItemStack stack)
-@@ -353,7 +416,7 @@
+@@ -353,7 +418,7 @@
          if (!stack.isEmpty())
          {
              IBakedModel ibakedmodel = this.getItemModelWithOverrides(stack, (World)null, (EntityLivingBase)null);
@@ -187,7 +189,7 @@
          }
      }
  
-@@ -392,16 +455,16 @@
+@@ -392,16 +457,16 @@
          }
      }
  

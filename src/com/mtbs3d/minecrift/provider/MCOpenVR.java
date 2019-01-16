@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
-import jopenvr.VR_IVROCSystem_FnTable;
 import net.minecraft.util.text.TextComponentString;
 import org.apache.commons.lang3.ArrayUtils;
 import org.lwjgl.input.Keyboard;
@@ -75,6 +74,7 @@ import jopenvr.VR_IVROverlay_FnTable;
 import jopenvr.VR_IVRRenderModels_FnTable;
 import jopenvr.VR_IVRSettings_FnTable;
 import jopenvr.VR_IVRSystem_FnTable;
+import jopenvr.VR_IVROCSystem_FnTable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiWinGame;
 import net.minecraft.client.main.Main;
@@ -530,7 +530,7 @@ public class MCOpenVR
 		}
 	}
 
-	private static void initOpenComposite() throws Exception {
+	private static void initOpenComposite() {
 		vrOpenComposite = new VR_IVROCSystem_FnTable(JOpenVRLibrary.VR_GetGenericInterface(VR_IVROCSystem_FnTable.Version, hmdErrorStoreBuf));
 		if (!isError()) {
 			vrOpenComposite.setAutoSynch(false);
