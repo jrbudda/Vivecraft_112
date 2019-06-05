@@ -186,7 +186,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 		logoSplash.add(tag);
 
 		logoSplash.add(Box.createRigidArea(new Dimension(5,20)));
-		tag = new JLabel("Select path to minecraft. (The default here is almost always what you want.)");
+		tag = new JLabel("Select path to minecraft. (Only change this if using MultiMC.)");
 		tag.setAlignmentX(LEFT_ALIGNMENT);
 		tag.setAlignmentY(CENTER_ALIGNMENT);
 		logoSplash.add(tag);
