@@ -4,9 +4,9 @@
  import com.google.common.collect.Maps;
  import com.google.common.collect.Sets;
  import com.google.gson.JsonSyntaxException;
-+import com.mtbs3d.minecrift.provider.MCOpenVR;
-+import com.mtbs3d.minecrift.render.renderPass;
-+import com.mtbs3d.minecrift.settings.VRSettings;
++import org.vivecraft.provider.MCOpenVR;
++import org.vivecraft.render.RenderPass;
++import org.vivecraft.settings.VRSettings;
 +
  import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
  import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
@@ -14,7 +14,23 @@
  import java.io.IOException;
  import java.util.ArrayDeque;
  import java.util.ArrayList;
-@@ -208,14 +213,14 @@
+@@ -20,7 +25,6 @@
+ import java.util.Map;
+ import java.util.Random;
+ import java.util.Set;
+-import java.util.function.Supplier;
+ import javax.annotation.Nullable;
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockChest;
+@@ -116,7 +120,6 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ import org.lwjgl.input.Keyboard;
+-import org.lwjgl.util.vector.Vector3f;
+ import org.lwjgl.util.vector.Vector4f;
+ 
+ public class RenderGlobal implements IWorldEventListener, IResourceManagerReloadListener
+@@ -208,14 +211,14 @@
      public Set chunksToUpdateForced = new LinkedHashSet();
      private Set<RenderChunk> chunksToUpdatePrev = new ObjectLinkedOpenHashSet<RenderChunk>();
      private Deque visibilityDeque = new ArrayDeque();
@@ -37,22 +53,21 @@
      private int renderDistance = 0;
      private int renderDistanceSq = 0;
      private static final Set SET_ALL_FACINGS = Collections.unmodifiableSet(new HashSet(Arrays.asList(EnumFacing.VALUES)));
-@@ -293,8 +298,12 @@
+@@ -293,8 +296,12 @@
  
              try
              {
--                this.entityOutlineShader = new ShaderGroup(this.mc.getTextureManager(), this.mc.getResourceManager(), this.mc.getFramebuffer(), resourcelocation);
--                this.entityOutlineShader.createBindFramebuffers(this.mc.displayWidth, this.mc.displayHeight);
 +            	if (this.entityOutlineFramebuffer != null) {
 +            		this.entityOutlineFramebuffer.deleteFramebuffer();
 +            		this.entityOutlineFramebuffer = null;
 +            	}
-+                this.entityOutlineShader = new ShaderGroup(this.mc.getTextureManager(), this.mc.getResourceManager(), this.mc.framebuffer, resourcelocation);
-+                this.entityOutlineShader.createBindFramebuffers(this.mc.displayFBWidth, this.mc.displayFBHeight);
+                 this.entityOutlineShader = new ShaderGroup(this.mc.getTextureManager(), this.mc.getResourceManager(), this.mc.getFramebuffer(), resourcelocation);
+-                this.entityOutlineShader.createBindFramebuffers(this.mc.displayWidth, this.mc.displayHeight);
++                this.entityOutlineShader.createBindFramebuffers(this.mc.stereoProvider.framebufferVrRender.framebufferWidth, this.mc.stereoProvider.framebufferVrRender.framebufferHeight);
                  this.entityOutlineFramebuffer = this.entityOutlineShader.getFramebufferRaw("final");
              }
              catch (IOException ioexception)
-@@ -323,14 +332,14 @@
+@@ -323,14 +330,14 @@
          {
              GlStateManager.enableBlend();
              GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE);
@@ -69,7 +84,7 @@
          {
              return this.entityOutlineFramebuffer != null && this.entityOutlineShader != null && this.mc.player != null;
          }
-@@ -408,7 +417,7 @@
+@@ -408,7 +415,7 @@
          }
      }
  
@@ -78,7 +93,7 @@
      {
          int i = 64;
          int j = 6;
-@@ -472,7 +481,7 @@
+@@ -472,7 +479,7 @@
          }
      }
  
@@ -87,19 +102,19 @@
      {
          Random random = new Random(10842L);
          bufferBuilderIn.begin(7, DefaultVertexFormats.POSITION);
-@@ -771,6 +780,11 @@
+@@ -771,6 +778,11 @@
                              {
                                  boolean flag3 = this.mc.getRenderViewEntity() instanceof EntityLivingBase ? ((EntityLivingBase)this.mc.getRenderViewEntity()).isPlayerSleeping() : false;
  
 +                                flag3 =false; //Never render self.
 +                                
-+                                if(mc.currentPass == renderPass.Third && mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_THIRD_PERSON)
++                                if(mc.currentPass == RenderPass.THIRD && mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_THIRD_PERSON)
 +                                	flag3= true; //well maybe sometimes.
 +                                
                                  if ((entity2 != this.mc.getRenderViewEntity() || this.mc.gameSettings.thirdPersonView != 0 || flag3) && (entity2.posY < 0.0D || entity2.posY >= 256.0D || this.world.isBlockLoaded(blockpos$pooledmutableblockpos.setPos(entity2))))
                                  {
                                      ++this.countEntitiesRendered;
-@@ -781,9 +795,18 @@
+@@ -781,9 +793,18 @@
                                          Shaders.nextEntity(entity2);
                                      }
  
@@ -118,7 +133,7 @@
                                      if (this.isOutlineActive(entity2, entity, camera))
                                      {
                                          list1.add(entity2);
-@@ -861,7 +884,7 @@
+@@ -861,7 +882,7 @@
                      GlStateManager.enableAlpha();
                  }
  
@@ -127,22 +142,23 @@
              }
  
              if (!this.isRenderEntityOutlines() && (!list1.isEmpty() || this.entityOutlinesRendered))
-@@ -1163,10 +1186,12 @@
+@@ -1163,10 +1184,12 @@
          }
  
          this.mc.mcProfiler.endStartSection("culling");
 -        BlockPos blockpos = new BlockPos(d3, d4 + (double)viewEntity.getEyeHeight(), d5);
 +        //VIVE NO EYEHEIGHT
-+        BlockPos blockpos = new BlockPos(d3, d4, d5);
++        BlockPos blockpos = new BlockPos(d3, d4+ (double)viewEntity.getEyeHeight(), d5);
          RenderChunk renderchunk = this.viewFrustum.getRenderChunk(blockpos);
-         new BlockPos(MathHelper.floor(d3 / 16.0D) * 16, MathHelper.floor(d4 / 16.0D) * 16, MathHelper.floor(d5 / 16.0D) * 16);
+-        new BlockPos(MathHelper.floor(d3 / 16.0D) * 16, MathHelper.floor(d4 / 16.0D) * 16, MathHelper.floor(d5 / 16.0D) * 16);
 -        this.displayListEntitiesDirty = this.displayListEntitiesDirty || !this.chunksToUpdate.isEmpty() || viewEntity.posX != this.lastViewEntityX || viewEntity.posY != this.lastViewEntityY || viewEntity.posZ != this.lastViewEntityZ || (double)viewEntity.rotationPitch != this.lastViewEntityPitch || (double)viewEntity.rotationYaw != this.lastViewEntityYaw;
++        blockpos = new BlockPos(d3, d4 , d5);
 +        // VIVE FIX CULLING ISSUES WITH MIRROR
 +        this.displayListEntitiesDirty = true; //this.displayListEntitiesDirty || !this.chunksToUpdate.isEmpty() || viewEntity.posX != this.lastViewEntityX || viewEntity.posY != this.lastViewEntityY || viewEntity.posZ != this.lastViewEntityZ || (double)viewEntity.rotationPitch != this.lastViewEntityPitch || (double)viewEntity.rotationYaw != this.lastViewEntityYaw;
          this.lastViewEntityX = viewEntity.posX;
          this.lastViewEntityY = viewEntity.posY;
          this.lastViewEntityZ = viewEntity.posZ;
-@@ -1264,9 +1289,12 @@
+@@ -1264,9 +1287,12 @@
  
                  if (set1.size() == 1)
                  {
@@ -158,23 +174,15 @@
                  }
  
                  if (set1.isEmpty())
-@@ -1397,10 +1425,11 @@
+@@ -1397,6 +1423,7 @@
                      {
                          this.chunksToUpdate.add(renderchunk5);
                      }
--                    else if (!renderchunk5.isPlayerUpdate())
--                    {
--                        this.chunksToUpdateForced.add(renderchunk5);
--                    }
-+                    //Vivecraft - why are we doing this?
-+                    //else if (!renderchunk5.isPlayerUpdate())
-+                    //{
-+                    //    this.chunksToUpdateForced.add(renderchunk5);
-+                    //}
-                     else
++                    // OptiFine adds this
+                     else if (!renderchunk5.isPlayerUpdate())
                      {
-                         this.mc.mcProfiler.startSection("build near");
-@@ -1490,7 +1519,7 @@
+                         this.chunksToUpdateForced.add(renderchunk5);
+@@ -1490,7 +1517,7 @@
  
          for (int i = 0; i < 8; ++i)
          {
@@ -183,7 +191,7 @@
              this.debugTerrainMatrix[i].x /= this.debugTerrainMatrix[i].w;
              this.debugTerrainMatrix[i].y /= this.debugTerrainMatrix[i].w;
              this.debugTerrainMatrix[i].z /= this.debugTerrainMatrix[i].w;
-@@ -1498,22 +1527,22 @@
+@@ -1498,22 +1525,22 @@
          }
      }
  
@@ -222,24 +230,24 @@
  
      public int renderBlockLayer(BlockRenderLayer blockLayerIn, double partialTicks, int pass, Entity entityIn)
      {
-@@ -1532,14 +1561,13 @@
+@@ -1532,13 +1559,16 @@
                  this.prevRenderSortY = entityIn.posY;
                  this.prevRenderSortZ = entityIn.posZ;
                  int k = 0;
--                this.chunksToResortTransparency.clear();
-+                //this.chunksToResortTransparency.clear();
++                // OptiFine adds this
+                 this.chunksToResortTransparency.clear();
  
                  for (RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation : this.renderInfos)
                  {
                      if (renderglobal$containerlocalrenderinformation.renderChunk.compiledChunk.isLayerStarted(blockLayerIn) && k++ < 15)
                      {
--                        this.chunksToResortTransparency.add(renderglobal$containerlocalrenderinformation.renderChunk);
--                    }
-+                    	this.renderDispatcher.updateTransparencyLater(renderglobal$containerlocalrenderinformation.renderChunk);                              }
++                        // OptiFine adds this
+                         this.chunksToResortTransparency.add(renderglobal$containerlocalrenderinformation.renderChunk);
++                    	//this.renderDispatcher.updateTransparencyLater(renderglobal$containerlocalrenderinformation.renderChunk);
+                     }
                  }
              }
- 
-@@ -1576,7 +1604,7 @@
+@@ -1576,7 +1606,7 @@
                  GlStateManager.disableFog();
              }
  
@@ -248,52 +256,27 @@
              this.renderBlockLayer(blockLayerIn);
              this.mc.mcProfiler.endSection();
              return l;
-@@ -2379,9 +2407,9 @@
+@@ -2379,9 +2409,10 @@
  
      public void updateChunks(long finishTimeNano)
      {
 -        finishTimeNano = (long)((double)finishTimeNano + 1.0E8D);
 +        //finishTimeNano = (long)((double)finishTimeNano + 1.0E8D);
          this.displayListEntitiesDirty |= this.renderDispatcher.runChunkUploads(finishTimeNano);
--
-+        /*
+ 
++        // OptiFine adds this
          if (this.chunksToUpdateForced.size() > 0)
          {
              Iterator iterator = this.chunksToUpdateForced.iterator();
-@@ -2415,10 +2443,10 @@
-                     iterator2.remove();
-                 }
-             }
--        }
-+        }*/
- 
--        double d4 = 0.0D;
--        int k1 = Config.getUpdatesPerFrame();
-+        //double d4 = 0.0D;
-+        //int k1 = Config.getUpdatesPerFrame();
- 
-         if (!this.chunksToUpdate.isEmpty())
-         {
-@@ -2446,7 +2474,8 @@
- 
+@@ -2447,6 +2478,7 @@
                  renderchunk2.clearNeedsUpdate();
                  iterator1.remove();
--
-+                
-+                /*
+ 
++                // OptiFine adds this
                  if (!flag2)
                  {
                      double d3 = RenderChunkUtils.getRelativeBufferSize(renderchunk2);
-@@ -2456,7 +2485,7 @@
-                     {
-                         break;
-                     }
--                }
-+                }*/
-             }
-         }
-     }
-@@ -2873,9 +2902,9 @@
+@@ -2873,9 +2905,9 @@
      {
      }
  
@@ -305,7 +288,7 @@
      }
  
      public void spawnParticle(int id, boolean ignoreRange, boolean p_190570_3_, final double x, final double y, final double z, double xSpeed, double ySpeed, double zSpeed, int... parameters)
-@@ -3163,6 +3192,8 @@
+@@ -3163,6 +3195,8 @@
      public void playEvent(EntityPlayer player, int type, BlockPos blockPosIn, int data)
      {
          Random random = this.world.rand;
@@ -314,7 +297,7 @@
  
          switch (type)
          {
-@@ -3219,18 +3250,30 @@
+@@ -3219,18 +3253,30 @@
                  break;
  
              case 1011:
@@ -345,7 +328,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_FENCE_GATE_CLOSE, SoundCategory.BLOCKS, 1.0F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -3251,14 +3294,26 @@
+@@ -3251,14 +3297,26 @@
                  break;
  
              case 1019:
@@ -372,7 +355,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.ENTITY_ZOMBIE_BREAK_DOOR_WOOD, SoundCategory.HOSTILE, 2.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F, false);
                  break;
  
-@@ -3287,10 +3342,17 @@
+@@ -3287,10 +3345,17 @@
                  break;
  
              case 1030:
@@ -390,7 +373,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_ANVIL_LAND, SoundCategory.BLOCKS, 0.3F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -3311,6 +3373,9 @@
+@@ -3311,6 +3376,9 @@
                  break;
  
              case 1036:
@@ -400,7 +383,7 @@
                  this.world.playSound(blockPosIn, SoundEvents.BLOCK_IRON_TRAPDOOR_CLOSE, SoundCategory.BLOCKS, 1.0F, this.world.rand.nextFloat() * 0.1F + 0.9F, false);
                  break;
  
-@@ -3350,6 +3415,9 @@
+@@ -3350,6 +3418,9 @@
                      {
                          soundtype = (SoundType)Reflector.call(block, Reflector.ForgeBlock_getSoundType, Block.getStateById(data), this.world, blockPosIn, null);
                      }

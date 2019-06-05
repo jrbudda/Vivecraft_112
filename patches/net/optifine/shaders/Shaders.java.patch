@@ -4,7 +4,7 @@
  import org.lwjgl.opengl.GLContext;
  import org.lwjgl.util.glu.GLU;
  
-+import com.mtbs3d.minecrift.render.renderPass;
++import org.vivecraft.render.RenderPass;
 +
  public class Shaders
  {
@@ -120,7 +120,7 @@
 -                setProgramUniform3f(uniform_sunPosition, sunPosition[0], sunPosition[1], sunPosition[2]);
 -                setProgramUniform3f(uniform_moonPosition, moonPosition[0], moonPosition[1], moonPosition[2]);
 +                
-+                if(Minecraft.getMinecraft().currentPass == renderPass.Third) {
++                if(Minecraft.getMinecraft().currentPass == RenderPass.THIRD) {
 +                    setProgramUniform3f(uniform_sunPosition, sunPositionT[0], sunPositionT[1], sunPositionT[2]);
 +                    setProgramUniform3f(uniform_moonPosition, moonPositionT[0], moonPositionT[1], moonPositionT[2]);
 +                }else {
@@ -140,8 +140,8 @@
 -        renderWidth = Math.round((float)renderDisplayWidth * configRenderResMul);
 -        renderHeight = Math.round((float)renderDisplayHeight * configRenderResMul);
 -        setupFrameBuffer();
-+        renderDisplayWidth = mc.displayFBWidth;
-+        renderDisplayHeight = mc.displayFBHeight;
++        renderDisplayWidth = mc.stereoProvider.framebufferVrRender.framebufferWidth;
++        renderDisplayHeight = mc.stereoProvider.framebufferVrRender.framebufferHeight;
 +        // VIVE: NO! Doing scaling here breaks everything! We have our own scaled rendering so this is unnecessary.
 +        renderWidth = renderDisplayWidth; //Math.round((float)renderDisplayWidth * configRenderResMul);
 +        renderHeight = renderDisplayHeight; //Math.round((float)renderDisplayHeight * configRenderResMul);
@@ -238,13 +238,13 @@
 -        {
 -            resize();
 -        }
-+        if(mc.reinitflag || (mc.displayFBWidth != renderDisplayWidth || mc.displayFBHeight != renderDisplayHeight)){
++        if(mc.reinitflag || (mc.stereoProvider.framebufferVrRender.framebufferWidth != renderDisplayWidth || mc.stereoProvider.framebufferVrRender.framebufferHeight != renderDisplayHeight)){
 +        	resize();
 +        	mc.reinitflag = false;
 +        }
 +        
 +        //Vive use right sizes and buffers
-+//        if(mc.currentPass == renderPass.Center){
++//        if(mc.currentPass == RenderPass.Center){
 +//        	dfb = dfbU;
 +//        	renderWidth = Math.round(mc.mirrorFBWidth * configRenderResMul);
 +//        	renderHeight = Math.round(mc.mirrorFBHeight * configRenderResMul);
@@ -326,7 +326,7 @@
 +    	GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, floatbuffer);
 +    	floatbuffer.get(tempMat, 0, 16);
 +    	
-+    	if(Minecraft.getMinecraft().currentPass == renderPass.Third) {
++    	if(Minecraft.getMinecraft().currentPass == RenderPass.THIRD) {
 +    		SMath.multiplyMat4xVec4(sunPositionT, tempMat, sunPosModelView);
 +    		SMath.multiplyMat4xVec4(moonPositionT, tempMat, moonPosModelView);
 +        	System.arraycopy(shadowAngle == sunAngle ? sunPositionT : moonPosition, 0, shadowLightPosition, 0, 3);

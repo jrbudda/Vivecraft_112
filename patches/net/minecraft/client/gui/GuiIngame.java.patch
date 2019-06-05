@@ -197,7 +197,7 @@
      }
  
      private void renderHotbarItem(int p_184044_1_, int p_184044_2_, float p_184044_3_, EntityPlayer player, ItemStack stack)
-@@ -1429,4 +1402,43 @@
+@@ -1429,4 +1402,55 @@
      {
          return this.overlayBoss;
      }
@@ -208,21 +208,33 @@
 +	public void drawMouseMenuQuad(int mouseX, int mouseY)
 +	{	
 +		GlStateManager.enableBlend();
-+		GlStateManager.blendFunc(SourceFactor.ONE_MINUS_DST_COLOR, DestFactor.ONE_MINUS_SRC_COLOR);
++		GlStateManager.enableAlpha();
 +		GlStateManager.disableDepth();
 +		GlStateManager.disableLighting();
-+		GlStateManager.colorMask(true, true, true, false);
 +		GlStateManager.color(1, 1, 1, 1);
 +
 +		this.mc.getTextureManager().bindTexture(Gui.ICONS);
 +		float menuMousePointerSize = 16f * this.mc.vrSettings.menuCrosshairScale;
++		
++		//Why didnt we think of this sooner?
++		/*GlStateManager.colorMask(false, false, false, true);
++		GlStateManager.blendFunc(SourceFactor.CONSTANT_ALPHA, DestFactor.ZERO);
++		drawCentredTexturedModalRect(mouseX, mouseY, menuMousePointerSize, menuMousePointerSize, 0, 0, 15, 15);
++		
++		GlStateManager.blendFunc(SourceFactor.ONE_MINUS_DST_COLOR, DestFactor.ONE_MINUS_SRC_COLOR);
++		GlStateManager.colorMask(true, true, true, false);
++		drawCentredTexturedModalRect(mouseX, mouseY, menuMousePointerSize, menuMousePointerSize, 0, 0, 15, 15);*/
++
++		// Turns out all we needed was some blendFuncSeparate magic :)
++		// Also color DestFactor of ZERO produces better results with non-white crosshairs
++		GlStateManager.tryBlendFuncSeparate(SourceFactor.ONE_MINUS_DST_COLOR, DestFactor.ZERO, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
 +		drawCentredTexturedModalRect(mouseX, mouseY, menuMousePointerSize, menuMousePointerSize, 0, 0, 15, 15);
 +		
 +		GlStateManager.disableBlend();
-+		GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
++		GlStateManager.tryBlendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
 +		GlStateManager.enableDepth();
 +		GlStateManager.enableLighting();
-+		GlStateManager.colorMask(true, true, true, false);
++		//GlStateManager.colorMask(true, true, true, false);
 +	}
 +    /**
 +     * Draws a centred textured rectangle at the stored z-value. Args: x, y, width, height, u, v, texwidth, texheight

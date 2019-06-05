@@ -1,6 +1,26 @@
 --- a/net/minecraft/client/gui/GuiVideoSettings.java
 +++ b/net/minecraft/client/gui/GuiVideoSettings.java
-@@ -172,11 +172,11 @@
+@@ -1,6 +1,8 @@
+ package net.minecraft.client.gui;
+ 
+ import java.io.IOException;
++
++import net.minecraft.client.Minecraft;
+ import net.minecraft.client.resources.I18n;
+ import net.minecraft.client.settings.GameSettings;
+ import net.minecraft.src.Config;
+@@ -26,6 +28,10 @@
+     private static final String __OBFID = "CL_00000718";
+     private TooltipManager tooltipManager = new TooltipManager(this, new TooltipProviderOptions());
+ 
++    // Fix optifine compatiblity with hardcoredarkness
++    GuiListExtended optionsRowList = new GuiOptionsRowList(Minecraft.getMinecraft(), 0, 0, 0, 0, 0, videoOptions);
++    //
++    
+     public GuiVideoSettings(GuiScreen parentScreenIn, GameSettings gameSettingsIn)
+     {
+         this.parentGuiScreen = parentScreenIn;
+@@ -172,11 +178,11 @@
                      return;
                  }
  
@@ -17,7 +37,7 @@
  
                  if (Config.getGameSettings().anaglyph)
                  {
-@@ -243,4 +243,15 @@
+@@ -243,4 +249,15 @@
      {
          return p_getGuiChatText_0_.inputField.getText();
      }

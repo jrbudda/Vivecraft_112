@@ -4,7 +4,7 @@
  package net.minecraft.client.renderer.entity;
  
  import com.google.common.collect.Maps;
-+import com.mtbs3d.minecrift.render.PlayerModelController;
++import org.vivecraft.render.PlayerModelController;
 +
  import java.util.Collections;
  import java.util.Map;

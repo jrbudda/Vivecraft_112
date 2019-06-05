@@ -8,11 +8,11 @@
  import com.google.common.util.concurrent.FutureCallback;
  import com.google.common.util.concurrent.Futures;
  import com.mojang.authlib.GameProfile;
-+import com.mtbs3d.minecrift.api.NetworkHelper;
-+import com.mtbs3d.minecrift.api.NetworkHelper.PacketDiscriminators;
-+import com.mtbs3d.minecrift.gameplay.OpenVRPlayer;
-+import com.mtbs3d.minecrift.render.PlayerModelController;
-+import com.mtbs3d.minecrift.utils.BlockWithData;
++import org.vivecraft.api.NetworkHelper;
++import org.vivecraft.api.NetworkHelper.PacketDiscriminators;
++import org.vivecraft.gameplay.OpenVRPlayer;
++import org.vivecraft.render.PlayerModelController;
++import org.vivecraft.utils.BlockWithData;
 +
  import io.netty.buffer.Unpooled;
 +
@@ -29,7 +29,15 @@
  import java.util.Arrays;
  import java.util.Collection;
  import java.util.Iterator;
-@@ -224,6 +235,7 @@
+@@ -20,7 +31,6 @@
+ import java.util.Random;
+ import java.util.UUID;
+ import java.util.Map.Entry;
+-import java.util.function.Consumer;
+ import javax.annotation.Nullable;
+ import net.minecraft.advancements.Advancement;
+ import net.minecraft.block.Block;
+@@ -224,6 +234,7 @@
  import net.minecraft.scoreboard.Scoreboard;
  import net.minecraft.scoreboard.Team;
  import net.minecraft.stats.RecipeBook;
@@ -37,7 +45,7 @@
  import net.minecraft.stats.StatBase;
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.tileentity.TileEntityBanner;
-@@ -246,6 +258,7 @@
+@@ -246,6 +257,7 @@
  import net.minecraft.util.StringUtils;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.MathHelper;
@@ -45,16 +53,15 @@
  import net.minecraft.util.text.ITextComponent;
  import net.minecraft.util.text.TextComponentTranslation;
  import net.minecraft.util.text.TextFormatting;
-@@ -256,6 +269,8 @@
+@@ -256,6 +268,7 @@
  import net.minecraft.world.WorldSettings;
  import net.minecraft.world.chunk.Chunk;
  import net.minecraft.world.storage.MapData;
 +
-+import org.apache.commons.lang3.ArrayUtils;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-@@ -309,6 +324,12 @@
+@@ -309,6 +322,12 @@
          this.netManager = networkManagerIn;
          this.profile = profileIn;
          this.advancementManager = new ClientAdvancementManager(mcIn);
@@ -67,7 +74,7 @@
      }
  
      /**
-@@ -327,7 +348,19 @@
+@@ -327,7 +346,19 @@
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
          this.gameController.playerController = new PlayerControllerMP(this.gameController, this);
@@ -88,7 +95,7 @@
          this.gameController.gameSettings.difficulty = packetIn.getDifficulty();
          this.gameController.loadWorld(this.clientWorldController);
          this.gameController.player.dimension = packetIn.getDimension();
-@@ -338,6 +371,17 @@
+@@ -338,6 +369,17 @@
          this.gameController.playerController.setGameType(packetIn.getGameType());
          this.gameController.gameSettings.sendSettingsToServer();
          this.netManager.sendPacket(new CPacketCustomPayload("MC|Brand", (new PacketBuffer(Unpooled.buffer())).writeString(ClientBrandRetriever.getClientModName())));
@@ -106,7 +113,7 @@
      }
  
      /**
-@@ -837,10 +881,15 @@
+@@ -837,10 +879,15 @@
              BlockPos blockpos = new BlockPos(nbttagcompound.getInteger("x"), nbttagcompound.getInteger("y"), nbttagcompound.getInteger("z"));
              TileEntity tileentity = this.clientWorldController.getTileEntity(blockpos);
  
@@ -123,7 +130,7 @@
          }
      }
  
-@@ -865,6 +914,10 @@
+@@ -865,6 +912,10 @@
      public void handleDisconnect(SPacketDisconnect packetIn)
      {
          this.netManager.closeChannel(packetIn.getReason());
@@ -134,7 +141,7 @@
      }
  
      /**
-@@ -916,8 +969,8 @@
+@@ -916,8 +967,8 @@
              else
              {
                  this.clientWorldController.playSound(entity.posX, entity.posY, entity.posZ, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, (this.avRandomizer.nextFloat() - this.avRandomizer.nextFloat()) * 1.4F + 2.0F, false);
@@ -145,7 +152,7 @@
              if (entity instanceof EntityItem)
              {
                  ((EntityItem)entity).getItem().setCount(packetIn.getAmount());
-@@ -934,7 +987,24 @@
+@@ -934,7 +985,24 @@
      public void handleChat(SPacketChat packetIn)
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
@@ -171,7 +178,7 @@
      }
  
      /**
-@@ -1077,7 +1147,14 @@
+@@ -1077,7 +1145,14 @@
  
                      if (entity1 == this.gameController.player && !flag)
                      {
@@ -187,7 +194,7 @@
                      }
                  }
              }
-@@ -1160,7 +1237,8 @@
+@@ -1160,7 +1235,8 @@
          {
              this.doneLoadingTerrain = false;
              Scoreboard scoreboard = this.clientWorldController.getScoreboard();
@@ -197,7 +204,7 @@
              this.clientWorldController.setWorldScoreboard(scoreboard);
              this.gameController.loadWorld(this.clientWorldController);
              this.gameController.player.dimension = packetIn.getDimensionID();
-@@ -1355,7 +1433,19 @@
+@@ -1355,7 +1431,19 @@
              {
                  tileentity.readFromNBT(packetIn.getNbtCompound());
              }
@@ -218,7 +225,7 @@
              if (flag && this.gameController.currentScreen instanceof GuiCommandBlock)
              {
                  ((GuiCommandBlock)this.gameController.currentScreen).updateGui();
-@@ -1469,15 +1559,41 @@
+@@ -1469,15 +1557,41 @@
              }
              else if (f == 101.0F)
              {
@@ -263,7 +270,7 @@
              }
          }
          else if (i == 6)
-@@ -1647,7 +1763,7 @@
+@@ -1647,7 +1761,7 @@
  
          if (entity instanceof EntityLivingBase)
          {
@@ -272,7 +279,7 @@
  
              if (potion != null)
              {
-@@ -2029,6 +2145,7 @@
+@@ -2029,6 +2143,7 @@
              }
              finally
              {
@@ -280,7 +287,7 @@
                  packetbuffer.release();
              }
          }
-@@ -2068,6 +2185,111 @@
+@@ -2068,6 +2183,111 @@
              String s1 = packetbuffer3.readString(256);
              this.gameController.getSoundHandler().stop(s1, SoundCategory.getByName(s));
          }
@@ -392,7 +399,7 @@
      }
  
      /**
-@@ -2358,4 +2580,12 @@
+@@ -2358,4 +2578,12 @@
      {
          return this.advancementManager;
      }

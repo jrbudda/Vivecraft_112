@@ -1,25 +1,19 @@
 --- a/net/minecraft/entity/projectile/EntityArrow.java
 +++ b/net/minecraft/entity/projectile/EntityArrow.java
-@@ -2,11 +2,18 @@
+@@ -2,8 +2,12 @@
  
  import com.google.common.base.Predicate;
  import com.google.common.base.Predicates;
-+import com.mtbs3d.minecrift.api.NetworkHelper;
-+import com.mtbs3d.minecrift.api.VivePlayer;
++import org.vivecraft.api.NetworkHelper;
++import org.vivecraft.api.VivePlayer;
 +
  import java.util.List;
  import javax.annotation.Nullable;
 +
-+import org.apache.http.impl.client.AIMDBackoffManager;
-+
  import net.minecraft.block.Block;
  import net.minecraft.block.material.Material;
  import net.minecraft.block.state.IBlockState;
-+import net.minecraft.client.Minecraft;
- import net.minecraft.enchantment.EnchantmentHelper;
- import net.minecraft.entity.Entity;
- import net.minecraft.entity.EntityLivingBase;
-@@ -92,6 +99,16 @@
+@@ -92,6 +96,16 @@
  
          if (shooter instanceof EntityPlayer)
          {
@@ -36,7 +30,7 @@
              this.pickupStatus = EntityArrow.PickupStatus.ALLOWED;
          }
      }
-@@ -117,11 +134,36 @@
+@@ -117,11 +131,36 @@
          this.dataManager.register(CRITICAL, Byte.valueOf((byte)0));
      }
  

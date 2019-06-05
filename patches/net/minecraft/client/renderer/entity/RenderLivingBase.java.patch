@@ -4,7 +4,7 @@
  package net.minecraft.client.renderer.entity;
  
  import com.google.common.collect.Lists;
-+import com.mtbs3d.minecrift.render.PlayerModelController;
++import org.vivecraft.render.PlayerModelController;
 +
  import java.nio.FloatBuffer;
  import java.util.List;

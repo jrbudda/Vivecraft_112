@@ -1,33 +1,27 @@
 --- a/net/minecraft/client/renderer/entity/layers/LayerHeldItem.java
 +++ b/net/minecraft/client/renderer/entity/layers/LayerHeldItem.java
-@@ -1,13 +1,26 @@
+@@ -1,13 +1,20 @@
  package net.minecraft.client.renderer.entity.layers;
  
-+import java.util.UUID;
-+
-+import com.mtbs3d.minecrift.gameplay.trackers.BowTracker;
-+import com.mtbs3d.minecrift.render.PlayerModelController;
-+import com.mtbs3d.minecrift.render.PlayerModelController.RotInfo;
++import org.vivecraft.gameplay.trackers.BowTracker;
++import org.vivecraft.render.PlayerModelController;
++import org.vivecraft.render.PlayerModelController.RotInfo;
 +
  import net.minecraft.client.Minecraft;
  import net.minecraft.client.model.ModelBiped;
-+import net.minecraft.client.model.ModelPlayer;
 +import net.minecraft.client.model.ModelPlayerVR;
  import net.minecraft.client.renderer.GlStateManager;
  import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
  import net.minecraft.client.renderer.entity.RenderLivingBase;
-+import net.minecraft.client.renderer.entity.RenderPlayerVR;
  import net.minecraft.entity.EntityLivingBase;
 +import net.minecraft.entity.player.EntityPlayer;
-+import net.minecraft.init.Items;
-+import net.minecraft.item.ItemBow;
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.EnumHandSide;
 +import net.minecraft.util.math.Vec3d;
  
  public class LayerHeldItem implements LayerRenderer<EntityLivingBase>
  {
-@@ -45,19 +58,92 @@
+@@ -45,19 +52,92 @@
      {
          if (!p_188358_2_.isEmpty())
          {

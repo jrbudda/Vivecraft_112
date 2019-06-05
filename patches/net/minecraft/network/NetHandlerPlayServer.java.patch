@@ -1,18 +1,13 @@
 --- a/net/minecraft/network/NetHandlerPlayServer.java
 +++ b/net/minecraft/network/NetHandlerPlayServer.java
-@@ -1,12 +1,24 @@
- package net.minecraft.network;
- 
-+import com.google.common.base.Charsets;
- import com.google.common.collect.Lists;
+@@ -4,9 +4,18 @@
  import com.google.common.primitives.Doubles;
  import com.google.common.primitives.Floats;
  import com.google.common.util.concurrent.Futures;
-+import com.mtbs3d.minecrift.api.NetworkHelper;
-+import com.mtbs3d.minecrift.api.NetworkHelper.PacketDiscriminators;
-+import com.mtbs3d.minecrift.api.VivePlayer;
++import org.vivecraft.api.NetworkHelper;
++import org.vivecraft.api.NetworkHelper.PacketDiscriminators;
++import org.vivecraft.api.VivePlayer;
 +
-+import io.netty.buffer.ByteBuf;
  import io.netty.util.concurrent.Future;
  import io.netty.util.concurrent.GenericFutureListener;
 +
@@ -21,11 +16,10 @@
 +import java.io.DataInputStream;
  import java.io.IOException;
 +import java.io.InputStreamReader;
-+import java.util.Arrays;
  import java.util.Collections;
  import java.util.List;
  import java.util.Set;
-@@ -15,6 +27,7 @@
+@@ -15,6 +24,7 @@
  import net.minecraft.block.BlockCommandBlock;
  import net.minecraft.block.material.Material;
  import net.minecraft.block.state.IBlockState;
@@ -33,7 +27,7 @@
  import net.minecraft.crash.CrashReport;
  import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.crash.ICrashReportDetail;
-@@ -90,6 +103,7 @@
+@@ -90,6 +100,7 @@
  import net.minecraft.network.play.server.SPacketSetSlot;
  import net.minecraft.network.play.server.SPacketTabComplete;
  import net.minecraft.server.MinecraftServer;
@@ -41,7 +35,7 @@
  import net.minecraft.tileentity.CommandBlockBaseLogic;
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.tileentity.TileEntityCommandBlock;
-@@ -274,6 +288,10 @@
+@@ -274,6 +285,10 @@
          {
              this.disconnect(new TextComponentTranslation("multiplayer.disconnect.idling", new Object[0]));
          }
@@ -52,7 +46,7 @@
      }
  
      private void captureCurrentPosition()
-@@ -296,6 +314,9 @@
+@@ -296,6 +311,9 @@
       */
      public void disconnect(final ITextComponent textComponent)
      {
@@ -62,7 +56,7 @@
          this.netManager.sendPacket(new SPacketDisconnect(textComponent), new GenericFutureListener < Future <? super Void >> ()
          {
              public void operationComplete(Future <? super Void > p_operationComplete_1_) throws Exception
-@@ -597,8 +618,8 @@
+@@ -597,8 +615,8 @@
  
                                  if (flag2 && (flag || !flag1))
                                  {
@@ -73,7 +67,7 @@
                                  }
                              }
  
-@@ -704,8 +725,15 @@
+@@ -704,8 +722,15 @@
                  double d1 = this.player.posY - ((double)blockpos.getY() + 0.5D) + 1.5D;
                  double d2 = this.player.posZ - ((double)blockpos.getZ() + 0.5D);
                  double d3 = d0 * d0 + d1 * d1 + d2 * d2;
@@ -90,7 +84,7 @@
                  {
                      return;
                  }
-@@ -763,7 +791,13 @@
+@@ -763,7 +788,13 @@
  
          if (blockpos.getY() < this.serverController.getBuildLimit() - 1 || enumfacing != EnumFacing.UP && blockpos.getY() < this.serverController.getBuildLimit())
          {
@@ -105,7 +99,16 @@
              {
                  this.player.interactionManager.processRightClickBlock(this.player, worldserver, itemstack, enumhand, blockpos, enumfacing, packetIn.getFacingX(), packetIn.getFacingY(), packetIn.getFacingZ());
              }
-@@ -1852,5 +1886,87 @@
+@@ -1133,7 +1164,7 @@
+                     if (entity instanceof EntityItem || entity instanceof EntityXPOrb || entity instanceof EntityArrow || entity == this.player)
+                     {
+                         this.disconnect(new TextComponentTranslation("multiplayer.disconnect.invalid_entity_attacked", new Object[0]));
+-                        this.serverController.logWarning("Player " + this.player.getName() + " tried to attack an invalid entity");
++                        this.serverController.logWarning("Player " + this.player.getName() + " tried to attack an invalid entity: " + entity.toString());
+                         return;
+                     }
+ 
+@@ -1852,5 +1883,87 @@
                  LOGGER.error("Couldn't pick item", (Throwable)exception);
              }
          }

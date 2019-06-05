@@ -4,7 +4,7 @@
  package net.minecraft.client.entity;
  
  import com.mojang.authlib.GameProfile;
-+import com.mtbs3d.minecrift.api.PatreonReceiver;
++import org.vivecraft.api.PatreonReceiver;
 +
  import java.io.File;
  import javax.annotation.Nullable;

@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/chunk/RenderChunk.java
++++ b/net/minecraft/client/renderer/chunk/RenderChunk.java
+@@ -169,7 +169,7 @@
+             this.postRenderBlocks(BlockRenderLayer.TRANSLUCENT, x, y, z, bufferbuilder, compiledchunk);
+         }
+     }
+-
++       
+     public void rebuildChunk(float x, float y, float z, ChunkCompileTaskGenerator generator)
+     {
+         CompiledChunk compiledchunk = new CompiledChunk();

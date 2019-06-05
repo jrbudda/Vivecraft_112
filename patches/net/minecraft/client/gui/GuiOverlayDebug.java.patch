@@ -1,25 +1,14 @@
 --- a/net/minecraft/client/gui/GuiOverlayDebug.java
 +++ b/net/minecraft/client/gui/GuiOverlayDebug.java
-@@ -3,6 +3,10 @@
+@@ -3,6 +3,7 @@
  import com.google.common.base.Strings;
  import com.google.common.collect.Lists;
  import com.google.common.collect.UnmodifiableIterator;
-+import com.mtbs3d.minecrift.utils.Quaternion;
-+import com.mtbs3d.minecrift.utils.Vector3;
 +
-+import java.nio.FloatBuffer;
  import java.util.Collection;
  import java.util.List;
  import java.util.Map.Entry;
-@@ -31,6 +35,7 @@
- import net.optifine.reflect.Reflector;
- import net.optifine.util.NativeMemory;
- import org.lwjgl.opengl.Display;
-+import org.lwjgl.util.vector.Matrix4f;
- 
- public class GuiOverlayDebug extends Gui
- {
-@@ -304,11 +309,29 @@
+@@ -304,11 +305,29 @@
                  }
              }
  

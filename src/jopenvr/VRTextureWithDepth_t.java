@@ -8,13 +8,13 @@ import java.util.List;
  * a tool written by <a href="http://ochafik.com/">Olivier Chafik</a> that <a href="http://code.google.com/p/jnaerator/wiki/CreditsAndLicense">uses a few opensource projects.</a>.<br>
  * For help, please visit <a href="http://nativelibs4java.googlecode.com/">NativeLibs4Java</a> , <a href="http://rococoa.dev.java.net/">Rococoa</a>, or <a href="http://jna.dev.java.net/">JNA</a>.
  */
-public class VRTextureWithDepth_t extends Structure {
+public class VRTextureWithDepth_t extends Texture_t {
 	public VRTextureDepthInfo_t depth;
 	public VRTextureWithDepth_t() {
 		super();
 	}
 	protected List<String> getFieldOrder() {
-		return Arrays.asList("depth");
+		return Arrays.asList("handle", "eType", "eColorSpace", "depth");
 	}
 	public VRTextureWithDepth_t(VRTextureDepthInfo_t depth) {
 		super();

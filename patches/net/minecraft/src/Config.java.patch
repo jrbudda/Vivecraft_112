@@ -39,7 +39,7 @@
 -        }
 -
 -        minecraft.loadingScreen = new LoadingScreenRenderer(minecraft);
-+    	Minecraft.getMinecraft().reinitFramebuffers = true; 
++    	Minecraft.getMinecraft().stereoProvider.reinitFrameBuffers("Update Framebuffer");
      }
  
      public static Object[] addObjectToArray(Object[] p_addObjectToArray_0_, Object p_addObjectToArray_1_)

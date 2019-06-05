@@ -36,7 +36,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 	private String tempDir = System.getProperty("java.io.tmpdir");
 
 	private static final boolean ALLOW_FORGE_INSTALL = true; 
-	private static final boolean DEFAULT_FORGE_INSTALL = false; 
+	private static final boolean DEFAULT_FORGE_INSTALL = true; 
 	private static final boolean ALLOW_HYDRA_INSTALL = false; 
 	private static final boolean ALLOW_KATVR_INSTALL = true; 
 	private static final boolean ALLOW_KIOSK_INSTALL = true; 
@@ -62,7 +62,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
     private static final String OF_JSON_NAME      = "1.12.2_HD_U_E3";
     private static final String OF_MD5            = "7EC95C57AC1A224D6EB93BD370E4AC37";
     private static final String OF_VERSION_EXT    = ".jar";
-    private static String FORGE_VERSION     = "14.23.5.2796";
+    private static String FORGE_VERSION     = "14.23.5.2838";
 	/* END OF DO NOT RENAME */
 
 	private static final String DEFAULT_PROFILE_NAME = "ViveCraft " + MINECRAFT_VERSION;
@@ -326,7 +326,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 		Integer[] rams = {1,2,4,6,8};
 
 		ramAllocation = new JComboBox(rams);
-		ramAllocation.setSelectedIndex(1);
+		ramAllocation.setSelectedIndex(2);
 		ramAllocation.setToolTipText(
 				"<html>" +
 						"Select the amount of Ram, in GB to allocate to the Vivecraft profile.<br>" +
@@ -1225,7 +1225,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 							if(isMultiMC && useForge.isSelected()) {
 								JSONArray tw = (JSONArray) root.get("+tweakers");
 								tw = new JSONArray();
-								tw.put("com.mtbs3d.minecrift.tweaker.MinecriftForgeTweaker");
+								tw.put("org.vivecraft.tweaker.MinecriftForgeTweaker");
 								tw.put("net.minecraftforge.fml.common.launcher.FMLTweaker");
 								tw.put("optifine.OptiFineForgeTweaker");
 								root.put("+tweakers", tw);

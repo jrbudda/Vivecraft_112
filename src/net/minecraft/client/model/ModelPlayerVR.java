@@ -1,19 +1,10 @@
 package net.minecraft.client.model;
 
-import java.util.UUID;
-
-import javax.swing.plaf.RootPaneUI;
-
-import com.mtbs3d.minecrift.render.PlayerModelController;
-import com.mtbs3d.minecrift.render.PlayerModelController.RotInfo;
-import com.mtbs3d.minecrift.render.StaticTexture;
-import com.mtbs3d.minecrift.render.VRShaders;
-import com.mtbs3d.minecrift.utils.Vector3;
+import org.vivecraft.render.PlayerModelController;
+import org.vivecraft.render.StaticTexture;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.entity.layers.LayerBipedArmor;
 import net.minecraft.client.renderer.entity.layers.LayerBipedArmorVR;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;

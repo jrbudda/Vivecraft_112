@@ -1,16 +1,15 @@
 --- a/net/minecraft/client/gui/GuiTextField.java
 +++ b/net/minecraft/client/gui/GuiTextField.java
-@@ -2,6 +2,9 @@
+@@ -2,6 +2,8 @@
  
  import com.google.common.base.Predicate;
  import com.google.common.base.Predicates;
-+import com.mtbs3d.minecrift.gameplay.screenhandlers.KeyboardHandler;
-+import com.mtbs3d.minecrift.provider.MCOpenVR;
++import org.vivecraft.gameplay.screenhandlers.KeyboardHandler;
 +
  import net.minecraft.client.Minecraft;
  import net.minecraft.client.renderer.BufferBuilder;
  import net.minecraft.client.renderer.GlStateManager;
-@@ -17,9 +20,10 @@
+@@ -17,9 +19,10 @@
      public int x;
      public int y;
  
@@ -23,7 +22,7 @@
  
      /** Has the current text being edited on the textbox. */
      private String text = "";
-@@ -511,30 +515,38 @@
+@@ -511,30 +514,38 @@
       */
      public boolean mouseClicked(int mouseX, int mouseY, int mouseButton)
      {
@@ -85,7 +84,7 @@
      }
  
      /**
-@@ -568,7 +580,10 @@
+@@ -568,7 +579,10 @@
              if (!s.isEmpty())
              {
                  String s1 = flag ? s.substring(0, j) : s;
@@ -97,7 +96,7 @@
              }
  
              boolean flag2 = this.cursorPosition < this.text.length() || this.text.length() >= this.getMaxStringLength();
-@@ -732,6 +747,13 @@
+@@ -732,6 +746,13 @@
          {
              Minecraft.getMinecraft().currentScreen.setFocused(isFocusedIn);
          }

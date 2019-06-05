@@ -30,7 +30,7 @@ void main(){
 
 	if(water > 0){ //goobly woobly
 		float ts = gl_TexCoord[0].s;
-		vec2 mod_texcoord = gl_TexCoord[0].st + vec2(0, water*.0015*sin(portaltime + 15*ts*pi));
+		vec2 mod_texcoord = gl_TexCoord[0].st + vec2(0, water*.0010*sin(portaltime + 10*ts*pi));
 		bkg_color = texture2D(tex0, mod_texcoord);
 		vec4 blue = vec4(0, 0, bkg_color.b, 1.0);
 		bkg_color  = mix(bkg_color, blue, 0.1);

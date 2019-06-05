@@ -1,6 +1,14 @@
 --- a/net/minecraft/client/settings/GameSettings.java
 +++ b/net/minecraft/client/settings/GameSettings.java
-@@ -112,7 +112,7 @@
+@@ -60,6 +60,7 @@
+ import org.lwjgl.input.Mouse;
+ import org.lwjgl.opengl.Display;
+ import org.lwjgl.opengl.DisplayMode;
++import org.vivecraft.provider.MCOpenVR;
+ 
+ public class GameSettings
+ {
+@@ -112,7 +113,7 @@
      public float chatOpacity = 1.0F;
      public boolean snooperEnabled = true;
      public boolean fullScreen;
@@ -9,7 +17,7 @@
      public boolean useVbo = true;
      public boolean reducedDebugInfo;
      public boolean hideServerAddress;
-@@ -142,7 +142,7 @@
+@@ -142,7 +143,7 @@
      public boolean enableWeakAttacks;
      public boolean showSubtitles;
      public boolean realmsNotifications = true;
@@ -18,7 +26,7 @@
      public TutorialSteps tutorialStep = TutorialSteps.MOVEMENT;
      public KeyBinding keyBindForward = new KeyBinding("key.forward", 17, "key.categories.movement");
      public KeyBinding keyBindLeft = new KeyBinding("key.left", 30, "key.categories.movement");
-@@ -228,7 +228,7 @@
+@@ -228,7 +229,7 @@
      public boolean ofStars = true;
      public boolean ofSunMoon = true;
      public int ofVignette = 0;
@@ -27,7 +35,7 @@
      public boolean ofChunkUpdatesDynamic = false;
      public int ofTime = 0;
      public boolean ofClearWater = false;
-@@ -250,7 +250,7 @@
+@@ -250,7 +251,7 @@
      public int ofTranslucentBlocks = 0;
      public boolean ofDynamicFov = true;
      public boolean ofAlternateBlocks = true;
@@ -36,7 +44,15 @@
      public boolean ofCustomEntityModels = true;
      public boolean ofCustomGuis = true;
      public boolean ofShowGlErrors = true;
-@@ -469,7 +469,7 @@
+@@ -292,6 +293,7 @@
+     {
+         this.setForgeKeybindProperties();
+         this.keyBindings = (KeyBinding[])ArrayUtils.addAll(new KeyBinding[] {this.keyBindAttack, this.keyBindUseItem, this.keyBindForward, this.keyBindLeft, this.keyBindBack, this.keyBindRight, this.keyBindJump, this.keyBindSneak, this.keyBindSprint, this.keyBindDrop, this.keyBindInventory, this.keyBindChat, this.keyBindPlayerList, this.keyBindPickBlock, this.keyBindCommand, this.keyBindScreenshot, this.keyBindTogglePerspective, this.keyBindSmoothCamera, this.keyBindFullscreen, this.keyBindSpectatorOutlines, this.keyBindSwapHands, this.keyBindSaveToolbar, this.keyBindLoadToolbar, this.keyBindAdvancements}, this.keyBindsHotbar);
++        this.keyBindings = MCOpenVR.initializeBindings(this.keyBindings);
+         this.difficulty = EnumDifficulty.NORMAL;
+         this.lastServer = "";
+         this.fovSetting = 70.0F;
+@@ -469,7 +471,7 @@
                  this.mc.getTextureMapBlocks().setMipmapLevels(this.mipmapLevels);
                  this.mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
                  this.mc.getTextureMapBlocks().setBlurMipmapDirect(false, this.mipmapLevels > 0);
@@ -45,7 +61,7 @@
              }
          }
  
-@@ -2037,7 +2037,7 @@
+@@ -2037,7 +2039,7 @@
          {
              ++this.ofChunkUpdates;
  
@@ -54,7 +70,7 @@
              {
                  this.ofChunkUpdates = 1;
              }
-@@ -2147,18 +2147,18 @@
+@@ -2147,18 +2149,18 @@
  
          if (p_setOptionValueOF_1_ == GameSettings.Options.FAST_RENDER)
          {
@@ -82,7 +98,7 @@
  
              Config.updateFramebufferSize();
          }
-@@ -3038,7 +3038,7 @@
+@@ -3038,7 +3040,7 @@
                      if (astring[0].equals("ofChunkUpdates") && astring.length >= 2)
                      {
                          this.ofChunkUpdates = Integer.valueOf(astring[1]).intValue();
@@ -91,7 +107,7 @@
                      }
  
                      if (astring[0].equals("ofChunkUpdatesDynamic") && astring.length >= 2)
-@@ -3189,13 +3189,13 @@
+@@ -3189,13 +3191,13 @@
  
                      if (astring[0].equals("ofFastMath") && astring.length >= 2)
                      {
@@ -107,7 +123,22 @@
                      }
  
                      if (astring[0].equals("ofTranslucentBlocks") && astring.length >= 2)
-@@ -3357,7 +3357,7 @@
+@@ -3218,6 +3220,14 @@
+ 
+             KeyBinding.resetKeyBindingArrayAndHash();
+             bufferedreader.close();
++            
++            //Vivecraft important.
++            this.ofFastRender = false;
++            this.fboEnable = true;
++            this.ofAaLevel = 0;
++            this.ofAfLevel = 1;
++            //
++            
+         }
+         catch (Exception exception11)
+         {
+@@ -3357,7 +3367,7 @@
          this.guiScale = 0;
          this.particleSetting = 0;
          this.heldItemTooltips = true;
@@ -116,7 +147,7 @@
          this.forceUnicodeFont = false;
          this.ofFogType = 1;
          this.ofFogStart = 0.8F;
-@@ -3370,7 +3370,7 @@
+@@ -3370,7 +3380,7 @@
          this.ofLazyChunkLoading = false;
          this.ofRenderRegions = false;
          this.ofFastMath = false;
@@ -125,7 +156,7 @@
          this.ofTranslucentBlocks = 0;
          this.ofDynamicFov = true;
          this.ofAlternateBlocks = true;
-@@ -3396,7 +3396,7 @@
+@@ -3396,7 +3406,7 @@
          this.ofStars = true;
          this.ofSunMoon = true;
          this.ofVignette = 0;
@@ -134,7 +165,7 @@
          this.ofChunkUpdatesDynamic = false;
          this.ofTime = 0;
          this.ofClearWater = false;
-@@ -3542,6 +3542,7 @@
+@@ -3542,6 +3552,7 @@
          }
      }
  
@@ -142,7 +173,7 @@
      public void onGuiClosed()
      {
          if (this.needsResourceRefresh)
-@@ -3550,6 +3551,7 @@
+@@ -3550,6 +3561,7 @@
              this.needsResourceRefresh = false;
          }
      }

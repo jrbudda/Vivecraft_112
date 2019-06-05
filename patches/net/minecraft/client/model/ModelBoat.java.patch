@@ -1,27 +1,22 @@
 --- a/net/minecraft/client/model/ModelBoat.java
 +++ b/net/minecraft/client/model/ModelBoat.java
-@@ -1,114 +1,175 @@
+@@ -1,114 +1,170 @@
  package net.minecraft.client.model;
  
-+import com.mtbs3d.minecrift.gameplay.OpenVRPlayer;
-+import com.mtbs3d.minecrift.provider.MCOpenVR;
-+import com.mtbs3d.minecrift.render.PlayerModelController;
-+import com.mtbs3d.minecrift.render.QuaternionHelper;
-+import com.mtbs3d.minecrift.settings.VRSettings;
-+import com.mtbs3d.minecrift.utils.*;
-+import com.mtbs3d.minecrift.utils.Quaternion;
-+import de.fruitfly.ovr.structs.Quatf;
++import org.vivecraft.gameplay.OpenVRPlayer;
++import org.vivecraft.provider.MCOpenVR;
++import org.vivecraft.render.PlayerModelController;
++import org.vivecraft.settings.VRSettings;
++import org.vivecraft.utils.Quaternion;
 +import net.minecraft.client.Minecraft;
  import net.minecraft.client.renderer.GLAllocation;
  import net.minecraft.client.renderer.GlStateManager;
-+import net.minecraft.client.renderer.debug.DebugRenderer;
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.item.EntityBoat;
 +import net.minecraft.entity.player.EntityPlayer;
-+import net.minecraft.util.EnumParticleTypes;
  import net.minecraft.util.math.MathHelper;
 +import net.minecraft.util.math.Vec3d;
-+import org.lwjgl.util.vector.*;
++import org.vivecraft.utils.Vector3;
  
 -public class ModelBoat extends ModelBase implements IMultipassModel
 -{

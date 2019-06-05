@@ -1,5 +1,7 @@
 #version 120 
  uniform sampler2D inputImageTexture; 
+ uniform sampler2D inputDepthTexture; 
+
  varying vec2 centerTextureCoordinate;
  varying vec2 oneStepLeftTextureCoordinate;
  varying vec2 twoStepsLeftTextureCoordinate;
@@ -30,4 +32,21 @@
 	 fragmentColor += texture2D(inputImageTexture, fourStepsRightTextureCoordinate) * -0.02143; 
  
 	 gl_FragColor = fragmentColor; 
+	 
+	 float depth = texture2D(inputDepthTexture, centerTextureCoordinate).r * 0.38026;
+	 
+	 depth += texture2D(inputDepthTexture, oneStepLeftTextureCoordinate).r * 0.27667; 
+	 depth += texture2D(inputDepthTexture, oneStepRightTextureCoordinate).r * 0.27667; 
+ 
+	 depth += texture2D(inputDepthTexture, twoStepsLeftTextureCoordinate).r * 0.08074; 
+	 depth += texture2D(inputDepthTexture, twoStepsRightTextureCoordinate).r * 0.08074; 
+ 
+	 depth += texture2D(inputDepthTexture, threeStepsLeftTextureCoordinate).r * -0.02612; 
+	 depth += texture2D(inputDepthTexture, threeStepsRightTextureCoordinate).r * -0.02612; 
+ 
+	 depth += texture2D(inputDepthTexture, fourStepsLeftTextureCoordinate).r * -0.02143; 
+	 depth += texture2D(inputDepthTexture, fourStepsRightTextureCoordinate).r * -0.02143; 
+ 
+	 gl_FragDepth = depth; 
+	 
  }

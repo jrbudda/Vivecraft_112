@@ -1,7 +1,7 @@
 {
 	"+tweakers": [
 	"optifine.OptiFineTweaker",
-	"com.mtbs3d.minecrift.tweaker.MinecriftVanillaTweaker"
+	"org.vivecraft.tweaker.MinecriftVanillaTweaker"
 	],
 	"libraries": [
 	{

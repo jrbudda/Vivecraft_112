@@ -5,7 +5,7 @@
  import java.util.Map;
  import javax.annotation.Nullable;
 +
-+import com.mtbs3d.minecrift.utils.ASMDelegator;
++import org.vivecraft.utils.ASMDelegator;
  import net.minecraft.client.Minecraft;
  import net.minecraft.client.entity.EntityPlayerSP;
  import net.minecraft.client.gui.GuiButton;

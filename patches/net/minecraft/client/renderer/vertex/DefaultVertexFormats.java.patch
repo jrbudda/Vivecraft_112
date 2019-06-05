@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/renderer/vertex/DefaultVertexFormats.java
++++ b/net/minecraft/client/renderer/vertex/DefaultVertexFormats.java
+@@ -31,6 +31,7 @@
+     public static final VertexFormatElement TEX_2S = new VertexFormatElement(1, VertexFormatElement.EnumType.SHORT, VertexFormatElement.EnumUsage.UV, 2);
+     public static final VertexFormatElement NORMAL_3B = new VertexFormatElement(0, VertexFormatElement.EnumType.BYTE, VertexFormatElement.EnumUsage.NORMAL, 3);
+     public static final VertexFormatElement PADDING_1B = new VertexFormatElement(0, VertexFormatElement.EnumType.BYTE, VertexFormatElement.EnumUsage.PADDING, 1);
++    public static final VertexFormat POSITION_COLOR_NORMAL = (new VertexFormat()).addElement(POSITION_3F).addElement(COLOR_4UB).addElement(NORMAL_3B).addElement(PADDING_1B);
+ 
+     public static void updateVertexFormats()
+     {

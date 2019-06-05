@@ -3,8 +3,8 @@
 @@ -1,5 +1,8 @@
  package net.minecraft.entity.ai;
  
-+import com.mtbs3d.minecrift.api.NetworkHelper;
-+import com.mtbs3d.minecrift.api.VivePlayer;
++import org.vivecraft.api.NetworkHelper;
++import org.vivecraft.api.VivePlayer;
 +
  import net.minecraft.entity.EntityLivingBase;
  import net.minecraft.entity.monster.EntityCreeper;

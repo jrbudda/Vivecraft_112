@@ -5,7 +5,7 @@
  
  import java.io.IOException;
 +
-+import com.mtbs3d.minecrift.gui.settings.GuiMinecriftSettings;
++import org.vivecraft.gui.settings.GuiMinecriftSettings;
 +
  import net.minecraft.client.resources.I18n;
  import net.minecraft.client.settings.GameSettings;

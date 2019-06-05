@@ -1,20 +1,19 @@
 --- a/net/minecraft/client/gui/GuiIngameMenu.java
 +++ b/net/minecraft/client/gui/GuiIngameMenu.java
-@@ -1,11 +1,21 @@
+@@ -1,11 +1,20 @@
  package net.minecraft.client.gui;
  
  import java.io.IOException;
 +
-+import com.mtbs3d.minecrift.gui.settings.GuiQuickCommandsInGame;
-+import com.mtbs3d.minecrift.settings.AutoCalibration;
-+import com.mtbs3d.minecrift.utils.jkatvr;
++import org.vivecraft.gui.settings.GuiQuickCommandsInGame;
++import org.vivecraft.settings.AutoCalibration;
++import org.vivecraft.utils.jkatvr;
 +
 +import net.minecraft.client.Minecraft;
  import net.minecraft.client.gui.achievement.GuiStats;
  import net.minecraft.client.gui.advancements.GuiScreenAdvancements;
 +import net.minecraft.client.main.Main;
  import net.minecraft.client.multiplayer.WorldClient;
-+import net.minecraft.client.renderer.EntityRenderer;
  import net.minecraft.client.resources.I18n;
 +import net.minecraft.client.settings.KeyBinding;
  import net.minecraft.realms.RealmsBridge;
@@ -22,7 +21,7 @@
  
  public class GuiIngameMenu extends GuiScreen
  {
-@@ -19,22 +29,41 @@
+@@ -19,22 +28,41 @@
      public void initGui()
      {
          this.saveStep = 0;
@@ -71,7 +70,7 @@
      }
  
      /**
-@@ -71,24 +100,66 @@
+@@ -71,24 +99,66 @@
  
              case 2:
              case 3:

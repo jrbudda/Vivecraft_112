@@ -1,15 +1,14 @@
 --- a/net/minecraft/client/model/ModelHorse.java
 +++ b/net/minecraft/client/model/ModelHorse.java
-@@ -1,11 +1,23 @@
+@@ -1,11 +1,22 @@
  package net.minecraft.client.model;
  
-+import com.mtbs3d.minecrift.gameplay.OpenVRPlayer;
-+import com.mtbs3d.minecrift.gameplay.trackers.HorseTracker;
-+import com.mtbs3d.minecrift.render.PlayerModelController;
-+import com.mtbs3d.minecrift.settings.VRSettings;
-+import com.mtbs3d.minecrift.utils.BezierCurve;
-+import com.mtbs3d.minecrift.utils.Debug;
-+import com.mtbs3d.minecrift.utils.Quaternion;
++import org.vivecraft.gameplay.trackers.HorseTracker;
++import org.vivecraft.render.PlayerModelController;
++import org.vivecraft.settings.VRSettings;
++import org.vivecraft.utils.BezierCurve;
++import org.vivecraft.utils.Debug;
++import org.vivecraft.utils.Quaternion;
 +import net.minecraft.client.Minecraft;
  import net.minecraft.client.renderer.GlStateManager;
  import net.minecraft.entity.Entity;
@@ -24,7 +23,7 @@
  
  public class ModelHorse extends ModelBase
  {
-@@ -89,7 +101,7 @@
+@@ -89,7 +100,7 @@
          this.backLeftShin.addBox(-2.0F, 0.0F, -1.5F, 3, 5, 3);
          this.backLeftShin.setRotationPoint(4.0F, 16.0F, 11.0F);
          this.backLeftHoof = new ModelRenderer(this, 78, 51);
@@ -33,7 +32,7 @@
          this.backLeftHoof.setRotationPoint(4.0F, 16.0F, 11.0F);
          this.backRightLeg = new ModelRenderer(this, 96, 29);
          this.backRightLeg.addBox(-1.5F, -2.0F, -2.5F, 4, 9, 5);
-@@ -104,10 +116,10 @@
+@@ -104,10 +115,10 @@
          this.frontLeftLeg.addBox(-1.9F, -1.0F, -2.1F, 3, 8, 4);
          this.frontLeftLeg.setRotationPoint(4.0F, 9.0F, -8.0F);
          this.frontLeftShin = new ModelRenderer(this, 44, 41);
@@ -46,7 +45,7 @@
          this.frontLeftHoof.setRotationPoint(4.0F, 16.0F, -8.0F);
          this.frontRightLeg = new ModelRenderer(this, 60, 29);
          this.frontRightLeg.addBox(-1.1F, -1.0F, -2.1F, 3, 8, 4);
-@@ -221,6 +233,8 @@
+@@ -221,6 +232,8 @@
          float f1 = abstracthorse.getHorseSize();
          boolean flag4 = abstracthorse.isBeingRidden();
  
@@ -55,7 +54,7 @@
          if (flag1)
          {
              this.horseFaceRopes.render(scale);
-@@ -236,8 +250,80 @@
+@@ -236,8 +249,80 @@
  
              if (flag4)
              {
@@ -138,7 +137,7 @@
              }
          }
  
-@@ -316,6 +402,12 @@
+@@ -316,6 +401,12 @@
              this.muleLeftChest.render(scale);
              this.muleRightChest.render(scale);
          }
