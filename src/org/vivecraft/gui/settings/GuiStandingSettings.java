@@ -229,6 +229,7 @@ public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
                 vr.vrTeleportDownLimit = 4;
                 vr.vrTeleportUpLimit = 1;
                 vr.vrTeleportHorizLimit = 16;
+                vr.analogDeadzone = 0.10f;
 
                 //end jrbudda
                 

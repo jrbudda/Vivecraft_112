@@ -57,9 +57,9 @@ public class TrackedControllerWindowsMR extends TrackedControllerVive {
 	public boolean isButtonPressed(ButtonType button) {
 		switch (button) {
 			case WMR_STICK_RIGHT:
-				return state.rAxis[k_axisStick] != null && state.rAxis[k_axisStick].y > 0.5F;
+				return state.rAxis[k_axisStick] != null && state.rAxis[k_axisStick].x > 0.5F;
 			case WMR_STICK_LEFT:
-				return state.rAxis[k_axisStick] != null && state.rAxis[k_axisStick].y < -0.5F;
+				return state.rAxis[k_axisStick] != null && state.rAxis[k_axisStick].x < -0.5F;
 			case WMR_STICK_UP:
 				return state.rAxis[k_axisStick] != null && state.rAxis[k_axisStick].y > 0.5F;
 			case WMR_STICK_DOWN:

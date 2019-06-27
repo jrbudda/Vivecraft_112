@@ -112,12 +112,18 @@ public class VRData{
 	}
 	
 	public float getBodyYaw(){
-		return PlayerModelController.getBodyYaw(PlayerModelController.getMainPlayerRotInfo(this));
+		if(Minecraft.getMinecraft().vrSettings.seated)
+			return hmd.getYaw();
+		
+		Vec3d v = (c1.getPosition().subtract(c0.getPosition())).normalize().rotateYaw((float) (-Math.PI/2));
+	
+		if(Minecraft.getMinecraft().vrSettings.vrReverseHands)
+			return(float) Math.toDegrees(Math.atan2(v.x, -v.z)); 
+		else
+			return(float) Math.toDegrees(Math.atan2(-v.x, v.z)); 
 	}
 		
-	public float getFacingYaw(){
-		return PlayerModelController.getFacingYaw(PlayerModelController.getMainPlayerRotInfo(this));
-	}
+
 	public Vec3d getHeadPivot() {
 		Vec3d eye = hmd.getPosition();
 		Vector3f v3 = hmd.getMatrix().transform(new Vector3f(0,-.1f, .1f));

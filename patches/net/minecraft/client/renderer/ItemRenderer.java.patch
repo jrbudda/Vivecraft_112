@@ -555,7 +555,7 @@
 +    					if (this.itemRenderer.shouldRenderItemIn3D(itemstack)){
 +    						GlStateManager.translate(0f, 0f, -0.1f);	
 +    						GlStateManager.scale(0.2, 0.2, 0.2);
-+    					}else if(((ItemBlock) item).getBlock() == Blocks.TORCH) {
++    					}else if(((ItemBlock) item).getBlock() == Blocks.TORCH || ((ItemBlock) item).getBlock() == Blocks.REDSTONE_TORCH) {
 +    						GlStateManager.translate(0f, 0.05f, -0.2f);		
 +    						GlStateManager.scale(0.6, 0.6, 0.6);	
 +    						GlStateManager.rotate(90.0F, 0.0F, 1.0F, 0.0F);

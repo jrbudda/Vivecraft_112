@@ -18,10 +18,11 @@
 		"MMC-hint": "local"
 	},
 	{
-		"name": "org.ow2.asm:asm-all:5.0.3"
+		"name": "org.ow2.asm:asm-all:5.0.3",
+		"url": "http://files.minecraftforge.net/maven/"
 	}, 
 	{
-		"url": "http://central.maven.org/maven2/", 
+		"url": "http://vivecraft.org/jar/", 
 		"name": "org.json:json:20140107"
 	}, 
 	{
@@ -34,9 +35,6 @@
 	{
 		"url": "http://vivecraft.org/jar/", 
 		"name": "de.fruitfly.ovr:JRift:0.8.0.0.1"
-	}, 
-	{
-		"name": "java3d:vecmath:1.5.2"
 	}
 	]
 }

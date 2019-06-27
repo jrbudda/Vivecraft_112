@@ -383,6 +383,7 @@ public class GuiVRControls extends BaseGuiSettings {
 				}
 			}
     		mapping.buttons.add(button);
+			mapping.modifiers = 0;
     		this.pressMode = false;
     		this.mapping = null;
     		this.mappingButtons = null;

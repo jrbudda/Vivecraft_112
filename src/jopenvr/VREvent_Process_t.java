@@ -12,17 +12,19 @@ public class VREvent_Process_t extends Structure {
 	public int pid;
 	public int oldPid;
 	public byte bForced;
+	public byte bConnectionLost;
 	public VREvent_Process_t() {
 		super();
 	}
 	protected List<String> getFieldOrder() {
-		return Arrays.asList("pid", "oldPid", "bForced");
+		return Arrays.asList("pid", "oldPid", "bForced", "bConnectionLost");
 	}
-	public VREvent_Process_t(int pid, int oldPid, byte bForced) {
+	public VREvent_Process_t(int pid, int oldPid, byte bForced, byte bConnectionLost) {
 		super();
 		this.pid = pid;
 		this.oldPid = oldPid;
 		this.bForced = bForced;
+		this.bConnectionLost = bConnectionLost;
 	}
 	public VREvent_Process_t(Pointer peer) {
 		super(peer);

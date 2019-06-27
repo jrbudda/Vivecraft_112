@@ -173,32 +173,32 @@ public class VRHotkeys {
 		
 		if (Keyboard.isKeyDown(Keyboard.KEY_LEFT) && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && !Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
 		{
-			mc.vrSettings.vrFixedCamposX -= 0.01;
+			adjustCamPos(new Vector3(-0.01F, 0, 0));
 			gotKey = true;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT) && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && !Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
 		{
-			mc.vrSettings.vrFixedCamposX += 0.01;
+			adjustCamPos(new Vector3(0.01F, 0, 0));
 			gotKey = true;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_UP) && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && !Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
 		{
-			mc.vrSettings.vrFixedCamposZ -= 0.01;
+			adjustCamPos(new Vector3(0, 0, -0.01F));
 			gotKey = true;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_DOWN) && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && !Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
 		{
-			mc.vrSettings.vrFixedCamposZ += 0.01;
+			adjustCamPos(new Vector3(0, 0, 0.01F));
 			gotKey = true;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_PRIOR) && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && !Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
 		{
-			mc.vrSettings.vrFixedCamposY += 0.01;
+			adjustCamPos(new Vector3(0, 0.01F, 0));
 			gotKey = true;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_NEXT) && Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && !Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
 		{
-			mc.vrSettings.vrFixedCamposY -= 0.01;
+			adjustCamPos(new Vector3(0, -0.01F, 0));
 			gotKey = true;
 		}
 

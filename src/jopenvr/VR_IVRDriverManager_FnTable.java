@@ -12,22 +12,27 @@ import java.util.List;
 public class VR_IVRDriverManager_FnTable extends Structure {
 	public VR_IVRDriverManager_FnTable.GetDriverCount_callback GetDriverCount;
 	public VR_IVRDriverManager_FnTable.GetDriverName_callback GetDriverName;
+	public VR_IVRDriverManager_FnTable.GetDriverHandle_callback GetDriverHandle;
 	public interface GetDriverCount_callback extends Callback {
 		int apply();
 	};
 	public interface GetDriverName_callback extends Callback {
 		int apply(int nDriver, Pointer pchValue, int unBufferSize);
 	};
+	public interface GetDriverHandle_callback extends Callback {
+		long apply(Pointer pchDriverName);
+	};
 	public VR_IVRDriverManager_FnTable() {
 		super();
 	}
 	protected List<String> getFieldOrder() {
-		return Arrays.asList("GetDriverCount", "GetDriverName");
+		return Arrays.asList("GetDriverCount", "GetDriverName", "GetDriverHandle");
 	}
-	public VR_IVRDriverManager_FnTable(VR_IVRDriverManager_FnTable.GetDriverCount_callback GetDriverCount, VR_IVRDriverManager_FnTable.GetDriverName_callback GetDriverName) {
+	public VR_IVRDriverManager_FnTable(VR_IVRDriverManager_FnTable.GetDriverCount_callback GetDriverCount, VR_IVRDriverManager_FnTable.GetDriverName_callback GetDriverName, VR_IVRDriverManager_FnTable.GetDriverHandle_callback GetDriverHandle) {
 		super();
 		this.GetDriverCount = GetDriverCount;
 		this.GetDriverName = GetDriverName;
+		this.GetDriverHandle = GetDriverHandle;
 	}
 	public VR_IVRDriverManager_FnTable(Pointer peer) {
 		super(peer);

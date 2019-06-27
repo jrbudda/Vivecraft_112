@@ -108,7 +108,7 @@ public class VRSettings
 	public TrackedControllerVive.TouchpadMode leftTouchpadMode = TrackedControllerVive.TouchpadMode.SPLIT_UD;
 	public TrackedControllerVive.TouchpadMode rightTouchpadMode = TrackedControllerVive.TouchpadMode.SINGLE;
 	public boolean freemoveWMRStick = true;
-	public float analogDeadzone = 0.05F;
+	public float analogDeadzone = 0.10f;
     public float vrWorldScale = 1.0f;
     public float vrWorldRotation = 0f;
 	public float vrWorldRotationCached;
@@ -782,21 +782,21 @@ public class VRSettings
                 		String functionId = optionTokens[0].substring(optionTokens[0].indexOf('_') + 1);
                     	VRButtonMapping vb = new VRButtonMapping(functionId);
 
-                    	if (!optionTokens[1].equals("none")) {
-                    		String[] split = optionTokens[1].split(",");
-                    		for (int i = 0; i < split.length; i++) {
-                    		    if (split[i].equals("&")) {
-                    		      //  vb.and = true;
-                    		        continue;
-                                }
+                        if (!optionTokens[1].equals("none")) {
+                            String[] split = optionTokens[1].split(",");
+                            for (int i = 0; i < split.length; i++) {
+                                try {
+                                    if (split[i].startsWith("mods_")) {
+                                        vb.modifiers = Integer.parseInt(split[i].substring(split[i].indexOf('_') + 1));
+                                        continue;
+                                    }
 
-                    			try {
-                    				vb.buttons.add(ButtonTuple.parse(split[i]));
-                            	} catch (IllegalArgumentException ex) {
-                            		System.out.println("Ignoring invalid button: " + split[i]);
-                            	}
-                    		}
-                    	}
+                                    vb.buttons.add(ButtonTuple.parse(split[i]));
+                                } catch (IllegalArgumentException ex) {
+                                    System.out.println("Ignoring invalid button: " + split[i]);
+                                }
+                            }
+                        }
 
                         this.buttonMappings.put(functionId, vb);
                     }
@@ -1631,7 +1631,7 @@ public class VRSettings
             var5.println("mrMovingCamOffsetZ:" + this.mrMovingCamOffsetZ);
             var5.println("mrMovingCamOffsetRotW:" + this.mrMovingCamOffsetRotQuat.w);
             var5.println("mrMovingCamOffsetRotX:" + this.mrMovingCamOffsetRotQuat.x);
-            var5.println("mrMovingCamOffsetrotY:" + this.mrMovingCamOffsetRotQuat.y);
+            var5.println("mrMovingCamOffsetRotY:" + this.mrMovingCamOffsetRotQuat.y);
             var5.println("mrMovingCamOffsetRotZ:" + this.mrMovingCamOffsetRotQuat.z);
             var5.println("vrTouchHotbar:" + this.vrTouchHotbar);
             var5.println("seatedhmd:" + this.seatedUseHMD);

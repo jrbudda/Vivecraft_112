@@ -183,8 +183,8 @@
 		"url": "http://files.minecraftforge.net/maven/"
 	},
 	{
-		"url": "http://central.maven.org/maven2/", 
-		"name": "org.json:json:20140107"
+		"name": "org.json:json:20140107",
+		"url": "http://vivecraft.org/jar/"
 	}, 
 	{
 		"name": "optifine:OptiFine:$OFVERSION",

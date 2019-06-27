@@ -265,7 +265,7 @@ public class VR_IVROverlay_FnTable extends Structure {
 		int apply(int eDirection, long ulFrom);
 	};
 	public interface SetOverlayDualAnalogTransform_callback extends Callback {
-		int apply(long ulOverlay, int eWhich, HmdVector2_t vCenter, float fRadius);
+		int apply(long ulOverlay, int eWhich, HmdVector2_t pvCenter, float fRadius);
 	};
 	public interface GetOverlayDualAnalogTransform_callback extends Callback {
 		int apply(long ulOverlay, int eWhich, HmdVector2_t pvCenter, FloatByReference pfRadius);

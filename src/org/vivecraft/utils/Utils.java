@@ -300,10 +300,10 @@ public class Utils
 		return color;
 	}
 
-	public static byte[] loadAsset(String name, boolean required) {
-		InputStream is = VRShaders.class.getResourceAsStream("/assets/vivecraft/" + name);
-		byte[] out = new byte[0];
+	public static InputStream getAssetAsStream(String name, boolean required) {
+		InputStream is = null;
 		try {
+			is = VRShaders.class.getResourceAsStream("/assets/vivecraft/" + name);
 			if (is == null) {
 				//uhh debugging?
 				Path dir = Paths.get(System.getProperty("user.dir")); // ../mcpxxx/jars/
@@ -315,21 +315,48 @@ public class Utils
 					is = new FileInputStream(p5.toFile());
 				}
 			}
-			out = IOUtils.toByteArray(is);
-			is.close();
-		} catch (Exception e) {
-			if (required) {
-				throw new RuntimeException("Failed to load asset: " + name, e);
-			} else {
-				System.out.println("Failed to load asset: " + name);
-				e.printStackTrace();
-			}
+		} catch (IOException e) {
+			handleAssetException(e, name, required);
 		}
-		return out;
+
+		return is;
+	}
+
+	public static byte[] loadAsset(String name, boolean required) {
+		InputStream is = getAssetAsStream(name, required);
+
+		try {
+			byte[] out = IOUtils.toByteArray(is);
+			is.close();
+			return out;
+		} catch (IOException e) {
+			handleAssetException(e, name, required);
+		}
+
+		return null;
 	}
 	
 	public static String loadAssetAsString(String name, boolean required) {
 		return new String(loadAsset(name, required), Charsets.UTF_8);
+	}
+
+	public static void loadAssetToFile(String name, File file, boolean required) {
+		InputStream is = getAssetAsStream(name, required);
+		try {
+			writeStreamToFile(is, file);
+			is.close();
+		} catch (IOException e) {
+			handleAssetException(e, name, required);
+		}
+	}
+
+	private static void handleAssetException(Throwable e, String name, boolean required) {
+		if (required) {
+			throw new RuntimeException("Failed to load asset: " + name, e);
+		} else {
+			System.out.println("Failed to load asset: " + name);
+			e.printStackTrace();
+		}
 	}
 	
 	public static void unpackNatives(String directory) {

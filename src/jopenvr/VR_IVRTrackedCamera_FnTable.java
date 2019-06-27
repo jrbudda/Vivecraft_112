@@ -35,10 +35,10 @@ public class VR_IVRTrackedCamera_FnTable extends Structure {
 		int apply(int nDeviceIndex, int eFrameType, IntByReference pnWidth, IntByReference pnHeight, IntByReference pnFrameBufferSize);
 	};
 	public interface GetCameraIntrinsics_callback extends Callback {
-		int apply(int nDeviceIndex, int eFrameType, HmdVector2_t pFocalLength, HmdVector2_t pCenter);
+		int apply(int nDeviceIndex, int nCameraIndex, int eFrameType, HmdVector2_t pFocalLength, HmdVector2_t pCenter);
 	};
 	public interface GetCameraProjection_callback extends Callback {
-		int apply(int nDeviceIndex, int eFrameType, float flZNear, float flZFar, HmdMatrix44_t pProjection);
+		int apply(int nDeviceIndex, int nCameraIndex, int eFrameType, float flZNear, float flZFar, HmdMatrix44_t pProjection);
 	};
 	public interface AcquireVideoStreamingService_callback extends Callback {
 		int apply(int nDeviceIndex, LongByReference pHandle);

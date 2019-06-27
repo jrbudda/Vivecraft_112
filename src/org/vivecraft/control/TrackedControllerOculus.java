@@ -159,9 +159,9 @@ public class TrackedControllerOculus extends TrackedController {
 			case OCULUS_STICK:
 				return (state.ulButtonPressed & k_buttonStick) > 0;
 			case OCULUS_STICK_RIGHT:
-				return state.rAxis[k_axisStick] != null && state.rAxis[k_axisStick].y > 0.5F;
+				return state.rAxis[k_axisStick] != null && state.rAxis[k_axisStick].x > 0.5F;
 			case OCULUS_STICK_LEFT:
-				return state.rAxis[k_axisStick] != null && state.rAxis[k_axisStick].y < -0.5F;
+				return state.rAxis[k_axisStick] != null && state.rAxis[k_axisStick].x < -0.5F;
 			case OCULUS_STICK_UP:
 				return state.rAxis[k_axisStick] != null && state.rAxis[k_axisStick].y > 0.5F;
 			case OCULUS_STICK_DOWN:

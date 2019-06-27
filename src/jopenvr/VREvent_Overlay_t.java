@@ -10,15 +10,17 @@ import java.util.List;
  */
 public class VREvent_Overlay_t extends Structure {
 	public long overlayHandle;
+	public long devicePath;
 	public VREvent_Overlay_t() {
 		super();
 	}
 	protected List<String> getFieldOrder() {
-		return Arrays.asList("overlayHandle");
+		return Arrays.asList("overlayHandle", "devicePath");
 	}
-	public VREvent_Overlay_t(long overlayHandle) {
+	public VREvent_Overlay_t(long overlayHandle, long devicePath) {
 		super();
 		this.overlayHandle = overlayHandle;
+		this.devicePath = devicePath;
 	}
 	public VREvent_Overlay_t(Pointer peer) {
 		super(peer);

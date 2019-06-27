@@ -144,7 +144,7 @@
 +
 +        if (rope!=null){
 +        	GlStateManager.popMatrix();
-+	        rope.render(80,Color.black,0);
++	        rope.render(80,new Color(40,26,13),0);
 +	        GlStateManager.pushMatrix();
 +        }
      }

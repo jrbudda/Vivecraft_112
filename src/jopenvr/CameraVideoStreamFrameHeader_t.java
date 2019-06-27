@@ -16,13 +16,14 @@ public class CameraVideoStreamFrameHeader_t extends Structure {
 	public int nBytesPerPixel;
 	public int nFrameSequence;
 	public TrackedDevicePose_t standingTrackedDevicePose;
+	public long ulFrameExposureTime;
 	public CameraVideoStreamFrameHeader_t() {
 		super();
 	}
 	protected List<String> getFieldOrder() {
-		return Arrays.asList("eFrameType", "nWidth", "nHeight", "nBytesPerPixel", "nFrameSequence", "standingTrackedDevicePose");
+		return Arrays.asList("eFrameType", "nWidth", "nHeight", "nBytesPerPixel", "nFrameSequence", "standingTrackedDevicePose", "ulFrameExposureTime");
 	}
-	public CameraVideoStreamFrameHeader_t(int eFrameType, int nWidth, int nHeight, int nBytesPerPixel, int nFrameSequence, TrackedDevicePose_t standingTrackedDevicePose) {
+	public CameraVideoStreamFrameHeader_t(int eFrameType, int nWidth, int nHeight, int nBytesPerPixel, int nFrameSequence, TrackedDevicePose_t standingTrackedDevicePose, long ulFrameExposureTime) {
 		super();
 		this.eFrameType = eFrameType;
 		this.nWidth = nWidth;
@@ -30,6 +31,7 @@ public class CameraVideoStreamFrameHeader_t extends Structure {
 		this.nBytesPerPixel = nBytesPerPixel;
 		this.nFrameSequence = nFrameSequence;
 		this.standingTrackedDevicePose = standingTrackedDevicePose;
+		this.ulFrameExposureTime = ulFrameExposureTime;
 	}
 	public CameraVideoStreamFrameHeader_t(Pointer peer) {
 		super(peer);

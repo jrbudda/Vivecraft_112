@@ -89,15 +89,15 @@ public class BezierCurve {
 
 		GlStateManager.disableTexture2D();
 		GlStateManager.disableLighting();
-		GlStateManager.depthMask(false);
-		//GlStateManager.disableCull();
+		GlStateManager.disableCull();
 
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder bufferbuilder = tessellator.getBuffer();
 
-
 		bufferbuilder.begin(3, DefaultVertexFormats.POSITION_COLOR);
 
+		GlStateManager.glLineWidth(10);
+		
 		Vec3d[] vertices=getLinearInterpolation(vertexCount/nodes.size());
 
 		for (int i = 0; i < vertices.length; i++) {

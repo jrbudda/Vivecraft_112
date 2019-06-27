@@ -21,6 +21,18 @@ public class VREvent_Data_t extends Union {
 	public VREvent_PerformanceTest_t performanceTest;
 	public VREvent_TouchPadMove_t touchPadMove;
 	public VREvent_SeatedZeroPoseReset_t seatedZeroPoseReset;
+	public VREvent_Screenshot_t screenshot;
+	public VREvent_ScreenshotProgress_t screenshotProgress;
+	public VREvent_ApplicationLaunch_t applicationLaunch;
+	public VREvent_EditingCameraSurface_t cameraSurface;
+	public VREvent_MessageOverlay_t messageOverlay;
+	public VREvent_Property_t property;
+	public VREvent_DualAnalog_t dualAnalog;
+	public VREvent_HapticVibration_t hapticVibration;
+	public VREvent_WebConsole_t webConsole;
+	public VREvent_InputBindingLoad_t inputBinding;
+	public VREvent_InputActionManifestLoad_t actionManifest;
+	public VREvent_SpatialAnchor_t spatialAnchor;
 	public VREvent_Data_t() {
 		super();
 	}
@@ -93,6 +105,66 @@ public class VREvent_Data_t extends Union {
 		super();
 		this.seatedZeroPoseReset = seatedZeroPoseReset;
 		setType(VREvent_SeatedZeroPoseReset_t.class);
+	}
+	public VREvent_Data_t(VREvent_Screenshot_t screenshot) {
+		super();
+		this.screenshot = screenshot;
+		setType(VREvent_Screenshot_t.class);
+	}
+	public VREvent_Data_t(VREvent_ScreenshotProgress_t screenshotProgress) {
+		super();
+		this.screenshotProgress = screenshotProgress;
+		setType(VREvent_ScreenshotProgress_t.class);
+	}
+	public VREvent_Data_t(VREvent_ApplicationLaunch_t applicationLaunch) {
+		super();
+		this.applicationLaunch = applicationLaunch;
+		setType(VREvent_ApplicationLaunch_t.class);
+	}
+	public VREvent_Data_t(VREvent_EditingCameraSurface_t cameraSurface) {
+		super();
+		this.cameraSurface = cameraSurface;
+		setType(VREvent_EditingCameraSurface_t.class);
+	}
+	public VREvent_Data_t(VREvent_MessageOverlay_t messageOverlay) {
+		super();
+		this.messageOverlay = messageOverlay;
+		setType(VREvent_MessageOverlay_t.class);
+	}
+	public VREvent_Data_t(VREvent_Property_t property) {
+		super();
+		this.property = property;
+		setType(VREvent_Property_t.class);
+	}
+	public VREvent_Data_t(VREvent_DualAnalog_t dualAnalog) {
+		super();
+		this.dualAnalog = dualAnalog;
+		setType(VREvent_DualAnalog_t.class);
+	}
+	public VREvent_Data_t(VREvent_HapticVibration_t hapticVibration) {
+		super();
+		this.hapticVibration = hapticVibration;
+		setType(VREvent_HapticVibration_t.class);
+	}
+	public VREvent_Data_t(VREvent_WebConsole_t webConsole) {
+		super();
+		this.webConsole = webConsole;
+		setType(VREvent_WebConsole_t.class);
+	}
+	public VREvent_Data_t(VREvent_InputBindingLoad_t inputBinding) {
+		super();
+		this.inputBinding = inputBinding;
+		setType(VREvent_InputBindingLoad_t.class);
+	}
+	public VREvent_Data_t(VREvent_InputActionManifestLoad_t actionManifest) {
+		super();
+		this.actionManifest = actionManifest;
+		setType(VREvent_InputActionManifestLoad_t.class);
+	}
+	public VREvent_Data_t(VREvent_SpatialAnchor_t spatialAnchor) {
+		super();
+		this.spatialAnchor = spatialAnchor;
+		setType(VREvent_SpatialAnchor_t.class);
 	}
 	public VREvent_Data_t(Pointer peer) {
 		super(peer);

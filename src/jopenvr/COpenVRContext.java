@@ -36,11 +36,19 @@ public class COpenVRContext extends Structure {
 	public IntByReference m_pVRScreenshots;
 	/** class vr::IVRDriverManager * */
 	public IntByReference m_pVRDriverManager;
+	/** class vr::IVRInput * */
+	public IntByReference m_pVRInput;
+	/** class vr::IVRIOBuffer * */
+	public IntByReference m_pVRIOBuffer;
+	/** class vr::IVRSpatialAnchors * */
+	public IntByReference m_pVRSpatialAnchors;
+	/** class vr::IVRNotifications * */
+	public IntByReference m_pVRNotifications;
 	public COpenVRContext() {
 		super();
 	}
 	protected List<String> getFieldOrder() {
-		return Arrays.asList("m_pVRSystem", "m_pVRChaperone", "m_pVRChaperoneSetup", "m_pVRCompositor", "m_pVROverlay", "m_pVRResources", "m_pVRRenderModels", "m_pVRExtendedDisplay", "m_pVRSettings", "m_pVRApplications", "m_pVRTrackedCamera", "m_pVRScreenshots", "m_pVRDriverManager");
+		return Arrays.asList("m_pVRSystem", "m_pVRChaperone", "m_pVRChaperoneSetup", "m_pVRCompositor", "m_pVROverlay", "m_pVRResources", "m_pVRRenderModels", "m_pVRExtendedDisplay", "m_pVRSettings", "m_pVRApplications", "m_pVRTrackedCamera", "m_pVRScreenshots", "m_pVRDriverManager", "m_pVRInput", "m_pVRIOBuffer", "m_pVRSpatialAnchors", "m_pVRNotifications");
 	}
 	public COpenVRContext(Pointer peer) {
 		super(peer);

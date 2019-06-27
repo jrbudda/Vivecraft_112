@@ -22,16 +22,16 @@ public class VR_IVRChaperoneSetup_FnTable extends Structure {
 	public VR_IVRChaperoneSetup_FnTable.GetWorkingStandingZeroPoseToRawTrackingPose_callback GetWorkingStandingZeroPoseToRawTrackingPose;
 	public VR_IVRChaperoneSetup_FnTable.SetWorkingPlayAreaSize_callback SetWorkingPlayAreaSize;
 	public VR_IVRChaperoneSetup_FnTable.SetWorkingCollisionBoundsInfo_callback SetWorkingCollisionBoundsInfo;
+	public VR_IVRChaperoneSetup_FnTable.SetWorkingPerimeter_callback SetWorkingPerimeter;
 	public VR_IVRChaperoneSetup_FnTable.SetWorkingSeatedZeroPoseToRawTrackingPose_callback SetWorkingSeatedZeroPoseToRawTrackingPose;
 	public VR_IVRChaperoneSetup_FnTable.SetWorkingStandingZeroPoseToRawTrackingPose_callback SetWorkingStandingZeroPoseToRawTrackingPose;
 	public VR_IVRChaperoneSetup_FnTable.ReloadFromDisk_callback ReloadFromDisk;
 	public VR_IVRChaperoneSetup_FnTable.GetLiveSeatedZeroPoseToRawTrackingPose_callback GetLiveSeatedZeroPoseToRawTrackingPose;
-	public VR_IVRChaperoneSetup_FnTable.SetWorkingCollisionBoundsTagsInfo_callback SetWorkingCollisionBoundsTagsInfo;
-	public VR_IVRChaperoneSetup_FnTable.GetLiveCollisionBoundsTagsInfo_callback GetLiveCollisionBoundsTagsInfo;
-	public VR_IVRChaperoneSetup_FnTable.SetWorkingPhysicalBoundsInfo_callback SetWorkingPhysicalBoundsInfo;
-	public VR_IVRChaperoneSetup_FnTable.GetLivePhysicalBoundsInfo_callback GetLivePhysicalBoundsInfo;
 	public VR_IVRChaperoneSetup_FnTable.ExportLiveToBuffer_callback ExportLiveToBuffer;
 	public VR_IVRChaperoneSetup_FnTable.ImportFromBufferToWorking_callback ImportFromBufferToWorking;
+	public VR_IVRChaperoneSetup_FnTable.ShowWorkingSetPreview_callback ShowWorkingSetPreview;
+	public VR_IVRChaperoneSetup_FnTable.HideWorkingSetPreview_callback HideWorkingSetPreview;
+	public VR_IVRChaperoneSetup_FnTable.RoomSetupStarting_callback RoomSetupStarting;
 	public interface CommitWorkingCopy_callback extends Callback {
 		byte apply(int configFile);
 	};
@@ -62,6 +62,9 @@ public class VR_IVRChaperoneSetup_FnTable extends Structure {
 	public interface SetWorkingCollisionBoundsInfo_callback extends Callback {
 		void apply(HmdQuad_t pQuadsBuffer, int unQuadsCount);
 	};
+	public interface SetWorkingPerimeter_callback extends Callback {
+		void apply(HmdVector2_t pPointBuffer, int unPointCount);
+	};
 	public interface SetWorkingSeatedZeroPoseToRawTrackingPose_callback extends Callback {
 		void apply(HmdMatrix34_t pMatSeatedZeroPoseToRawTrackingPose);
 	};
@@ -74,29 +77,26 @@ public class VR_IVRChaperoneSetup_FnTable extends Structure {
 	public interface GetLiveSeatedZeroPoseToRawTrackingPose_callback extends Callback {
 		byte apply(HmdMatrix34_t pmatSeatedZeroPoseToRawTrackingPose);
 	};
-	public interface SetWorkingCollisionBoundsTagsInfo_callback extends Callback {
-		void apply(Pointer pTagsBuffer, int unTagCount);
-	};
-	public interface GetLiveCollisionBoundsTagsInfo_callback extends Callback {
-		byte apply(Pointer pTagsBuffer, IntByReference punTagCount);
-	};
-	public interface SetWorkingPhysicalBoundsInfo_callback extends Callback {
-		byte apply(HmdQuad_t pQuadsBuffer, int unQuadsCount);
-	};
-	public interface GetLivePhysicalBoundsInfo_callback extends Callback {
-		byte apply(HmdQuad_t pQuadsBuffer, IntByReference punQuadsCount);
-	};
 	public interface ExportLiveToBuffer_callback extends Callback {
 		byte apply(Pointer pBuffer, IntByReference pnBufferLength);
 	};
 	public interface ImportFromBufferToWorking_callback extends Callback {
 		byte apply(Pointer pBuffer, int nImportFlags);
 	};
+	public interface ShowWorkingSetPreview_callback extends Callback {
+		void apply();
+	};
+	public interface HideWorkingSetPreview_callback extends Callback {
+		void apply();
+	};
+	public interface RoomSetupStarting_callback extends Callback {
+		void apply();
+	};
 	public VR_IVRChaperoneSetup_FnTable() {
 		super();
 	}
 	protected List<String> getFieldOrder() {
-		return Arrays.asList("CommitWorkingCopy", "RevertWorkingCopy", "GetWorkingPlayAreaSize", "GetWorkingPlayAreaRect", "GetWorkingCollisionBoundsInfo", "GetLiveCollisionBoundsInfo", "GetWorkingSeatedZeroPoseToRawTrackingPose", "GetWorkingStandingZeroPoseToRawTrackingPose", "SetWorkingPlayAreaSize", "SetWorkingCollisionBoundsInfo", "SetWorkingSeatedZeroPoseToRawTrackingPose", "SetWorkingStandingZeroPoseToRawTrackingPose", "ReloadFromDisk", "GetLiveSeatedZeroPoseToRawTrackingPose", "SetWorkingCollisionBoundsTagsInfo", "GetLiveCollisionBoundsTagsInfo", "SetWorkingPhysicalBoundsInfo", "GetLivePhysicalBoundsInfo", "ExportLiveToBuffer", "ImportFromBufferToWorking");
+		return Arrays.asList("CommitWorkingCopy", "RevertWorkingCopy", "GetWorkingPlayAreaSize", "GetWorkingPlayAreaRect", "GetWorkingCollisionBoundsInfo", "GetLiveCollisionBoundsInfo", "GetWorkingSeatedZeroPoseToRawTrackingPose", "GetWorkingStandingZeroPoseToRawTrackingPose", "SetWorkingPlayAreaSize", "SetWorkingCollisionBoundsInfo", "SetWorkingPerimeter", "SetWorkingSeatedZeroPoseToRawTrackingPose", "SetWorkingStandingZeroPoseToRawTrackingPose", "ReloadFromDisk", "GetLiveSeatedZeroPoseToRawTrackingPose", "ExportLiveToBuffer", "ImportFromBufferToWorking", "ShowWorkingSetPreview", "HideWorkingSetPreview", "RoomSetupStarting");
 	}
 	public VR_IVRChaperoneSetup_FnTable(Pointer peer) {
 		super(peer);

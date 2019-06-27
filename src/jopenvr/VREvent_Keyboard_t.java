@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class VREvent_Keyboard_t extends Structure {
 	/** char[8] */
-	public Pointer[] cNewInput = new Pointer[8];
+	public byte[] cNewInput = new byte[8];
 	public long uUserValue;
 	public VREvent_Keyboard_t() {
 		super();
@@ -18,7 +18,7 @@ public class VREvent_Keyboard_t extends Structure {
 	protected List<String> getFieldOrder() {
 		return Arrays.asList("cNewInput", "uUserValue");
 	}
-	public VREvent_Keyboard_t(Pointer cNewInput[], long uUserValue) {
+	public VREvent_Keyboard_t(byte cNewInput[], long uUserValue) {
 		super();
 		if ((cNewInput.length != this.cNewInput.length)) 
 			throw new IllegalArgumentException("Wrong array size !");

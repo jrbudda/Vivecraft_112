@@ -30,7 +30,9 @@ public class VivecraftMain
 		"guichaguri.betterfps.transformers.PatcherTransformer",
 		"sampler.asm.Transformer",
 		"de.morrien.f5fix.F5FixTransformer",
-		"com.therandomlabs.randompatches.core.RPTransformer"
+		"com.therandomlabs.randompatches.core.RPTransformer",
+		"pl.asie.foamfix.coremod.FoamFixAT",
+		"pl.asie.foamfix.coremod.FoamFixTransformer"
 	};
 	
 	public static void main(String[] p_main_0_)

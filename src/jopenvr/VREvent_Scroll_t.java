@@ -11,18 +11,20 @@ import java.util.List;
 public class VREvent_Scroll_t extends Structure {
 	public float xdelta;
 	public float ydelta;
-	public int repeatCount;
+	public int unused;
+	public float viewportscale;
 	public VREvent_Scroll_t() {
 		super();
 	}
 	protected List<String> getFieldOrder() {
-		return Arrays.asList("xdelta", "ydelta", "repeatCount");
+		return Arrays.asList("xdelta", "ydelta", "unused", "viewportscale");
 	}
-	public VREvent_Scroll_t(float xdelta, float ydelta, int repeatCount) {
+	public VREvent_Scroll_t(float xdelta, float ydelta, int unused, float viewportscale) {
 		super();
 		this.xdelta = xdelta;
 		this.ydelta = ydelta;
-		this.repeatCount = repeatCount;
+		this.unused = unused;
+		this.viewportscale = viewportscale;
 	}
 	public VREvent_Scroll_t(Pointer peer) {
 		super(peer);

@@ -56,6 +56,9 @@ public class VR_IVRCompositor_FnTable extends Structure {
 	public VR_IVRCompositor_FnTable.GetVulkanDeviceExtensionsRequired_callback GetVulkanDeviceExtensionsRequired;
 	public VR_IVRCompositor_FnTable.SetExplicitTimingMode_callback SetExplicitTimingMode;
 	public VR_IVRCompositor_FnTable.SubmitExplicitTimingData_callback SubmitExplicitTimingData;
+	public VR_IVRCompositor_FnTable.IsMotionSmoothingEnabled_callback IsMotionSmoothingEnabled;
+	public VR_IVRCompositor_FnTable.IsMotionSmoothingSupported_callback IsMotionSmoothingSupported;
+	public VR_IVRCompositor_FnTable.IsCurrentSceneFocusAppLoading_callback IsCurrentSceneFocusAppLoading;
 	public interface SetTrackingSpace_callback extends Callback {
 		void apply(int eOrigin);
 	};
@@ -185,11 +188,20 @@ public class VR_IVRCompositor_FnTable extends Structure {
 	public interface SubmitExplicitTimingData_callback extends Callback {
 		int apply();
 	};
+	public interface IsMotionSmoothingEnabled_callback extends Callback {
+		byte apply();
+	};
+	public interface IsMotionSmoothingSupported_callback extends Callback {
+		byte apply();
+	};
+	public interface IsCurrentSceneFocusAppLoading_callback extends Callback {
+		byte apply();
+	};
 	public VR_IVRCompositor_FnTable() {
 		super();
 	}
 	protected List<String> getFieldOrder() {
-		return Arrays.asList("SetTrackingSpace", "GetTrackingSpace", "WaitGetPoses", "GetLastPoses", "GetLastPoseForTrackedDeviceIndex", "Submit", "ClearLastSubmittedFrame", "PostPresentHandoff", "GetFrameTiming", "GetFrameTimings", "GetFrameTimeRemaining", "GetCumulativeStats", "FadeToColor", "GetCurrentFadeColor", "FadeGrid", "GetCurrentGridAlpha", "SetSkyboxOverride", "ClearSkyboxOverride", "CompositorBringToFront", "CompositorGoToBack", "CompositorQuit", "IsFullscreen", "GetCurrentSceneFocusProcess", "GetLastFrameRenderer", "CanRenderScene", "ShowMirrorWindow", "HideMirrorWindow", "IsMirrorWindowVisible", "CompositorDumpImages", "ShouldAppRenderWithLowResources", "ForceInterleavedReprojectionOn", "ForceReconnectProcess", "SuspendRendering", "GetMirrorTextureD3D11", "ReleaseMirrorTextureD3D11", "GetMirrorTextureGL", "ReleaseSharedGLTexture", "LockGLSharedTextureForAccess", "UnlockGLSharedTextureForAccess", "GetVulkanInstanceExtensionsRequired", "GetVulkanDeviceExtensionsRequired", "SetExplicitTimingMode", "SubmitExplicitTimingData");
+		return Arrays.asList("SetTrackingSpace", "GetTrackingSpace", "WaitGetPoses", "GetLastPoses", "GetLastPoseForTrackedDeviceIndex", "Submit", "ClearLastSubmittedFrame", "PostPresentHandoff", "GetFrameTiming", "GetFrameTimings", "GetFrameTimeRemaining", "GetCumulativeStats", "FadeToColor", "GetCurrentFadeColor", "FadeGrid", "GetCurrentGridAlpha", "SetSkyboxOverride", "ClearSkyboxOverride", "CompositorBringToFront", "CompositorGoToBack", "CompositorQuit", "IsFullscreen", "GetCurrentSceneFocusProcess", "GetLastFrameRenderer", "CanRenderScene", "ShowMirrorWindow", "HideMirrorWindow", "IsMirrorWindowVisible", "CompositorDumpImages", "ShouldAppRenderWithLowResources", "ForceInterleavedReprojectionOn", "ForceReconnectProcess", "SuspendRendering", "GetMirrorTextureD3D11", "ReleaseMirrorTextureD3D11", "GetMirrorTextureGL", "ReleaseSharedGLTexture", "LockGLSharedTextureForAccess", "UnlockGLSharedTextureForAccess", "GetVulkanInstanceExtensionsRequired", "GetVulkanDeviceExtensionsRequired", "SetExplicitTimingMode", "SubmitExplicitTimingData", "IsMotionSmoothingEnabled", "IsMotionSmoothingSupported", "IsCurrentSceneFocusAppLoading");
 	}
 	public VR_IVRCompositor_FnTable(Pointer peer) {
 		super(peer);

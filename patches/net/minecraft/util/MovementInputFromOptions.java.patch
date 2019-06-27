@@ -172,10 +172,10 @@
 +
 +			if(set) {
 +				// just assuming all this below is needed for compatibility.
-+				this.forwardKeyDown = this.moveForward > 0;
-+				this.backKeyDown = this.moveForward < 0;
-+				this.leftKeyDown = this.moveStrafe > 0;
-+				this.rightKeyDown = this.moveStrafe < 0;
++				this.forwardKeyDown = this.moveForward > mc.vrSettings.analogDeadzone;
++				this.backKeyDown = this.moveForward < -mc.vrSettings.analogDeadzone;
++				this.leftKeyDown = this.moveStrafe > mc.vrSettings.analogDeadzone;
++				this.rightKeyDown = this.moveStrafe < -mc.vrSettings.analogDeadzone;
 +				VRButtonMapping.setKeyBindState(this.gameSettings.keyBindForward, this.forwardKeyDown);
 +				VRButtonMapping.setKeyBindState(this.gameSettings.keyBindBack, this.backKeyDown);
 +				VRButtonMapping.setKeyBindState(this.gameSettings.keyBindLeft, this.leftKeyDown);

@@ -703,10 +703,11 @@
          }
       },
 	{
-		"name": "org.ow2.asm:asm-all:5.0.3"
+		"name": "org.ow2.asm:asm-all:5.0.3",
+		"url": "http://files.minecraftforge.net/maven/"
 	}, 
 	{
-		"url": "http://central.maven.org/maven2/", 
+		"url": "http://vivecraft.org/jar/", 
 		"name": "org.json:json:20140107"
 	}, 
 	{
@@ -719,11 +720,7 @@
 	{
 		"url": "http://vivecraft.org/jar/", 
 		"name": "de.fruitfly.ovr:JRift:0.8.0.0.1"
-	}, 
-	{
-		"url": "http://vivecraft.org/jar/", 
-		"name": "net.aib42.mumblelink:JMumble:1.11"
-	}, 
+	},
 	{
 		"url": "https://cache.techjargaming.com/maven/",
 		"name": "bspkrs:mmv:0.7.3"
