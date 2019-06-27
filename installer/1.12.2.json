@@ -703,8 +703,7 @@
          }
       },
 	{
-		"name": "org.ow2.asm:asm-all:5.0.3",
-		"url": "http://files.minecraftforge.net/maven/"
+		"name": "org.ow2.asm:asm-all:5.0.3"
 	}, 
 	{
 		"url": "http://vivecraft.org/jar/", 
