@@ -652,7 +652,7 @@
                          vec3d2 = new Vec3d((double)(f2 * f5 - f3 * f4), vec3d2.y, (double)(f3 * f5 + f2 * f4));
                          f1 = (float)vec3d2.lengthSquared();
  
-@@ -1324,4 +1562,382 @@
+@@ -1324,4 +1562,380 @@
              }
          }
      }
@@ -835,7 +835,6 @@
 +    			if(this.capabilities.isFlying || this.inWater){
 +    				switch (mc.vrSettings.vrFreeMoveMode){
 +    				case VRSettings.FREEMOVE_CONTROLLER:
-+    				case VRSettings.FREEMOVE_JOYPAD:
 +    					directionVec = directionVec.rotatePitch(con.vrdata_world_pre.getController(1).getPitch()  * PIOVER180);		   
 +    					break;
 +    				case VRSettings.FREEMOVE_HMD:
@@ -853,7 +852,6 @@
 +    			}else{
 +    				switch (mc.vrSettings.vrFreeMoveMode){
 +    				case VRSettings.FREEMOVE_CONTROLLER:
-+    				case VRSettings.FREEMOVE_JOYPAD:
 +    					directionVec = directionVec.rotateYaw(-con.vrdata_world_pre.getController(1).getYaw() * PIOVER180);	
 +    					break;
 +    				case VRSettings.FREEMOVE_HMD:

@@ -8,27 +8,22 @@ import org.vivecraft.render.RenderPass;
 import org.vivecraft.render.ShaderHelper;
 import org.vivecraft.render.VRShaders;
 import org.vivecraft.settings.VRSettings;
+import org.vivecraft.utils.Matrix4f;
+import org.vivecraft.utils.OpenVRUtil;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
-import de.fruitfly.ovr.enums.EyeType;
-import de.fruitfly.ovr.structs.FovPort;
-import de.fruitfly.ovr.structs.GLConfig;
-import de.fruitfly.ovr.structs.Matrix4f;
-import de.fruitfly.ovr.structs.RenderTextureInfo;
-import de.fruitfly.ovr.structs.RenderTextureSet;
-import de.fruitfly.ovr.structs.Sizei;
 import jopenvr.HiddenAreaMesh_t;
 import jopenvr.HmdMatrix44_t;
 import jopenvr.JOpenVRLibrary;
 import jopenvr.JOpenVRLibrary.EVRCompositorError;
-import jopenvr.OpenVRUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.src.Config;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.DimensionType;
 import net.optifine.shaders.Shaders;
 
@@ -83,28 +78,12 @@ public class OpenVRStereoRenderer
 	private HiddenAreaMesh_t[] hiddenMeshes = new HiddenAreaMesh_t[2];
 	private float[][] hiddenMesheVertecies = new float[2][];
 
-	public RenderTextureInfo getRenderTextureSizes(float renderScaleFactor)
+	public Tuple<Integer, Integer>getRenderTextureSizes(float renderScaleFactor)
 	{
 		IntByReference rtx = new IntByReference();
 		IntByReference rty = new IntByReference();
 		MCOpenVR.vrsystem.GetRecommendedRenderTargetSize.apply(rtx, rty);
-
-		RenderTextureInfo info = new RenderTextureInfo();
-		info.HmdNativeResolution.w = rtx.getValue();
-		info.HmdNativeResolution.h = rty.getValue();
-		info.LeftFovTextureResolution.w = (int) (rtx.getValue());
-		info.LeftFovTextureResolution.h = (int) (rty.getValue());
-		info.RightFovTextureResolution.w = (int) (rtx.getValue());
-		info.RightFovTextureResolution.h = (int) (rty.getValue());
-		if ( info.LeftFovTextureResolution.w % 2 != 0) info.LeftFovTextureResolution.w++;
-		if ( info.LeftFovTextureResolution.h % 2 != 0) info.LeftFovTextureResolution.w++;
-		if ( info.RightFovTextureResolution.w % 2 != 0) info.LeftFovTextureResolution.w++;
-		if ( info.RightFovTextureResolution.h % 2 != 0) info.LeftFovTextureResolution.w++;
-
-		info.CombinedTextureResolution.w = info.LeftFovTextureResolution.w + info.RightFovTextureResolution.w;
-		info.CombinedTextureResolution.h = info.LeftFovTextureResolution.h;
-
-
+		Tuple<Integer, Integer> info = new Tuple<Integer, Integer>(rtx.getValue(), rty.getValue());
 		for (int i = 0; i < 2; i++) {
 			hiddenMeshes[i] = MCOpenVR.vrsystem.GetHiddenAreaMesh.apply(i,0);
 			hiddenMeshes[i].read();
@@ -115,8 +94,8 @@ public class OpenVRStereoRenderer
 				hiddenMeshes[i].pVertexData.getPointer().read(0, hiddenMesheVertecies[i], 0, hiddenMesheVertecies[i].length);
 	
 				for (int ix = 0;ix < hiddenMesheVertecies[i].length;ix+=2) {
-					hiddenMesheVertecies[i][ix] = hiddenMesheVertecies[i][ix] * info.LeftFovTextureResolution.w;
-					hiddenMesheVertecies[i][ix + 1] = hiddenMesheVertecies[i][ix +1] * info.LeftFovTextureResolution.h;
+					hiddenMesheVertecies[i][ix] = hiddenMesheVertecies[i][ix] * info.getFirst();
+					hiddenMesheVertecies[i][ix + 1] = hiddenMesheVertecies[i][ix +1] * info.getSecond();
 				}
 				System.out.println("Stencil mesh loaded for eye " + i);
 			} else {
@@ -127,30 +106,24 @@ public class OpenVRStereoRenderer
 		return info;
 	}
 
-	public Matrix4f getProjectionMatrix(FovPort fov,
-			int eyeType,
-			float nearClip,
-			float farClip)
+	public Matrix4f getProjectionMatrix(int eyeType,float nearClip,float farClip)
 	{
 		if ( eyeType == 0 )
 		{
 			HmdMatrix44_t mat = MCOpenVR.vrsystem.GetProjectionMatrix.apply(JOpenVRLibrary.EVREye.EVREye_Eye_Left, nearClip, farClip);
 			MCOpenVR.texType0.depth.mProjection = mat;
+			MCOpenVR.texType0.depth.write();
 			MCOpenVR.hmdProjectionLeftEye = new Matrix4f();
 			return OpenVRUtil.convertSteamVRMatrix4ToMatrix4f(mat, MCOpenVR.hmdProjectionLeftEye);
 		}else{
 			HmdMatrix44_t mat = MCOpenVR.vrsystem.GetProjectionMatrix.apply(JOpenVRLibrary.EVREye.EVREye_Eye_Right, nearClip, farClip);
 			MCOpenVR.texType1.depth.mProjection = mat;
+			MCOpenVR.texType1.depth.write();
 			MCOpenVR.hmdProjectionRightEye = new Matrix4f();
 			return OpenVRUtil.convertSteamVRMatrix4ToMatrix4f(mat, MCOpenVR.hmdProjectionRightEye);
 		}
 	}
 
-
-	public EyeType eyeRenderOrder(int index)
-	{
-		return ( index == 1 ) ? EyeType.ovrEye_Right : EyeType.ovrEye_Left;
-	}
 
 	public double getFrameTiming() {
 		return getCurrentTimeSecs();
@@ -181,7 +154,7 @@ public class OpenVRStereoRenderer
 
 	public boolean providesRenderTextures() { return true; }
 
-	public RenderTextureSet createRenderTexture(int lwidth, int lheight)
+	public void createRenderTexture(int lwidth, int lheight)
 	{	
 		// generate left eye texture
 		LeftEyeTextureId = GL11.glGenTextures();
@@ -213,15 +186,8 @@ public class OpenVRStereoRenderer
 		MCOpenVR.texType1.eType = JOpenVRLibrary.ETextureType.ETextureType_TextureType_OpenGL;
 		MCOpenVR.texType1.write();
 
-		RenderTextureSet textureSet = new RenderTextureSet();
-		textureSet.leftEyeTextureIds.add(LeftEyeTextureId);
-		textureSet.rightEyeTextureIds.add(RightEyeTextureId);
-		return textureSet;
 	}
 
-	public void configureRenderer(GLConfig cfg) {
-
-	}
 
 	public boolean endFrame(RenderPass eye)
 	{
@@ -501,6 +467,7 @@ public class OpenVRStereoRenderer
 
 		if (lastEnableVsync != mc.gameSettings.enableVsync) {
 			reinitFrameBuffers("VSync Changed");
+			lastEnableVsync = mc.gameSettings.enableVsync;
 		}
 
 		if (reinitFramebuffers)
@@ -512,22 +479,20 @@ public class OpenVRStereoRenderer
 			int displayFBWidth = (mc.displayWidth< 1) ? 1 : mc.displayWidth;
 			int displayFBHeight = (mc.displayHeight  < 1) ? 1 : mc.displayHeight;
 				
-			Sizei EyeTextureSize = new Sizei(); 
 			
-			EyeTextureSize.w = displayFBWidth;
-			EyeTextureSize.h = displayFBHeight;
+			int eyew, eyeh;
 
-			FovPort leftFov = null;
-			FovPort rightFov = null;
+			eyew = displayFBWidth;
+			eyeh = displayFBHeight;
 
 			if (!isInitialized()) {
 				throw new RenderConfigException(RENDER_SETUP_FAILURE_MESSAGE + getName(), " " + getinitError());
 			}
 
-			RenderTextureInfo renderTextureInfo = getRenderTextureSizes(mc.vrSettings.renderScaleFactor);
+			Tuple<Integer, Integer> renderTextureInfo = getRenderTextureSizes(mc.vrSettings.renderScaleFactor);
 
-			EyeTextureSize.w  = renderTextureInfo.LeftFovTextureResolution.w ;
-			EyeTextureSize.h  = renderTextureInfo.LeftFovTextureResolution.h ;
+			eyew  = renderTextureInfo.getFirst();
+			eyeh  = renderTextureInfo.getSecond();
 
 			if (framebufferVrRender != null) {
 				framebufferVrRender.deleteFramebuffer();
@@ -592,49 +557,31 @@ public class OpenVRStereoRenderer
 
 			checkGLError("Mirror framebuffer setup");
 
-			int tex0 = -1, tex1 = -1;
+			createRenderTexture(
+					eyew,
+					eyeh);
 
-			if (providesRenderTextures())
-			{ //always true
-				// Source render textures
-				RenderTextureSet renderTextures = createRenderTexture(
-						EyeTextureSize.w,
-						EyeTextureSize.h);
-				if (renderTextures == null) {
+			if (LeftEyeTextureId == -1) {
 					throw new RenderConfigException(RENDER_SETUP_FAILURE_MESSAGE + getName(), getLastError());
 				}
-				mc.print("L Render texture resolution: " + EyeTextureSize.w + " x " + EyeTextureSize.h);
-				mc.print("Provider supplied render texture IDs:\n" + renderTextures.toString());
+			mc.print("L Render texture resolution: " + eyew + " x " + eyeh);
+			mc.print("Provider supplied render texture IDs:\n" + LeftEyeTextureId + " " + RightEyeTextureId);
 
-			    tex0 = renderTextures.leftEyeTextureIds.get(0);
-				tex1 = renderTextures.rightEyeTextureIds.get(0);
-
-			}
-			else
-			{
-				// Generate our textures
-				//renderTexProvider.genTextureIds(GL11.GL_RGBA8, GL11.GL_RGBA, GL11.GL_INT, EyeTextureSize.w, EyeTextureSize.h, 1);
-			}
 			checkGLError("Render Texture setup");
 
-			
-			if (tex0 == -1 || tex1 == -1) {
-				throw new Exception("Failed to create eye textures");
-			}
-			
-			framebufferEye0 = new Framebuffer("L Eye", EyeTextureSize.w, EyeTextureSize.h, true,  false, false, 0, tex0, false);
+			framebufferEye0 = new Framebuffer("L Eye", eyew, eyeh, true,  false, false, 0, LeftEyeTextureId, false);
 			mc.print(framebufferEye0.toString());
 			checkGLError("Left Eye framebuffer setup");
 			
-			framebufferEye1 = new Framebuffer("R Eye", EyeTextureSize.w, EyeTextureSize.h, true,  false, false,0, tex1, false);
+			framebufferEye1 = new Framebuffer("R Eye", eyew, eyeh, true,  false, false,0, RightEyeTextureId, false);
 			mc.print(framebufferEye1.toString());
 			checkGLError("Right Eye framebuffer setup");
 			
 			MCOpenVR.texType0.depth.handle = Pointer.createConstant(framebufferEye0.depthBuffer);	
 			MCOpenVR.texType1.depth.handle = Pointer.createConstant(framebufferEye1.depthBuffer);	
 
-			displayFBWidth = (int) Math.ceil(EyeTextureSize.w * mc.vrSettings.renderScaleFactor);
-			displayFBHeight = (int) Math.ceil(EyeTextureSize.h * mc.vrSettings.renderScaleFactor);
+			displayFBWidth = (int) Math.ceil(eyew * mc.vrSettings.renderScaleFactor);
+			displayFBHeight = (int) Math.ceil(eyeh * mc.vrSettings.renderScaleFactor);
 			
 			framebufferVrRender = new Framebuffer("3D Render", displayFBWidth , displayFBHeight, true, false);
 			mc.print(framebufferVrRender.toString());
@@ -643,9 +590,9 @@ public class OpenVRStereoRenderer
 			mirrorFBWidth = mc.displayWidth;
 			mirrorFBHeight = mc.displayHeight;
 			if (mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_MIXED_REALITY) {
-				mirrorFBWidth = mirrorFBWidth / 2;
+				mirrorFBWidth = mc.displayWidth / 2;
 				if(mc.vrSettings.mixedRealityUnityLike)
-					mirrorFBHeight = mirrorFBHeight / 2;
+					mirrorFBHeight = mc.displayHeight / 2;
 			}
 
 			if (Config.isShaders()) {
@@ -688,10 +635,10 @@ public class OpenVRStereoRenderer
 			
 			mc.entityRenderer.setupClipPlanes();
 
-			eyeproj[0] = getProjectionMatrix(null, 0, mc.entityRenderer.minClipDistance, mc.entityRenderer.clipDistance).transposed().toFloatBuffer();
-			eyeproj[1] = getProjectionMatrix(null, 1, mc.entityRenderer.minClipDistance, mc.entityRenderer.clipDistance).transposed().toFloatBuffer();
-			cloudeyeproj[0] = getProjectionMatrix(null, 0, mc.entityRenderer.minClipDistance, mc.entityRenderer.clipDistance * 4).transposed().toFloatBuffer();
-			cloudeyeproj[1] = getProjectionMatrix(null, 1, mc.entityRenderer.minClipDistance, mc.entityRenderer.clipDistance * 4).transposed().toFloatBuffer();
+			eyeproj[0] = getProjectionMatrix(0, mc.entityRenderer.minClipDistance, mc.entityRenderer.clipDistance).transposed().toFloatBuffer();
+			eyeproj[1] = getProjectionMatrix(1, mc.entityRenderer.minClipDistance, mc.entityRenderer.clipDistance).transposed().toFloatBuffer();
+			cloudeyeproj[0] = getProjectionMatrix(0, mc.entityRenderer.minClipDistance, mc.entityRenderer.clipDistance * 4).transposed().toFloatBuffer();
+			cloudeyeproj[1] = getProjectionMatrix(1, mc.entityRenderer.minClipDistance, mc.entityRenderer.clipDistance * 4).transposed().toFloatBuffer();
 
 			if (mc.vrSettings.useFsaa)
 			{
@@ -702,9 +649,9 @@ public class OpenVRStereoRenderer
 					// GL11.GL_RGBA8
 					checkGLError("pre FSAA FBO creation");
 					// Lanczos downsample FBOs
-					fsaaFirstPassResultFBO = new Framebuffer("FSAA Pass1 FBO",EyeTextureSize.w, displayFBHeight, true, false,false, 0, -1, true);
+					fsaaFirstPassResultFBO = new Framebuffer("FSAA Pass1 FBO",eyew, displayFBHeight, true, false,false, 0, -1, true);
 					//TODO: ugh, support multiple color attachments in Framebuffer....
-					fsaaLastPassResultFBO = new Framebuffer("FSAA Pass2 FBO",EyeTextureSize.w, EyeTextureSize.h, true, false,false, 0, -1, true);
+					fsaaLastPassResultFBO = new Framebuffer("FSAA Pass2 FBO",eyew, eyeh, true, false,false, 0, -1, true);
 			
 					mc.print(fsaaFirstPassResultFBO.toString());
 					mc.print(fsaaLastPassResultFBO.toString());
@@ -750,8 +697,8 @@ public class OpenVRStereoRenderer
 
 
 			System.out.println("[Minecrift] New render config:" +
-					"\nRender target width:  " + (true ? EyeTextureSize.w + EyeTextureSize.w: mc.displayWidth) +
-					", height: " + (true ? Math.max(EyeTextureSize.h, EyeTextureSize.h) : mc.displayHeight) +
+					"\nRender target width:  " + eyew + eyew +
+					", height: " + eyeh +
 					(true ? " [Render scale: " + mc.vrSettings.renderScaleFactor + "]" : "") +
 					(mc.vrSettings.useFsaa ? " [FSAA Scale: " + mc.vrSettings.renderScaleFactor + "]" : "") +
 					"\nDisplay target width: " + displayFBWidth + ", height: " + displayFBHeight);
@@ -761,15 +708,9 @@ public class OpenVRStereoRenderer
 			
 			lastDisplayFBWidth = displayFBWidth;
 			lastDisplayFBHeight = displayFBHeight;
-			lastEnableVsync = mc.gameSettings.enableVsync;
 			reinitFramebuffers = false;
 		}
 
-		if (changeNonDestructiveRenderConfig || reinitFramebuffers)
-		{
-			configureRenderer(null); //does nothing for Vive
-		}
-		
 	}
 
 	public List<RenderPass> getRenderPasses() {

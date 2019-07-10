@@ -2,13 +2,19 @@ package org.vivecraft.provider;
 
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Field;
 import java.nio.IntBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,16 +22,12 @@ import java.util.Map;
 import java.util.Queue;
 
 import org.vivecraft.api.Vec3History;
-import org.vivecraft.control.AxisType;
-import org.vivecraft.control.ButtonTuple;
-import org.vivecraft.control.ButtonType;
 import org.vivecraft.control.ControllerType;
+import org.vivecraft.control.HandedKeyBinding;
 import org.vivecraft.control.TrackedController;
-import org.vivecraft.control.TrackedControllerOculus;
-import org.vivecraft.control.TrackedControllerVive;
-import org.vivecraft.control.TrackedControllerWindowsMR;
-import org.vivecraft.control.VRButtonMapping;
-import org.vivecraft.control.VRInputEvent;
+import org.vivecraft.control.TrackpadSwipeSampler;
+import org.vivecraft.control.VRInputAction;
+import org.vivecraft.control.VRInputActionSet;
 import org.vivecraft.gameplay.screenhandlers.GuiHandler;
 import org.vivecraft.gameplay.screenhandlers.KeyboardHandler;
 import org.vivecraft.gameplay.screenhandlers.RadialHandler;
@@ -33,35 +35,43 @@ import org.vivecraft.gui.settings.GuiVRControls;
 import org.vivecraft.render.RenderPass;
 import org.vivecraft.settings.VRHotkeys;
 import org.vivecraft.settings.VRSettings;
+import org.vivecraft.utils.Angle;
 import org.vivecraft.utils.HardwareType;
+import org.vivecraft.utils.InputInjector;
 import org.vivecraft.utils.KeyboardSimulator;
 import org.vivecraft.utils.MCReflection;
+import org.vivecraft.utils.Matrix4f;
 import org.vivecraft.utils.MenuWorldExporter;
+import org.vivecraft.utils.OpenVRUtil;
+import org.vivecraft.utils.Quaternion;
 import org.vivecraft.utils.Utils;
 import org.vivecraft.utils.Vector2;
+import org.vivecraft.utils.Vector3;
 import org.vivecraft.utils.jkatvr;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.sun.jna.Memory;
 import com.sun.jna.NativeLibrary;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.FloatByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
-import de.fruitfly.ovr.structs.EulerOrient;
-import de.fruitfly.ovr.structs.Matrix4f;
-import de.fruitfly.ovr.structs.Quatf;
-import de.fruitfly.ovr.structs.Vector3f;
 import jopenvr.HmdMatrix34_t;
 import jopenvr.HmdVector2_t;
+import jopenvr.InputOriginInfo_t;
+import jopenvr.InputPoseActionData_t;
 import jopenvr.JOpenVRLibrary;
 import jopenvr.JOpenVRLibrary.EVREventType;
-import jopenvr.OpenVRUtil;
+import jopenvr.JOpenVRLibrary.EVRInputError;
 import jopenvr.RenderModel_ComponentState_t;
 import jopenvr.RenderModel_ControllerMode_State_t;
 import jopenvr.Texture_t;
 import jopenvr.TrackedDevicePose_t;
+import jopenvr.VRActiveActionSet_t;
 import jopenvr.VRControllerAxis_t;
 import jopenvr.VRControllerState_t;
 import jopenvr.VREvent_Controller_t;
@@ -72,6 +82,7 @@ import jopenvr.VRTextureWithDepth_t;
 import jopenvr.VR_IVRApplications_FnTable;
 import jopenvr.VR_IVRChaperone_FnTable;
 import jopenvr.VR_IVRCompositor_FnTable;
+import jopenvr.VR_IVRInput_FnTable;
 import jopenvr.VR_IVROCSystem_FnTable;
 import jopenvr.VR_IVROverlay_FnTable;
 import jopenvr.VR_IVRRenderModels_FnTable;
@@ -80,8 +91,10 @@ import jopenvr.VR_IVRSystem_FnTable;
 import net.java.games.input.ControllerEnvironment;
 import net.minecraft.block.BlockTorch;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiWinGame;
 import net.minecraft.client.main.Main;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -101,7 +114,10 @@ public class MCOpenVR
 {
 	static String initStatus;
 	private static boolean initialized;
+	private static boolean inputInitialized;
+
 	static Minecraft mc;
+	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
 	public static VR_IVRSystem_FnTable vrsystem;
 	static VR_IVRCompositor_FnTable vrCompositor;
@@ -111,6 +127,7 @@ public class MCOpenVR
 	static VR_IVRChaperone_FnTable vrChaperone;
 	public static VR_IVROCSystem_FnTable vrOpenComposite;
 	static VR_IVRApplications_FnTable vrApplications;
+	public static VR_IVRInput_FnTable vrInput;
 
 	private static IntByReference hmdErrorStore = new IntByReference();
 	private static IntBuffer hmdErrorStoreBuf;
@@ -126,8 +143,9 @@ public class MCOpenVR
 	// position/orientation of headset and eye offsets
 	private static final Matrix4f hmdPose = new Matrix4f();
 	public static final Matrix4f hmdRotation = new Matrix4f();
-	static Matrix4f hmdProjectionLeftEye;
-	static Matrix4f hmdProjectionRightEye;
+	public static Matrix4f hmdProjectionLeftEye;
+	public static Matrix4f hmdProjectionRightEye;
+	
 	static Matrix4f hmdPoseLeftEye = new Matrix4f();
 	static Matrix4f hmdPoseRightEye = new Matrix4f();
 	static boolean initSuccess = false, flipEyes = false;
@@ -157,7 +175,7 @@ public class MCOpenVR
 
 	static Vec3d[] aimSource = new Vec3d[3];
 
-	public static Vector3f offset=new Vector3f(0,0,0);
+	public static Vector3 offset=new Vector3(0,0,0);
 
 	static boolean[] controllerTracking = new boolean[3];
 	public static TrackedController[] controllers = new TrackedController[2];
@@ -170,14 +188,8 @@ public class MCOpenVR
 	private static Matrix4f[] controllerRotation = new Matrix4f[3];
 	private static Matrix4f[] handRotation = new Matrix4f[3];
 	public static int[] controllerDeviceIndex = new int[3];
-	private static VRControllerState_t.ByReference[] inputStateRefernceArray = new VRControllerState_t.ByReference[3];
-	private static VRControllerState_t[] lastControllerState = new VRControllerState_t[3];
-	private static VRControllerState_t[] controllerStateReference = new VRControllerState_t[3];
 
 	private static Queue<VREvent_t> vrEvents = new LinkedList<>();
-
-	private static Queue<VRInputEvent> vrInputEvents = new LinkedList<>();
-	private static Map<String, ButtonTuple> activeBindings = new HashMap<>();
 
 	public static double startedOpeningInventory = 0;
 	public static boolean hudPopup = true;
@@ -185,7 +197,7 @@ public class MCOpenVR
 
 	static boolean headIsTracking;
 
-	private static int moveModeSwitchcount = 0;
+	private static int moveModeSwitchCount = 0;
 
 	public static boolean isWalkingAbout;
 	private static boolean isFreeRotate;
@@ -193,6 +205,26 @@ public class MCOpenVR
 	private static ControllerType freeRotateController;
 	private static float walkaboutYawStart;
 	private static float hmdForwardYaw;
+	public static boolean unpressBindingsNextFrame = false;
+
+	private static Map<String, VRInputAction> inputActions = new HashMap<>();
+	private static Map<String, VRInputAction> inputActionsByKeyBinding = new HashMap<>();
+	private static Map<VRInputActionSet, Long> actionSetHandles = new EnumMap<>(VRInputActionSet.class);
+
+	private static long leftPoseHandle;
+	private static long rightPoseHandle;
+	private static long leftHapticHandle;
+	private static long rightHapticHandle;
+	private static long externalCameraPoseHandle;
+
+	private static long leftControllerHandle;
+	private static long rightControllerHandle;
+
+	private static Map<String, TrackpadSwipeSampler> trackpadSwipeSamplers = new HashMap<>();
+
+	private static InputPoseActionData_t.ByReference poseData;
+	private static InputOriginInfo_t.ByReference originInfo;
+	private static VRActiveActionSet_t.ByReference activeActionSetsReference;
 
 	public static boolean mrMovingCamActive;
 	public static Vec3d mrControllerPos = Vec3d.ZERO;
@@ -208,25 +240,39 @@ public class MCOpenVR
 		return "openvr";
 	}
 
-	public static final int MODIFIER_COUNT = 2;
-
-	public static final KeyBinding keyModifier1 = new KeyBinding("Modifier 1", -1, "Vivecraft");
-	public static final KeyBinding keyModifier2 = new KeyBinding("Modifier 2", -1, "Vivecraft");
-	public static final KeyBinding keyHotbarNext = new KeyBinding("Hotbar Next", -1, "Vivecraft");
-	public static final KeyBinding keyHotbarPrev = new KeyBinding("Hotbar Prev", -1, "Vivecraft");
-	public static final KeyBinding keyRotateLeft = new KeyBinding("Rotate Left", -1, "Vivecraft");
-	public static final KeyBinding keyRotateRight = new KeyBinding("Rotate Right", -1, "Vivecraft");
-	public static final KeyBinding keyWalkabout = new KeyBinding("Walkabout", -1, "Vivecraft");
-	public static final KeyBinding keyRotateFree = new KeyBinding("Rotate Free", -1, "Vivecraft");
-	public static final KeyBinding keyQuickTorch = new KeyBinding("Quick Torch", -1, "Vivecraft");
-	public static final KeyBinding keyMenuButton = new KeyBinding("In-Game Menu Button", -1, "Vivecraft");
-	public static final KeyBinding keyExportWorld = new KeyBinding("Export Menu World", -1, "Vivecraft");
-	public static final KeyBinding keyRadialMenu = new KeyBinding("Open Radial Menu", -1, "Vivecraft");
-	public static final KeyBinding keySwapMirrorView = new KeyBinding("Swap Mirror View", -1, "Vivecraft");
-	public static final KeyBinding keyToggleKeyboard = new KeyBinding("Show/Hide Keyboard", -1, "Vivecraft");
-	public static final KeyBinding keyMoveThirdPersonCam = new KeyBinding("Move Third Person Camera", -1, "Vivecraft");
-	//public static final KeyBinding keyInteractVRprimary = new KeyBinding("Interact VR Primary",-1,"Vivecraft");
-	//public static final KeyBinding keyInteractVRsecondary = new KeyBinding("Interact VR Secondary",-1,"Vivecraft");
+	public static final KeyBinding keyHotbarNext = new KeyBinding("vivecraft.key.hotbarNext", Keyboard.KEY_NEXT, "key.categories.inventory");
+	public static final KeyBinding keyHotbarPrev = new KeyBinding("vivecraft.key.hotbarPrev", Keyboard.KEY_PRIOR, "key.categories.inventory");
+	public static final KeyBinding keyHotbarScroll = new KeyBinding("vivecraft.key.hotbarScroll", -1, "key.categories.inventory"); // dummy binding
+	public static final KeyBinding keyHotbarSwipeX = new KeyBinding("vivecraft.key.hotbarSwipeX", -1, "key.categories.inventory"); // dummy binding
+	public static final KeyBinding keyHotbarSwipeY = new KeyBinding("vivecraft.key.hotbarSwipeY", -1, "key.categories.inventory"); // dummy binding
+	public static final KeyBinding keyRotateLeft = new KeyBinding("vivecraft.key.rotateLeft", Keyboard.KEY_LEFT, "key.categories.movement");
+	public static final KeyBinding keyRotateRight = new KeyBinding("vivecraft.key.rotateRight", Keyboard.KEY_RIGHT, "key.categories.movement");
+	public static final KeyBinding keyRotateAxis = new KeyBinding("vivecraft.key.rotateAxis", -1, "key.categories.movement"); // dummy binding
+	public static final KeyBinding keyWalkabout = new KeyBinding("vivecraft.key.walkabout", Keyboard.KEY_END, "key.categories.movement");
+	public static final KeyBinding keyRotateFree = new KeyBinding("vivecraft.key.rotateFree", Keyboard.KEY_HOME, "key.categories.movement");
+	public static final KeyBinding keyTeleport = new KeyBinding("vivecraft.key.teleport", -1, "key.categories.movement");
+	public static final KeyBinding keyTeleportFallback = new KeyBinding("vivecraft.key.teleportFallback", -1, "key.categories.movement");
+	public static final KeyBinding keyFreeMoveRotate = new KeyBinding("vivecraft.key.freeMoveRotate", -1, "key.categories.movement"); // dummy binding
+	public static final KeyBinding keyFreeMoveStrafe = new KeyBinding("vivecraft.key.freeMoveStrafe", -1, "key.categories.movement"); // dummy binding
+	public static final KeyBinding keyToggleMovement = new KeyBinding("vivecraft.key.toggleMovement", -1, "key.categories.movement");
+	public static final KeyBinding keyQuickTorch = new KeyBinding("vivecraft.key.quickTorch", Keyboard.KEY_INSERT, "key.categories.gameplay");
+	public static final KeyBinding keyMenuButton = new KeyBinding("vivecraft.key.ingameMenuButton", -1, "key.categories.ui");
+	public static final KeyBinding keyExportWorld = new KeyBinding("vivecraft.key.exportWorld", -1, "key.categories.misc");
+	public static final KeyBinding keyRadialMenu = new KeyBinding("vivecraft.key.radialMenu", -1, "key.categories.ui");
+	public static final KeyBinding keySwapMirrorView = new KeyBinding("vivecraft.key.swapMirrorView", -1, "key.categories.misc");
+	public static final KeyBinding keyToggleKeyboard = new KeyBinding("vivecraft.key.toggleKeyboard", -1, "key.categories.ui");
+	public static final KeyBinding keyMoveThirdPersonCam = new KeyBinding("vivecraft.key.moveThirdPersonCam", -1, "key.categories.misc");
+	public static final KeyBinding keyTogglePlayerList = new KeyBinding("vivecraft.key.togglePlayerList", -1, "key.categories.multiplayer");
+	public static final HandedKeyBinding keyTrackpadTouch = new HandedKeyBinding("vivecraft.key.trackpadTouch", -1, "key.categories.misc"); // used for swipe sampler
+	public static final HandedKeyBinding keyVRInteract = new HandedKeyBinding("vivecraft.key.vrInteract", -1,"key.categories.gameplay") {
+		@Override
+		public boolean isPriorityOnController(ControllerType type) {
+			// TODO: use this to only take priority on the hand that's interacting
+			return super.isPriorityOnController(type);
+		}
+	};
+	public static final HandedKeyBinding keyClimbeyGrab = new HandedKeyBinding("vivecraft.key.climbeyGrab", -1,"vivecraft.key.category.climbey");
+	public static final HandedKeyBinding keyClimbeyJump = new HandedKeyBinding("vivecraft.key.climbeyJump", -1,"vivecraft.key.category.climbey");
 	
 	
 	public MCOpenVR()
@@ -241,19 +287,15 @@ public class MCOpenVR
 			handRotation[c] = new Matrix4f();
 			controllerDeviceIndex[c] = -1;
 
-			lastControllerState[c] = new VRControllerState_t();
-			controllerStateReference[c] = new VRControllerState_t();
-			inputStateRefernceArray[c] = new VRControllerState_t.ByReference();
+			poseData = new InputPoseActionData_t.ByReference();
+			poseData.setAutoRead(false);
+			poseData.setAutoWrite(false);
+			poseData.setAutoSynch(false);
 
-			inputStateRefernceArray[c].setAutoRead(false);
-			inputStateRefernceArray[c].setAutoWrite(false);
-			inputStateRefernceArray[c].setAutoSynch(false);
-			for (int i = 0; i < 5; i++)
-			{
-				lastControllerState[c].rAxis[i] = new VRControllerAxis_t();
-			}
-
-
+			originInfo = new InputOriginInfo_t.ByReference();
+			originInfo.setAutoRead(false);
+			originInfo.setAutoWrite(false);
+			originInfo.setAutoSynch(false);
 		}		
 	}
 
@@ -316,26 +358,23 @@ public class MCOpenVR
 			return false;
 		}
 
-		installApplicationManifest();
+		try {
+			initOpenVRInput();
+		} catch (Exception e) {
+			System.out.println("ERROR: " + e.getLocalizedMessage());
+			System.out.println( "Controller Input Not Available");
+			mc.vrSettings.seated = true;
+		}
+
+		if (vrInput == null) {
+			System.out.println("Controller input not available. Forcing seated mode.");
+			mc.vrSettings.seated = true;
+		}
 
 		System.out.println( "OpenVR initialized & VR connected." );
 
-		HardwareType hw = getHardwareType();
-		if (hw == HardwareType.WINDOWSMR) {
-			controllers[RIGHT_CONTROLLER] = new TrackedControllerWindowsMR(ControllerType.RIGHT);
-			controllers[LEFT_CONTROLLER] = new TrackedControllerWindowsMR(ControllerType.LEFT);
-		} else if (hw == HardwareType.OCULUS) {
-			controllers[RIGHT_CONTROLLER] = new TrackedControllerOculus(ControllerType.RIGHT);
-			controllers[LEFT_CONTROLLER] = new TrackedControllerOculus(ControllerType.LEFT);
-		} else {
-			controllers[RIGHT_CONTROLLER] = new TrackedControllerVive(ControllerType.RIGHT);
-			controllers[LEFT_CONTROLLER] = new TrackedControllerVive(ControllerType.LEFT);
-		}
-
-		if (controllers[RIGHT_CONTROLLER] instanceof TrackedControllerVive)
-			((TrackedControllerVive)controllers[RIGHT_CONTROLLER]).setTouchpadMode(mc.vrSettings.rightTouchpadMode);
-		if (controllers[LEFT_CONTROLLER] instanceof TrackedControllerVive)
-			((TrackedControllerVive)controllers[LEFT_CONTROLLER]).setTouchpadMode(mc.vrSettings.leftTouchpadMode);
+		controllers[RIGHT_CONTROLLER] = new TrackedController(ControllerType.RIGHT);
+		controllers[LEFT_CONTROLLER] = new TrackedController(ControllerType.LEFT);
 
 		deviceVelocity = new Vec3d[JOpenVRLibrary.k_unMaxTrackedDeviceCount];
 
@@ -383,25 +422,31 @@ public class MCOpenVR
 	}
 
 	public static KeyBinding[] initializeBindings(KeyBinding[] keyBindings) {
-		if (keyBindings == null) return null;
-		keyBindings = ArrayUtils.add(keyBindings, keyModifier1);
-		keyBindings = ArrayUtils.add(keyBindings, keyModifier2);
 		keyBindings = ArrayUtils.add(keyBindings, keyRotateLeft);
 		keyBindings = ArrayUtils.add(keyBindings, keyRotateRight);
+		keyBindings = ArrayUtils.add(keyBindings, keyRotateAxis);
 		keyBindings = ArrayUtils.add(keyBindings, keyRotateFree);
 		keyBindings = ArrayUtils.add(keyBindings, keyWalkabout);
+		keyBindings = ArrayUtils.add(keyBindings, keyTeleport);
+		keyBindings = ArrayUtils.add(keyBindings, keyTeleportFallback);
+		keyBindings = ArrayUtils.add(keyBindings, keyFreeMoveRotate);
+		keyBindings = ArrayUtils.add(keyBindings, keyFreeMoveStrafe);
+		keyBindings = ArrayUtils.add(keyBindings, keyToggleMovement);
 		keyBindings = ArrayUtils.add(keyBindings, keyQuickTorch);
 		keyBindings = ArrayUtils.add(keyBindings, keyHotbarNext);
 		keyBindings = ArrayUtils.add(keyBindings, keyHotbarPrev);
+		keyBindings = ArrayUtils.add(keyBindings, keyHotbarScroll);
+		keyBindings = ArrayUtils.add(keyBindings, keyHotbarSwipeX);
+		keyBindings = ArrayUtils.add(keyBindings, keyHotbarSwipeY);
 		keyBindings = ArrayUtils.add(keyBindings, keyMenuButton);
 		keyBindings = ArrayUtils.add(keyBindings, keyRadialMenu);
-		//keyBindings = ArrayUtils.add(keyBindings, keyInteractVRprimary);
-		//keyBindings = ArrayUtils.add(keyBindings, keyInteractVRsecondary);
+		keyBindings = ArrayUtils.add(keyBindings, keyVRInteract);
 		keyBindings = ArrayUtils.add(keyBindings, keySwapMirrorView);
 		keyBindings = ArrayUtils.add(keyBindings, keyExportWorld);
 		keyBindings = ArrayUtils.add(keyBindings, keyToggleKeyboard);
 		keyBindings = ArrayUtils.add(keyBindings, keyMoveThirdPersonCam);
-		keyBindings = ArrayUtils.add(keyBindings, GuiHandler.keyMenuButton);
+		keyBindings = ArrayUtils.add(keyBindings, keyTogglePlayerList);
+		keyBindings = ArrayUtils.add(keyBindings, keyTrackpadTouch);
 		keyBindings = ArrayUtils.add(keyBindings, GuiHandler.keyLeftClick);
 		keyBindings = ArrayUtils.add(keyBindings, GuiHandler.keyRightClick);
 		keyBindings = ArrayUtils.add(keyBindings, GuiHandler.keyMiddleClick);
@@ -410,16 +455,21 @@ public class MCOpenVR
 		keyBindings = ArrayUtils.add(keyBindings, GuiHandler.keyAlt);
 		keyBindings = ArrayUtils.add(keyBindings, GuiHandler.keyScrollUp);
 		keyBindings = ArrayUtils.add(keyBindings, GuiHandler.keyScrollDown);
+		keyBindings = ArrayUtils.add(keyBindings, GuiHandler.keyScrollAxis);
+		keyBindings = ArrayUtils.add(keyBindings, GuiHandler.keyKeyboardClick);
+		keyBindings = ArrayUtils.add(keyBindings, GuiHandler.keyKeyboardShift);
+		keyBindings = ArrayUtils.add(keyBindings, keyClimbeyGrab);
+		keyBindings = ArrayUtils.add(keyBindings, keyClimbeyJump);
 
-		//TODO: Forge?
 				Map<String, Integer> co = (Map<String, Integer>) MCReflection.KeyBinding_CATEGORY_ORDER.get(null);
-				co.put("Vivecraft", Integer.valueOf(8));
-				co.put("Vivecraft GUI", Integer.valueOf(9));
+		co.put("vivecraft.key.category.gui", 8);
+		co.put("vivecraft.key.category.climbey", 9);
+		co.put("vivecraft.key.category.keyboard", 10);
 
 		return keyBindings;
 	}
 
-	private static void installApplicationManifest() {
+	private static void installApplicationManifest(boolean force) {
 		File file = new File("openvr/vivecraft.vrmanifest");
 		Utils.loadAssetToFile("vivecraft.vrmanifest", file, true);
 
@@ -438,38 +488,286 @@ public class MCOpenVR
 				return;
 			}
 
-			// 1 = Temporary manifest so we don't stick around in the game library.
-			// SteamVR Input will still persist our bindings.
-			int error = vrApplications.AddApplicationManifest.apply(ptrFomrString(file.getAbsolutePath()), (byte)1);
-			if (error != 0) {
-				System.out.println("Failed to add application manifest: " + vrApplications.GetApplicationsErrorNameFromEnum.apply(error).getString(0));
+			System.out.println("Appkey: " + appKey);
+
+			if (!force && vrApplications.IsApplicationInstalled.apply(ptrFomrString(appKey)) != 0) {
+				System.out.println("Application manifest already installed");
 			} else {
-				System.out.println("Application manifest added successfully");
-
-				// OpenVR doc says pid = 0 will use the calling process, but it actually doesn't, so we
-				// have to use this dumb hack that *probably* works on all relevant platforms.
-				// TODO: When Minecraft one day requires Java 9+, we can use ProcessHandle.current().pid()
-				int pid;
-				try {
-					String runtimeName = ManagementFactory.getRuntimeMXBean().getName();
-					pid = Integer.parseInt(runtimeName.split("@")[0]);
-				} catch (Exception e) {
-					System.out.println("Error getting process id");
-					e.printStackTrace();
-					return;
-				}
-
-				error = vrApplications.IdentifyApplication.apply(pid, ptrFomrString(appKey));
+				// 0 = Permanent manifest which will show up in the library
+				// 1 = Temporary manifest which will only show up in bindings while running
+				int error = vrApplications.AddApplicationManifest.apply(ptrFomrString(file.getAbsolutePath()), (byte) 0);
 				if (error != 0) {
-					System.out.println("Failed to identify application: " + vrApplications.GetApplicationsErrorNameFromEnum.apply(error).getString(0));
+					System.out.println("Failed to install application manifest: " + vrApplications.GetApplicationsErrorNameFromEnum.apply(error).getString(0));
+					return;
 				} else {
-					System.out.println("Application identified successfully");
+					System.out.println("Application manifest installed successfully");
 				}
+			}
+
+			// OpenVR doc says pid = 0 will use the calling process, but it actually doesn't, so we
+			// have to use this dumb hack that *probably* works on all relevant platforms.
+			// TODO: When Minecraft one day requires Java 9+, we can use ProcessHandle.current().pid()
+			int pid;
+			try {
+				String runtimeName = ManagementFactory.getRuntimeMXBean().getName();
+				pid = Integer.parseInt(runtimeName.split("@")[0]);
+			} catch (Exception e) {
+				System.out.println("Error getting process id");
+				e.printStackTrace();
+				return;
+			}
+
+			int error = vrApplications.IdentifyApplication.apply(pid, ptrFomrString(appKey));
+			if (error != 0) {
+				System.out.println("Failed to identify application: " + vrApplications.GetApplicationsErrorNameFromEnum.apply(error).getString(0));
+			} else {
+				System.out.println("Application identified successfully");
 			}
 		}
 	}
 
-	private static void initializeJOpenVR() throws Exception { 
+	private static class ActionParams {
+		final String requirement;
+		final String type;
+		final VRInputActionSet actionSetOverride;
+
+		ActionParams(String requirement, String type, VRInputActionSet actionSetOverride) {
+			this.requirement = requirement;
+			this.type = type;
+			this.actionSetOverride = actionSetOverride;
+		}
+	}
+
+	public static void initInputAndApplication() {
+		populateInputActions();
+		if (vrInput == null) return;
+		generateActionManifest();
+		loadActionManifest();
+		loadActionHandles();
+        installApplicationManifest(false);
+		inputInitialized = true;
+	}
+
+	private static void populateInputActions() {
+		Map<String, ActionParams> actionParams = getSpecialActionParams();
+		for (final KeyBinding keyBinding : mc.gameSettings.keyBindings) {
+			ActionParams params = actionParams.getOrDefault(keyBinding.getKeyDescription(), new ActionParams("optional", "boolean", null));
+			VRInputAction action = new VRInputAction(keyBinding, params.requirement, params.type, params.actionSetOverride);
+			inputActions.put(action.name, action);
+		}
+		for (VRInputAction action : inputActions.values()) {
+			inputActionsByKeyBinding.put(action.keyBinding.getKeyDescription(), action);
+		}
+
+		// TODO: implement VR interact
+		getInputAction(MCOpenVR.keyVRInteract).setPriority(5).setEnabled(false);
+		getInputAction(MCOpenVR.keyClimbeyGrab).setPriority(10).setEnabled(false);
+		getInputAction(MCOpenVR.keyClimbeyJump).setPriority(10).setEnabled(false);
+		getInputAction(GuiHandler.keyKeyboardClick).setPriority(50);
+		getInputAction(GuiHandler.keyKeyboardShift).setPriority(50);
+	}
+
+	// This is for bindings with specific requirement/type params, anything not listed will default to optional and boolean
+	// See OpenVR docs for valid values: https://github.com/ValveSoftware/openvr/wiki/Action-manifest#actions
+	private static Map<String, ActionParams> getSpecialActionParams() {
+		Map<String, ActionParams> map = new HashMap<>();
+
+		addActionParams(map, mc.gameSettings.keyBindForward, "optional", "vector1", null);
+		addActionParams(map, mc.gameSettings.keyBindBack, "optional", "vector1", null);
+		addActionParams(map, mc.gameSettings.keyBindLeft, "optional", "vector1", null);
+		addActionParams(map, mc.gameSettings.keyBindRight, "optional", "vector1", null);
+		addActionParams(map, mc.gameSettings.keyBindInventory, "mandatory", "boolean", VRInputActionSet.GLOBAL);
+		addActionParams(map, mc.gameSettings.keyBindAttack, "mandatory", "boolean", null);
+		addActionParams(map, mc.gameSettings.keyBindUseItem, "mandatory", "boolean", null);
+		addActionParams(map, mc.gameSettings.keyBindChat, "optional", "boolean", VRInputActionSet.GLOBAL);
+		addActionParams(map, MCOpenVR.keyHotbarScroll, "optional", "vector2", null);
+		addActionParams(map, MCOpenVR.keyHotbarSwipeX, "optional", "vector2", null);
+		addActionParams(map, MCOpenVR.keyHotbarSwipeY, "optional", "vector2", null);
+		addActionParams(map, MCOpenVR.keyMenuButton, "mandatory", "boolean", VRInputActionSet.GLOBAL);
+		addActionParams(map, MCOpenVR.keyTeleportFallback, "suggested", "vector1", null);
+		addActionParams(map, MCOpenVR.keyFreeMoveRotate, "optional", "vector2", null);
+		addActionParams(map, MCOpenVR.keyFreeMoveStrafe, "optional", "vector2", null);
+		addActionParams(map, MCOpenVR.keyRotateLeft, "optional", "vector1", null);
+		addActionParams(map, MCOpenVR.keyRotateRight, "optional", "vector1", null);
+		addActionParams(map, MCOpenVR.keyRotateAxis, "optional", "vector2", null);
+		addActionParams(map, MCOpenVR.keyRadialMenu, "suggested", "boolean", null);
+		addActionParams(map, MCOpenVR.keySwapMirrorView, "optional", "boolean", VRInputActionSet.GLOBAL);
+		addActionParams(map, MCOpenVR.keyToggleKeyboard, "optional", "boolean", VRInputActionSet.GLOBAL);
+		addActionParams(map, MCOpenVR.keyMoveThirdPersonCam, "optional", "boolean", VRInputActionSet.GLOBAL);
+		addActionParams(map, MCOpenVR.keyTrackpadTouch, "optional", "boolean", VRInputActionSet.TECHNICAL);
+		addActionParams(map, MCOpenVR.keyVRInteract, "suggested", "boolean", null);
+		addActionParams(map, MCOpenVR.keyClimbeyGrab, "suggested", "boolean", null);
+		addActionParams(map, MCOpenVR.keyClimbeyJump, "suggested", "boolean", null);
+		addActionParams(map, GuiHandler.keyLeftClick, "mandatory", "boolean", null);
+		addActionParams(map, GuiHandler.keyScrollAxis, "optional", "vector2", null);
+		addActionParams(map, GuiHandler.keyRightClick, "suggested", "boolean", null);
+		addActionParams(map, GuiHandler.keyShift, "suggested", "boolean", null);
+		addActionParams(map, GuiHandler.keyKeyboardClick, "mandatory", "boolean", null);
+		addActionParams(map, GuiHandler.keyKeyboardShift, "suggested", "boolean", null);
+
+		return map;
+	}
+
+	private static void addActionParams(Map<String, ActionParams> map, KeyBinding keyBinding, String requirement, String type, VRInputActionSet actionSetOverride) {
+		ActionParams params = new ActionParams(requirement, type, actionSetOverride);
+		map.put(keyBinding.getKeyDescription(), params);
+	}
+
+	public static final String ACTION_LEFT_HAND = "/actions/global/in/lefthand";
+	public static final String ACTION_RIGHT_HAND = "/actions/global/in/righthand";
+	public static final String ACTION_LEFT_HAPTIC = "/actions/global/out/lefthaptic";
+	public static final String ACTION_RIGHT_HAPTIC = "/actions/global/out/righthaptic";
+	public static final String ACTION_EXTERNAL_CAMERA = "/actions/mixedreality/in/externalcamera";
+
+	private static void generateActionManifest() {
+		Map<String, Object> jsonMap = new HashMap<>();
+
+		List<Map<String, Object>> actionSets = new ArrayList<>();
+		for (VRInputActionSet actionSet : VRInputActionSet.values()) {
+			String usage = actionSet.usage;
+			if (actionSet.advanced && !mc.vrSettings.allowAdvancedBindings)
+				usage = "hidden";
+			actionSets.add(ImmutableMap.<String, Object>builder().put("name", actionSet.name).put("usage", usage).build());
+		}
+		jsonMap.put("action_sets", actionSets);
+
+		// Sort the bindings so they're easy to look through in SteamVR
+		List<VRInputAction> sortedActions = new ArrayList<>(inputActions.values());
+		sortedActions.sort(Comparator.comparing(action -> action.keyBinding));
+
+		List<Map<String, Object>> actions = new ArrayList<>();
+		for (VRInputAction action : sortedActions) {
+			actions.add(ImmutableMap.<String, Object>builder().put("name", action.name).put("requirement", action.requirement).put("type", action.type).build());
+		}
+		// Bunch of hard-coded bullshit
+		actions.add(ImmutableMap.<String, Object>builder().put("name", ACTION_LEFT_HAND).put("requirement", "suggested").put("type", "pose").build());
+		actions.add(ImmutableMap.<String, Object>builder().put("name", ACTION_RIGHT_HAND).put("requirement", "suggested").put("type", "pose").build());
+		actions.add(ImmutableMap.<String, Object>builder().put("name", ACTION_EXTERNAL_CAMERA).put("requirement", "optional").put("type", "pose").build());
+		actions.add(ImmutableMap.<String, Object>builder().put("name", ACTION_LEFT_HAPTIC).put("requirement", "suggested").put("type", "vibration").build());
+		actions.add(ImmutableMap.<String, Object>builder().put("name", ACTION_RIGHT_HAPTIC).put("requirement", "suggested").put("type", "vibration").build());
+		jsonMap.put("actions", actions);
+
+		Map<String, Object> localization = new HashMap<>();
+		for (VRInputAction action : sortedActions) {
+			localization.put(action.name, I18n.format(action.keyBinding.getKeyCategory()) + " - " + I18n.format(action.keyBinding.getKeyDescription()));
+		}
+		for (VRInputActionSet actionSet : VRInputActionSet.values()) {
+			localization.put(actionSet.name, I18n.format(actionSet.localizedName));
+		}
+		// More hard-coded bullshit
+		localization.put(ACTION_LEFT_HAND, "Left Hand Pose");
+		localization.put(ACTION_RIGHT_HAND, "Right Hand Pose");
+		localization.put(ACTION_EXTERNAL_CAMERA, "External Camera");
+		localization.put(ACTION_LEFT_HAPTIC, "Left Hand Haptic");
+		localization.put(ACTION_RIGHT_HAPTIC, "Right Hand Haptic");
+		localization.put("language_tag", "en_US");
+		jsonMap.put("localization", ImmutableList.<Map<String, Object>>builder().add(localization).build());
+
+		List<Map<String, Object>> defaultBindings = new ArrayList<>();
+		defaultBindings.add(ImmutableMap.<String, Object>builder().put("controller_type", "vive_controller").put("binding_url", "vive_defaults.json").build());
+		defaultBindings.add(ImmutableMap.<String, Object>builder().put("controller_type", "oculus_touch").put("binding_url", "oculus_defaults.json").build());
+		defaultBindings.add(ImmutableMap.<String, Object>builder().put("controller_type", "holographic_controller").put("binding_url", "wmr_defaults.json").build());
+		defaultBindings.add(ImmutableMap.<String, Object>builder().put("controller_type", "knuckles").put("binding_url", "knuckles_defaults.json").build());
+		defaultBindings.add(ImmutableMap.<String, Object>builder().put("controller_type", "vive_tracker_camera").put("binding_url", "tracker_defaults.json").build());
+		jsonMap.put("default_bindings", defaultBindings);
+
+		try {
+			new File("openvr/input").mkdirs();
+			try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream("openvr/input/action_manifest.json"), StandardCharsets.UTF_8)) {
+				GSON.toJson(jsonMap, writer);
+			}
+		} catch (IOException e) {
+			throw new RuntimeException("Failed to write action manifest", e);
+		}
+
+		Utils.loadAssetToFile("input/vive_defaults.json", new File("openvr/input/vive_defaults.json"), true);
+		Utils.loadAssetToFile("input/oculus_defaults.json", new File("openvr/input/oculus_defaults.json"), true);
+		Utils.loadAssetToFile("input/wmr_defaults.json", new File("openvr/input/wmr_defaults.json"), true);
+		Utils.loadAssetToFile("input/knuckles_defaults.json", new File("openvr/input/knuckles_defaults.json"), true);
+		Utils.loadAssetToFile("input/tracker_defaults.json", new File("openvr/input/tracker_defaults.json"), true);
+	}
+
+	private static void loadActionManifest() {
+		int error = vrInput.SetActionManifestPath.apply(ptrFomrString(new File("openvr/input/action_manifest.json").getAbsolutePath()));
+		if (error != 0) {
+			throw new RuntimeException("Failed to load action manifest: " + getInputError(error));
+		}
+	}
+
+	private static void loadActionHandles() {
+		LongByReference longRef = new LongByReference();
+
+		for (VRInputAction action : inputActions.values()) {
+			int error = vrInput.GetActionHandle.apply(ptrFomrString(action.name), longRef);
+			if (error != 0)
+				throw new RuntimeException("Error getting action handle for '" + action.name + "': " + getInputError(error));
+			action.setHandle(longRef.getValue());
+		}
+
+		leftPoseHandle = getActionHandle(ACTION_LEFT_HAND);
+		rightPoseHandle = getActionHandle(ACTION_RIGHT_HAND);
+		leftHapticHandle = getActionHandle(ACTION_LEFT_HAPTIC);
+		rightHapticHandle = getActionHandle(ACTION_RIGHT_HAPTIC);
+		externalCameraPoseHandle = getActionHandle(ACTION_EXTERNAL_CAMERA);
+
+		for (VRInputActionSet actionSet : VRInputActionSet.values()) {
+			int error = vrInput.GetActionSetHandle.apply(ptrFomrString(actionSet.name), longRef);
+			if (error != 0)
+				throw new RuntimeException("Error getting action set handle for '" + actionSet.name + "': " + getInputError(error));
+			actionSetHandles.put(actionSet, longRef.getValue());
+		}
+
+		leftControllerHandle = getInputSourceHandle("/user/hand/left");
+		rightControllerHandle = getInputSourceHandle("/user/hand/right");
+	}
+
+	private static long getActionHandle(String name) {
+		LongByReference longRef = new LongByReference();
+		int error = vrInput.GetActionHandle.apply(ptrFomrString(name), longRef);
+		if (error != 0)
+			throw new RuntimeException("Error getting action handle for '" + name + "': " + getInputError(error));
+		return longRef.getValue();
+	}
+
+	private static VRActiveActionSet_t[] getActiveActionSets() {
+		ArrayList<VRInputActionSet> list = new ArrayList<>();
+		list.add(VRInputActionSet.GLOBAL);
+		list.add(VRInputActionSet.MIXED_REALITY);
+		list.add(VRInputActionSet.TECHNICAL);
+		if (mc.currentScreen == null) {
+			list.add(VRInputActionSet.INGAME);
+			if (mc.climbTracker.isClimbeyClimb() || mc.jumpTracker.isClimbeyJump())
+				list.add(VRInputActionSet.CLIMBEY);
+		} else {
+			list.add(VRInputActionSet.GUI);
+		}
+		if (KeyboardHandler.Showing || RadialHandler.isShowing())
+			list.add(VRInputActionSet.KEYBOARD);
+
+		activeActionSetsReference = new VRActiveActionSet_t.ByReference();
+		activeActionSetsReference.setAutoRead(false);
+		activeActionSetsReference.setAutoWrite(false);
+		activeActionSetsReference.setAutoSynch(false);
+
+		VRActiveActionSet_t[] activeActionSets = (VRActiveActionSet_t[])activeActionSetsReference.toArray(list.size());
+
+		for (int i = 0; i < list.size(); i++) {
+			VRInputActionSet actionSet = list.get(i);
+			activeActionSets[i].ulActionSet = getActionSetHandle(actionSet);
+			activeActionSets[i].ulRestrictedToDevice = JOpenVRLibrary.k_ulInvalidInputValueHandle;
+			activeActionSets[i].nPriority = 0;
+
+			activeActionSets[i].setAutoRead(false);
+			activeActionSets[i].setAutoWrite(false);
+			activeActionSets[i].setAutoSynch(false);
+			activeActionSets[i].write();
+		}
+
+		activeActionSetsReference.write();
+		return activeActionSets;
+	}
+
+	private static void initializeJOpenVR() {
 		hmdErrorStoreBuf = IntBuffer.allocate(1);
 		vrsystem = null;
 		JOpenVRLibrary.VR_InitInternal(hmdErrorStoreBuf, JOpenVRLibrary.EVRApplicationType.EVRApplicationType_VRApplication_Scene);
@@ -480,7 +778,7 @@ public class MCOpenVR
 		}
 
 		if( vrsystem == null || isError()) {
-			throw new Exception(jopenvr.JOpenVRLibrary.VR_GetVRInitErrorAsEnglishDescription(getError()).getString(0));		
+			throw new RuntimeException(jopenvr.JOpenVRLibrary.VR_GetVRInitErrorAsEnglishDescription(getError()).getString(0));
 		} else {
 
 			vrsystem.setAutoSynch(false);
@@ -501,6 +799,7 @@ public class MCOpenVR
 			hmdTrackedDevicePoseReference.setAutoRead(false);
 			hmdTrackedDevicePoseReference.setAutoWrite(false);
 			hmdTrackedDevicePoseReference.setAutoSynch(false);
+			
 			for(int i=0;i<JOpenVRLibrary.k_unMaxTrackedDeviceCount;i++) {
 				hmdTrackedDevicePoses[i].setAutoRead(false);
 				hmdTrackedDevicePoses[i].setAutoWrite(false);
@@ -512,8 +811,8 @@ public class MCOpenVR
 	}
 
 	private static Pointer ptrFomrString(String in){
-		Pointer p = new Memory(in.length()+1);
-		p.setString(0, in);
+		Pointer p = new Memory(in.getBytes(StandardCharsets.UTF_8).length + 1);
+		p.setString(0, in, StandardCharsets.UTF_8.name());
 		return p;
 
 	}
@@ -549,7 +848,7 @@ public class MCOpenVR
 
 	}
 
-	static void initOpenVRApplications() throws Exception {
+	static void initOpenVRApplications() {
 		vrApplications = new VR_IVRApplications_FnTable(JOpenVRLibrary.VR_GetGenericInterface(JOpenVRLibrary.IVRApplications_Version, hmdErrorStoreBuf));
 		if (!isError()) {
 			vrApplications.setAutoSynch(false);
@@ -561,7 +860,7 @@ public class MCOpenVR
 		}
 	}
 
-	public static void initOpenVRSettings() throws Exception
+	public static void initOpenVRSettings()
 	{
 		vrSettings = new VR_IVRSettings_FnTable(JOpenVRLibrary.VR_GetGenericInterface(JOpenVRLibrary.IVRSettings_Version, hmdErrorStoreBuf));
 		if (!isError()) {
@@ -575,7 +874,7 @@ public class MCOpenVR
 	}
 
 
-	public static void initOpenVRRenderModels() throws Exception
+	public static void initOpenVRRenderModels()
 	{
 		vrRenderModels = new VR_IVRRenderModels_FnTable(JOpenVRLibrary.VR_GetGenericInterface(JOpenVRLibrary.IVRRenderModels_Version, hmdErrorStoreBuf));
 		if (!isError()) {
@@ -588,7 +887,7 @@ public class MCOpenVR
 		}
 	}
 
-	private static void initOpenVRChaperone() throws Exception {
+	private static void initOpenVRChaperone() {
 		vrChaperone = new VR_IVRChaperone_FnTable(JOpenVRLibrary.VR_GetGenericInterface(JOpenVRLibrary.IVRChaperone_Version, hmdErrorStoreBuf));
 		if (!isError()) {
 			vrChaperone.setAutoSynch(false);
@@ -597,6 +896,18 @@ public class MCOpenVR
 		} else {
 			System.out.println("VRChaperone init failed: " + jopenvr.JOpenVRLibrary.VR_GetVRInitErrorAsEnglishDescription(getError()).getString(0));
 			vrChaperone = null;
+		}
+	}
+
+	private static void initOpenVRInput() {
+		vrInput = new VR_IVRInput_FnTable(JOpenVRLibrary.VR_GetGenericInterface(JOpenVRLibrary.IVRInput_Version, hmdErrorStoreBuf));
+		if (!isError()) {
+			vrInput.setAutoSynch(false);
+			vrInput.read();
+			System.out.println("OpenVR Input initialized OK");
+		} else {
+			System.out.println("VRInput init failed: " + jopenvr.JOpenVRLibrary.VR_GetVRInitErrorAsEnglishDescription(getError()).getString(0));
+			vrInput = null;
 		}
 	}
 
@@ -638,6 +949,7 @@ public class MCOpenVR
 		componentNames.add("handgrip");
 		componentNames.add("status");
 		boolean failed = false;
+		
 		for (String comp : componentNames) {
 			controllerComponentTransforms.put(comp, new Matrix4f[2]); 			
 			Pointer p = ptrFomrString(comp);
@@ -646,17 +958,27 @@ public class MCOpenVR
 
 				//	debugOut(controllerDeviceIndex[i]);
 
+				if (controllerDeviceIndex[i] == JOpenVRLibrary.k_unTrackedDeviceIndexInvalid) {
+					failed = true;
+					continue;
+				}
 				vrsystem.GetStringTrackedDeviceProperty.apply(controllerDeviceIndex[i], JOpenVRLibrary.ETrackedDeviceProperty.ETrackedDeviceProperty_Prop_RenderModelName_String, pointer, JOpenVRLibrary.k_unMaxPropertyStringSize - 1, hmdErrorStore);
 
 				//doing this next bit for each controller because pointer
 				long button = vrRenderModels.GetComponentButtonMask.apply(pointer, p);   		
-				if(button > 0){ //see now... wtf openvr, '0' is the system button, it cant also be the error value!
+				if(button > 0){ //see now... wtf openvr, '0' is the system button, it cant also be the error value! (hint: it's a mask, not an index)
 					controllerComponentNames.put(button, comp); //u get 1 button per component, nothing more
 				}
 				//
-				RenderModel_ControllerMode_State_t modeState = new RenderModel_ControllerMode_State_t();
-				RenderModel_ComponentState_t componentState = new RenderModel_ComponentState_t();
-				byte ret = vrRenderModels.GetComponentState.apply(pointer, p, controllerStateReference[i], modeState, componentState);
+				long sourceHandle = i == RIGHT_CONTROLLER ? rightControllerHandle : leftControllerHandle;
+				if (sourceHandle == JOpenVRLibrary.k_ulInvalidInputValueHandle) {
+					failed = true;
+					continue;
+				}
+				//
+				RenderModel_ControllerMode_State_t.ByReference modeState = new RenderModel_ControllerMode_State_t.ByReference();
+				RenderModel_ComponentState_t.ByReference componentState = new RenderModel_ComponentState_t.ByReference();
+				byte ret = vrRenderModels.GetComponentStateForDevicePath.apply(pointer, p, sourceHandle, modeState, componentState);
 				if(ret == 0) {
 					//System.out.println("Failed getting transform: " + comp + " controller " + i);
 					failed = true; // Oculus does not seem to raise ANY trackedDevice events. So just keep trying...
@@ -673,14 +995,15 @@ public class MCOpenVR
 						Matrix4f tip = getControllerComponentTransform(0,"tip");
 						Matrix4f hand = getControllerComponentTransform(0,"base");
 
-						Vector3f tipvec = tip.transform(forward);
-						Vector3f handvec = hand.transform(forward);
-						double dot = Math.abs(tipvec.normalised().dot(handvec.normalised()));
+						Vector3 tipvec = tip.transform(forward);
+						Vector3 handvec = hand.transform(forward);
+
+						double dot = Math.abs(tipvec.normalized().dot(handvec.normalized()));
 						
 						double anglerad = Math.acos(dot);
 						double angledeg = Math.toDegrees(anglerad);
 
-						double angletestrad = Math.acos(tipvec.normalised().dot(forward.normalised()));
+						double angletestrad = Math.acos(tipvec.normalized().dot(forward.normalized()));
 						double angletestdeg = Math.toDegrees(angletestrad);
 
 					//	System.out.println("gun angle " + angledeg + " default angle " + angletestdeg);
@@ -810,6 +1133,7 @@ public class MCOpenVR
 
 	public static void poll(long frameIndex)
 	{
+		if (!initialized) return;
 		boolean sleeping = (mc.world !=null && mc.player != null && mc.player.isPlayerSleeping());
 
 		paused = vrsystem.ShouldApplicationPause.apply() != 0;
@@ -820,24 +1144,6 @@ public class MCOpenVR
 		if(!mc.vrSettings.seated){
 			mc.mcProfiler.endStartSection("controllers");
 
-			for (TrackedController controller : controllers) {
-				controller.updateState();
-				controller.processInput();
-			}
-
-			updateControllerButtonState(); // Still used by tip transforms
-
-			boolean freemoveJoyPad = mc.vrPlayer.getFreeMove() && mc.vrSettings.vrFreeMoveMode == VRSettings.FREEMOVE_JOYPAD;
-			HardwareType hw = getHardwareType();
-			if (hw == HardwareType.OCULUS) {
-				((TrackedControllerOculus)controllers[LEFT_CONTROLLER]).setStickButtonsEnabled(!freemoveJoyPad);
-			} else if (hw == HardwareType.WINDOWSMR) {
-				TrackedControllerWindowsMR controller = ((TrackedControllerWindowsMR)controllers[LEFT_CONTROLLER]);
-				controller.setSwipeEnabled(!freemoveJoyPad || mc.vrSettings.freemoveWMRStick);
-				controller.setStickButtonsEnabled(!freemoveJoyPad || !mc.vrSettings.freemoveWMRStick);
-			} else {
-				((TrackedControllerVive)controllers[LEFT_CONTROLLER]).setSwipeEnabled(!freemoveJoyPad);
-			}
 
 			// GUI controls
 
@@ -857,13 +1163,13 @@ public class MCOpenVR
 		updatePose();
 
 		mc.mcProfiler.endSection();
+		processInputs();
+
+		mc.mcProfiler.endSection();
 	}
 
 	private static int quickTorchPreviousSlot;
 
-	private static Vec3d vecFromVector(Vector3f in){
-		return new Vec3d(in.x, in.y, in.z);
-	}
 	private static void processHotbar() {
 
 		if(mc.player == null) return;
@@ -881,11 +1187,11 @@ public class MCOpenVR
 		if(mc.vrSettings.vrReverseHands) i = -1;
 
 		if (mc.vrSettings.vrHudLockMode == VRSettings.HUD_LOCK_WRIST){
-			barStartos = vecFromVector( getAimRotation(1).transform(new Vector3f(i*0.02f,0.05f,0.26f)));
-			barEndos = vecFromVector( getAimRotation(1).transform(new Vector3f(i*0.02f,0.05f,0.01f)));
+			barStartos =  getAimRotation(1).transform(new Vector3(i*0.02f,0.05f,0.26f)).toVec3d();
+			barEndos =  getAimRotation(1).transform(new Vector3(i*0.02f,0.05f,0.01f)).toVec3d();
 		} else if (mc.vrSettings.vrHudLockMode == VRSettings.HUD_LOCK_HAND){
-			barStartos = vecFromVector( getAimRotation(1).transform(new Vector3f(i*-.18f,0.08f,-0.01f)));
-			barEndos = vecFromVector( getAimRotation(1).transform(new Vector3f(i*0.19f,0.04f,-0.08f)));
+			barStartos =  getAimRotation(1).transform(new Vector3(i*-.18f,0.08f,-0.01f)).toVec3d();
+			barEndos =  getAimRotation(1).transform(new Vector3(i*0.19f,0.04f,-0.08f)).toVec3d();
 		} else return; //how did u get here
 
 
@@ -977,261 +1283,124 @@ public class MCOpenVR
 
 
 
-	private static void findControllerDevices()
-	{
-		controllerDeviceIndex[RIGHT_CONTROLLER] = -1;
-		controllerDeviceIndex[LEFT_CONTROLLER] = -1;
-		controllerDeviceIndex[THIRD_CONTROLLER] = -1;
-
-		if(mc.vrSettings.vrReverseHands){
-			controllerDeviceIndex[RIGHT_CONTROLLER]  = vrsystem.GetTrackedDeviceIndexForControllerRole.apply(JOpenVRLibrary.ETrackedControllerRole.ETrackedControllerRole_TrackedControllerRole_LeftHand);
-			controllerDeviceIndex[LEFT_CONTROLLER] = vrsystem.GetTrackedDeviceIndexForControllerRole.apply(JOpenVRLibrary.ETrackedControllerRole.ETrackedControllerRole_TrackedControllerRole_RightHand);
-		}else {
-			controllerDeviceIndex[LEFT_CONTROLLER]  = vrsystem.GetTrackedDeviceIndexForControllerRole.apply(JOpenVRLibrary.ETrackedControllerRole.ETrackedControllerRole_TrackedControllerRole_LeftHand);
-			controllerDeviceIndex[RIGHT_CONTROLLER] = vrsystem.GetTrackedDeviceIndexForControllerRole.apply(JOpenVRLibrary.ETrackedControllerRole.ETrackedControllerRole_TrackedControllerRole_RightHand);
+	private static void processScrollInput(KeyBinding keyBinding, Runnable upCallback, Runnable downCallback) {
+		VRInputAction action = getInputAction(keyBinding);
+		if (action.isEnabled() && action.getLastOrigin() != JOpenVRLibrary.k_ulInvalidInputValueHandle && action.getAxis2D(true).getY() != 0) {
+			float value = action.getAxis2D(false).getY();
+			if (value > 0)
+				upCallback.run();
+			else if (value < 0)
+				downCallback.run();
 		}
-
-		controllers[RIGHT_CONTROLLER].deviceIndex = controllerDeviceIndex[RIGHT_CONTROLLER];
-		controllers[LEFT_CONTROLLER].deviceIndex = controllerDeviceIndex[LEFT_CONTROLLER];
-
 	}
 
-	private static void updateControllerButtonState()
-	{
-		for (int c = 0; c < 2; c++) //each controller
-		{
-			// store previous state
-			lastControllerState[c].unPacketNum = controllerStateReference[c].unPacketNum;
-			lastControllerState[c].ulButtonPressed = controllerStateReference[c].ulButtonPressed;
-			lastControllerState[c].ulButtonTouched = controllerStateReference[c].ulButtonTouched;
+	private static void processSwipeInput(KeyBinding keyBinding, Runnable leftCallback, Runnable rightCallback, Runnable upCallback, Runnable downCallback) {
+		VRInputAction action = getInputAction(keyBinding);
+		if (action.isEnabled() && action.getLastOrigin() != JOpenVRLibrary.k_ulInvalidInputValueHandle) {
+			ControllerType controller = findActiveBindingControllerType(keyBinding);
+			if (controller != null) {
+				if (!trackpadSwipeSamplers.containsKey(keyBinding.getKeyDescription()))
+					trackpadSwipeSamplers.put(keyBinding.getKeyDescription(), new TrackpadSwipeSampler());
+				TrackpadSwipeSampler sampler = trackpadSwipeSamplers.get(keyBinding.getKeyDescription());
+				sampler.update(controller, action.getAxis2D(false));
 
-			for (int i = 0; i < 5; i++) //5 axes but only [0] and [1] is anything, trigger and touchpad
-			{
-				if (controllerStateReference[c].rAxis[i] != null)
-				{
-					lastControllerState[c].rAxis[i].x = controllerStateReference[c].rAxis[i].x;
-					lastControllerState[c].rAxis[i].y = controllerStateReference[c].rAxis[i].y;
+				if (sampler.isSwipedUp() && upCallback != null) {
+					triggerHapticPulse(controller, 0.001f, 400, 0.5f);
+					upCallback.run();
+				}
+				if (sampler.isSwipedDown() && downCallback != null) {
+					triggerHapticPulse(controller, 0.001f, 400, 0.5f);
+					downCallback.run();
+				}
+				if (sampler.isSwipedLeft() && leftCallback != null) {
+					triggerHapticPulse(controller, 0.001f, 400, 0.5f);
+					leftCallback.run();
+				}
+				if (sampler.isSwipedRight() && rightCallback != null) {
+					triggerHapticPulse(controller, 0.001f, 400, 0.5f);
+					rightCallback.run();
 				}
 			}
+		}
+	}
 
-			// read new state
-			if (controllerDeviceIndex[c] != -1)
-			{			
-				vrsystem.GetControllerState.apply(controllerDeviceIndex[c], inputStateRefernceArray[c], inputStateRefernceArray[c].size());
-				inputStateRefernceArray[c].read();
-				controllerStateReference[c] = inputStateRefernceArray[c];			
-			} else
-			{
-				// controller not connected, clear state
-				lastControllerState[c].ulButtonPressed = 0;
-				lastControllerState[c].ulButtonPressed = 0;
-
-				for (int i = 0; i < 5; i++)
-				{
-					if (controllerStateReference[c].rAxis[i] != null)
-					{
-						lastControllerState[c].rAxis[i].x = 0.0f;
-						lastControllerState[c].rAxis[i].y = 0.0f;
+	private static void processInputAction(VRInputAction action) {
+		if (!action.isActive() || !action.isEnabled() || unpressBindingsNextFrame) {
+			action.unpressBinding();
+		} else {
+			if (action.isButtonChanged()) {
+				if (action.isButtonPressed())
+					action.pressBinding();
+				else
+					action.unpressBinding();
 					}
 				}
-				try{
-					controllerStateReference[c] = lastControllerState[c];					
-				} catch (Throwable e){
-
-				}
 			}
-		}
-	}
-
-	public static float joyPadX, joyPadZ;
 
 	public static void processInputs() {
-		if(Main.viewonly) {
-			vrInputEvents.clear();
-			return;
-		}
+		if (mc.vrSettings.seated || Main.viewonly || !inputInitialized) return;
 
-		outer: while (hasNextInputEvent()) {
-			VRInputEvent event = nextInputEvent();
-			
-			if (event.isButtonPressEvent()) {
-								
-				if (event.getButtonState() && mc.currentScreen instanceof GuiVRControls && ((GuiVRControls)mc.currentScreen).pressMode) {
-					((GuiVRControls)mc.currentScreen).bindSingleButton(new ButtonTuple(event.getButton(), event.getController().getType()));
-					continue;
+		for (VRInputAction action : inputActions.values()) {
+			if (action.isHanded()) {
+				for (ControllerType hand : ControllerType.values()) {
+					action.setCurrentHand(hand);
+					processInputAction(action);
 				}
-
-				if(event.getButtonState() && event.getController().getType() == ControllerType.RIGHT && (event.getButton() == ButtonType.VIVE_APPMENU || event.getButton() == ButtonType.OCULUS_BY)) {
-					if((controllers[RIGHT_CONTROLLER].isButtonPressed(ButtonType.VIVE_GRIP) || controllers[RIGHT_CONTROLLER].isButtonPressed(ButtonType.OCULUS_HAND_TRIGGER)) 
-							&& (mc.vrSettings.displayMirrorMode == mc.vrSettings.MIRROR_MIXED_REALITY||mc.vrSettings.displayMirrorMode == mc.vrSettings.MIRROR_THIRD_PERSON)){				
-						if (!Main.kiosk) {
-							VRHotkeys.snapMRCam( 0);
-							mc.vrSettings.saveOptions();
-						}
-						continue;
-					}
-				}
-							
-				if(KeyboardHandler.handleInputEvent(event)) continue;
-				if(RadialHandler.handleInputEvent(event)) continue;
-
-			}
-						
-			// GUI bindings
-			for (VRButtonMapping binding : mc.vrSettings.buttonMappings.values()) {
-				if (binding.buttons.contains(new ButtonTuple(event.getButton(), event.getController().getType(), event.isButtonTouchEvent()))) {
-					if (!binding.isModifierBinding() && (keyModifier1.isKeyDown() != binding.hasModifier(0) || keyModifier2.isKeyDown() != binding.hasModifier(1))) {
-						continue;
-					}
-
-					if (event.getButtonState()) {
-						if ((mc.currentScreen != null || GuiHandler.controllerMouseValid || KeyboardHandler.Showing || RadialHandler.isUsingController(event.getController().getType())) && (binding.isGUIBinding() || binding.isKeyboardBinding())) {
-							binding.press();
-							if (binding.keyBinding != null)
-								activeBindings.put(binding.keyBinding.getKeyDescription(), new ButtonTuple(event.getButton(), event.getController().getType()));
-							continue outer; // GUI bindings override in-game ones
-						}
-					} else {
-						boolean unpress = true;
-						for (ButtonTuple button : binding.buttons) {
-							if (!controllers[button.controller.ordinal()].isButtonActive(button.button))
-								continue;
-							if (button.isTouch && controllers[button.controller.ordinal()].isButtonTouched(button.button)) {
-								unpress = false;
-								break;
-						}
-							if (!button.isTouch && controllers[button.controller.ordinal()].isButtonPressed(button.button)) {
-								unpress = false;
-								break;
-							}
-						}
-
-						if (unpress) {
-						binding.scheduleUnpress(1);
-
-							if (binding.isModifierBinding()) {
-								int modifier = 0;
-								if (binding.keyBinding == keyModifier2)
-									modifier = 1;
-
-								// Unpress any bindings using this modifier
-								for (VRButtonMapping binding2 : mc.vrSettings.buttonMappings.values()) {
-									if (binding2.hasModifier(modifier))
-										binding2.scheduleUnpress(1);
-								}
-							}
-						}
-					}
-				}
-			}
-
-			// In-game bindings
-			ArrayList<VRButtonMapping> affectedBindings=new ArrayList<>();
-			for (VRButtonMapping binding : mc.vrSettings.buttonMappings.values()) {
-				if (binding.buttons.contains(new ButtonTuple(event.getButton(), event.getController().getType(), event.isButtonTouchEvent()))) {
-					affectedBindings.add(binding);
-				}
-			}
-			
-			affectedBindings.sort(Comparator.comparingInt(VRButtonMapping::getPriority).reversed());
-			
-			for(VRButtonMapping binding: affectedBindings){
-					if (!binding.isModifierBinding() && (keyModifier1.isKeyDown() != binding.hasModifier(0) || keyModifier2.isKeyDown() != binding.hasModifier(1))) {
-						continue;
-					}
-
-					if (event.getButtonState()) {
-						// Right controller blocked in GUI since it's the pointer
-						if ((!binding.isGUIBinding() || binding.isKeyboardBinding()) && (mc.currentScreen == null && !RadialHandler.isUsingController(event.getController().getType()) /*|| event.getController().getType() == ControllerType.LEFT*/)) {
-							boolean consumed=binding.press();
-							if (binding.keyBinding != null)
-								activeBindings.put(binding.keyBinding.getKeyDescription(), new ButtonTuple(event.getButton(), event.getController().getType()));
-							if(consumed)
-								break;
-						}
-					} else {
-						boolean unpress = true;
-						for (ButtonTuple button : binding.buttons) {
-							if (!controllers[button.controller.ordinal()].isButtonActive(button.button))
-								continue;
-							if (button.isTouch && controllers[button.controller.ordinal()].isButtonTouched(button.button)) {
-								unpress = false;
-								break;
-							}
-							if (!button.isTouch && controllers[button.controller.ordinal()].isButtonPressed(button.button)) {
-								unpress = false;
-								break;
-							}
-						}
-
-						if (unpress) {
-						binding.scheduleUnpress(1);
-
-							if (binding.isModifierBinding()) {
-								int modifier = 0;
-								if (binding.keyBinding == keyModifier2)
-									modifier = 1;
-
-								// Unpress any bindings using this modifier
-								for (VRButtonMapping binding2 : mc.vrSettings.buttonMappings.values()) {
-									if (binding2.hasModifier(modifier))
-										binding2.scheduleUnpress(1);
-					}
-				}
-			}
-					
-				}
-			}
-		}
-
-		if (controllers[LEFT_CONTROLLER] instanceof TrackedControllerWindowsMR && mc.vrSettings.freemoveWMRStick) {
-			Vector2 axis = controllers[LEFT_CONTROLLER].getAxis(AxisType.WMR_STICK);
-			if (Math.abs(axis.getX()) > mc.vrSettings.analogDeadzone)
-				joyPadX = -axis.getX();
-			else joyPadX = 0;
-			if (Math.abs(axis.getY()) > mc.vrSettings.analogDeadzone)
-				joyPadZ = axis.getY();
-			else joyPadZ = 0;
-		} else if (controllers[LEFT_CONTROLLER] instanceof TrackedControllerVive) {
-			if (controllers[LEFT_CONTROLLER].isButtonTouched(ButtonType.VIVE_TOUCHPAD)) {
-				Vector2 axis = controllers[LEFT_CONTROLLER].getAxis(AxisType.VIVE_TOUCHPAD);
-				joyPadX = -axis.getX();
-				joyPadZ = axis.getY();
 			} else {
-				joyPadX = 0;
-				joyPadZ = 0;
+				processInputAction(action);
 			}
-		} else if (controllers[LEFT_CONTROLLER] instanceof TrackedControllerOculus) {
-			Vector2 axis = controllers[LEFT_CONTROLLER].getAxis(AxisType.OCULUS_STICK);
-			if (Math.abs(axis.getX()) > mc.vrSettings.analogDeadzone)
-				joyPadX = -axis.getX();
-			else joyPadX = 0;
-			if (Math.abs(axis.getY()) > mc.vrSettings.analogDeadzone)
-				joyPadZ = axis.getY();
-			else joyPadZ = 0;
 		}
+
+		processScrollInput(GuiHandler.keyScrollAxis, () -> {
+			if (Display.isActive())
+				KeyboardSimulator.robot.mouseWheel(-120);
+			else if (InputInjector.isSupported())
+				InputInjector.mouseWheelUp();
+		}, () -> {
+			if (Display.isActive())
+				KeyboardSimulator.robot.mouseWheel(120);
+			else if (InputInjector.isSupported())
+				InputInjector.mouseWheelDown();
+		});
+		processScrollInput(keyHotbarScroll, () -> changeHotbar(-1), () -> changeHotbar(1));
+		processSwipeInput(keyHotbarSwipeX, () -> changeHotbar(1), () -> changeHotbar(-1), null, null);
+		processSwipeInput(keyHotbarSwipeY, null, null, () -> changeHotbar(-1), () -> changeHotbar(1));
+
+		// Reset this flag
+		unpressBindingsNextFrame = false;
 	}
 
 	public static void processBindings() {
 		//VIVE SPECIFIC FUNCTIONALITY
 		//TODO: Find a better home for these. (uh?)
+		if (inputActions.isEmpty()) return;
 
 		boolean sleeping = (mc.world !=null && mc.player != null && mc.player.isPlayerSleeping());
 		boolean gui = mc.currentScreen != null;
 
-		if(	Keyboard.isKeyDown(Keyboard.KEY_RCONTROL)) return;
-
-		//handle movementtoggle
-		if (mc.gameSettings.keyBindPickBlock.isKeyDown() && !VRHotkeys.isMovingThirdPersonCam()) {
-			if(mc.vrSettings.vrAllowLocoModeSwotch){
-				moveModeSwitchcount++;
-				if (moveModeSwitchcount >= 20 * 4) {
-					moveModeSwitchcount = 0;					
-					mc.vrPlayer.setFreeMove(!mc.vrPlayer.getFreeMove());
+		boolean toggleMovementPressed = keyToggleMovement.isPressed();
+		if (mc.gameSettings.keyBindPickBlock.isKeyDown() || toggleMovementPressed) {
+			if (++moveModeSwitchCount == 20 * 4 || toggleMovementPressed) {
+				if (mc.vrSettings.seated) {
+					mc.vrSettings.seatedFreeMove = !mc.vrSettings.seatedFreeMove;
+					mc.printChatMessage("Movement mode switched to: " + (mc.vrSettings.seatedFreeMove ? "Free-move" : "Teleport"));
+				} else {
+					if (mc.vrPlayer.isTeleportSupported()) {
+						mc.vrSettings.forceStandingFreeMove = !mc.vrSettings.forceStandingFreeMove;
+						mc.printChatMessage("Movement mode switched to: " + (mc.vrSettings.forceStandingFreeMove ? "Free-move" : "Teleport"));
+					} else {
+						if (mc.vrPlayer.isTeleportOverridden()) {
+							mc.vrPlayer.setTeleportOverride(false);
+							mc.printChatMessage("Restricted movement enabled (no teleporting)");
+						} else {
+							mc.vrPlayer.setTeleportOverride(true);
+							mc.printChatMessage("Restricted movement disabled (teleporting allowed)");
+						}
+					}
 				}				
 			}
 		} else {
-			moveModeSwitchcount = 0;
+			moveModeSwitchCount = 0;
 		}
 
 		Vec3d main = getAimVector(0);
@@ -1326,15 +1495,36 @@ public class MCOpenVR
 		//GuiContainer.java only listens directly to the keyboard to close.
 		if(gui && !(mc.currentScreen instanceof GuiWinGame) && mc.gameSettings.keyBindInventory.isKeyDown()){ //inventory will repeat open/close while button is held down. TODO: fix.
 			if((getCurrentTimeSecs() - startedOpeningInventory) > 0.5 && mc.player != null) mc.player.closeScreen();
-			VRButtonMapping.unpressKey(mc.gameSettings.keyBindInventory); //minecraft.java will open a new window otherwise.
+			getInputAction(mc.gameSettings.keyBindInventory).unpressKey(); //minecraft.java will open a new window otherwise.
+		}
+
+		// allow toggling chat window with chat keybind
+		if (mc.currentScreen instanceof GuiChat && mc.gameSettings.keyBindChat.isPressed()) {
+			mc.displayGuiScreen(null);
 		}
 
 		if(mc.vrSettings.vrWorldRotationIncrement == 0){
-			ButtonTuple button = MCOpenVR.findAnyBindingButton(keyRotateLeft);
-			float ax= 0;
-			if (button != null) 
-				ax=MovementInputFromOptions.getMovementAxisValue(button);
-			if(keyRotateLeft.isKeyDown() || (!isVive() && ax > 0)){ //require button press for trackpad.
+			float ax = getInputAction(keyRotateAxis).isEnabled() ? getInputAction(keyRotateAxis).getAxis2D(false).getX() : 0;
+			if (ax == 0) ax = getInputAction(keyFreeMoveRotate).isEnabled() ? getInputAction(keyFreeMoveRotate).getAxis2D(false).getX() : 0;
+			if (ax != 0) {
+				float analogRotSpeed = 10 * ax;
+				mc.vrSettings.vrWorldRotation -= analogRotSpeed;
+				mc.vrSettings.vrWorldRotation = mc.vrSettings.vrWorldRotation % 360;
+			}
+		} else {
+			if (keyRotateAxis.isPressed() || keyFreeMoveRotate.isPressed()) {
+				float ax = getInputAction(keyRotateAxis).getAxis2D(false).getX();
+				if (ax == 0) ax = getInputAction(keyFreeMoveRotate).getAxis2D(false).getX();
+				if (Math.abs(ax) > 0.5f) {
+					mc.vrSettings.vrWorldRotation -= mc.vrSettings.vrWorldRotationIncrement * Math.signum(ax);
+					mc.vrSettings.vrWorldRotation = mc.vrSettings.vrWorldRotation % 360;
+				}
+			}
+		}
+
+		if(mc.vrSettings.vrWorldRotationIncrement == 0){
+			float ax = MovementInputFromOptions.getMovementAxisValue(keyRotateLeft);
+			if(ax > 0){
 				float analogRotSpeed = 5;
 				if(ax > 0)	analogRotSpeed= 10 * ax;
 				mc.vrSettings.vrWorldRotation+=analogRotSpeed;
@@ -1348,11 +1538,8 @@ public class MCOpenVR
 		}
 
 		if(mc.vrSettings.vrWorldRotationIncrement == 0){
-			ButtonTuple button = MCOpenVR.findAnyBindingButton(keyRotateRight);
-			float ax= 0;
-			if (button != null) 
-				ax=MovementInputFromOptions.getMovementAxisValue(button);
-			if(keyRotateRight.isKeyDown() || (!isVive() && ax > 0)){//require button press for trackpad.
+			float ax = MovementInputFromOptions.getMovementAxisValue(keyRotateRight);
+			if(ax > 0){
 				float analogRotSpeed = 5;
 				if(ax > 0)	analogRotSpeed = 10 * ax;
 				mc.vrSettings.vrWorldRotation-=analogRotSpeed;
@@ -1367,10 +1554,10 @@ public class MCOpenVR
 
 		seatedRot = mc.vrSettings.vrWorldRotation;
 
-		if(keyRadialMenu.isPressed()) {
-			if(!gui) {
-				RadialHandler.setOverlayShowing(!RadialHandler.isShowing(), findActiveBindingButton(keyRadialMenu));
-			}
+		if(keyRadialMenu.isPressed() && !gui) {
+			TrackedController controller = findActiveBindingController(keyRadialMenu);
+			if (controller != null)
+				RadialHandler.setOverlayShowing(!RadialHandler.isShowing(), controller.getType());
 		}
 		
 		if (keySwapMirrorView.isPressed()) {
@@ -1385,8 +1572,7 @@ public class MCOpenVR
 			KeyboardHandler.setOverlayShowing(!KeyboardHandler.Showing);
 		}
 
-		if (isBindingBound(keyMoveThirdPersonCam)) {
-			if (keyMoveThirdPersonCam.isPressed() && !Main.kiosk && (mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_MIXED_REALITY || mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_THIRD_PERSON)) {
+		if (keyMoveThirdPersonCam.isPressed() && !Main.kiosk && !mc.vrSettings.seated && (mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_MIXED_REALITY || mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_THIRD_PERSON)) {
 				TrackedController controller = MCOpenVR.findActiveBindingController(keyMoveThirdPersonCam);
 				if (controller != null)
 					VRHotkeys.startMovingThirdPersonCam(controller.getType().ordinal());
@@ -1395,6 +1581,13 @@ public class MCOpenVR
 				VRHotkeys.stopMovingThirdPersonCam();
 				mc.vrSettings.saveOptions();
 			}
+
+		if(KeyboardHandler.Showing && mc.currentScreen == null && keyMenuButton.isPressed()) { //super special case.
+			KeyboardHandler.setOverlayShowing(false);
+		}
+
+		if(RadialHandler.isShowing() && keyMenuButton.isPressed()) { //super special case.
+			RadialHandler.setOverlayShowing(false, null);
 		}
 
 		if(keyMenuButton.isPressed()) { //handle menu directly
@@ -1444,34 +1637,22 @@ public class MCOpenVR
 			}
 		}
 		
-		if(KeyboardHandler.Showing && mc.currentScreen == null && GuiHandler.keyMenuButton.isPressed()) { //super special case.
+		if(KeyboardHandler.Showing && mc.currentScreen == null && keyMenuButton.isPressed()) { //super special case.
 			KeyboardHandler.setOverlayShowing(false);
 		}
 		
-		if(RadialHandler.isShowing() && GuiHandler.keyMenuButton.isPressed()) { //super special case.
+		if(RadialHandler.isShowing() && keyMenuButton.isPressed()) { //super special case.
 			RadialHandler.setOverlayShowing(false, null);
 		}
 
 		if (mc.currentScreen != null ||
 				GuiHandler.controllerMouseValid) 
 			GuiHandler.processBindingsGui();
+		RadialHandler.processBindings();
+		KeyboardHandler.processBindings();
 	}
 
 
-	public static void postProcessBindings() {
-		outer: for (VRButtonMapping mapping : mc.vrSettings.buttonMappings.values()) {
-			if (mapping.keyBinding != null) {
-				
-				for (ButtonTuple button : mapping.buttons) {
-					if (button.isTouch && button.controller.getController().isButtonTouched(button.button))
-						continue outer;
-					if (!button.isTouch && button.controller.getController().isButtonPressed(button.button))
-						continue outer;
-				}
-				activeBindings.remove(mapping.keyBinding.getKeyDescription());
-			}
-		}
-	}
 
 	private static void changeHotbar(int dir){
 		if(mc.player == null || (mc.climbTracker.isGrabbingLadder() && 
@@ -1560,18 +1741,6 @@ public class MCOpenVR
 						KeyboardSimulator.type(str); //holy shit it works.
 					}
 					break;*/
-				case EVREventType.EVREventType_VREvent_ButtonTouch:
-					if (!mc.vrSettings.seated) handleButtonEvent(event, true, false);
-					break;
-				case EVREventType.EVREventType_VREvent_ButtonPress:
-					if (!mc.vrSettings.seated) handleButtonEvent(event, true, true);
-					break;
-				case EVREventType.EVREventType_VREvent_ButtonUntouch:
-					if (!mc.vrSettings.seated) handleButtonEvent(event, false, false);
-					break;
-				case EVREventType.EVREventType_VREvent_ButtonUnpress:
-					if (!mc.vrSettings.seated) handleButtonEvent(event, false, true);
-					break;
 				case EVREventType.EVREventType_VREvent_Quit:
 					mc.shutdown();
 					break;
@@ -1588,78 +1757,121 @@ public class MCOpenVR
 		}
 	}
 
-	private static void handleButtonEvent(VREvent_t event, boolean state, boolean press) {
-		VREvent_Controller_t controllerEvent = new VREvent_Controller_t(event.data.getPointer());
-		controllerEvent.read();
-		if (event.trackedDeviceIndex == -1) return;
-		if (controllerDeviceIndex[RIGHT_CONTROLLER] == event.trackedDeviceIndex) {
-			controllers[RIGHT_CONTROLLER].processButtonEvent(controllerEvent.button, state, press);
-		}
-		if (controllerDeviceIndex[LEFT_CONTROLLER] == event.trackedDeviceIndex) {
-			controllers[LEFT_CONTROLLER].processButtonEvent(controllerEvent.button, state, press);
-		}
+	public static boolean isBoundInActiveActionSets(KeyBinding binding) {
+		List<Long> origins = getInputAction(binding).getOrigins();
+		return !origins.isEmpty();
 	}
 
-	public static boolean isBound(KeyBinding binding) {
-		VRButtonMapping vb = mc.vrSettings.buttonMappings.get(binding.getKeyDescription());
-		return vb != null && vb.buttons.isEmpty() == false;
+	public static ControllerType findActiveBindingControllerType(KeyBinding binding) {
+		if (!inputInitialized) return null;
+		long origin = getInputAction(binding).getLastOrigin();
+		if (origin != JOpenVRLibrary.k_ulInvalidInputValueHandle) {
+			return getOriginControllerType(origin);
+		}
+		return null;
 	}
-	
+
 	public static TrackedController findActiveBindingController(KeyBinding binding) {
-		if (activeBindings.containsKey(binding.getKeyDescription())) {
-			return activeBindings.get(binding.getKeyDescription()).controller.getController();
-		}
+		ControllerType type = findActiveBindingControllerType(binding);
+		if (type != null) return type.getController();
 		return null;
 	}
 
-	public static ButtonTuple findAnyBindingButton(KeyBinding binding) {
-		ButtonTuple but = findActiveBindingButton(binding);
-		if(but != null) return but;
-
-		VRButtonMapping vb = mc.vrSettings.buttonMappings.get(binding.getKeyDescription());
-		for (ButtonTuple tuple : vb.buttons) {
-			if (tuple.controller.getController().isButtonActive(tuple.button))
-				return tuple;
-		}
-		return null;
+	public static void triggerBindingHapticPulse(KeyBinding binding, float durationSeconds, float frequency, float amplitude) {
+		TrackedController controller = findActiveBindingController(binding);
+		if (controller != null) controller.triggerHapticPulse(durationSeconds, frequency, amplitude);
 	}
 
-
-
-	public static ButtonTuple findActiveBindingButton(KeyBinding binding) {
-		if (activeBindings.containsKey(binding.getKeyDescription())) {
-			return activeBindings.get(binding.getKeyDescription());
-		}
-		return null;
-	}
-
-	public static boolean isBindingBound(KeyBinding binding) {
-		try {
-			VRButtonMapping vb = mc.vrSettings.buttonMappings.get(binding.getKeyDescription());
-			for (ButtonTuple tuple : vb.buttons) {
-				if (tuple.controller.getController().isButtonActive(tuple.button))
-					return true;
-			}
-		} catch (Exception e) {
-		}
-		return false;
-	}
-
+	@Deprecated
 	public static void triggerBindingHapticPulse(KeyBinding binding, int duration) {
 		TrackedController controller = findActiveBindingController(binding);
 		if (controller != null) controller.triggerHapticPulse(duration);
+		}
+
+	public static VRInputAction getInputActionByName(String name) {
+		return inputActions.get(name);
 	}
 
-	public static void queueInputEvent(TrackedController controller, ButtonType button, AxisType axis, boolean buttonState, boolean buttonPress, Vector2 axisDelta) {
-		vrInputEvents.add(new VRInputEvent(controller, button, axis, buttonState, buttonPress, axisDelta));
+	public static VRInputAction getInputAction(String keyBindingDesc) {
+		return inputActionsByKeyBinding.get(keyBindingDesc);
+			}
+
+	public static VRInputAction getInputAction(KeyBinding keyBinding) {
+		return getInputAction(keyBinding.getKeyDescription());
+		}
+
+	public static Collection<VRInputAction> getInputActions() {
+		return Collections.unmodifiableCollection(inputActions.values());
 	}
 
-	public static boolean hasNextInputEvent() {
-		return !vrInputEvents.isEmpty();
+	public static long getActionSetHandle(VRInputActionSet actionSet) {
+		return actionSetHandles.get(actionSet);
 	}
 
-	public static VRInputEvent nextInputEvent() {
-		return vrInputEvents.poll();
+	public static long getInputSourceHandle(String path) {
+		LongByReference longRef = new LongByReference();
+		int error = vrInput.GetInputSourceHandle.apply(ptrFomrString(path), longRef);
+		if (error != 0)
+			throw new RuntimeException("Error getting input source handle for '" + path + "': " + getInputError(error));
+		return longRef.getValue();
+	}
+
+	public static long getControllerHandle(ControllerType hand) {
+		if (mc.vrSettings.vrReverseHands) {
+			if (hand == ControllerType.RIGHT)
+				return leftControllerHandle;
+			else
+				return rightControllerHandle;
+		} else {
+			if (hand == ControllerType.RIGHT)
+				return rightControllerHandle;
+			else
+				return leftControllerHandle;
+	}
+	}
+
+	private static boolean firstActionUpdate = true;
+
+	public static String getInputError(int code){
+		switch (code){
+		case EVRInputError.EVRInputError_VRInputError_BufferTooSmall:
+			return "BufferTooSmall";
+		case EVRInputError.EVRInputError_VRInputError_InvalidBoneCount:
+			return "InvalidBoneCount";
+		case EVRInputError.EVRInputError_VRInputError_InvalidBoneIndex:
+			return "InvalidBoneIndex";
+		case EVRInputError.EVRInputError_VRInputError_InvalidCompressedData:
+			return "InvalidCompressedData";
+		case EVRInputError.EVRInputError_VRInputError_InvalidDevice:
+			return "InvalidDevice";
+		case EVRInputError.EVRInputError_VRInputError_InvalidHandle:
+			return "InvalidHandle";
+		case EVRInputError.EVRInputError_VRInputError_InvalidParam:
+			return "InvalidParam";
+		case EVRInputError.EVRInputError_VRInputError_InvalidSkeleton:
+			return "InvalidSkeleton";
+		case EVRInputError.EVRInputError_VRInputError_IPCError:
+			return "IPCError";
+		case EVRInputError.EVRInputError_VRInputError_MaxCapacityReached:
+			return "MaxCapacityReached";
+		case EVRInputError.EVRInputError_VRInputError_MismatchedActionManifest:
+			return "MismatchedActionManifest";
+		case EVRInputError.EVRInputError_VRInputError_MissingSkeletonData:
+			return "MissingSkeletonData";
+		case EVRInputError.EVRInputError_VRInputError_NameNotFound:
+			return "NameNotFound";
+		case EVRInputError.EVRInputError_VRInputError_NoActiveActionSet:
+			return "NoActiveActionSet";
+		case EVRInputError.EVRInputError_VRInputError_NoData:
+			return "NoData";
+		case EVRInputError.EVRInputError_VRInputError_None:
+			return "wat";
+		case EVRInputError.EVRInputError_VRInputError_NoSteam:
+			return "NoSteam";
+		case EVRInputError.EVRInputError_VRInputError_WrongType:
+			return "WrongType";
+		}
+		return "Unknown";
 	}
 
 	private static void updatePose()
@@ -1679,7 +1891,6 @@ public class MCOpenVR
 
 		if (getXforms == true) { //set null by events.
 			getTransforms(); //do we want the dynamic info? I don't think so...
-			findControllerDevices(); 
 		}
 
 		for (int nDevice = 0; nDevice < JOpenVRLibrary.k_unMaxTrackedDeviceCount; ++nDevice )
@@ -1687,17 +1898,8 @@ public class MCOpenVR
 			hmdTrackedDevicePoses[nDevice].read();
 			if ( hmdTrackedDevicePoses[nDevice].bPoseIsValid != 0 )
 			{
-				jopenvr.OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(hmdTrackedDevicePoses[nDevice].mDeviceToAbsoluteTracking, poseMatrices[nDevice]);
+				OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(hmdTrackedDevicePoses[nDevice].mDeviceToAbsoluteTracking, poseMatrices[nDevice]);
 				deviceVelocity[nDevice] = new Vec3d(hmdTrackedDevicePoses[nDevice].vVelocity.v[0],hmdTrackedDevicePoses[nDevice].vVelocity.v[1],hmdTrackedDevicePoses[nDevice].vVelocity.v[2]);
-				if(mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_MIXED_REALITY || mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_THIRD_PERSON){
-					if(controllerDeviceIndex[0]!= -1 && controllerDeviceIndex[1] != -1 ){
-						int c = vrsystem.GetTrackedDeviceClass.apply(nDevice);
-						int r = vrsystem.GetControllerRoleForTrackedDeviceIndex.apply(nDevice);
-						if((c == 2 && r == 0) || c == 3) {
-							controllerDeviceIndex[THIRD_CONTROLLER] = nDevice;
-						}
-					} 
-				}
 			}		
 		}
 
@@ -1713,7 +1915,30 @@ public class MCOpenVR
 			hmdPose.M[1][3] = 1.62f;
 		}
 
-		for (int c=0;c<3;c++)
+		if (inputInitialized) {
+			// Gotta do this here so we can get the poses
+			mc.mcProfiler.startSection("updateActionState");
+			VRActiveActionSet_t[] activeActionSets = getActiveActionSets();
+			if (activeActionSets.length > 0) {
+				int error = vrInput.UpdateActionState.apply(activeActionSetsReference, activeActionSets[0].size(), activeActionSets.length);
+				if (error != 0)
+					throw new RuntimeException("Error updating action state: " + getInputError(error));
+			}
+			inputActions.values().forEach(VRInputAction::readNewData);
+
+			mc.mcProfiler.endSection();
+
+			if (mc.vrSettings.vrReverseHands) {
+				updateControllerPose(RIGHT_CONTROLLER, leftPoseHandle);
+				updateControllerPose(LEFT_CONTROLLER, rightPoseHandle);
+			} else {
+				updateControllerPose(RIGHT_CONTROLLER, rightPoseHandle);
+				updateControllerPose(LEFT_CONTROLLER, leftPoseHandle);
+			}
+			updateControllerPose(THIRD_CONTROLLER, externalCameraPoseHandle);
+		}
+
+		/*for (int c=0;c<3;c++)
 		{
 			if (controllerDeviceIndex[c] != -1)
 			{
@@ -1727,12 +1952,82 @@ public class MCOpenVR
 				if (c < 2) controllers[c].tracking = false;
 				//OpenVRUtil.Matrix4fSetIdentity(controllerPose[c]);
 			}
-		}
-
+		}*/
 
 		updateAim();
 		//VRHotkeys.snapMRCam(mc, 0);
 
+	}
+
+	private static void readPoseData(long actionHandle) {
+		int error = vrInput.GetPoseActionDataForNextFrame.apply(actionHandle, JOpenVRLibrary.ETrackingUniverseOrigin.ETrackingUniverseOrigin_TrackingUniverseStanding, poseData, poseData.size(), JOpenVRLibrary.k_ulInvalidInputValueHandle);
+		if (error != 0)
+			throw new RuntimeException("Error reading pose data: " + getInputError(error));
+		poseData.read();
+	}
+
+	private static void readOriginInfo(long inputValueHandle) {
+		int error = vrInput.GetOriginTrackedDeviceInfo.apply(inputValueHandle, originInfo, originInfo.size());
+		if (error != 0)
+			throw new RuntimeException("Error reading origin info: " + getInputError(error));
+		originInfo.read();
+	}
+
+	public static InputOriginInfo_t getOriginInfo(long inputValueHandle) {
+		InputOriginInfo_t originInfoT = new InputOriginInfo_t();
+		readOriginInfo(inputValueHandle);
+		originInfoT.devicePath = originInfo.devicePath;
+		originInfoT.trackedDeviceIndex = originInfo.trackedDeviceIndex;
+		originInfoT.rchRenderModelComponentName = originInfo.rchRenderModelComponentName;
+		return originInfoT;
+	}
+
+	public static ControllerType getOriginControllerType(long inputValueHandle) {
+		if (inputValueHandle == JOpenVRLibrary.k_ulInvalidInputValueHandle)
+			return null;
+		readOriginInfo(inputValueHandle);
+		if (originInfo.trackedDeviceIndex != JOpenVRLibrary.k_unTrackedDeviceIndexInvalid) {
+			if (originInfo.trackedDeviceIndex == controllerDeviceIndex[RIGHT_CONTROLLER])
+				return ControllerType.RIGHT;
+			else if (originInfo.trackedDeviceIndex == controllerDeviceIndex[LEFT_CONTROLLER])
+				return ControllerType.LEFT;
+		}
+		return null;
+	}
+
+	private static void updateControllerPose(int controller, long actionHandle) {
+		readPoseData(actionHandle);
+		if (poseData.activeOrigin != JOpenVRLibrary.k_ulInvalidInputValueHandle) {
+			readOriginInfo(poseData.activeOrigin);
+			int deviceIndex = originInfo.trackedDeviceIndex;
+			if (deviceIndex != controllerDeviceIndex[controller])
+				getXforms = true;
+			controllerDeviceIndex[controller] = deviceIndex;
+			if (deviceIndex != JOpenVRLibrary.k_unTrackedDeviceIndexInvalid) {
+				TrackedDevicePose_t pose = poseData.pose;
+				if (pose.bPoseIsValid != 0) {
+					OpenVRUtil.convertSteamVRMatrix3ToMatrix4f(pose.mDeviceToAbsoluteTracking, poseMatrices[deviceIndex]);
+					deviceVelocity[deviceIndex] = new Vec3d(pose.vVelocity.v[0], pose.vVelocity.v[1], pose.vVelocity.v[2]);
+					OpenVRUtil.Matrix4fCopy(poseMatrices[deviceIndex], controllerPose[controller]);
+
+					controllerTracking[controller] = true;
+					return; // controller is tracking, don't execute the code below
+				}
+			}
+		} else {
+			controllerDeviceIndex[controller] = JOpenVRLibrary.k_unTrackedDeviceIndexInvalid;
+		}
+
+		//OpenVRUtil.Matrix4fSetIdentity(controllerPose[controller]);
+		controllerTracking[controller] = false;
+	}
+
+	public static boolean isControllerTracking(int controller) {
+		return controllerTracking[controller];
+	}
+
+	public static boolean isControllerTracking(ControllerType controller) {
+		return isControllerTracking(controller.ordinal());
 	}
 
 	/**
@@ -1740,10 +2035,10 @@ public class MCOpenVR
 	 */
 
 	public static Vec3d getCenterEyePosition() {
-		Vector3f pos = OpenVRUtil.convertMatrix4ftoTranslationVector(hmdPose);
+		Vector3 pos = OpenVRUtil.convertMatrix4ftoTranslationVector(hmdPose);
 		if (mc.vrSettings.seated || mc.vrSettings.allowStandingOriginOffset)
 		pos=pos.add(offset);
-		return new Vec3d(pos.x, pos.y, pos.z);
+		return pos.toVec3d();
 	}
 
 	/**
@@ -1765,16 +2060,16 @@ public class MCOpenVR
 
 		if(hmdToEye == null){
 			Matrix4f pose = hmdPose;
-			Vector3f pos = OpenVRUtil.convertMatrix4ftoTranslationVector(pose);
+			Vector3 pos = OpenVRUtil.convertMatrix4ftoTranslationVector(pose);
 			if (mc.vrSettings.seated || mc.vrSettings.allowStandingOriginOffset)
 			pos=pos.add(offset);
-			return new Vec3d(pos.x, pos.y, pos.z);
+			return pos.toVec3d();
 		} else {
 			Matrix4f pose = Matrix4f.multiply( hmdPose, hmdToEye );
-			Vector3f pos = OpenVRUtil.convertMatrix4ftoTranslationVector(pose);
+			Vector3 pos = OpenVRUtil.convertMatrix4ftoTranslationVector(pose);
 			if (mc.vrSettings.seated || mc.vrSettings.allowStandingOriginOffset)
 			pos=pos.add(offset);
-			return new Vec3d(pos.x, pos.y, pos.z);
+			return pos.toVec3d();
 		}
 	}
 
@@ -1797,10 +2092,10 @@ public class MCOpenVR
 	 * @return quaternion w, x, y & z components
 	 */
 
-	static EulerOrient getOrientationEuler()
+	static Angle getOrientationEuler()
 	{
-		Quatf orient = OpenVRUtil.convertMatrix4ftoRotationQuat(hmdPose);
-		return OpenVRUtil.getEulerAnglesDegYXZ(orient);
+		Quaternion orient = OpenVRUtil.convertMatrix4ftoRotationQuat(hmdPose);
+		return orient.toEuler();
 	}
 
 	final String k_pch_SteamVR_Section = "steamvr";
@@ -1816,22 +2111,21 @@ public class MCOpenVR
 	}
 
 	public static Vec3d getAimVector( int controller ) {
-		Vector3f v = controllerRotation[controller].transform(forward);
-		return new Vec3d(v.x, v.y, v.z);
+		Vector3 v = controllerRotation[controller].transform(forward);
+		return v.toVec3d();
 
 	}
 
 	public static Vec3d getHmdVector() {
-		Vector3f v = hmdRotation.transform(forward);
-		return new Vec3d(v.x, v.y, v.z);
+		Vector3 v = hmdRotation.transform(forward);
+		return v.toVec3d();
 	}
 
 	public static Vec3d getHandVector( int controller ) {
-		Vector3f forward = new Vector3f(0,0,-1);
+		Vector3 forward = new Vector3(0,0,-1);
 		Matrix4f aimRotation = handRotation[controller];
-		Vector3f controllerDirection = aimRotation.transform(forward);
-		Vec3d out = new Vec3d(controllerDirection.x, controllerDirection.y,controllerDirection.z);
-		return out;
+		Vector3 controllerDirection = aimRotation.transform(forward);
+		return controllerDirection.toVec3d();
 	}
 
 	public static Matrix4f getAimRotation( int controller ) {
@@ -1852,24 +2146,35 @@ public class MCOpenVR
 	public static Vec3d getAimSource( int controller ) {
 		Vec3d out = new Vec3d(aimSource[controller].x, aimSource[controller].y, aimSource[controller].z);
 		if(!mc.vrSettings.seated && mc.vrSettings.allowStandingOriginOffset)
-			out = out.addVector(offset.x, offset.y, offset.z);
+			out = out.addVector(offset.getX(), offset.getY(), offset.getZ());
 		return out;
 	}
 
-	public static void triggerHapticPulse(int controller, int strength) {
-		if(Minecraft.getMinecraft().vrSettings.seated) return;
-		if (controllerDeviceIndex[controller]==-1)
-			return;
-		vrsystem.TriggerHapticPulse.apply(controllerDeviceIndex[controller], 0, (short)strength);
+	public static void triggerHapticPulse(ControllerType controller, float durationSeconds, float frequency, float amplitude) {
+		if (Minecraft.getMinecraft().vrSettings.seated || !inputInitialized) return;
+		int error = vrInput.TriggerHapticVibrationAction.apply(controller == ControllerType.LEFT ? leftHapticHandle : rightHapticHandle, 0, durationSeconds, frequency, amplitude, JOpenVRLibrary.k_ulInvalidInputValueHandle);
+		if (error != 0)
+			System.out.println("Error triggering haptic: " + getInputError(error));
 	}
 	
+	@Deprecated
 	public static void triggerHapticPulse(ControllerType controller, int strength) {
-		triggerHapticPulse(controller.ordinal(), strength);
+		if (strength < 1) return;
+		// Through careful analysis of the haptics in the legacy API (read: I put the controller to
+		// my ear, listened to the vibration, and reproduced the frequency in Audacity), I have determined
+		// that the old haptics used 160Hz. So, these parameters will match the "feel" of the old haptics.
+		triggerHapticPulse(controller, strength / 1000000f, 160, 1);
+	}
+
+	@Deprecated
+	public static void triggerHapticPulse(int controller, int strength) {
+		if (controller < 0 || controller >= ControllerType.values().length) return;
+		triggerHapticPulse(ControllerType.values()[controller], strength);
 	}
 
 	public static float seatedRot;
 
-	public static Vector3f forward = new Vector3f(0,0,-1);
+	public static Vector3 forward = new Vector3(0,0,-1);
 	static double aimPitch = 0; //needed for seated mode.
 
 
@@ -1898,10 +2203,14 @@ public class MCOpenVR
 
 			Vec3d eye = getCenterEyePosition();
 			hmdHistory.add(eye);
-			Vector3f v3 = MCOpenVR.hmdRotation.transform(new Vector3f(0,-.1f, .1f));
-			hmdPivotHistory.add(new Vec3d(v3.x+eye.x, v3.y+eye.y, v3.z+eye.z));
+			Vector3 v3 = MCOpenVR.hmdRotation.transform(new Vector3(0,-.1f, .1f));
+			hmdPivotHistory.add(new Vec3d(v3.getX()+eye.x, v3.getY()+eye.y, v3.getZ()+eye.z));
 
 		}
+
+		Matrix4f[] controllerPoseTip = new Matrix4f[2];
+		controllerPoseTip[0] = new Matrix4f();
+		controllerPoseTip[1] = new Matrix4f();
 
 		{//right controller
 			handRotation[0].M[0][0] = controllerPose[0].M[0][0];
@@ -1924,30 +2233,29 @@ public class MCOpenVR
 			if(mc.vrSettings.seated){
 				controllerPose[0] = hmdPose.inverted().inverted();
 				controllerPose[1] = hmdPose.inverted().inverted();
+				controllerPoseTip[0] = controllerPose[0];
+				controllerPoseTip[1] = controllerPose[1];
 			} else	
-				controllerPose[0] = Matrix4f.multiply(controllerPose[0], getControllerComponentTransform(0,"tip"));
+				controllerPoseTip[0] = Matrix4f.multiply(controllerPose[0], getControllerComponentTransform(0,"tip"));
 
 			// grab controller position in tracker space, scaled to minecraft units
-			Vector3f controllerPos = OpenVRUtil.convertMatrix4ftoTranslationVector(controllerPose[0]);
-			aimSource[0] = new Vec3d(
-					controllerPos.x,
-					controllerPos.y,
-					controllerPos.z);
+			Vector3 controllerPos = OpenVRUtil.convertMatrix4ftoTranslationVector(controllerPoseTip[0]);
+			aimSource[0] = controllerPos.toVec3d();
 
 			controllerHistory[0].add(aimSource[0]);
 
 			// build matrix describing controller rotation
-			controllerRotation[0].M[0][0] = controllerPose[0].M[0][0];
-			controllerRotation[0].M[0][1] = controllerPose[0].M[0][1];
-			controllerRotation[0].M[0][2] = controllerPose[0].M[0][2];
+			controllerRotation[0].M[0][0] = controllerPoseTip[0].M[0][0];
+			controllerRotation[0].M[0][1] = controllerPoseTip[0].M[0][1];
+			controllerRotation[0].M[0][2] = controllerPoseTip[0].M[0][2];
 			controllerRotation[0].M[0][3] = 0.0F;
-			controllerRotation[0].M[1][0] = controllerPose[0].M[1][0];
-			controllerRotation[0].M[1][1] = controllerPose[0].M[1][1];
-			controllerRotation[0].M[1][2] = controllerPose[0].M[1][2];
+			controllerRotation[0].M[1][0] = controllerPoseTip[0].M[1][0];
+			controllerRotation[0].M[1][1] = controllerPoseTip[0].M[1][1];
+			controllerRotation[0].M[1][2] = controllerPoseTip[0].M[1][2];
 			controllerRotation[0].M[1][3] = 0.0F;
-			controllerRotation[0].M[2][0] = controllerPose[0].M[2][0];
-			controllerRotation[0].M[2][1] = controllerPose[0].M[2][1];
-			controllerRotation[0].M[2][2] = controllerPose[0].M[2][2];
+			controllerRotation[0].M[2][0] = controllerPoseTip[0].M[2][0];
+			controllerRotation[0].M[2][1] = controllerPoseTip[0].M[2][1];
+			controllerRotation[0].M[2][2] = controllerPoseTip[0].M[2][2];
 			controllerRotation[0].M[2][3] = 0.0F;
 			controllerRotation[0].M[3][0] = 0.0F;
 			controllerRotation[0].M[3][1] = 0.0F;
@@ -2040,27 +2348,24 @@ public class MCOpenVR
 
 			// update off hand aim
 			if(!mc.vrSettings.seated) 
-				controllerPose[1] = Matrix4f.multiply(controllerPose[1], getControllerComponentTransform(1,"tip"));
+				controllerPoseTip[1] = Matrix4f.multiply(controllerPose[1], getControllerComponentTransform(1,"tip"));
 
-			Vector3f leftControllerPos = OpenVRUtil.convertMatrix4ftoTranslationVector(controllerPose[1]);
-			aimSource[1] = new Vec3d(
-					leftControllerPos.x,
-					leftControllerPos.y,
-					leftControllerPos.z);
+			Vector3 leftControllerPos = OpenVRUtil.convertMatrix4ftoTranslationVector(controllerPoseTip[1]);
+			aimSource[1] = leftControllerPos.toVec3d();
 			controllerHistory[1].add(aimSource[1]);
 
 			// build matrix describing controller rotation
-			controllerRotation[1].M[0][0] = controllerPose[1].M[0][0];
-			controllerRotation[1].M[0][1] = controllerPose[1].M[0][1];
-			controllerRotation[1].M[0][2] = controllerPose[1].M[0][2];
+			controllerRotation[1].M[0][0] = controllerPoseTip[1].M[0][0];
+			controllerRotation[1].M[0][1] = controllerPoseTip[1].M[0][1];
+			controllerRotation[1].M[0][2] = controllerPoseTip[1].M[0][2];
 			controllerRotation[1].M[0][3] = 0.0F;
-			controllerRotation[1].M[1][0] = controllerPose[1].M[1][0];
-			controllerRotation[1].M[1][1] = controllerPose[1].M[1][1];
-			controllerRotation[1].M[1][2] = controllerPose[1].M[1][2];
+			controllerRotation[1].M[1][0] = controllerPoseTip[1].M[1][0];
+			controllerRotation[1].M[1][1] = controllerPoseTip[1].M[1][1];
+			controllerRotation[1].M[1][2] = controllerPoseTip[1].M[1][2];
 			controllerRotation[1].M[1][3] = 0.0F;
-			controllerRotation[1].M[2][0] = controllerPose[1].M[2][0];
-			controllerRotation[1].M[2][1] = controllerPose[1].M[2][1];
-			controllerRotation[1].M[2][2] = controllerPose[1].M[2][2];
+			controllerRotation[1].M[2][0] = controllerPoseTip[1].M[2][0];
+			controllerRotation[1].M[2][1] = controllerPoseTip[1].M[2][1];
+			controllerRotation[1].M[2][2] = controllerPoseTip[1].M[2][2];
 			controllerRotation[1].M[2][3] = 0.0F;
 			controllerRotation[1].M[3][0] = 0.0F;
 			controllerRotation[1].M[3][1] = 0.0F;
@@ -2097,11 +2402,8 @@ public class MCOpenVR
 
 		if(controllerDeviceIndex[THIRD_CONTROLLER]!=-1 && (mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_MIXED_REALITY || mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_THIRD_PERSON )|| debugThirdController) {
 			mrMovingCamActive = true;
-			Vector3f thirdControllerPos = OpenVRUtil.convertMatrix4ftoTranslationVector(controllerPose[2]);
-			aimSource[2] = new Vec3d(
-					thirdControllerPos.x,
-					thirdControllerPos.y,
-					thirdControllerPos.z);
+			Vector3 thirdControllerPos = OpenVRUtil.convertMatrix4ftoTranslationVector(controllerPose[2]);
+			aimSource[2] = thirdControllerPos.toVec3d();
 		} else {
 			mrMovingCamActive = false;
 			aimSource[2] = new Vec3d(
@@ -2143,16 +2445,17 @@ public class MCOpenVR
 	}
 
 	public static void resetPosition() {
-		Vec3d pos= getCenterEyePosition().scale(-1).addVector(offset.x,offset.y,offset.z);
-		offset=new Vector3f((float) pos.x,(float)pos.y+1.62f,(float)pos.z);
+		Vec3d pos= getCenterEyePosition().scale(-1).addVector(offset.getX(),offset.getY(),offset.getZ());
+		offset=new Vector3((float) pos.x,(float)pos.y+1.62f,(float)pos.z);
 	}
 
 	public static void clearOffset() {
-		offset=new Vector3f(0,0,0);
+		offset=new Vector3(0,0,0);
 	}
 
-	public static boolean isVivecraftBinding(KeyBinding kb) {
-		return kb.getKeyCategory().startsWith("Vivecraft");
+	public static boolean isSafeBinding(KeyBinding kb) {
+		// Stupid hard-coded junk
+		return kb.getKeyCategory().startsWith("Vivecraft") || kb == mc.gameSettings.keyBindChat || kb == mc.gameSettings.keyBindInventory;
 	}
 
 	public static boolean isHMDTracking() {

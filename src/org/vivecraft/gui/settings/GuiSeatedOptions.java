@@ -19,25 +19,11 @@ public class GuiSeatedOptions extends BaseGuiSettings implements GuiEventEx
 			VRSettings.VrOptions.Y_SENSITIVITY,
 			VRSettings.VrOptions.KEYHOLE,
             VRSettings.VrOptions.SEATED_HUD_XHAIR,
-            VRSettings.VrOptions.WORLD_ROTATION_INCREMENT        
+            VRSettings.VrOptions.WORLD_ROTATION_INCREMENT,
+            VRSettings.VrOptions.SEATED_FREE_MOVE        
 	};
 	
 	
-    static VRSettings.VrOptions[] teleportSettings = new VRSettings.VrOptions[]
-    {
-            VRSettings.VrOptions.LIMIT_TELEPORT,
-            VRSettings.VrOptions.SIMULATE_FALLING,
-            VRSettings.VrOptions.TELEPORT_UP_LIMIT,
-            VRSettings.VrOptions.TELEPORT_DOWN_LIMIT,
-            VRSettings.VrOptions.TELEPORT_HORIZ_LIMIT
-
-    };
-    static VRSettings.VrOptions[] freeMoveSettings = new VRSettings.VrOptions[]
-    {
-        VRSettings.VrOptions.SEATED_HMD,
-        VRSettings.VrOptions.FOV_REDUCTION,
-    };
-
 	public GuiSeatedOptions(GuiScreen guiScreen, VRSettings guivrSettings) {
 		super( guiScreen, guivrSettings );
 		screenTitle = "Seated Settings";
@@ -51,21 +37,14 @@ public class GuiSeatedOptions extends BaseGuiSettings implements GuiEventEx
 		this.buttonList.clear();
 		this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, "Reset To Defaults"));
 		this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, "Done"));
-        mc.vrSettings.vrFreeMove = mc.vrPlayer.getFreeMove();
-
-		GuiSmallButtonEx mode = new GuiSmallButtonEx(VRSettings.VrOptions.MOVE_MODE.returnEnumOrdinal(), this.width / 2 - 68, this.height / 6 + 80,VRSettings.VrOptions.MOVE_MODE, this.guivrSettings.getKeyBinding(VRSettings.VrOptions.MOVE_MODE));
-        mode.setEventHandler(this);
-        this.buttonList.add(mode);
 
 		VRSettings.VrOptions[] buttons = seatedOptions;
 
 		addButtons(buttons, 0);
 		
-        if(mc.vrPlayer.getFreeMove())
-        	addButtons(freeMoveSettings,104);
-        else
-        	addButtons(teleportSettings,104); 
-        
+		this.buttonList.add(new GuiButtonEx(300, this.width / 2 - 155 , this.height / 6 + 102,150,20, "Free Move Settings..."));
+		this.buttonList.add(new GuiButtonEx(301, this.width / 2 + 5 , this.height / 6 + 102,150,20, "Teleport Settings..."));
+
 	}
 
 	private void addButtons(VRSettings.VrOptions[] buttons, int y) {
@@ -159,17 +138,17 @@ public class GuiSeatedOptions extends BaseGuiSettings implements GuiEventEx
 				vrSettings.keyholeX=15;
 				vrSettings.xSensitivity=1;
 				vrSettings.ySensitivity=1;
-				vrSettings.vrFreeMove = true;
-				vrSettings.useFOVReduction = false;
-				vrSettings.vrFreeMove = true;
 				vrSettings.seatedUseHMD = false;
 				vrSettings.seatedHudAltMode = false;
-				vrSettings.vrTeleportDownLimit = 4;
-				vrSettings.vrTeleportUpLimit = 1;
-				vrSettings.vrTeleportHorizLimit = 16;
-				mc.vrPlayer.setFreeMove(true);
 				Minecraft.getMinecraft().vrSettings.saveOptions();
 				this.reinit = true;
+			}
+			else if (par1GuiButton.id == 300) {
+				this.mc.displayGuiScreen(new GuiFreeMoveSettings(this, guivrSettings));
+			}
+			else if (par1GuiButton.id == 301) {
+				this.mc.displayGuiScreen(this.parentGuiScreen);
+				this.mc.displayGuiScreen(new GuiTeleportSettings(this, guivrSettings));
 			}
 
 			else if (par1GuiButton instanceof GuiSmallButtonEx)
@@ -177,13 +156,6 @@ public class GuiSeatedOptions extends BaseGuiSettings implements GuiEventEx
 				VRSettings.VrOptions num = VRSettings.VrOptions.getEnumOptions(par1GuiButton.id);
 				this.guivrSettings.setOptionValue(((GuiSmallButtonEx)par1GuiButton).returnVrEnumOptions(), 1);
 				par1GuiButton.displayString = this.guivrSettings.getKeyBinding(VRSettings.VrOptions.getEnumOptions(par1GuiButton.id));
-                
-				if(num == VRSettings.VrOptions.MOVE_MODE){
-                	this.reinit = true;
-                }     
-				if(num == VRSettings.VrOptions.LIMIT_TELEPORT){
-                	this.reinit = true;
-                }  
 			}
 		}
 	}
@@ -257,6 +229,13 @@ public class GuiSeatedOptions extends BaseGuiSettings implements GuiEventEx
                 return new String[] {
                         "Limit the number of blocks you can teleport sideways you"
                 };
+            case SEATED_FREE_MOVE:
+                return new String[] {
+                        "Which locomotion mode to use in seated mode.",
+                        "",
+                        "Teleport: Press any direction to activate.",
+                        "Free Move: WASD movement like vanilla Minecraft."
+                        };
             default:
                 return null;
             }

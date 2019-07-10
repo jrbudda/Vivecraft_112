@@ -4,7 +4,7 @@
   <jar>../../installer.jar</jar>
   <outfile>../../installer.exe</outfile>
   <errTitle></errTitle>
-  <cmdLine></cmdLine>
+  <cmdLine>-Djava.net.preferIPv4Stack=true</cmdLine>
   <chdir></chdir>
   <priority>normal</priority>
   <downloadUrl>http://java.com/download</downloadUrl>
@@ -15,7 +15,7 @@
   <icon></icon>
   <jre>
     <path></path>
-    <minVersion>1.6.0</minVersion>
+    <minVersion>1.8.0</minVersion>
     <maxVersion></maxVersion>
   </jre>
 </launch4jConfig>

@@ -79,10 +79,10 @@ public class GuiMinecriftSettings extends BaseGuiSettings implements GuiEventEx
     	int profileButtonWidth = 120;
 
     	if(!isConfirm){
-        	screenTitle = "VR Settings";
-            VROption mode = new VROption(VRSettings.VrOptions.PLAY_MODE_SEATED,VROption.Position.POS_RIGHT,  2,  VROption.ENABLED, null);
-            GuiSmallButtonEx profilesButton = new GuiSmallButtonEx(mode.getOrdinal(), (this.width / 2 - profileButtonWidth/2 ) , this.height / 4 + 24 , mode._e, mode.getButtonText());
-            profilesButton.setWidth(profileButtonWidth);
+    		screenTitle = "VR Settings";
+    		VROption mode = new VROption(VRSettings.VrOptions.PLAY_MODE_SEATED,VROption.Position.POS_RIGHT,  2,  VROption.ENABLED, null);
+    		GuiSmallButtonEx profilesButton = new GuiSmallButtonEx(mode.getOrdinal(), (this.width / 2 - profileButtonWidth/2 ) , this.height / 4 + 24 , mode._e, mode.getButtonText());
+    		profilesButton.setWidth(profileButtonWidth);
     		this.buttonList.add(profilesButton);
     		this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, "Reset To Defaults"));
     		this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, "Done"));
@@ -97,10 +97,10 @@ public class GuiMinecriftSettings extends BaseGuiSettings implements GuiEventEx
     		}else {
     			processButtons(vrStandingOptions);
     			if(mc.vrSettings.allowStandingOriginOffset)
-	    			processButtons(new VROption[] {
-	                        new VROption(VRSettings.VrOptions.RESET_ORIGIN, VROption.Position.POS_RIGHT,   4f, VROption.ENABLED, null),
-	    			}
-	    			);
+    				processButtons(new VROption[] {
+    						new VROption(VRSettings.VrOptions.RESET_ORIGIN, VROption.Position.POS_RIGHT,   4f, VROption.ENABLED, null),
+    				}
+    						);
     		}
 
     	}

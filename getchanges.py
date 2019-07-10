@@ -39,37 +39,26 @@ def main(mcp_dir, patch_dir = "patches", orig_dir = ".minecraft_orig"):
     patchsrc_base_dir = os.path.join( base_dir , "patchsrc" )
     resources_base_dir    = os.path.join(base_dir, "resources" )
 
-    try:
+    try:       
         shutil.rmtree( new_src_dir, onerror=pythonisdumb, ignore_errors=True)
-    except OSError as e:
-        print e
-        
-    try:
-        shutil.rmtree( patch_base_dir, onerror=pythonisdumb, ignore_errors=True)
-    except OSError as e:
-        print e
-        
-    try:
-        shutil.rmtree( patchsrc_base_dir, onerror=pythonisdumb, ignore_errors=True)
-    except OSError as e:
-        print e
-        
-    try:
+        shutil.rmtree( patch_base_dir, onerror=pythonisdumb, ignore_errors=True)    
+        shutil.rmtree( patchsrc_base_dir, onerror=pythonisdumb, ignore_errors=True)      
         shutil.rmtree( resources_base_dir, onerror=pythonisdumb, ignore_errors=True)
+         
+        if not os.path.exists( new_src_dir ):
+            os.mkdir( new_src_dir )
+        
+        if not os.path.exists( patch_base_dir ):
+            os.mkdir( patch_base_dir )
+
+        if not os.path.exists( patchsrc_base_dir ):
+            os.mkdir( patchsrc_base_dir )
+
+        if not os.path.exists( resources_base_dir ):
+            os.makedirs( resources_base_dir )
+            
     except OSError as e:
-        print e  
-     
-    if not os.path.exists( new_src_dir ):
-        os.mkdir( new_src_dir )
-    
-    if not os.path.exists( patch_base_dir ):
-        os.mkdir( patch_base_dir )
-
-    if not os.path.exists( patchsrc_base_dir ):
-        os.mkdir( patchsrc_base_dir )
-
-    if not os.path.exists( resources_base_dir ):
-        os.makedirs( resources_base_dir )
+        quit
 
     mod_src_dir = os.path.join( mcp_dir , "src", "minecraft" )
     resources_src_dir = os.path.join( mcp_dir , "src", "resources" )

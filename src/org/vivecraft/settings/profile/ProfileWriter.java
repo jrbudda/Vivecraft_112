@@ -55,4 +55,8 @@ public class ProfileWriter
             ProfileManager.setProfileSet(this.theProfile, this.set, this.data);
         }
     }
+
+    public void setData(Map<String, String> data) {
+        this.data = data;
+    }
 }

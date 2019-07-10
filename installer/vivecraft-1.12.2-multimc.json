@@ -13,10 +13,6 @@
 		"url": "http://vivecraft.org/jar/"
 	},
 	{
-		"name": "de.fruitfly.ovr:JRift:0.8.0.0.1",
-		"url": "http://vivecraft.org/jar/"
-	},
-	{
 		"name": "org.ow2.asm:asm-all:5.2",
 		"url": "http://files.minecraftforge.net/maven/"
 	},

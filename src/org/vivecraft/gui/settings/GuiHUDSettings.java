@@ -145,7 +145,6 @@ public class GuiHUDSettings extends BaseGuiSettings
             {
             	this.guivrSettings.saveOptions();
             	GuiVRControls guiVRControls = new GuiVRControls(this, this.guivrSettings);
-            	guiVRControls.guiFilter = true;
                 this.mc.displayGuiScreen(guiVRControls);
             }
             else if (par1GuiButton.id == 301)

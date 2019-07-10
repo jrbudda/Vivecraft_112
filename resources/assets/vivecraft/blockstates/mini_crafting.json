@@ -1,5 +1,5 @@
 {
     "variants": {
-        "normal": { "model": "vivecraft:mini_crafting" }
+        "": { "model": "vivecraft:mini_crafting" }
     }
 }

@@ -7,7 +7,7 @@ from tempfile import mkstemp
 from shutil import move
 from os import remove, close
 from install import download_deps, download_native, download_file, mkdir_p, replacelineinfile
-from minecriftversion import mc_version, of_file_name, of_json_name, minecrift_version_num, \
+from minecriftversion import mc_version, of_file_name, minecrift_version_num, \
   minecrift_build, of_file_extension, of_file_md5, mcp_version, forge_version, mc_file_md5
 
 try:
@@ -61,44 +61,59 @@ def process_json(addon, version, mcversion, forgeversion, ofversion):
         json_obj["libraries"].insert(0,{"name":lib_id, "MMC-hint":"local"}) #Insert at beginning
         #json_obj["libraries"].append({"name":"net.minecraft:Minecraft:"+mc_version}) #Insert at end
         return json.dumps( json_obj, indent=1 )
-	
+
 def parse_srg_classnames(srgfile):
-	classnames = []
-	with open(srgfile) as f:
-		for line in f:
-			split = line.split(" ")
-			if split[0] == "CL:":
-				classnames.append("%s.class" % (split[1]))
-	return classnames
+    classnames = {}
+    with open(srgfile) as f:
+        for line in f:
+            split = line.split(" ")
+            if split[0] == "CL:":
+                classnames["%s.class" % (split[1])] = split[2].strip()
+    return classnames
 
 def create_install(mcp_dir):
     print "Creating Installer..."
     reobf = os.path.join(mcp_dir,'reobf','minecraft')
     resources = os.path.join(base_dir,"resources")
-    # VIVE - removed from inner loop. blk.class is EntityPlayerSP, not anything to do with sound?
-    #if cur_file=='blk.class': #skip SoundManager
-    #continue
+    patches = os.path.join(base_dir,'patches')
+    
     in_mem_zip = StringIO.StringIO()
     with zipfile.ZipFile( in_mem_zip,'w', zipfile.ZIP_DEFLATED) as zipout:
         vanilla = parse_srg_classnames(os.path.join(mcp_dir, "conf", "joined.srg"))
         for abs_path, _, filelist in os.walk(reobf, followlinks=True):
-            arc_path = os.path.relpath( abs_path, reobf ).replace('\\','/').replace('.','')+'/'
+            arc_path = os.path.relpath( abs_path, reobf ).replace('\\','/').replace('.','') + '/'
             for cur_file in fnmatch.filter(filelist, '*.class'):
+                #print arc_path + cur_file
                 flg = False
                 #if cur_file in {'MinecriftVanillaTweaker.class','MinecriftClassTransformer.class','MinecriftForgeTweaker.class','MinecriftClassTransformer$Stage.class','MinecriftClassTransformer$1.class','MinecriftClassTransformer$2.class','MinecriftClassTransformer$3.class','MinecriftClassTransformer$4.class'}:
                 #if cur_file in {'brl.class', 'brl$1.class', 'brl$2.class', 'brl$3.class', 'brl$4.class', 'brl$5.class', 'brl$a.class'}: #skip facebakery
                 #    continue
                 #if cur_file in {'aej.class', 'aej$1.class', 'aej$2.class', 'aej$3.class', 'aej$4.class', 'aej$5.class', 'aej$6.class', 'aej$7.class', 'aej$8.class', 'aej$9.class', 'aej$10.class', 'aej$11.class', 'aej$12.class'}: #skip creativetabs - wtf
                 #    continue
-                if cur_file in {'bmg.class', 'bmp.class', 'bmp$a.class', 'bmp$b.class', 'bmp$c.class', 'bhe.class'}: #skip guicontainer and guicontainercreative - asm
-                    continue
-                if cur_file in {'Matrix4f.class'}: #why
-                    continue
-                if cur_file in vanilla: #these misbehave when loaded in this jar, do some magic.
-                    flg = True
-                # Just don't ask about this nonsense because I don't have any idea
-                #if cur_file in {'brd.class'}: #skip bakedquad
+                #if cur_file in {'bmg.class', 'bmp.class', 'bmp$a.class', 'bmp$b.class', 'bmp$c.class', 'bhe.class'}: #skip guicontainer and guicontainercreative - asm
                 #    continue
+                #if cur_file in {'Matrix4f.class'}: #why
+                #    continue
+                #if cur_file in vanilla or 'optifine' in arc_path: #these misbehave when loaded in this jar, do some magic.
+                if not '$' in cur_file and not 'vivecraft' in (arc_path+cur_file).lower() and not 'jopenvr' in arc_path and not 'VR' in cur_file: #these misbehave when loaded in this jar, do some magic.
+                    flg = True
+                    ok = False
+                    v = (arc_path + cur_file).replace('/','\\').split('$')[0].replace('.class', '')
+                    cur_file_parent = cur_file.split('$')[0].replace('.class','') + '.class'
+                    if cur_file_parent in vanilla:
+                        v = vanilla[cur_file_parent].replace('/','\\')               
+                    for patch_path, _, patchlist in os.walk(patches, followlinks=True):
+                        for patch in fnmatch.filter(patchlist, '*.patch'):
+                            p = patch_path + '\\' + patch
+                            if v in p:
+                                #print 'Found ' + v + ' ' + p
+                                ok = True
+                                break
+                    if not ok:
+                        print "WARNING: Skipping unexpected file with no patch " + arc_path + cur_file_parent + ' (' + v + ')'
+                        continue
+                if "blaze3d" in arc_path:
+                    flg = True
                 #if cur_file in {'bsz.class', 'bsz$1.class', 'bsz$2.class', 'bsz$3.class', 'bsz$a.class'}: #skip chunkrenderdispatcher
                 #    continue
                 #if cur_file in {'atm.class', 'atm$1.class', 'atm$a.class', 'atm$Builder.class'}: #skip blockstatecontainer
@@ -112,8 +127,8 @@ def create_install(mcp_dir):
                 in_file= os.path.join(abs_path,cur_file)
                 arcname =  arc_path + cur_file
                 if flg:
-                    arcname =  arc_path + cur_file.replace('.class', '.clazz')
-                zipout.write(in_file, arcname)
+                    arcname =  arc_path.replace('/','.') + cur_file.replace('.class', '.clazz')
+                zipout.write(in_file, arcname.strip('.'))
         print "Checking Resources..."
         for a, b, c in os.walk(resources):
             print a
@@ -145,7 +160,6 @@ def create_install(mcp_dir):
     replacelineinfile( installer_java_file, "private static final String MC_VERSION",        "    private static final String MC_VERSION        = \"%s\";\n" % minecrift_version_num );
     replacelineinfile( installer_java_file, "private static final String MC_MD5",            "    private static final String MC_MD5            = \"%s\";\n" % mc_file_md5 );
     replacelineinfile( installer_java_file, "private static final String OF_FILE_NAME",      "    private static final String OF_FILE_NAME      = \"%s\";\n" % of_file_name );
-    replacelineinfile( installer_java_file, "private static final String OF_JSON_NAME",      "    private static final String OF_JSON_NAME      = \"%s\";\n" % of_json_name );
     replacelineinfile( installer_java_file, "private static final String OF_MD5",            "    private static final String OF_MD5            = \"%s\";\n" % of_file_md5 );
     replacelineinfile( installer_java_file, "private static final String OF_VERSION_EXT",    "    private static final String OF_VERSION_EXT    = \"%s\";\n" % of_file_extension );
     replacelineinfile( installer_java_file, "private static String FORGE_VERSION",     "    private static String FORGE_VERSION     = \"%s\";\n" % forge_version );
@@ -172,7 +186,7 @@ def create_install(mcp_dir):
                     install_out.write(os.path.join(dirName,afile), os.path.join(relpath,afile))
             
         # Add json files
-        install_out.writestr("version.json", process_json("", version,minecrift_version_num,"",of_file_name ))
+        install_out.writestr("version.json", process_json("", version,minecrift_version_num,"",of_file_name))
         install_out.writestr("version-forge.json", process_json("-forge", version,minecrift_version_num,forge_version,of_file_name ))
         install_out.writestr("version-multimc.json", process_json("-multimc", version,minecrift_version_num,"",of_file_name ))
         
@@ -225,16 +239,8 @@ def main(mcp_dir):
         pass
         shutil.rmtree(reobf)
     except OSError:
-        pass
-		
-	# Read Minecrift lib versions
-	jRiftPom = os.path.join(base_dir, 'JRift', 'JRift', 'pom.xml')
-	jRiftLibraryPom = os.path.join(base_dir, 'JRift', 'JRiftLibrary', 'pom.xml')
-	jRiftVer = readpomversion(jRiftPom)
-	print 'JRift: %s' % jRiftVer
-	jRiftLibraryVer = readpomversion(jRiftLibraryPom)
-	print 'JRiftLibrary: %s' % jRiftLibraryVer
-        
+        quit
+		       
     # Update Minecrift version
     minecraft_java_file = os.path.join(mcp_dir,'src','minecraft','net','minecraft','client','Minecraft.java')
     if os.path.exists(minecraft_java_file):

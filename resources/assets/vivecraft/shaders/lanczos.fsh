@@ -18,7 +18,7 @@
  void main() 
  { 
 	 vec4 fragmentColor = texture2D(inputImageTexture, centerTextureCoordinate) * 0.38026;
- 
+	 
 	 fragmentColor += texture2D(inputImageTexture, oneStepLeftTextureCoordinate) * 0.27667; 
 	 fragmentColor += texture2D(inputImageTexture, oneStepRightTextureCoordinate) * 0.27667; 
  

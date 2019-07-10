@@ -36,11 +36,6 @@ public abstract class TwoHandedGuiScreen extends GuiScreen
 				{
 					this.selectedButton = guibutton;
 					guibutton.playPressSound(this.mc.getSoundHandler());
-					
-					if((int)((int)cursorX2 * this.width / this.mc.displayWidth) == mouseX)
-						MCOpenVR.triggerHapticPulse(ControllerType.RIGHT, 2000);
-					else 
-						MCOpenVR.triggerHapticPulse(ControllerType.LEFT, 2000);
 
 					this.actionPerformed(guibutton);
 				}

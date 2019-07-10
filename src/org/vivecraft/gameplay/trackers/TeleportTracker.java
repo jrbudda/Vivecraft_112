@@ -5,12 +5,12 @@ import java.util.Random;
 import org.vivecraft.api.NetworkHelper;
 import org.vivecraft.gameplay.VRMovementStyle;
 import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.utils.Angle;
+import org.vivecraft.utils.Matrix4f;
+import org.vivecraft.utils.OpenVRUtil;
+import org.vivecraft.utils.Quaternion;
+import org.vivecraft.utils.Vector3;
 
-import de.fruitfly.ovr.structs.EulerOrient;
-import de.fruitfly.ovr.structs.Matrix4f;
-import de.fruitfly.ovr.structs.Quatf;
-import de.fruitfly.ovr.structs.Vector3f;
-import jopenvr.OpenVRUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLadder;
 import net.minecraft.block.BlockVine;
@@ -60,7 +60,6 @@ public class TeleportTracker extends Tracker{
 		if(p == null) return false;
 		if(p.isDead) return false;
 		if(p.isPlayerSleeping()) return false;
-		if (Minecraft.getMinecraft().vrPlayer.getFreeMove()) return false;
 		return true;
 	}
 
@@ -82,7 +81,10 @@ public class TeleportTracker extends Tracker{
         boolean doTeleport = false;
         Vec3d dest = null;
 
-        if ((player.movementInput.moveForward != 0 || player.movementInput.moveStrafe != 0) && !player.isRiding()) //holding down Ltrigger
+        boolean bindingTeleport = MCOpenVR.keyTeleport.isKeyDown() && mc.vrPlayer.isTeleportEnabled();
+        boolean seatedTeleport = mc.vrSettings.seated && !mc.vrPlayer.getFreeMove() && (player.movementInput.moveForward != 0 || player.movementInput.moveStrafe != 0);
+
+        if ((bindingTeleport || seatedTeleport) && !player.isRiding())
         {
             dest = movementTeleportDestination;
 
@@ -241,13 +243,12 @@ public class TeleportTracker extends Tracker{
             }
 
      	   //execute teleport               
-            if(mc.vrPlayer.noTeleportClient){
+            if(!mc.vrPlayer.isTeleportSupported()){
             	String tp = "/tp " + mc.player.getName() + " " + dest.x + " " +dest.y + " " + dest.z;      
             	mc.player.sendChatMessage(tp);
             } else {          
             	if(NetworkHelper.serverSupportsDirectTeleport)	player.teleported = true;
-                //System.out.println("tp to " + dest);
-            	player.setPositionAndUpdate(dest.x, dest.y, dest.z);
+            	player.setLocationAndAngles(dest.x, dest.y, dest.z, player.rotationYaw, player.rotationPitch);
             }
 
             doTeleportCallback();
@@ -328,8 +329,8 @@ public class TeleportTracker extends Tracker{
         handRotation = Matrix4f.multiply(rot, handRotation);
         
         // extract hand roll
-        Quatf handQuat = OpenVRUtil.convertMatrix4ftoRotationQuat(handRotation);
-        EulerOrient euler = OpenVRUtil.getEulerAnglesDegYXZ(handQuat);
+        Quaternion handQuat = OpenVRUtil.convertMatrix4ftoRotationQuat(handRotation);
+        Angle euler = handQuat.toEuler();
         //TODO: use vrdata for this
         
         int maxSteps = 50;
@@ -342,13 +343,13 @@ public class TeleportTracker extends Tracker{
 
         // calculate gravity vector for arc
         float gravityAcceleration = 0.098f;
-        Matrix4f rollCounter = OpenVRUtil.rotationZMatrix((float)Math.toRadians(-euler.roll));
+        Matrix4f rollCounter = OpenVRUtil.rotationZMatrix((float)Math.toRadians(-euler.getRoll()));
         Matrix4f gravityTilt = OpenVRUtil.rotationXMatrix((float)Math.PI * -.8f);
         Matrix4f gravityRotation = Matrix4f.multiply(handRotation, rollCounter);
         
-        Vector3f forward = new Vector3f(0,1,0);
-        Vector3f gravityDirection = gravityRotation.transform(forward);
-        Vec3d gravity = new Vec3d(-gravityDirection.x, -gravityDirection.y, -gravityDirection.z);
+        Vector3 forward = new Vector3(0,1,0);
+        Vector3 gravityDirection = gravityRotation.transform(forward);
+        Vec3d gravity = gravityDirection.multiply(-1).toVec3d();
         
         gravity = gravity.scale(gravityAcceleration);
 
@@ -637,7 +638,7 @@ public class TeleportTracker extends Tracker{
         if(mc.vrSettings.vrLimitedSurvivalTeleport){
           mc.player.addExhaustion((float) (movementTeleportDistance / 16 * 1.2f));    
           
-          if (!mc.vrPlayer.getFreeMove() && mc.playerController.isNotCreative() && vrMovementStyle.arcAiming){
+          if (mc.playerController.isNotCreative() && vrMovementStyle.arcAiming){
           	teleportEnergy -= movementTeleportDistance * 4;	
           }       
         }

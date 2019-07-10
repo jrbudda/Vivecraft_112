@@ -27,35 +27,9 @@ public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
             VRSettings.VrOptions.VEHICLE_ROTATION,
             VRSettings.VrOptions.BCB_ON,
             VRSettings.VrOptions.WALK_MULTIPLIER,
-            VRSettings.VrOptions.ALLOW_MODE_SWITCH,
+            VRSettings.VrOptions.WORLD_ROTATION_INCREMENT,
             VRSettings.VrOptions.ALLOW_STANDING_ORIGIN_OFFSET,
-            VRSettings.VrOptions.WORLD_ROTATION_INCREMENT
-    };
-
-    static VRSettings.VrOptions[] teleportSettings = new VRSettings.VrOptions[]
-    {
-            VRSettings.VrOptions.LIMIT_TELEPORT,
-            VRSettings.VrOptions.SIMULATE_FALLING,
-            VRSettings.VrOptions.TELEPORT_UP_LIMIT,
-            VRSettings.VrOptions.TELEPORT_DOWN_LIMIT,
-            VRSettings.VrOptions.TELEPORT_HORIZ_LIMIT
-    };
-    static VRSettings.VrOptions[] freeMoveSettings = new VRSettings.VrOptions[]
-    {
-    		VRSettings.VrOptions.FREEMOVE_MODE,
-            VRSettings.VrOptions.INERTIA_FACTOR,
-            VRSettings.VrOptions.MOVEMENT_MULTIPLIER,
-            VRSettings.VrOptions.FOV_REDUCTION,
-    };
-    static VRSettings.VrOptions[] freeMoveSettingsJP = new VRSettings.VrOptions[]
-    {
-            VRSettings.VrOptions.ANALOG_DEADZONE,
-    		VRSettings.VrOptions.FREEMOVE_WMR_STICK
-    };
-    static VRSettings.VrOptions[] freeMoveSettingsNJP = new VRSettings.VrOptions[]
-    {
-    		VRSettings.VrOptions.ANALOG_DEADZONE,
-            VRSettings.VrOptions.ANALOG_MOVEMENT
+            VRSettings.VrOptions.FORCE_STANDING_FREE_MOVE
     };
     
     public GuiStandingSettings(GuiScreen guiScreen, VRSettings guivrSettings) {
@@ -73,22 +47,9 @@ public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
         this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, "Done"));
         VRSettings.VrOptions[] buttons = locomotionSettings;
         addButtons(buttons,0);
-        mc.vrSettings.vrFreeMove = mc.vrPlayer.getFreeMove();
-        GuiSmallButtonEx mode = new GuiSmallButtonEx(VRSettings.VrOptions.MOVE_MODE.returnEnumOrdinal(), this.width / 2 - 75, this.height / 6 + 80,VRSettings.VrOptions.MOVE_MODE, this.guivrSettings.getKeyBinding(VRSettings.VrOptions.MOVE_MODE));
-        mode.setEventHandler(this);
-        this.buttonList.add(mode);
+		this.buttonList.add(new GuiButtonEx(300, this.width / 2 - 155 , this.height / 6 + 102,150,20, "Free Move Settings..."));
+		this.buttonList.add(new GuiButtonEx(301, this.width / 2 + 5 , this.height / 6 + 102,150,20, "Teleport Settings..."));
   
-		if(mc.vrPlayer.getFreeMove()){
-			List<VrOptions> fm = new ArrayList<VRSettings.VrOptions>();
-			Collections.addAll(fm, freeMoveSettings);
-	    	if(guivrSettings.vrFreeMoveMode == guivrSettings.FREEMOVE_JOYPAD) 
-				Collections.addAll(fm, freeMoveSettingsJP);
-	    	else if (guivrSettings.vrFreeMoveMode != guivrSettings.FREEMOVE_RUNINPLACE) 
-				Collections.addAll(fm, freeMoveSettingsNJP);
-        	addButtons((VrOptions[]) fm.toArray(new VrOptions[fm.size()]),115);
-		}
-        else
-        	addButtons(teleportSettings,115);        
     }
 
 	private void addButtons(VRSettings.VrOptions[] buttons, int startY) {
@@ -145,26 +106,7 @@ public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
                     minValue = 0f;
                     maxValue = 0.5f;
                     increment = 0.01f;
-                }
-                else if(var8 == VrOptions.TELEPORT_DOWN_LIMIT){
-                    minValue = 0f;
-                    maxValue = 16f;
-                    increment = 1f;
-                    show = this.guivrSettings.vrLimitedSurvivalTeleport;
-                }
-                else if(var8 == VrOptions.TELEPORT_UP_LIMIT){
-                    minValue = 0f;
-                    maxValue = 4f;
-                    increment = 1f;
-                    show = this.guivrSettings.vrLimitedSurvivalTeleport;
-                }
-                else if(var8 == VrOptions.TELEPORT_HORIZ_LIMIT){
-                    minValue = 0f;
-                    maxValue = 32f;
-                    increment = 1f;
-                    show = this.guivrSettings.vrLimitedSurvivalTeleport;
-                }
-                
+                }              
                 if(show) {
                 	GuiSliderEx slider = new GuiSliderEx(var8.returnEnumOrdinal(), width, height - 20, var8, this.guivrSettings.getKeyBinding(var8), minValue, maxValue, increment, this.guivrSettings.getOptionFloatValue(var8));
                 	slider.setEventHandler(this);
@@ -216,29 +158,24 @@ public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
                 vr.simulateFalling = true;
                 //jrbudda//
                 vr.vrAllowCrawling = false;
-                vr.vrAllowLocoModeSwotch = true;
-                vr.vrFreeMove = false;
-                vr.vrLimitedSurvivalTeleport = true;
                 vr.vrShowBlueCircleBuddy = true;
                 vr.walkMultiplier=1;
                 vr.vrFreeMoveMode = vr.FREEMOVE_CONTROLLER;
                 vr.vehicleRotation = true;
-                vr.useFOVReduction = false;
-                vr.walkUpBlocks = true;
-                vr.analogMovement = true;
-                vr.vrTeleportDownLimit = 4;
-                vr.vrTeleportUpLimit = 1;
-                vr.vrTeleportHorizLimit = 16;
-                vr.analogDeadzone = 0.10f;
 
                 //end jrbudda
                 
-                Minecraft.getMinecraft().gameSettings.viewBobbing = true;
-
                 Minecraft.getMinecraft().gameSettings.saveOptions();
                 Minecraft.getMinecraft().vrSettings.saveOptions();
                 this.reinit = true;
             }
+			else if (par1GuiButton.id == 300) {
+				this.mc.displayGuiScreen(new GuiFreeMoveSettings(this, guivrSettings));
+			}
+			else if (par1GuiButton.id == 301) {
+				this.mc.displayGuiScreen(this.parentGuiScreen);
+				this.mc.displayGuiScreen(new GuiTeleportSettings(this, guivrSettings));
+			}
             else if (par1GuiButton instanceof GuiSmallButtonEx)
             {
                 VRSettings.VrOptions num = VRSettings.VrOptions.getEnumOptions(par1GuiButton.id);
@@ -317,30 +254,9 @@ public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
                             "  affect lava, water or jumping movement currently."
                     };
                 // VIVE START - new options
-                case SIMULATE_FALLING:
-                    return new String[] {
-                            "If enabled the player will falls to the ground in TP mode",
-                            "when standing above empty space. Also allows jumping"
-                    } ;
-                case ALLOW_MODE_SWITCH:
-                    return new String[] {
-                            "Allows the use of the Pick Block button to switch between",
-                            "Teleport and Free Move mode."
-                    } ;
                 case ALLOW_CRAWLING:
                     return new String[] {
                             "If enabled the player will be able to duck under block"
-                    } ;
-                case MOVE_MODE:
-                    return new String[] {
-                            "Current move mode. Teleport or Free Move."
-                    } ;
-                case LIMIT_TELEPORT:
-                    return new String[] {
-                            "If enabled the arc teleporter will be have restrictions",
-                            "in survival mode. It will not be able to jump up the side", 
-                            "of blocks, it will consume food, and it will have an energy",
-                            "bar that refills over time."
                     } ;
                 case BCB_ON:
                     return new String[] {
@@ -348,32 +264,6 @@ public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
                             "This is your Square Shadow Buddy (tm).",
                             "Do not lose your Square Shadow Buddy."
                     };
-                case WALK_MULTIPLIER:
-                    return new String[]{
-                            "Multiplies your position in the room by a factor",
-                            "Allows you to walk around more,",
-                            "but may cause motion sickness"
-                    };
-                case FREEMOVE_MODE:
-                    return new String[] {
-                            "The source for freemove direction.","",
-                            "Controller: Offhand controller pointing direction",
-                            "HMD: Headset look direction",
-                            "Run In Place:",
-                            "    Direction is based on how controllers are swinging.",
-                            "Joy/Pad: ",
-                            "    Uses the offhand touchpad or joystick for all motion.",
-                    } ;
-                case FREEMOVE_WMR_STICK:
-                	return new String[] {
-                			"Whether to use touchpad or stick for Joy/Pad movement."	
-                	};
-                case ANALOG_DEADZONE:
-                	return new String[] {
-                			"How far an axis must be pushed before movement is",
-                			"registered for Joy/Pad or Analog movement. Adjust this",
-                			"if you are drifting while not touching the axis."
-                	};
                 case VEHICLE_ROTATION:
                     return new String[] {
                             "Riding in a vehicle will rotate the world",
@@ -388,7 +278,7 @@ public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
                 case WORLD_ROTATION_INCREMENT:
                     return new String[] {
                             "How many degrees to rotate when",
-                            "rotating the world."
+                            "rotating the world. Move all the way left for Smooth."
                             
                     };
                 case ANALOG_MOVEMENT:
@@ -409,6 +299,20 @@ public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
                     return new String[] {
                             "Limit the number of blocks you can teleport sideways you"
                     };
+                case FORCE_STANDING_FREE_MOVE:
+                    return new String[] {
+            				"Forces the use of the fallback walk forwards",
+            				"binding (left trigger by default). For more movement",
+            				"options, edit the SteamVR controller bindings.",
+            				"",
+            				"Note that this disables the teleport binding."
+            				};
+                case ALLOW_STANDING_ORIGIN_OFFSET:
+                	return new String[]{
+                			"Allows the \"Reset Origin\" button to be used in",
+                			"standing mode, for those that wish to play physically",
+                			"seated while using tracked controllers."
+                	};
                 default:
                     return null;
             }

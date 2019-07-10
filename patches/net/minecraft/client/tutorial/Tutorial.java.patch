@@ -1,0 +1,12 @@
+--- a/net/minecraft/client/tutorial/Tutorial.java
++++ b/net/minecraft/client/tutorial/Tutorial.java
+@@ -99,7 +99,8 @@
+             this.stop();
+         }
+ 
+-        this.tutorialStep = this.minecraft.gameSettings.tutorialStep.create(this);
++        this.tutorialStep = TutorialSteps.NONE.create(this);// Nope
++        //this.minecraft.gameSettings.tutorialStep.create(this);
+     }
+ 
+     public void update()

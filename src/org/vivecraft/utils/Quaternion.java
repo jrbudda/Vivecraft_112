@@ -1,11 +1,8 @@
 package org.vivecraft.utils;
 
-import de.fruitfly.ovr.structs.EulerOrient;
-import de.fruitfly.ovr.structs.Quatf;
-import jopenvr.OpenVRUtil;
-import net.minecraft.util.math.Vec3d;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Matrix4f;
+import net.minecraft.util.math.Vec3d;
 
 
 /**
@@ -85,9 +82,14 @@ public class Quaternion {
 		this(matrix.m00, matrix.m01, matrix.m02, matrix.m10, matrix.m11, matrix.m12, matrix.m20, matrix.m21, matrix.m22);
 	}
 
-	public Quaternion(de.fruitfly.ovr.structs.Matrix4f matrix){
+	public Quaternion(org.vivecraft.utils.Matrix4f matrix) {
 		this(matrix.M[0][0],matrix.M[0][1],matrix.M[0][2],matrix.M[1][0],matrix.M[1][1],matrix.M[1][2],matrix.M[2][0],matrix.M[2][1],matrix.M[2][2]);
 	}
+
+
+//	public Quaternion(org.vivecraft.utils.Matrix4f matrix){
+//		this(matrix.M[0][0],matrix.M[0][1],matrix.M[0][2],matrix.M[1][0],matrix.M[1][1],matrix.M[1][2],matrix.M[2][0],matrix.M[2][1],matrix.M[2][2]);
+//	}
 
 	private Quaternion(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22) {
 		float s;
@@ -202,20 +204,23 @@ public class Quaternion {
 	}
 
 	public Angle toEuler(){
-		Quaternion norm=this.normalized();
-		Quatf quat = new Quatf(norm.x,norm.y,norm.z,norm.w);
-		EulerOrient euler = OpenVRUtil.getEulerAnglesDegYXZ(quat);
-		return new Angle(euler.pitch,euler.yaw,euler.roll);
-	}
+		Angle eulerAngles = new Angle();
+		Quaternion q = this;
+		eulerAngles.setYaw((float)Math.toDegrees(Math.atan2( 2*(q.x*q.z + q.w*q.y), q.w*q.w - q.x*q.x - q.y*q.y + q.z*q.z )));
+		eulerAngles.setPitch((float)Math.toDegrees(Math.asin ( -2*(q.y*q.z - q.w*q.x) )));
+		eulerAngles.setRoll((float)Math.toDegrees(Math.atan2( 2*(q.x*q.y + q.w*q.z), q.w*q.w - q.x*q.x + q.y*q.y - q.z*q.z )));
 
+		return eulerAngles;
+	}
+	
 
 	public Quaternion rotate(Axis axis, float degrees, boolean local) {
 		if (local) {
 			return this.multiply(new Quaternion(axis, degrees));
 		} else {
-		Matrix4f matrix = getMatrix();
-		matrix.rotate((float)Math.toRadians(degrees), Utils.convertVector(axis.getVector()));
-		return new Quaternion(matrix);
+			Matrix4f matrix = getMatrix();
+			matrix.rotate((float)Math.toRadians(degrees), Utils.convertVector(axis.getVector()));
+			return new Quaternion(matrix);
 		}
 	}
 

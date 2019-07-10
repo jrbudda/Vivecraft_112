@@ -9,7 +9,7 @@ import net.minecraft.client.entity.EntityPlayerSP;
  * register in {@link OpenVRPlayer}
  * */
 public abstract class Tracker {
-	Minecraft mc;
+	public Minecraft mc;
 	public Tracker(Minecraft mc){
 		this.mc=mc;
 	}
@@ -17,6 +17,7 @@ public abstract class Tracker {
 	public abstract boolean isActive(EntityPlayerSP player);
 	public abstract void doProcess(EntityPlayerSP player);
 	public void reset(EntityPlayerSP player){}
+	public void idleTick(EntityPlayerSP player){}
 
 	public EntryPoint getEntryPoint(){return EntryPoint.LIVING_UPDATE;}
 

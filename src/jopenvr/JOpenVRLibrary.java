@@ -1256,15 +1256,15 @@ public class JOpenVRLibrary implements Library {
 
 	public static String IVRSystem_Version = "FnTable:IVRSystem_019";
 	public static String IVRExtendedDisplay_Version = "FnTable:IVRExtendedDisplay_001";
-	public static String IVRTrackedCamera_Version = "FnTable:IVRTrackedCamera_003";
+	public static String IVRTrackedCamera_Version = "FnTable:IVRTrackedCamera_005";
 	public static String IVRApplications_Version = "FnTable:IVRApplications_006";
 	public static String IVRChaperone_Version = "FnTable:IVRChaperone_003";
-	public static String IVRChaperoneSetup_Version = "FnTable:IVRChaperoneSetup_005";
+	public static String IVRChaperoneSetup_Version = "FnTable:IVRChaperoneSetup_006";
 	public static String IVRCompositor_Version = "FnTable:IVRCompositor_022";
 	public static String IVRInput_Version = "FnTable:IVRInput_006";
 	public static String IVRIOBuffer_Version = "FnTable:IVRIOBuffer_002";
-	public static String IVROverlay_Version = "FnTable:IVROverlay_018";
-	public static String IVRRenderModels_Version = "FnTable:IVRRenderModels_005";
+	public static String IVROverlay_Version = "FnTable:IVROverlay_019";
+	public static String IVRRenderModels_Version = "FnTable:IVRRenderModels_006";
 	public static String IVRNotifications_Version = "FnTable:IVRNotifications_002";
 	public static String IVRSettings_Version = "FnTable:IVRSettings_002";
 	public static String IVRScreenshots_Version = "FnTable:IVRScreenshots_001";

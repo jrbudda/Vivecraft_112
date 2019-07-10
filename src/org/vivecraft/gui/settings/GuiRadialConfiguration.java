@@ -207,9 +207,9 @@ public class GuiRadialConfiguration extends BaseGuiSettings
     public void drawScreen(int par1, int par2, float par3) {
         this.drawDefaultBackground();
     	
-    	if(!MCOpenVR.isBound(MCOpenVR.keyRadialMenu))
-    		this.drawCenteredString(this.fontRenderer, "The radial menu is not currently bound to a controller button.", this.width / 2, this.height - 50, 13777215);
-    	
+//    	if(!MCOpenVR.isBound(MCOpenVR.keyRadialMenu))
+//    		this.drawCenteredString(this.fontRenderer, "The radial menu is not currently bound to a controller button.", this.width / 2, this.height - 50, 13777215);
+//    	
     	if(this.isShift)
     		this.drawCenteredString(this.fontRenderer, "Hold (Gui Shift) with the radial menu open to switch to this set", this.width / 2, this.height - 36, 13777015);
 

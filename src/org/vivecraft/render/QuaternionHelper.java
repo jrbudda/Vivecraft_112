@@ -2,15 +2,10 @@ package org.vivecraft.render;
 
 import java.nio.FloatBuffer;
 
-import de.fruitfly.ovr.OculusRift;
-import de.fruitfly.ovr.enums.Axis;
-import de.fruitfly.ovr.enums.HandedSystem;
-import de.fruitfly.ovr.enums.RotateDirection;
-import de.fruitfly.ovr.structs.EulerOrient;
-import de.fruitfly.ovr.structs.Quatf;
-import net.minecraft.util.math.Vec3d;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Quaternion;
+
+import net.minecraft.util.math.Vec3d;
 
 /**
  * With thanks to 'Exemplos de LWJGL', by fabcam...@hotmail.com
@@ -20,17 +15,17 @@ public class QuaternionHelper
 {
     public static final Quaternion IDENTITY_QUATERNION = new Quaternion().setIdentity();
 
-    public static String toEulerDegString(String name, Quaternion q1, Axis rot1, Axis rot2, Axis rot3, HandedSystem hand, RotateDirection rotDir)
-    {
-        Quatf quat = new Quatf(q1.x, q1.y, q1.z, q1.w);
-        return toEulerDegString(name, quat, rot1, rot2, rot3, hand, rotDir);
-    }
-
-    public static String toEulerDegString(String name, Quatf q1, Axis rot1, Axis rot2, Axis rot3, HandedSystem hand, RotateDirection rotDir)
-    {
-        EulerOrient euler = OculusRift.getEulerAnglesDeg(q1, 1.0f, rot1, rot2, rot3, hand, rotDir);
-        return String.format("%s: Yaw: %.3f, Pitch: %.3f, Roll: %.3f", new Object[] {name, Float.valueOf(euler.yaw), Float.valueOf(euler.pitch), Float.valueOf(euler.roll)});
-    }
+//    public static String toEulerDegString(String name, Quaternion q1, Axis rot1, Axis rot2, Axis rot3, HandedSystem hand, RotateDirection rotDir)
+//    {
+//        Quatf quat = new Quatf(q1.x, q1.y, q1.z, q1.w);
+//        return toEulerDegString(name, quat, rot1, rot2, rot3, hand, rotDir);
+//    }
+//
+//    public static String toEulerDegString(String name, Quatf q1, Axis rot1, Axis rot2, Axis rot3, HandedSystem hand, RotateDirection rotDir)
+//    {
+//        EulerOrient euler = OculusRift.getEulerAnglesDeg(q1, 1.0f, rot1, rot2, rot3, hand, rotDir);
+//        return String.format("%s: Yaw: %.3f, Pitch: %.3f, Roll: %.3f", new Object[] {name, Float.valueOf(euler.yaw), Float.valueOf(euler.pitch), Float.valueOf(euler.roll)});
+//    }
 
     public static Quaternion clone(Quaternion q1)
     {

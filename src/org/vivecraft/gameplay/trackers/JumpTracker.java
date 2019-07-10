@@ -53,7 +53,12 @@ public class JumpTracker extends Tracker {
 	public boolean isjumping(){
 		return c1Latched || c0Latched;
 	}
-
+ 	
+	@Override
+	public void idleTick(EntityPlayerSP player) {
+		MCOpenVR.getInputAction(MCOpenVR.keyClimbeyJump).setEnabled(isClimbeyJump());
+	}
+ 	
 	@Override
 	public void reset(EntityPlayerSP player) {
 		c1Latched = false;
@@ -62,14 +67,14 @@ public class JumpTracker extends Tracker {
 
 	public void doProcess(EntityPlayerSP player){
 
-		if(isClimbeyJumpEquipped() && mc.vrPlayer.getFreeMove()){
+		if(isClimbeyJumpEquipped()){
 
 			OpenVRPlayer provider = mc.vrPlayer;
 
 			boolean[] ok = new boolean[2];
 
 			for(int c=0;c<2;c++){
-				ok[c]=	mc.gameSettings.keyBindJump.isKeyDown();
+				ok[c]=	MCOpenVR.keyClimbeyJump.isKeyDown();
 			}
 
 			boolean jump = false;

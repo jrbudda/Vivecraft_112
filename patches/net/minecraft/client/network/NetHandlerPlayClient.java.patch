@@ -101,7 +101,6 @@
          this.netManager.sendPacket(new CPacketCustomPayload("MC|Brand", (new PacketBuffer(Unpooled.buffer())).writeString(ClientBrandRetriever.getClientModName())));
 +        
 +        // VIVE START - ask server if it's running this mod
-+        this.gameController.vrPlayer.setFreeMove(true);
 +        byte[] version = Minecraft.getMinecraft().minecriftVerString.getBytes(Charsets.UTF_8);
 +        String s = "Vivecraft";
 +        PacketBuffer pb = new PacketBuffer(Unpooled.buffer());
@@ -109,6 +108,7 @@
 +        this.netManager.sendPacket(new CPacketCustomPayload("REGISTER", pb ));
 +        this.netManager.sendPacket(new CPacketCustomPayload("MC|Vive|Version", (new PacketBuffer(Unpooled.buffer())).writeString(Minecraft.getMinecraft().minecriftVerString)));
 +        this.netManager.sendPacket(NetworkHelper.getVivecraftClientPacket(PacketDiscriminators.VERSION, version));
++        this.gameController.vrPlayer.teleportWarningTimer = 20 * 3;
 +        // VIVE END - ask server if it's running this mod
      }
  
@@ -130,14 +130,16 @@
          }
      }
  
-@@ -865,6 +912,10 @@
+@@ -864,7 +911,11 @@
+      */
      public void handleDisconnect(SPacketDisconnect packetIn)
      {
-         this.netManager.closeChannel(packetIn.getReason());
-+        // VIVE START - no longer on a vanilla server, reset restricted state
-+    	this.gameController.vrPlayer.noTeleportClient = true;
-+        OpenVRPlayer.get().setFreeMove(true);
-+        // VIVE END - no longer on a vanilla server, reset restricted state
+-        this.netManager.closeChannel(packetIn.getReason());
++    	this.netManager.closeChannel(packetIn.getReason());
++    	// VIVE START - no longer on a vanilla server, reset restricted state
++    	this.gameController.vrPlayer.setTeleportSupported(false);
++    	this.gameController.vrPlayer.setTeleportOverride(false);
++    	// VIVE END - no longer on a vanilla server, reset restricted state
      }
  
      /**
@@ -294,8 +296,8 @@
 +        // VIVE START - server told us that it has this mod too, allow extended reach, etc.
 +        else if ("MC|ViveOK".equals(packetIn.getChannelName()))
 +        { //allowed, set to user preference.
-+        	this.gameController.vrPlayer.noTeleportClient = false;
-+            this.gameController.vrPlayer.setFreeMove(Minecraft.getMinecraft().vrPlayer.getFreeMove());
++        	this.gameController.vrPlayer.setTeleportSupported(true);
++        	this.gameController.vrPlayer.teleportWarningTimer = -1;
 +        } 
 +        else if ("Vivecraft".equals(packetIn.getChannelName()))
 +        { 
@@ -306,8 +308,8 @@
 +        	switch (dis){
 +        	case VERSION:
 +        		String v = packetbuffer.readString(1024);
-+        		this.gameController.vrPlayer.noTeleportClient = false;
-+        		this.gameController.vrPlayer.setFreeMove(Minecraft.getMinecraft().vrSettings.vrFreeMove);
++        		this.gameController.vrPlayer.setTeleportSupported(true);
++        		this.gameController.vrPlayer.teleportWarningTimer = -1;
 +        		this.gameController.printChatMessage("Vivecraft server mod detected: " + v);
 +        		break;
 +        	case REQUESTDATA:

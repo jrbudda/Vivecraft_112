@@ -25,6 +25,7 @@ public class VR_IVRRenderModels_FnTable extends Structure {
 	public VR_IVRRenderModels_FnTable.GetComponentName_callback GetComponentName;
 	public VR_IVRRenderModels_FnTable.GetComponentButtonMask_callback GetComponentButtonMask;
 	public VR_IVRRenderModels_FnTable.GetComponentRenderModelName_callback GetComponentRenderModelName;
+	public VR_IVRRenderModels_FnTable.GetComponentStateForDevicePath_callback GetComponentStateForDevicePath;
 	public VR_IVRRenderModels_FnTable.GetComponentState_callback GetComponentState;
 	public VR_IVRRenderModels_FnTable.RenderModelHasComponent_callback RenderModelHasComponent;
 	public VR_IVRRenderModels_FnTable.GetRenderModelThumbnailURL_callback GetRenderModelThumbnailURL;
@@ -69,6 +70,9 @@ public class VR_IVRRenderModels_FnTable extends Structure {
 	public interface GetComponentRenderModelName_callback extends Callback {
 		int apply(Pointer pchRenderModelName, Pointer pchComponentName, Pointer pchComponentRenderModelName, int unComponentRenderModelNameLen);
 	};
+	public interface GetComponentStateForDevicePath_callback extends Callback {
+		byte apply(Pointer pchRenderModelName, Pointer pchComponentName, long devicePath, RenderModel_ControllerMode_State_t pState, RenderModel_ComponentState_t pComponentState);
+	};
 	public interface GetComponentState_callback extends Callback {
 		byte apply(Pointer pchRenderModelName, Pointer pchComponentName, VRControllerState_t pControllerState, RenderModel_ControllerMode_State_t pState, RenderModel_ComponentState_t pComponentState);
 	};
@@ -88,7 +92,7 @@ public class VR_IVRRenderModels_FnTable extends Structure {
 		super();
 	}
 	protected List<String> getFieldOrder() {
-		return Arrays.asList("LoadRenderModel_Async", "FreeRenderModel", "LoadTexture_Async", "FreeTexture", "LoadTextureD3D11_Async", "LoadIntoTextureD3D11_Async", "FreeTextureD3D11", "GetRenderModelName", "GetRenderModelCount", "GetComponentCount", "GetComponentName", "GetComponentButtonMask", "GetComponentRenderModelName", "GetComponentState", "RenderModelHasComponent", "GetRenderModelThumbnailURL", "GetRenderModelOriginalPath", "GetRenderModelErrorNameFromEnum");
+		return Arrays.asList("LoadRenderModel_Async", "FreeRenderModel", "LoadTexture_Async", "FreeTexture", "LoadTextureD3D11_Async", "LoadIntoTextureD3D11_Async", "FreeTextureD3D11", "GetRenderModelName", "GetRenderModelCount", "GetComponentCount", "GetComponentName", "GetComponentButtonMask", "GetComponentRenderModelName", "GetComponentStateForDevicePath", "GetComponentState", "RenderModelHasComponent", "GetRenderModelThumbnailURL", "GetRenderModelOriginalPath", "GetRenderModelErrorNameFromEnum");
 	}
 	public VR_IVRRenderModels_FnTable(Pointer peer) {
 		super(peer);

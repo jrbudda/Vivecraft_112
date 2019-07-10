@@ -6,10 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-import org.vivecraft.control.ButtonTuple;
 import org.vivecraft.control.ControllerType;
-import org.vivecraft.control.VRButtonMapping;
-import org.vivecraft.control.VRInputEvent;
 import org.vivecraft.gameplay.screenhandlers.GuiHandler;
 import org.vivecraft.gameplay.screenhandlers.KeyboardHandler;
 import org.vivecraft.utils.KeyboardSimulator;
@@ -50,6 +47,7 @@ public class PhysicalKeyboard {
 	private long[] pressTime = new long[2];
 	private long[] pressRepeatTime = new long[2];
 	private long shiftPressTime;
+	private boolean lastPressedShift;
 
 	private String easterEggText = new String(new byte[]{0x72, 0x6f, 0x79, 0x61, 0x6c, 0x20, 0x72, 0x61, 0x69, 0x6e, 0x62, 0x6f, 0x77}, StandardCharsets.UTF_8);
 	private int easterEggIndex = 0;
@@ -264,15 +262,15 @@ public class PhysicalKeyboard {
 		}
 	}
 
-	public boolean handleInputEvent(VRInputEvent event) {
-		VRButtonMapping shift = mc.vrSettings.buttonMappings.get(GuiHandler.keyShift.getKeyDescription());
-		Predicate<ButtonTuple> predicate = b -> b.button == event.getButton() && b.isTouch == event.isButtonTouchEvent();
-		if(shift.buttons.stream().anyMatch(predicate)) {
-			setShift(event.getButtonState(), false);
-			// Only block if this isn't a controller where shift is bound, so text can be selected
-			return shift.buttons.stream().noneMatch(b -> b.controller == event.getController().getType());
+	public void processBindings() {
+		if (GuiHandler.keyKeyboardShift.isPressed()) {
+			setShift(true, false);
+			lastPressedShift = true;
 		}
-		return false;
+		if (!GuiHandler.keyKeyboardShift.isKeyDown() && lastPressedShift) {
+			setShift(false, false);
+			lastPressedShift = false;
+		}
 	}
 
 	private Vector3f getCenterPos() {

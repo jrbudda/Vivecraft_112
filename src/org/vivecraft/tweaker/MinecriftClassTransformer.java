@@ -71,7 +71,7 @@ public class MinecriftClassTransformer implements IClassTransformer
             File file = new File(uri);
             ZipFile zipFile = new ZipFile(file);
 
-            if (zipFile.getEntry("org/vivecraft/provider/MCOculus.class") == null)
+            if (zipFile.getEntry("org/vivecraft/provider/MCOpenVR.class") == null)
             {
                 zipFile.close();
                 return null;

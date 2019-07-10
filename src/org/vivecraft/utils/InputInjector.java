@@ -14,9 +14,10 @@ import org.lwjgl.opengl.Display;
 public class InputInjector {
 	private static boolean supportChecked = false;
 	private static boolean supported = true;
-	//private static Method putMouseEvent;
 	private static Method putKeyboardEvent;
 	private static Method putMouseEventWithCoords;
+	private static Method handleMouseScrolled;
+	private static Method handleButtonPress;
 	private static Object keyboard;
 	private static Object mouse;
 	private static Class displayClass;
@@ -72,13 +73,30 @@ public class InputInjector {
 		return field.get(obj);
 	}
 	
-	private static void putMouseEventWithCoords(int button, boolean state, int coord1, int coord2, int dz, long nanos) throws ReflectiveOperationException {
+	private static void putMouseEventWithCoords(int button, boolean state, int coord1, int coord2, int dz) throws ReflectiveOperationException {
 		if (!loadObjects()) return;
 		if (putMouseEventWithCoords == null) {
 			putMouseEventWithCoords = mouseClass.getDeclaredMethod("putMouseEventWithCoords", Byte.TYPE, Byte.TYPE, Integer.TYPE, Integer.TYPE, Integer.TYPE, Long.TYPE);
 			putMouseEventWithCoords.setAccessible(true);
 		}
-		putMouseEventWithCoords.invoke(mouse, (byte)button, state ? (byte)1 : (byte)0, coord1, coord2, dz, nanos);
+		putMouseEventWithCoords.invoke(mouse, (byte)button, state ? (byte)1 : (byte)0, coord1, coord2, dz, System.nanoTime());
+	}
+
+	private static void putMouseWheelEvent(boolean down) throws ReflectiveOperationException {
+		if (!loadObjects()) return;
+		if (LWJGLUtil.getPlatform() == LWJGLUtil.PLATFORM_WINDOWS) {
+			if (handleMouseScrolled == null) {
+				handleMouseScrolled = mouseClass.getDeclaredMethod("handleMouseScrolled", Integer.TYPE, Long.TYPE);
+				handleMouseScrolled.setAccessible(true);
+			}
+			handleMouseScrolled.invoke(mouse, down ? 120 : -120, System.nanoTime() / 1000000L);
+		} else if (LWJGLUtil.getPlatform() == LWJGLUtil.PLATFORM_LINUX) {
+			if (handleButtonPress == null) {
+				handleButtonPress = mouseClass.getDeclaredMethod("handleButtonPress", Boolean.TYPE, Byte.TYPE, Long.TYPE);
+				handleButtonPress.setAccessible(true);
+			}
+			handleButtonPress.invoke(mouse, Mouse.isGrabbed(), down ? (byte)4 : (byte)5, System.nanoTime());
+		}
 	}
 	
 	private static void putKeyboardEvent(int keycode, boolean state, int ch) throws ReflectiveOperationException {
@@ -117,13 +135,28 @@ public class InputInjector {
 			int dx = x - Mouse.getX();
 			int dy = y - Mouse.getY(); // TODO: Find out if linux needs transformed (inverted) Y
 			if (dx != 0 || dy != 0) {
-				long nanos = System.nanoTime();
 				if (Mouse.isGrabbed()) {
-					putMouseEventWithCoords(-1, false, dx, dy, 0, nanos);
+					putMouseEventWithCoords(-1, false, dx, dy, 0);
 				} else {
-					putMouseEventWithCoords(-1, false, x, y, 0, nanos);
+					putMouseEventWithCoords(-1, false, x, y, 0);
 				}
 			}
+		} catch (ReflectiveOperationException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static void mouseWheelUp() {
+		try {
+			putMouseWheelEvent(false);
+		} catch (ReflectiveOperationException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static void mouseWheelDown() {
+		try {
+			putMouseWheelEvent(true);
 		} catch (ReflectiveOperationException e) {
 			throw new RuntimeException(e);
 		}

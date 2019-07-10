@@ -193,10 +193,6 @@
 	{
 		"url": "http://vivecraft.org/jar/", 
 		"name": "com.sun:jna:4.2.1"
-	}, 
-	{
-		"url": "http://vivecraft.org/jar/", 
-		"name": "de.fruitfly.ovr:JRift:0.8.0.0.1"
 	}
 	]
 }

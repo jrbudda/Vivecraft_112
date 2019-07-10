@@ -62,4 +62,8 @@ public class ProfileReader
     {
 
     }
+
+    public Map<String, String> getData() {
+        return currentProfile;
+    }
 }

@@ -5,8 +5,8 @@ import java.nio.ByteBuffer;
 import org.vivecraft.api.NetworkHelper;
 import org.vivecraft.gameplay.OpenVRPlayer;
 import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.utils.Vector3;
 
-import de.fruitfly.ovr.structs.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -67,13 +67,13 @@ public class BowTracker extends Tracker {
 	
 	public static boolean isBow(ItemStack itemStack) {
 		if( itemStack == ItemStack.EMPTY) return false;
-		if(Minecraft.getMinecraft().vrSettings.bowMode == 0) return false;
 		else if(Minecraft.getMinecraft().vrSettings.bowMode == 1) return itemStack.getItem() == Items.BOW; 
 		else return itemStack.getItem().getItemUseAction(itemStack) == EnumAction.BOW;			 
 	}
 	
 	public static boolean isHoldingBow(EntityLivingBase e, EnumHand hand) {
 		if(Minecraft.getMinecraft().vrSettings.seated) return false;
+		if(Minecraft.getMinecraft().vrSettings.bowMode == 0) return false;
 		return isBow(e.getHeldItem(hand));
 	}
 	
@@ -140,11 +140,11 @@ public class BowTracker extends Tracker {
 
 		Vec3d rightaim3 = provider.vrdata_world_render.getHand(0).getCustomVector(new Vec3d(0,0,-1));
 		
-		Vector3f rightAim = new Vector3f((float)rightaim3.x, (float) rightaim3.y, (float) rightaim3.z);
+		Vector3 rightAim = new Vector3((float)rightaim3.x, (float) rightaim3.y, (float) rightaim3.z);
 		leftHandAim = provider.vrdata_world_render.getHand(1).getCustomVector(new Vec3d(0, 0, -1));
 	 	Vec3d l4v3 = provider.vrdata_world_render.getHand(1).getCustomVector(new Vec3d(0, -1, 0));
 		 
-		Vector3f leftforeward = new Vector3f((float)l4v3.x, (float) l4v3.y, (float) l4v3.z);
+		Vector3 leftforeward = new Vector3((float)l4v3.x, (float) l4v3.y, (float) l4v3.z);
 
 		controllersDot = 180 / Math.PI * Math.acos(leftforeward.dot(rightAim));
 
@@ -275,12 +275,9 @@ public class BowTracker extends Tracker {
         		
         ItemStack itemstack = this.findAmmo(player);
 
-        if (itemstack != null || flag)
+        if (itemstack.isEmpty() && flag)
         {
-            if (itemstack == null)
-            {
-                return new ItemStack(Items.ARROW);
-            }
+        	return new ItemStack(Items.ARROW);
         }
         return itemstack;
     }

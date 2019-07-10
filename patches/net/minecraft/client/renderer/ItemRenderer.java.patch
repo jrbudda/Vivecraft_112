@@ -1,15 +1,16 @@
 --- a/net/minecraft/client/renderer/ItemRenderer.java
 +++ b/net/minecraft/client/renderer/ItemRenderer.java
-@@ -1,13 +1,30 @@
+@@ -1,13 +1,31 @@
  package net.minecraft.client.renderer;
  
  import com.google.common.base.MoreObjects;
++
++import org.vivecraft.control.ControllerType;
 +import org.vivecraft.gameplay.trackers.BowTracker;
 +import org.vivecraft.provider.MCOpenVR;
 +import org.vivecraft.render.RenderVRPlayer;
++import org.vivecraft.utils.Vector3;
 +import org.vivecraft.render.RenderPass;
-+
-+import de.fruitfly.ovr.structs.Vector3f;
 +
 +import java.util.HashMap;
 +import java.util.Map;
@@ -31,7 +32,7 @@
  import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
  import net.minecraft.client.renderer.entity.Render;
  import net.minecraft.client.renderer.entity.RenderManager;
-@@ -16,19 +33,31 @@
+@@ -16,19 +34,31 @@
  import net.minecraft.client.renderer.texture.TextureMap;
  import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
  import net.minecraft.entity.EntityLivingBase;
@@ -65,7 +66,7 @@
  import net.minecraft.world.storage.MapData;
  import net.optifine.DynamicLights;
  import net.optifine.reflect.Reflector;
-@@ -50,20 +79,37 @@
+@@ -50,20 +80,37 @@
      private float prevEquippedProgressOffHand;
      private final RenderManager renderManager;
      private final RenderItem itemRenderer;
@@ -106,7 +107,7 @@
      {
          if (!heldStack.isEmpty())
          {
-@@ -72,17 +118,17 @@
+@@ -72,17 +119,17 @@
              GlStateManager.pushMatrix();
              boolean flag = this.itemRenderer.shouldRenderItemIn3D(heldStack) && block.getBlockLayer() == BlockRenderLayer.TRANSLUCENT;
  
@@ -135,7 +136,7 @@
  
              GlStateManager.popMatrix();
          }
-@@ -100,7 +146,7 @@
+@@ -100,7 +147,7 @@
          GlStateManager.popMatrix();
      }
  
@@ -144,7 +145,7 @@
      {
          AbstractClientPlayer abstractclientplayer = this.mc.player;
          int i = this.mc.world.getCombinedLight(new BlockPos(abstractclientplayer.posX, abstractclientplayer.posY + (double)abstractclientplayer.getEyeHeight(), abstractclientplayer.posZ), 0);
-@@ -115,6 +161,7 @@
+@@ -115,6 +162,7 @@
          OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, f, f1);
      }
  
@@ -152,7 +153,7 @@
      private void rotateArm(float p_187458_1_)
      {
          EntityPlayerSP entityplayersp = this.mc.player;
-@@ -135,6 +182,7 @@
+@@ -135,6 +183,7 @@
          return f;
      }
  
@@ -160,7 +161,7 @@
      private void renderArms()
      {
          if (!this.mc.player.isInvisible())
-@@ -149,6 +197,7 @@
+@@ -149,6 +198,7 @@
          }
      }
  
@@ -168,7 +169,7 @@
      private void renderArm(EnumHandSide p_187455_1_)
      {
          this.mc.getTextureManager().bindTexture(this.mc.player.getLocationSkin());
-@@ -175,29 +224,31 @@
+@@ -175,29 +225,31 @@
  
      private void renderMapFirstPersonSide(float p_187465_1_, EnumHandSide hand, float p_187465_3_, ItemStack stack)
      {
@@ -222,7 +223,7 @@
      }
  
      private void renderMapFirstPerson(float p_187463_1_, float p_187463_2_, float p_187463_3_)
-@@ -205,14 +256,17 @@
+@@ -205,14 +257,17 @@
          float f = MathHelper.sqrt(p_187463_3_);
          float f1 = -0.2F * MathHelper.sin(p_187463_3_ * (float)Math.PI);
          float f2 = -0.4F * MathHelper.sin(f * (float)Math.PI);
@@ -246,7 +247,7 @@
          this.renderMapFirstPerson(this.itemStackMainHand);
      }
  
-@@ -243,76 +297,105 @@
+@@ -243,76 +298,105 @@
          GlStateManager.enableLighting();
      }
  
@@ -407,7 +408,7 @@
      }
  
      /**
-@@ -371,100 +454,344 @@
+@@ -371,100 +455,344 @@
          RenderHelper.disableStandardItemLighting();
      }
  
@@ -591,21 +592,21 @@
 +    						tool)
 +
 +    				{
++    					boolean climbClaws = mc.climbTracker.isClaws(itemstack) && mc.climbTracker.isClimbeyClimb();
 +
-+    					if(mc.climbTracker.isClaws(itemstack) && mc.climbTracker.isClimbeyClimb()){
++    					if(climbClaws){
 +
 +    						GlStateManager.scale(0.3, 0.3, 0.3);
 +    						GlStateManager.translate(-.025f, .12f, .25f);
 +    						GlStateManager.rotate(90, 0, 0, 1);	
 +
-+    						if((mc.gameSettings.keyBindAttack.isKeyDown() && rightSide) ||
-+    								((mc.climbTracker.isGrabbingLadder() || !mc.player.onGround) && mc.gameSettings.keyBindForward.isKeyDown() && !rightSide)) {
++    						if((MCOpenVR.keyClimbeyGrab.isKeyDown(ControllerType.RIGHT) && rightSide) || (MCOpenVR.keyClimbeyGrab.isKeyDown(ControllerType.LEFT) && !rightSide)) {
 +    							GlStateManager.translate(0f, 0f, -.2f);	
 +    						}
 +
 +    					}
 +
-+    					if(vive){
++    					if(vive || climbClaws){
 +    						GlStateManager.translate(0f, -.025f, -0.1f);		
 +    						GlStateManager.scale(0.6, 0.6, 0.6);	
 +    						if(item instanceof ItemCarrotOnAStick || item instanceof ItemFishingRod) {}
@@ -642,27 +643,27 @@
 +    						Vec3d aim = mc.bowTracker.getAimVector(); 
 +    						Vec3d a = new Vec3d(aim.x, aim.y, aim.z);
 +    						//a.rotateAroundY(-mc.vrSettings.vrWorldRotation);
-+    						Vector3f aimCopy = new Vector3f((float)a.x,(float) a.y, (float)a.z);
++    						Vector3 aimCopy = new Vector3((float)a.x,(float) a.y, (float)a.z);
 +
 +    						//Matrix4f left = mc.lookaimController.getAimRotation(1);
 +
 +    						Vec3d lup = mc.vrPlayer.vrdata_world_render.getController(1).getCustomVector(new Vec3d(0, -1, 0));
-+    						Vector3f current = new Vector3f((float)lup.x, (float)lup.y, (float)lup.z);
++    						Vector3 current = new Vector3((float)lup.x, (float)lup.y, (float)lup.z);
 +    						Vec3d lback = mc.vrPlayer.vrdata_world_render.getController(1).getCustomVector(new Vec3d(0, 0, -1));
 +
-+    						Vector3f currentfore =  new Vector3f((float)lback.x, (float)lback.y, (float)lback.z);
++    						Vector3 currentfore =  new Vector3((float)lback.x, (float)lback.y, (float)lback.z);
 +
-+    						Vector3f v = aimCopy.cross(current);
++    						Vector3 v = aimCopy.cross(current);
 +    						double d = 180 / Math.PI * Math.acos(aimCopy.dot(current));
 +
-+    						float pitch = (float)Math.toDegrees(Math.asin(aimCopy.y/aimCopy.length()));
-+    						float yaw = (float)Math.toDegrees(Math.atan2(aimCopy.x, aimCopy.z));     
++    						float pitch = (float)Math.toDegrees(Math.asin(aimCopy.getY()/aimCopy.length()));
++    						float yaw = (float)Math.toDegrees(Math.atan2(aimCopy.getX(), aimCopy.getZ()));     
 +
-+    						Vector3f up = new Vector3f(0,1,0);
++    						Vector3 up = new Vector3(0,1,0);
 +
-+    						Vector3f pAim2 = new Vector3f(0,0,0);
++    						Vector3 pAim2 = new Vector3(0,0,0);
 +
-+    						aimCopy.y = 0 ; // we want the normal to a aiming plane, but vertical.
++    						aimCopy.setY(0) ; // we want the normal to a aiming plane, but vertical.
 +
 +    						float porjaim = currentfore.dot(aimCopy); //angle between controller up and aim, just for ortho check			    		        		
 +    						if(porjaim !=0) { //check to make sure 	we arent holding the bow perfectly straight up.					
@@ -670,7 +671,7 @@
 +    						}
 +
 +    						float dot =0;
-+    						Vector3f proj = currentfore.subtract(pAim2).normalised(); //subtract to get projection of LCU onto vertical aim plane   
++    						Vector3 proj = currentfore.subtract(pAim2).normalized(); //subtract to get projection of LCU onto vertical aim plane   
 +
 +    						dot = proj.dot(up);		//angle between our projection and straight up (the default bow render pos.)
 +
@@ -842,7 +843,7 @@
      }
  
      /**
-@@ -472,54 +799,204 @@
+@@ -472,54 +800,204 @@
       */
      public void renderOverlays(float partialTicks)
      {
@@ -1079,7 +1080,7 @@
      }
  
      /**
-@@ -551,7 +1028,7 @@
+@@ -551,7 +1029,7 @@
          GlStateManager.popMatrix();
          GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
      }
@@ -1088,7 +1089,7 @@
      /**
       * Renders a texture that warps around based on the direction the player is looking. Texture needs to be bound
       * before being called. Used for the water overlay.
-@@ -596,13 +1073,13 @@
+@@ -596,13 +1074,13 @@
          Tessellator tessellator = Tessellator.getInstance();
          BufferBuilder bufferbuilder = tessellator.getBuffer();
          GlStateManager.color(1.0F, 1.0F, 1.0F, 0.9F);
@@ -1105,7 +1106,7 @@
          {
              GlStateManager.pushMatrix();
              TextureAtlasSprite textureatlassprite = this.mc.getTextureMapBlocks().getAtlasSprite("minecraft:blocks/fire_layer_1");
-@@ -611,19 +1088,16 @@
+@@ -611,19 +1089,16 @@
              float f2 = textureatlassprite.getMaxU();
              float f3 = textureatlassprite.getMinV();
              float f4 = textureatlassprite.getMaxV();
