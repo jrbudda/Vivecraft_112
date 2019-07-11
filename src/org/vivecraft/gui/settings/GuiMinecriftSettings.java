@@ -39,7 +39,7 @@ public class GuiMinecriftSettings extends BaseGuiSettings implements GuiEventEx
             {
                 new VROption(209,VROption.Position.POS_LEFT,   4f, VROption.ENABLED, "Locomotion Settings..."),
                 new VROption(221,VROption.Position.POS_RIGHT,   4f, VROption.ENABLED, "Interaction Settings..."),
-                new VROption(220,VROption.Position.POS_LEFT,   5f, VROption.ENABLED, "Controller Buttons..."),
+                new VROption(220,VROption.Position.POS_LEFT,   5f, VROption.ENABLED, "Controller Bindings..."),
                 new VROption(224,VROption.Position.POS_RIGHT,   5f, VROption.ENABLED, "Radial Menu..."),
                // new VROption(VRSettings.VrOptions.REVERSE_HANDS,   VROption.Position.POS_RIGHT,   5f, VROption.ENABLED, null),
             };

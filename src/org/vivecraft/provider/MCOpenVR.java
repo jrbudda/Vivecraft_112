@@ -928,14 +928,14 @@ public class MCOpenVR
 	private static Map<String, Matrix4f[]> controllerComponentTransforms;
 	private static Map<Long, String> controllerComponentNames;
 
-	private static void getTransforms(){
+	private static void getTransforms() {
 		if (vrRenderModels == null) return;
 
-		if(getXforms == true) {
+		if (getXforms == true) {
 			controllerComponentTransforms = new HashMap<String, Matrix4f[]>();
 		}
 
-		if(controllerComponentNames == null) {
+		if (controllerComponentNames == null) {
 			controllerComponentNames = new HashMap<Long, String>();
 		}
 
@@ -949,9 +949,9 @@ public class MCOpenVR
 		componentNames.add("handgrip");
 		componentNames.add("status");
 		boolean failed = false;
-		
+
 		for (String comp : componentNames) {
-			controllerComponentTransforms.put(comp, new Matrix4f[2]); 			
+			controllerComponentTransforms.put(comp, new Matrix4f[2]);
 			Pointer p = ptrFomrString(comp);
 
 			for (int i = 0; i < 2; i++) {
@@ -965,8 +965,8 @@ public class MCOpenVR
 				vrsystem.GetStringTrackedDeviceProperty.apply(controllerDeviceIndex[i], JOpenVRLibrary.ETrackedDeviceProperty.ETrackedDeviceProperty_Prop_RenderModelName_String, pointer, JOpenVRLibrary.k_unMaxPropertyStringSize - 1, hmdErrorStore);
 
 				//doing this next bit for each controller because pointer
-				long button = vrRenderModels.GetComponentButtonMask.apply(pointer, p);   		
-				if(button > 0){ //see now... wtf openvr, '0' is the system button, it cant also be the error value! (hint: it's a mask, not an index)
+				long button = vrRenderModels.GetComponentButtonMask.apply(pointer, p);
+				if (button > 0) { //see now... wtf openvr, '0' is the system button, it cant also be the error value! (hint: it's a mask, not an index)
 					controllerComponentNames.put(button, comp); //u get 1 button per component, nothing more
 				}
 				//
@@ -979,7 +979,7 @@ public class MCOpenVR
 				RenderModel_ControllerMode_State_t.ByReference modeState = new RenderModel_ControllerMode_State_t.ByReference();
 				RenderModel_ComponentState_t.ByReference componentState = new RenderModel_ComponentState_t.ByReference();
 				byte ret = vrRenderModels.GetComponentStateForDevicePath.apply(pointer, p, sourceHandle, modeState, componentState);
-				if(ret == 0) {
+				if (ret == 0) {
 					//System.out.println("Failed getting transform: " + comp + " controller " + i);
 					failed = true; // Oculus does not seem to raise ANY trackedDevice events. So just keep trying...
 					continue;
@@ -992,31 +992,31 @@ public class MCOpenVR
 				if (!failed && i == 0) {
 					try {
 
-						Matrix4f tip = getControllerComponentTransform(0,"tip");
-						Matrix4f hand = getControllerComponentTransform(0,"base");
+						Matrix4f tip = getControllerComponentTransform(0, "tip");
+						Matrix4f hand = getControllerComponentTransform(0, "base");
 
 						Vector3 tipvec = tip.transform(forward);
 						Vector3 handvec = hand.transform(forward);
 
 						double dot = Math.abs(tipvec.normalized().dot(handvec.normalized()));
-						
+
 						double anglerad = Math.acos(dot);
 						double angledeg = Math.toDegrees(anglerad);
 
 						double angletestrad = Math.acos(tipvec.normalized().dot(forward.normalized()));
 						double angletestdeg = Math.toDegrees(angletestrad);
 
-					//	System.out.println("gun angle " + angledeg + " default angle " + angletestdeg);
-						
+						//	System.out.println("gun angle " + angledeg + " default angle " + angletestdeg);
+
 						gunStyle = angledeg > 10;
 
 					} catch (Exception e) {
 						failed = true;
 					}
+				}
 			}
 		}
-		}
-		
+
 		getXforms = failed;
 	}
 
@@ -1333,9 +1333,9 @@ public class MCOpenVR
 					action.pressBinding();
 				else
 					action.unpressBinding();
-					}
-				}
 			}
+		}
+	}
 
 	public static void processInputs() {
 		if (mc.vrSettings.seated || Main.viewonly || !inputInitialized) return;
@@ -1589,26 +1589,37 @@ public class MCOpenVR
 		if(RadialHandler.isShowing() && keyMenuButton.isPressed()) { //super special case.
 			RadialHandler.setOverlayShowing(false, null);
 		}
-
+	
 		if(keyMenuButton.isPressed()) { //handle menu directly
 			if(!gui) {
 				if(!Main.kiosk){
-					if(Display.isActive()){
-						KeyboardSimulator.robot.keyPress(KeyEvent.VK_ESCAPE); //window focus... yadda yadda
-						KeyboardSimulator.robot.keyRelease(KeyEvent.VK_ESCAPE); //window focus... yadda yadda
-					}
-					else mc.displayInGameMenu();
+					mc.displayInGameMenu();
+				}
+			} else {
+				if(Display.isActive()) {
+					KeyboardSimulator.robot.keyPress(KeyEvent.VK_ESCAPE); //window focus... yadda yadda
+					KeyboardSimulator.robot.keyRelease(KeyEvent.VK_ESCAPE); //window focus... yadda yadda
+				} else {
+					mc.player.closeScreen();
 				}
 			}
 			KeyboardHandler.setOverlayShowing(false);
 		}
-
+		
 		if (keyExportWorld.isPressed()) {
 			if (mc.world != null && mc.player != null) {
 				try {
 					final BlockPos pos = mc.player.getPosition();
 					final int size = 320;
-					final File file = new File("worldexport.mmw");
+					File dir = new File("menuworlds/custom");
+					dir.mkdirs();
+					File foundFile;
+					for (int i = 0;; i++) {
+						foundFile = new File(dir, "world" + i + ".mmw");
+						if (!foundFile.exists())
+							break;
+					}
+					final File file = foundFile;
 					System.out.println("Exporting world... area size: " + size);
 					System.out.println("Saving to " + file.getAbsolutePath());
 					if (mc.isIntegratedServerRunning()) {
@@ -1645,9 +1656,7 @@ public class MCOpenVR
 			RadialHandler.setOverlayShowing(false, null);
 		}
 
-		if (mc.currentScreen != null ||
-				GuiHandler.controllerMouseValid) 
-			GuiHandler.processBindingsGui();
+		GuiHandler.processBindingsGui();
 		RadialHandler.processBindings();
 		KeyboardHandler.processBindings();
 	}

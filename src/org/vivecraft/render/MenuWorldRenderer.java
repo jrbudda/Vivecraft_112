@@ -1,5 +1,6 @@
 package org.vivecraft.render;
 
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Random;
@@ -7,6 +8,8 @@ import java.util.Set;
 
 import org.vivecraft.utils.FakeBlockAccess;
 import org.vivecraft.utils.MCReflection;
+import org.vivecraft.utils.MenuWorldDownloader;
+import org.vivecraft.utils.MenuWorldExporter;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -65,7 +68,6 @@ public class MenuWorldRenderer {
     public MenuCloudRenderer cloudRenderer;
     public Set<TextureAtlasSprite> visibleTextures = new HashSet<>();
     private Random rand;
-    private boolean init;
     private boolean ready;
 	
 	public MenuWorldRenderer() {
@@ -78,6 +80,32 @@ public class MenuWorldRenderer {
         this.cloudRenderer = new MenuCloudRenderer(mc);
         this.rand = new Random();
         this.rand.nextInt(); // toss some bits in the bin
+	}
+
+	public void init() {
+		try {
+			InputStream inputStream = MenuWorldDownloader.getRandomWorld();
+			if (inputStream != null) {
+				System.out.println("Initializing main menu world renderer...");
+				loadRenderers();
+				System.out.println("Loading world data...");
+				setWorld(MenuWorldExporter.loadWorld(inputStream));
+				System.out.println("Building geometry...");
+				prepare();
+				mc.entityRenderer.menuWorldFastTime = new Random().nextInt(10) == 0;
+			} else {
+				System.out.println("Failed to load any main menu world, falling back to old menu room");
+			}
+		} catch (Exception e) {
+			System.out.println("Exception thrown when loading main menu world, falling back to old menu room");
+			e.printStackTrace();
+			destroy();
+			setWorld(null);
+		} catch (OutOfMemoryError e) { // Only effective way of preventing crash on poop computers with low heap size
+			System.out.println("OutOfMemoryError while loading main menu world. Low heap size or 32-bit Java?");
+			destroy();
+			setWorld(null);
+		}
 	}
 	
 	public void render() {
@@ -198,12 +226,10 @@ public class MenuWorldRenderer {
 		}
 	}
 	
-	public void init() throws Exception {
-		if (init) return;
+	public void loadRenderers() throws Exception {
         this.generateSky();
         this.generateSky2();
         this.generateStars();
-        init = true;
 	}
 	
 	public boolean isReady() {

@@ -65,7 +65,7 @@ public class RadialHandler {
 		Vec2f tex2 = GuiHandler.getTexCoordsForCursor(Pos_room, Rotation_room, mc.currentScreen, GuiHandler.guiScale, mc.vrPlayer.vrdata_room_pre.getController(0));
 	
 		float u = tex2.x;
-		float v = tex2.y;
+		float v = 1- tex2.y;
 		
 		if (u<0 || v<0 || u>1 || v>1)
 		{
@@ -91,7 +91,7 @@ public class RadialHandler {
 		}
 		
 		 u = tex1.x;
-		 v = tex1.y;
+		 v = 1-tex1.y;
 		
 		if (u<0 || v<0 || u>1 || v>1)
 		{
@@ -179,15 +179,10 @@ public class RadialHandler {
 
 		ScaledResolution s = new ScaledResolution(mc);
 		
-		double d0 = Math.min(Math.max((int) UI.cursorX1, 0), mc.displayWidth)
-				* (double)s.getScaledWidth() / (double)mc.displayWidth;
-		double d1 = Math.min(Math.max((int) UI.cursorY1, 0), mc.displayWidth)
-				* (double)s.getScaledHeight() / (double)mc.displayHeight;
-
-		double d2 = Math.min(Math.max((int) UI.cursorX2, 0), mc.displayWidth)
-				* (double)s.getScaledWidth() / (double)mc.displayWidth;
-		double d3 = Math.min(Math.max((int) UI.cursorY2, 0), mc.displayWidth)
-				* (double)s.getScaledHeight() / (double)mc.displayHeight;
+		double d0 = UI.cursorX1;	
+		double d1 = UI.cursorY1;
+		double d2 = UI.cursorX2;
+		double d3 = UI.cursorY2;
 
 		if(mc.vrSettings.radialModeHold) {
 			if (activecontroller == null)
@@ -197,7 +192,7 @@ public class RadialHandler {
 				if (activecontroller == ControllerType.LEFT) {
 					UI.mouseDown((int)d0, (int)d1, 0, false);
 				} else {
-					UI.mouseUp((int)d2, (int)d3, 0, false);
+					UI.mouseDown((int)d2, (int)d3, 0, false);
 				}
 				RadialHandler.setOverlayShowing(false, null);
 			}

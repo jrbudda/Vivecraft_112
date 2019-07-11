@@ -44,8 +44,10 @@ public class GuiHUDSettings extends BaseGuiSettings
     	this.buttonList.add(new GuiSmallButtonEx(301, this.width / 2 - 78, this.height / 6 - 14, "Hide Hud (F1): " + mc.gameSettings.hideGUI));
     	this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, "Reset To Defaults"));
     	this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, "Done"));
+    	this.buttonList.add(new GuiButtonEx(302, this.width / 2 - 155  + 160, this.height / 6 +150 ,150,20, "Menu World Settings..."));
+
     	if(!mc.vrSettings.seated)
-    		this.buttonList.add(new GuiButtonEx(300, this.width / 2 - 155 , this.height / 6 + 95,150,20, "GUI Buttons..."));
+    		this.buttonList.add(new GuiButtonEx(300, this.width / 2 - 155 , this.height / 6 + 95,150,20, "GUI Bindings..."));
     	VRSettings.VrOptions[] buttons = hudOptions;
 
     	for (int var12 = 2; var12 < buttons.length + 2; ++var12)
@@ -152,6 +154,10 @@ public class GuiHUDSettings extends BaseGuiSettings
             	mc.gameSettings.hideGUI = !mc.gameSettings.hideGUI;
                 this.reinit = true;
 
+            }
+            else if (par1GuiButton.id == 302)
+            {
+				mc.displayGuiScreen(new GuiMenuWorldSettings(this, guivrSettings));
             }
         }
     }

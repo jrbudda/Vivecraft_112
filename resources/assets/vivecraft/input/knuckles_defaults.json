@@ -84,6 +84,9 @@
                   }
                },
                "mode" : "button",
+               "parameters": {
+                  "click_activate_threshold": "0.5"
+               },
                "path" : "/user/hand/left/input/trackpad"
             }
          ]
@@ -143,6 +146,9 @@
                   }
                },
                "mode" : "button",
+               "parameters": {
+                  "click_activate_threshold": "0.5"
+               },
                "path" : "/user/hand/right/input/trackpad"
             }
          ]
@@ -252,6 +258,9 @@
                   }
                },
                "mode" : "button",
+               "parameters": {
+                  "click_activate_threshold": "0.5"
+               },
                "path" : "/user/hand/right/input/trackpad"
             },
             {

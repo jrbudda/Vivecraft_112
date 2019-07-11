@@ -90,8 +90,8 @@ def create_install(mcp_dir):
                 #    continue
                 #if cur_file in {'aej.class', 'aej$1.class', 'aej$2.class', 'aej$3.class', 'aej$4.class', 'aej$5.class', 'aej$6.class', 'aej$7.class', 'aej$8.class', 'aej$9.class', 'aej$10.class', 'aej$11.class', 'aej$12.class'}: #skip creativetabs - wtf
                 #    continue
-                #if cur_file in {'bmg.class', 'bmp.class', 'bmp$a.class', 'bmp$b.class', 'bmp$c.class', 'bhe.class'}: #skip guicontainer and guicontainercreative - asm
-                #    continue
+                if cur_file in {'bmg.class', 'bmp.class', 'bmp$a.class', 'bmp$b.class', 'bmp$c.class', 'bhe.class'}: #skip guicontainer and guicontainercreative - asm
+                    continue
                 #if cur_file in {'Matrix4f.class'}: #why
                 #    continue
                 #if cur_file in vanilla or 'optifine' in arc_path: #these misbehave when loaded in this jar, do some magic.
