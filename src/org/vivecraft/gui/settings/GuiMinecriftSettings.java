@@ -288,8 +288,11 @@ public class GuiMinecriftSettings extends BaseGuiSettings implements GuiEventEx
      	case REVERSE_HANDS:
     		return new String[] {
 				"Swap left/right hands as dominant",
-				"  ON: Left dominant, weirdo.",
-				"  OFF: Right dominant"
+				"  ON: Left dominant",
+				"  OFF: Right dominant",
+				"",
+				"To swap the buttons, restart the game and make",
+				"sure default bindings are selected in SteamVR."
     		};
         case WORLD_SCALE:
             return new String[] {

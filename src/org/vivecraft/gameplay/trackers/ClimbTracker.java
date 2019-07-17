@@ -36,6 +36,7 @@ public class ClimbTracker extends Tracker{
 	public byte serverblockmode = 0;
 	
 	private boolean gravityOverride=false;
+	public boolean forceActivate = false;
 
 	public Vec3d[] latchStart = new Vec3d[]{new Vec3d(0,0,0), new Vec3d(0,0,0)};
 	public Vec3d[] latchStart_room = new Vec3d[]{new Vec3d(0,0,0), new Vec3d(0,0,0)};
@@ -113,7 +114,12 @@ public class ClimbTracker extends Tracker{
 
 	@Override
 	public void idleTick(EntityPlayerSP player) {
-		MCOpenVR.getInputAction(MCOpenVR.keyClimbeyGrab).setEnabled(isGrabbingLadder() || (isClimbeyClimb() && (inblock[0] || inblock[1])));
+		if (isGrabbingLadder())
+			forceActivate = true;
+		else if (mc.player.onGround || mc.player.capabilities.isFlying)
+			forceActivate = false;
+
+		MCOpenVR.getInputAction(MCOpenVR.keyClimbeyGrab).setEnabled(isClimbeyClimb() && (isGrabbingLadder() || forceActivate || inblock[0] || inblock[1]));
 	}
 
 	@Override

@@ -266,6 +266,10 @@ public class VRInputAction {
 		return true;
 	}
 
+	public boolean isEnabledRaw() {
+		return enabled;
+	}
+
 	public VRInputAction setEnabled(boolean enabled) {
 		this.enabled = enabled;
 		return this;
@@ -374,14 +378,6 @@ public class VRInputAction {
 			if (notifyListeners(false, null)) return;
 			unpressKey();
 		}
-	}
-
-	public static String getOriginName(long handle) {
-		Pointer p = new Memory(JOpenVRLibrary.k_unMaxPropertyStringSize + 1);
-		int error = MCOpenVR.vrInput.GetOriginLocalizedName.apply(handle, p, JOpenVRLibrary.k_unMaxPropertyStringSize, JOpenVRLibrary.EVRInputStringBits.EVRInputStringBits_VRInputString_All);
-		if (error != 0)
-			throw new RuntimeException("Error getting origin name: " + MCOpenVR.getInputError(error));
-		return p.getString(0);
 	}
 
 	public static void setKeyBindState(KeyBinding kb, boolean pressed) {

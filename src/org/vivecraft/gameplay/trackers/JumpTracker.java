@@ -123,6 +123,8 @@ public class JumpTracker extends Tracker {
 			}
 
 			if(jump){
+				mc.climbTracker.forceActivate = true;
+
 				Vec3d m = (MCOpenVR.controllerHistory[0].netMovement(0.3)
 						.add(MCOpenVR.controllerHistory[1].netMovement(0.3)));
 	

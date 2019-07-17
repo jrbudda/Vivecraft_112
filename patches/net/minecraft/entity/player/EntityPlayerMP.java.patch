@@ -54,7 +54,7 @@
  import net.minecraft.server.management.PlayerInteractionManager;
  import net.minecraft.server.management.UserListOpsEntry;
 +import net.optifine.reflect.Reflector;
-+import net.optifine.reflect.SafeReflector;
++import net.optifine.reflect.VRSafeReflector;
  import net.minecraft.stats.RecipeBookServer;
  import net.minecraft.stats.StatBase;
  import net.minecraft.stats.StatList;
@@ -255,7 +255,7 @@
 +                dimensionIn = 1;
 +            }
 +
-+            Reflector.callVoid(this.mcServer.getPlayerList(), SafeReflector.ForgePlayerList_transferPlayerToDimension, this, dimensionIn, teleporter);
++            Reflector.callVoid(this.mcServer.getPlayerList(), VRSafeReflector.ForgePlayerList_transferPlayerToDimension, this, dimensionIn, teleporter);
 +            this.connection.sendPacket(new SPacketEffect(1032, BlockPos.ORIGIN, 0, false));
 +            this.lastExperience = -1;
 +            this.lastHealth = -1.0F;

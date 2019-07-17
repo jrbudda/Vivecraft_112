@@ -6,7 +6,7 @@ public enum VRInputActionSet {
 	INGAME("/actions/ingame", "vivecraft.actionset.ingame", "leftright", false),
 	GUI("/actions/gui", "vivecraft.actionset.gui", "leftright", false),
 	GLOBAL("/actions/global", "vivecraft.actionset.global", "leftright", false),
-	CLIMBEY("/actions/climbey", "vivecraft.actionset.climbey", "single", true),
+	CONTEXTUAL("/actions/contextual", "vivecraft.actionset.contextual", "single", true),
 	KEYBOARD("/actions/keyboard", "vivecraft.actionset.keyboard", "single", true),
 	MIXED_REALITY("/actions/mixedreality", "vivecraft.actionset.mixedReality", "single", true),
 	TECHNICAL("/actions/technical", "vivecraft.actionset.technical", "leftright", true);
@@ -28,7 +28,7 @@ public enum VRInputActionSet {
 			case "vivecraft.key.category.gui":
 				return GUI;
 			case "vivecraft.key.category.climbey":
-				return CLIMBEY;
+				return CONTEXTUAL;
 			case "vivecraft.key.category.keyboard":
 				return KEYBOARD;
 			default:

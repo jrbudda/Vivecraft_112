@@ -12,7 +12,7 @@ import net.minecraft.src.Config;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.ChunkPos;
 
-public class SafeReflector
+public class VRSafeReflector
 {
     private static boolean logForge = logEntry("*** Reflector Forge ***");
 	public static ReflectorClass ITeleporter = new ReflectorClass("net.minecraftforge.common.util.ITeleporter");

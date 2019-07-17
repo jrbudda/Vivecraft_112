@@ -40,6 +40,7 @@ import net.minecraft.util.math.Vec3d;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -73,16 +74,16 @@ public class GuiHandler {
 	public static Vec3d hudPos_room = new Vec3d(0,0,0);
 	public static Matrix4f hudRotation_room = new Matrix4f();
 
-	public static final KeyBinding keyLeftClick = new KeyBinding("vivecraft.key.guiLeftClick", -1, "vivecraft.key.category.gui");
-	public static final KeyBinding keyRightClick = new KeyBinding("vivecraft.key.guiRightClick", -1, "vivecraft.key.category.gui");
-	public static final KeyBinding keyMiddleClick = new KeyBinding("vivecraft.key.guiMiddleClick", -1, "vivecraft.key.category.gui");
-	public static final KeyBinding keyShift = new KeyBinding("vivecraft.key.guiShift", -1, "vivecraft.key.category.gui");
-	public static final KeyBinding keyCtrl = new KeyBinding("vivecraft.key.guiCtrl", -1, "vivecraft.key.category.gui");
-	public static final KeyBinding keyAlt = new KeyBinding("vivecraft.key.guiAlt", -1, "vivecraft.key.category.gui");
-	public static final KeyBinding keyScrollUp = new KeyBinding("vivecraft.key.guiScrollUp", -1, "vivecraft.key.category.gui");
-	public static final KeyBinding keyScrollDown = new KeyBinding("vivecraft.key.guiScrollDown", -1, "vivecraft.key.category.gui");
-	public static final KeyBinding keyScrollAxis = new KeyBinding("vivecraft.key.guiScrollAxis", -1, "vivecraft.key.category.gui"); // dummy binding
-	public static final HandedKeyBinding keyKeyboardClick = new HandedKeyBinding("vivecraft.key.keyboardClick", -1, "vivecraft.key.category.keyboard") {
+	public static final KeyBinding keyLeftClick = new KeyBinding("vivecraft.key.guiLeftClick", Keyboard.KEY_NONE, "vivecraft.key.category.gui");
+	public static final KeyBinding keyRightClick = new KeyBinding("vivecraft.key.guiRightClick", Keyboard.KEY_NONE, "vivecraft.key.category.gui");
+	public static final KeyBinding keyMiddleClick = new KeyBinding("vivecraft.key.guiMiddleClick", Keyboard.KEY_NONE, "vivecraft.key.category.gui");
+	public static final KeyBinding keyShift = new KeyBinding("vivecraft.key.guiShift", Keyboard.KEY_NONE, "vivecraft.key.category.gui");
+	public static final KeyBinding keyCtrl = new KeyBinding("vivecraft.key.guiCtrl", Keyboard.KEY_NONE, "vivecraft.key.category.gui");
+	public static final KeyBinding keyAlt = new KeyBinding("vivecraft.key.guiAlt", Keyboard.KEY_NONE, "vivecraft.key.category.gui");
+	public static final KeyBinding keyScrollUp = new KeyBinding("vivecraft.key.guiScrollUp", Keyboard.KEY_NONE, "vivecraft.key.category.gui");
+	public static final KeyBinding keyScrollDown = new KeyBinding("vivecraft.key.guiScrollDown", Keyboard.KEY_NONE, "vivecraft.key.category.gui");
+	public static final KeyBinding keyScrollAxis = new KeyBinding("vivecraft.key.guiScrollAxis", Keyboard.KEY_NONE, "vivecraft.key.category.gui"); // dummy binding
+	public static final HandedKeyBinding keyKeyboardClick = new HandedKeyBinding("vivecraft.key.keyboardClick", Keyboard.KEY_NONE, "vivecraft.key.category.keyboard") {
 		@Override
 		public boolean isPriorityOnController(ControllerType type) {
 			if (KeyboardHandler.Showing && !mc.vrSettings.physicalKeyboard) {
@@ -91,7 +92,7 @@ public class GuiHandler {
 			return RadialHandler.isShowing() && RadialHandler.isUsingController(type);
 		}
 	};
-	public static final HandedKeyBinding keyKeyboardShift = new HandedKeyBinding("vivecraft.key.keyboardShift", -1, "vivecraft.key.category.keyboard") {
+	public static final HandedKeyBinding keyKeyboardShift = new HandedKeyBinding("vivecraft.key.keyboardShift", Keyboard.KEY_NONE, "vivecraft.key.category.keyboard") {
 		@Override
 		public boolean isPriorityOnController(ControllerType type) {
 			if (KeyboardHandler.Showing) {
@@ -679,7 +680,7 @@ public class GuiHandler {
 
   		// counter head rotation
   		if (currentPass != RenderPass.THIRD) {
-  			GL11.glMultMatrix(mc.vrPlayer.vrdata_world_render.hmd.getMatrix().toFloatBuffer());
+  			GL11.glMultMatrix(mc.vrPlayer.vrdata_world_render.getEye(currentPass).getMatrix().toFloatBuffer());
   		} else {
   			mc.entityRenderer.applyMRCameraRotation(false);			
   		}

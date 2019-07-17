@@ -408,7 +408,7 @@
      }
  
      /**
-@@ -371,100 +455,344 @@
+@@ -371,100 +455,339 @@
          RenderHelper.disableStandardItemLighting();
      }
  
@@ -720,13 +720,8 @@
 +    					GlStateManager.scale(0.5f,0.5f,0.5f);    
 +    					GlStateManager.rotate(90f, 1.0F, 0.0F, 0.0F);    
 +
-+    					if(vive){
-+    						GlStateManager.translate(-0.012, 0.2, 00);
-+    						GlStateManager.rotate(-45F, 1.0F, 0.0F, 0.0F);
-+    					} else {
-+    						GlStateManager.translate(-0.012, 0.17, .100);
-+    						GlStateManager.rotate(-45F + 39.4f, 1.0F, 0.0F, 0.0F	);
-+    					}
++    					GlStateManager.translate(-0.012, 0.2, 00);
++    					GlStateManager.rotate(-45F, 1.0F, 0.0F, 0.0F);
 +
 +    					GlStateManager.rotate(-90.0F, 0.0F, 1.0F, 0.0F);
 +    					GlStateManager.rotate(90.0F, 0.0F, 0.0F, 1.0F);	
@@ -843,7 +838,7 @@
      }
  
      /**
-@@ -472,54 +800,204 @@
+@@ -472,54 +795,204 @@
       */
      public void renderOverlays(float partialTicks)
      {
@@ -1080,7 +1075,7 @@
      }
  
      /**
-@@ -551,7 +1029,7 @@
+@@ -551,7 +1024,7 @@
          GlStateManager.popMatrix();
          GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
      }
@@ -1089,7 +1084,7 @@
      /**
       * Renders a texture that warps around based on the direction the player is looking. Texture needs to be bound
       * before being called. Used for the water overlay.
-@@ -596,13 +1074,13 @@
+@@ -596,13 +1069,13 @@
          Tessellator tessellator = Tessellator.getInstance();
          BufferBuilder bufferbuilder = tessellator.getBuffer();
          GlStateManager.color(1.0F, 1.0F, 1.0F, 0.9F);
@@ -1106,7 +1101,7 @@
          {
              GlStateManager.pushMatrix();
              TextureAtlasSprite textureatlassprite = this.mc.getTextureMapBlocks().getAtlasSprite("minecraft:blocks/fire_layer_1");
-@@ -611,19 +1089,16 @@
+@@ -611,19 +1084,16 @@
              float f2 = textureatlassprite.getMaxU();
              float f3 = textureatlassprite.getMinV();
              float f4 = textureatlassprite.getMaxV();

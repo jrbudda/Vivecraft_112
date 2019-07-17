@@ -93,8 +93,8 @@ public class VRData{
 		
 		hmd = new VRDevicePose(this, MCOpenVR.hmdRotation, scaledPos, MCOpenVR.getHmdVector()); 
 		
-		eye0 = new VRDevicePose(this, MCOpenVR.hmdRotation, MCOpenVR.getEyePosition(RenderPass.LEFT).subtract(hmd_raw).add(scaledPos), MCOpenVR.getHmdVector());
-		eye1 = new VRDevicePose(this, MCOpenVR.hmdRotation, MCOpenVR.getEyePosition(RenderPass.RIGHT).subtract(hmd_raw).add(scaledPos), MCOpenVR.getHmdVector());
+		eye0 = new VRDevicePose(this, MCOpenVR.getEyeRotation(RenderPass.LEFT), MCOpenVR.getEyePosition(RenderPass.LEFT).subtract(hmd_raw).add(scaledPos), MCOpenVR.getHmdVector());
+		eye1 = new VRDevicePose(this, MCOpenVR.getEyeRotation(RenderPass.RIGHT), MCOpenVR.getEyePosition(RenderPass.RIGHT).subtract(hmd_raw).add(scaledPos), MCOpenVR.getHmdVector());
 		
 		c0 = new VRDevicePose(this, MCOpenVR.getAimRotation(0),MCOpenVR.getAimSource(0).subtract(hmd_raw).add(scaledPos), MCOpenVR.getAimVector(0));
 		c1 = new VRDevicePose(this, MCOpenVR.getAimRotation(1),MCOpenVR.getAimSource(1).subtract(hmd_raw).add(scaledPos), MCOpenVR.getAimVector(1));

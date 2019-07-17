@@ -18,7 +18,7 @@
  import net.minecraft.util.ReportedException;
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.math.MathHelper;
-@@ -165,16 +169,46 @@
+@@ -165,16 +169,47 @@
          }
      }
  
@@ -36,20 +36,21 @@
 +            EntityPlayerSP p = Minecraft.getMinecraft().player;
 +                       
 +            if(p!=null && isfphand){
-+               
-+            	fade= p.getCooledAttackStrength(0)*.75f + .25f;
++
++                fade= p.getCooledAttackStrength(0)*.75f + .25f;
 +        	
 +            	if(p.isSneaking()) 
 +                	fade =0.75f;
 +                
 +                if(p.isActiveItemStackBlocking() && p.getActiveItemStack() != stack) 
-+                	fade =0.75f;   
++                	fade =0.75f;
 +
-+                if(stack.getItem() == Items.SHIELD)
-+                	if(p.isActiveItemStackBlocking())
-+                		fade = 1;
-+                	else
-+                		fade = 0.75f;
++                if(stack.getItem() == Items.SHIELD) {
++                    if (p.isActiveItemStackBlocking())
++                        fade = 1;
++                    else
++                        fade = 0.75f;
++                }
  
 +                if(fade < 0.1) fade = 0.1f;
 +                if(fade > 1) fade = 1f;
@@ -67,7 +68,7 @@
                  GlStateManager.enableRescaleNormal();
  
                  if (Reflector.ForgeItem_getTileEntityItemStackRenderer.exists())
-@@ -196,7 +230,8 @@
+@@ -196,7 +231,8 @@
                  }
  
                  this.renderModelHasEmissive = false;
@@ -77,7 +78,7 @@
  
                  if (this.renderModelHasEmissive)
                  {
-@@ -215,10 +250,19 @@
+@@ -215,10 +251,19 @@
                  }
              }
  
@@ -97,7 +98,7 @@
      private void renderEffect(IBakedModel model)
      {
          if (!Config.isCustomItems() || CustomItems.isUseGlint())
-@@ -311,35 +355,56 @@
+@@ -311,35 +356,56 @@
          this.putQuadNormal(renderer, quad);
      }
  
@@ -107,14 +108,14 @@
      {
 -        boolean flag = color == -1 && !stack.isEmpty();
 -        int i = 0;
-+    	boolean flag = color == -1 && !stack.isEmpty();
-+    	int i = 0;
- 
+-
 -        for (int j = quads.size(); i < j; ++i)
 -        {
 -            BakedQuad bakedquad = quads.get(i);
 -            int k = color;
--
++    	boolean flag = color == -1 && !stack.isEmpty();
++    	int i = 0;
+ 
 -            if (flag && bakedquad.hasTintIndex())
 -            {
 -                k = this.itemColors.colorMultiplier(stack, bakedquad.getTintIndex());
@@ -180,7 +181,7 @@
      }
  
      public boolean shouldRenderItemIn3D(ItemStack stack)
-@@ -353,7 +418,7 @@
+@@ -353,7 +419,7 @@
          if (!stack.isEmpty())
          {
              IBakedModel ibakedmodel = this.getItemModelWithOverrides(stack, (World)null, (EntityLivingBase)null);
@@ -189,7 +190,7 @@
          }
      }
  
-@@ -392,16 +457,16 @@
+@@ -392,16 +458,16 @@
          }
      }
  

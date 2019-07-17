@@ -758,7 +758,7 @@ public class VRSettings
 //                        
                        
                     }
-
+                    
                     if(optionTokens[0].startsWith("QUICKCOMMAND_")){
                     	String[] pts = optionTokens[0].split("_");
                     	int i = Integer.parseInt(pts[1]);
@@ -1512,7 +1512,8 @@ public class VRSettings
         try
         {
             ProfileWriter var5 = new ProfileWriter(ProfileManager.PROFILE_SET_VR, theProfiles);
-            var5.setData(preservedSettingMap);
+            if (preservedSettingMap != null)
+                var5.setData(preservedSettingMap);
 
             var5.println("version:" + version);
             var5.println("newlyCreated:" + false );
