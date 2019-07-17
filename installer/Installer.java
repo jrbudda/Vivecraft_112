@@ -1608,6 +1608,9 @@ public class Installer extends JPanel  implements PropertyChangeListener
 
 	public static void main(String[] args)
 	{
+		// I'm gonna shit a JVM
+		System.setProperty("java.net.preferIPv4Stack" , "true");
+
 		try {
 			// Set System L&F
 			UIManager.setLookAndFeel(
