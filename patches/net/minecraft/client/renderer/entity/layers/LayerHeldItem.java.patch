@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/entity/layers/LayerHeldItem.java
 +++ b/net/minecraft/client/renderer/entity/layers/LayerHeldItem.java
-@@ -1,13 +1,20 @@
+@@ -1,17 +1,25 @@
  package net.minecraft.client.renderer.entity.layers;
  
 +import org.vivecraft.gameplay.trackers.BowTracker;
@@ -21,101 +21,116 @@
  
  public class LayerHeldItem implements LayerRenderer<EntityLivingBase>
  {
-@@ -45,19 +52,92 @@
+     protected final RenderLivingBase<?> livingEntityRenderer;
++    private static RenderLivingBase<?> jesusChristWhy;
+ 
+     public LayerHeldItem(RenderLivingBase<?> livingEntityRendererIn)
      {
-         if (!p_188358_2_.isEmpty())
-         {
+@@ -43,28 +51,92 @@
+ 
+     private void renderHeldItem(EntityLivingBase p_188358_1_, ItemStack p_188358_2_, ItemCameraTransforms.TransformType p_188358_3_, EnumHandSide handSide)
+     {
+-        if (!p_188358_2_.isEmpty())
+-        {
 -            GlStateManager.pushMatrix();
 -            this.translateToHand(handSide);
++    	if (!p_188358_2_.isEmpty())
++    	{      
  
-+            
-+            boolean vr =false;;
-+            RotInfo rotinfo = null;
-+            if(p_188358_1_ instanceof EntityPlayer){
-+            	if(PlayerModelController.getInstance().isTracked(p_188358_1_.getUniqueID())){
-+                	rotinfo = PlayerModelController.getInstance().getRotationsForPlayer(p_188358_1_.getUniqueID());
-+            		if(rotinfo.seated ==false){
-+            			vr = true;
-+            		}
-+            	}
-+            }
-+            
-+            if(handSide == EnumHandSide.LEFT && vr && BowTracker.isHoldingBowEither(p_188358_1_)){
-+            	return;
-+            }
-+            
-+            GlStateManager.pushMatrix();
-+            
-             if (p_188358_1_.isSneaking())
-             {
-                 GlStateManager.translate(0.0F, 0.2F, 0.0F);
-             }
--
-+            
-+            this.translateToHand(handSide);
-+            
-             GlStateManager.rotate(-90.0F, 1.0F, 0.0F, 0.0F);
-             GlStateManager.rotate(180.0F, 0.0F, 1.0F, 0.0F);
-             boolean flag = handSide == EnumHandSide.LEFT;
+-            if (p_188358_1_.isSneaking())
+-            {
+-                GlStateManager.translate(0.0F, 0.2F, 0.0F);
+-            }
++    		boolean vr = 	PlayerModelController.getInstance().isTracked(p_188358_1_.getUniqueID()) &&
++    				PlayerModelController.getInstance().getRotationsForPlayer(p_188358_1_.getUniqueID()).seated == false;
+ 
+-            GlStateManager.rotate(-90.0F, 1.0F, 0.0F, 0.0F);
+-            GlStateManager.rotate(180.0F, 0.0F, 1.0F, 0.0F);
+-            boolean flag = handSide == EnumHandSide.LEFT;
 -            GlStateManager.translate((float)(flag ? -1 : 1) / 16.0F, 0.125F, -0.625F);
 -            Minecraft.getMinecraft().getItemRenderer().renderItemSide(p_188358_1_, p_188358_2_, p_188358_3_, flag);
-+            //VIVECRAFT
+-            GlStateManager.popMatrix();
+-        }
++    		if(handSide == EnumHandSide.LEFT && vr && BowTracker.isHoldingBowEither(p_188358_1_)){
++    			return;
++    		}
 +
-+            
-+            if(!vr) {
-+            	GlStateManager.translate((float)(flag ? -1 : 1) / 16.0F, 0.125F, -0.625F);   
-+            }
-+            else{
-+    			GlStateManager.translate((float)(flag ? -1 : 1) / 16.0F, 0.125F,  -.2125f);
-+            	if(BowTracker.isBow(p_188358_2_) && !rotinfo.seated){
-+      
-+              		Vec3d diff = rotinfo.leftArmPos.subtract(rotinfo.rightArmPos);
-+            		double ltor = Math.atan2(-diff.x, diff.z) + Math.PI/2;   
-+            		Vec3d rtol = rotinfo.rightArmPos.subtract(rotinfo.leftArmPos).rotateYaw((float) ltor);
-+    				Vec3d larm = rotinfo.leftArmPos;
-+    				ModelPlayerVR m = ((ModelPlayerVR)this.livingEntityRenderer.getMainModel());
-+    				larm = larm.rotateYaw((float)(ltor)).add(rotinfo.leftArmRot.scale(-0.2));  
-+    				float scale = (float) 0.0625;
++    		GlStateManager.pushMatrix();
++    		this.translateToHand(handSide);
 +
-+		      		GlStateManager.popMatrix();
-+		      		GlStateManager.pushMatrix();
++    		if (p_188358_1_.isSneaking())
++    		{
++    			GlStateManager.translate(0.0F, 0.2F, 0.0F);
++    		}
 +
-+					GlStateManager.translate(m.bipedLeftArm.rotationPointX*scale,m.bipedLeftArm.rotationPointY*scale,m.bipedLeftArm.rotationPointZ*scale);
-+    				
-+					if(p_188358_1_.isHandActive()){
-+						
-+		        		float yaw1 = (float) Math.atan2(-rtol.x, -rtol.z); 
-+		        		float pitch1 = (float) Math.asin(rtol.y/rtol.lengthVector()); 
++    		GlStateManager.rotate(-90.0F, 1.0F, 0.0F, 0.0F);
++    		GlStateManager.rotate(180.0F, 0.0F, 1.0F, 0.0F);
++    		boolean flag = handSide == EnumHandSide.LEFT;
++    		//VIVECRAFT     
 +
-+    					GlStateManager.rotate((float) Math.toDegrees(-Math.PI+yaw1), 0,1,0);
-+    					GlStateManager.rotate((float) Math.toDegrees(+pitch1), 1,0,0);
-+						
-+    				} else{
-+    					GlStateManager.rotate((float) Math.toDegrees(m.bipedLeftArm.rotateAngleY), 0,1,0);
-+    					GlStateManager.rotate( 90 + (float) Math.toDegrees(m.bipedLeftArm.rotateAngleX), 1,0,0);
-+    				}
-+    				
-+					GlStateManager.translate(0, 0.155F, -0.215F);
-+		            Minecraft.getMinecraft().getItemRenderer().renderItemSide(0, p_188358_1_, p_188358_2_, p_188358_3_, flag);
-+		            GlStateManager.popMatrix();
-+			
++    		GlStateManager.translate((float)(flag ? -1 : 1) / 16.0F, 0.125F, -0.625F);   
 +
-+    				
-+    				GlStateManager.pushMatrix();
-+					this.translateToHand(handSide);
-+    				GlStateManager.popMatrix();
-+    				return;
-+            	} else {
-+                    GlStateManager.rotate(-80.0F, 1.0F, 0.0F, 0.0F);        		
-+            	}
-+            	
-+    
-+                GlStateManager.translate(0, 0.155F, -0.215F);
-+                
-+            }
++    		if(vr)
++    			vrRender(flag, p_188358_1_, p_188358_2_, p_188358_3_, handSide);
++    		else
++    			Minecraft.getMinecraft().getItemRenderer().renderItemSide(0, p_188358_1_, p_188358_2_, p_188358_3_, flag);
 +
-+            //
-+            Minecraft.getMinecraft().getItemRenderer().renderItemSide(0, p_188358_1_, p_188358_2_, p_188358_3_, flag);
-             GlStateManager.popMatrix();
-         }
++    		GlStateManager.popMatrix();
++    	}
      }
+ 
++    private static void vrRender(boolean flag, EntityLivingBase p_188358_1_, ItemStack p_188358_2_, ItemCameraTransforms.TransformType p_188358_3_, EnumHandSide handSide)
++    {
++    	RotInfo rotinfo = PlayerModelController.getInstance().getRotationsForPlayer(p_188358_1_.getUniqueID());
++		GlStateManager.translate(0, 0,  -.2125f + 0.625f);
++    	if(BowTracker.isBow(p_188358_2_) && !rotinfo.seated){
++
++      		Vec3d diff = rotinfo.leftArmPos.subtract(rotinfo.rightArmPos);
++    		double ltor = Math.atan2(-diff.x, diff.z) + Math.PI/2;   
++    		Vec3d rtol = rotinfo.rightArmPos.subtract(rotinfo.leftArmPos).rotateYaw((float) ltor);
++			Vec3d larm = rotinfo.leftArmPos;
++			ModelPlayerVR m = (ModelPlayerVR) jesusChristWhy.getMainModel();
++			larm = larm.rotateYaw((float)(ltor)).add(rotinfo.leftArmRot.scale(-0.2));  
++			float scale = (float) 0.0625;
++
++      		GlStateManager.popMatrix();
++      		GlStateManager.pushMatrix();
++
++			GlStateManager.translate(m.bipedLeftArm.rotationPointX*scale,m.bipedLeftArm.rotationPointY*scale,m.bipedLeftArm.rotationPointZ*scale);
++			
++			if(p_188358_1_.isHandActive()){
++				
++        		float yaw1 = (float) Math.atan2(-rtol.x, -rtol.z); 
++        		float pitch1 = (float) Math.asin(rtol.y/rtol.lengthVector()); 
++
++				GlStateManager.rotate((float) Math.toDegrees(-Math.PI+yaw1), 0,1,0);
++				GlStateManager.rotate((float) Math.toDegrees(+pitch1), 1,0,0);
++				
++			} else{
++				GlStateManager.rotate((float) Math.toDegrees(m.bipedLeftArm.rotateAngleY), 0,1,0);
++				GlStateManager.rotate( 90 + (float) Math.toDegrees(m.bipedLeftArm.rotateAngleX), 1,0,0);
++			}
++			
++			GlStateManager.translate(0, 0.155F, -0.215F);
++            Minecraft.getMinecraft().getItemRenderer().renderItemSide(0, p_188358_1_, p_188358_2_, p_188358_3_, flag);
++            GlStateManager.popMatrix();
++			
++//			GlStateManager.pushMatrix();
++//			this.translateToHand(handSide);
++//			GlStateManager.popMatrix();
++			return;
++    	} else {
++            GlStateManager.rotate(-80.0F, 1.0F, 0.0F, 0.0F);        		
++    	}   
++        GlStateManager.translate(0, 0.155F, -0.215F);
++        
++    }
++    
++    
+     protected void translateToHand(EnumHandSide p_191361_1_)
+     {
+         ((ModelBiped)this.livingEntityRenderer.getMainModel()).postRenderArm(0.0625F, p_191361_1_);
++        jesusChristWhy = this.livingEntityRenderer;
+     }
+ 
+     public boolean shouldCombineTextures()

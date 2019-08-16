@@ -77,13 +77,18 @@ public class OpenVRStereoRenderer
 
 	private HiddenAreaMesh_t[] hiddenMeshes = new HiddenAreaMesh_t[2];
 	private float[][] hiddenMesheVertecies = new float[2][];
+	private Tuple<Integer, Integer> resolution;
 
-	public Tuple<Integer, Integer>getRenderTextureSizes(float renderScaleFactor)
+	public Tuple<Integer, Integer> getRenderTextureSizes(float renderScaleFactor)
 	{
+		if (resolution != null)
+			return resolution;
+
 		IntByReference rtx = new IntByReference();
 		IntByReference rty = new IntByReference();
 		MCOpenVR.vrsystem.GetRecommendedRenderTargetSize.apply(rtx, rty);
-		Tuple<Integer, Integer> info = new Tuple<Integer, Integer>(rtx.getValue(), rty.getValue());
+		resolution = new Tuple<>(rtx.getValue(), rty.getValue());
+
 		for (int i = 0; i < 2; i++) {
 			hiddenMeshes[i] = MCOpenVR.vrsystem.GetHiddenAreaMesh.apply(i,0);
 			hiddenMeshes[i].read();
@@ -94,8 +99,8 @@ public class OpenVRStereoRenderer
 				hiddenMeshes[i].pVertexData.getPointer().read(0, hiddenMesheVertecies[i], 0, hiddenMesheVertecies[i].length);
 	
 				for (int ix = 0;ix < hiddenMesheVertecies[i].length;ix+=2) {
-					hiddenMesheVertecies[i][ix] = hiddenMesheVertecies[i][ix] * info.getFirst();
-					hiddenMesheVertecies[i][ix + 1] = hiddenMesheVertecies[i][ix +1] * info.getSecond();
+					hiddenMesheVertecies[i][ix] = hiddenMesheVertecies[i][ix] * resolution.getFirst();
+					hiddenMesheVertecies[i][ix + 1] = hiddenMesheVertecies[i][ix +1] * resolution.getSecond();
 				}
 				System.out.println("Stencil mesh loaded for eye " + i);
 			} else {
@@ -103,7 +108,7 @@ public class OpenVRStereoRenderer
 			}
 		}
 
-		return info;
+		return resolution;
 	}
 
 	public Matrix4f getProjectionMatrix(int eyeType,float nearClip,float farClip)
@@ -760,7 +765,7 @@ public class OpenVRStereoRenderer
 			GlStateManager.matrixMode(GL11.GL_MODELVIEW);
 			GlStateManager.pushMatrix();
 			GlStateManager.loadIdentity();
-			GlStateManager.ortho(0.0D, framebufferVrRender.framebufferWidth, framebufferVrRender.framebufferHeight, 0.0D, -10, 20.0D);
+			GlStateManager.ortho(0.0D, framebufferVrRender.framebufferWidth, 0.0D, framebufferVrRender.framebufferHeight, -10, 20.0D);
 			GlStateManager.viewport(0, 0, framebufferVrRender.framebufferWidth, framebufferVrRender.framebufferHeight);
 			//this viewport might be wrong for some shaders.
 			GL11.glBegin(GL11.GL_TRIANGLES);

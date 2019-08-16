@@ -1,12 +1,13 @@
 --- a/net/minecraft/util/MovementInputFromOptions.java
 +++ b/net/minecraft/util/MovementInputFromOptions.java
-@@ -1,68 +1,158 @@
+@@ -1,68 +1,194 @@
  package net.minecraft.util;
  
 +import org.vivecraft.control.VRInputAction;
 +import org.vivecraft.gameplay.screenhandlers.KeyboardHandler;
 +import org.vivecraft.provider.MCOpenVR;
 +import org.vivecraft.settings.VRSettings;
++import org.vivecraft.utils.Utils;
 +import org.vivecraft.utils.Vector2;
 +import org.vivecraft.utils.jkatvr;
 +
@@ -20,6 +21,7 @@
 -    private final GameSettings gameSettings;
 +	private final GameSettings gameSettings;
 +    private boolean autoSprintActive = false;
++	private boolean movementSetByAnalog = false;
  
      public MovementInputFromOptions(GameSettings gameSettingsIn)
      {
@@ -67,6 +69,14 @@
 +		return action.isEnabled() ? Math.abs(action.getAxis1D(false)) : 0;
 +	}
 +
++	private float axisToDigitalMovement(float value) {
++		if (value > 0.5f)
++			return 1;
++		if (value < -0.5f)
++			return -1;
++		return 0;
++	}
++
 +	public void updatePlayerMoveState() {
 +		this.moveStrafe = 0.0F;
 +		this.moveForward = 0.0F;
@@ -104,8 +114,9 @@
 +			this.rightKeyDown = false;
 +		}
 +
++		boolean setMovement = false;
++		float forwardAxis = 0;
 +		if (!flag && !mc.vrSettings.seated && mc.currentScreen == null && !KeyboardHandler.Showing){
-+			boolean set = false;
 +			// override everything
 +
 +			VRInputAction strafeAction = MCOpenVR.getInputAction(MCOpenVR.keyFreeMoveStrafe);
@@ -114,31 +125,47 @@
 +			Vector2 rotateAxis = rotateAction.isEnabled() ? rotateAction.getAxis2D(false) : new Vector2();
 +
 +			if (strafeAxis.getX() != 0 || strafeAxis.getY() != 0) {
-+				set = true;
-+				this.moveForward = strafeAxis.getY();
-+				this.moveStrafe = -strafeAxis.getX();
++				setMovement = true;
++				forwardAxis = strafeAxis.getY();
++				if (mc.vrSettings.analogMovement) {
++					this.moveForward = strafeAxis.getY();
++					this.moveStrafe = -strafeAxis.getX();
++				} else {
++					this.moveForward = axisToDigitalMovement(strafeAxis.getY());
++					this.moveStrafe = axisToDigitalMovement(-strafeAxis.getX());
++				}
 +			} else if (rotateAxis.getY() != 0) {
-+				set = true;
-+				this.moveForward = rotateAxis.getY();
-+				this.moveStrafe = 0;
++				setMovement = true;
++				forwardAxis = rotateAxis.getY();
++				if (mc.vrSettings.analogMovement) {
++					this.moveForward = rotateAxis.getY();
 +
-+				this.moveStrafe -= getMovementAxisValue(this.gameSettings.keyBindRight);
-+				this.moveStrafe += getMovementAxisValue(this.gameSettings.keyBindLeft);
-+			} else 	if (mc.vrSettings.analogMovement) {
-+				set = true;
++					this.moveStrafe = 0;
++					this.moveStrafe -= getMovementAxisValue(this.gameSettings.keyBindRight);
++					this.moveStrafe += getMovementAxisValue(this.gameSettings.keyBindLeft);
++				} else {
++					this.moveForward = axisToDigitalMovement(rotateAxis.getY());
++				}
++			} else if (mc.vrSettings.analogMovement) {
++				setMovement = true;
 +				this.moveForward = 0;
 +				this.moveStrafe = 0;
 +
 +				float forward = getMovementAxisValue(this.gameSettings.keyBindForward);
 +				if (forward == 0) forward = getMovementAxisValue(MCOpenVR.keyTeleportFallback);
++				forwardAxis = forward;
 +
 +				this.moveForward += forward;
 +				this.moveForward -= getMovementAxisValue(this.gameSettings.keyBindBack);
 +				this.moveStrafe -= getMovementAxisValue(this.gameSettings.keyBindRight);
 +				this.moveStrafe += getMovementAxisValue(this.gameSettings.keyBindLeft);
-+				}
 +
-+			if(set) {
++				float deadzone = 0.05f;
++				this.moveForward = Utils.applyDeadzone(this.moveForward, deadzone);
++				this.moveStrafe = Utils.applyDeadzone(this.moveStrafe, deadzone);
++			}
++
++			if(setMovement) {
 +				// just assuming all this below is needed for compatibility.
 +				this.forwardKeyDown = this.moveForward > 0;
 +				this.backKeyDown = this.moveForward < 0;
@@ -151,20 +178,29 @@
 +
 +				if (mc.vrSettings.autoSprint) {
 +					// Sprint only works for walk forwards obviously
-+					if (this.moveForward >= mc.vrSettings.autoSprintThreshold) {
++					if (forwardAxis >= mc.vrSettings.autoSprintThreshold) {
 +						mc.player.setSprinting(true);
 +						autoSprintActive = true;
 +						this.moveForward = 1;
-+					} else if (this.moveForward > 0) {
++					} else if (this.moveForward > 0 && mc.vrSettings.analogMovement) {
 +						// Adjust range so you can still reach full speed while not sprinting
 +						this.moveForward = (this.moveForward / mc.vrSettings.autoSprintThreshold) * 1.0f;
 +					}
 +				}
-+			} 
-+
 +			}
++		}
++
++		if (!setMovement) {
++			if (movementSetByAnalog) {
++				VRInputAction.setKeyBindState(this.gameSettings.keyBindForward, false);
++				VRInputAction.setKeyBindState(this.gameSettings.keyBindBack, false);
++				VRInputAction.setKeyBindState(this.gameSettings.keyBindLeft, false);
++				VRInputAction.setKeyBindState(this.gameSettings.keyBindRight, false);
++			}
++		}
++		movementSetByAnalog = setMovement;
 +			
-+		if (autoSprintActive && this.moveForward < mc.vrSettings.autoSprintThreshold) {
++		if (autoSprintActive && forwardAxis < mc.vrSettings.autoSprintThreshold) {
 +			mc.player.setSprinting(false);
 +			autoSprintActive = false;
 +		}

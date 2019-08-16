@@ -42,7 +42,7 @@ public class BackpackTracker extends Tracker {
 		
 		for(int c=0; c<2; c++) {
 			Vec3d controllerPos = provider.vrdata_room_pre.getController(c).getPosition();//.add(provider.getCustomControllerVector(c, new Vec3(0, 0, -0.1)));
-			Vec3d controllerDir = provider.vrdata_room_pre.getController(c).getDirection();
+			Vec3d controllerDir = provider.vrdata_room_pre.getHand(c).getDirection();
 			Vec3d hmddir = provider.vrdata_room_pre.hmd.getDirection();
 			Vec3d delta = hmdPos.subtract(controllerPos);
 			double dot = controllerDir.dotProduct(down);

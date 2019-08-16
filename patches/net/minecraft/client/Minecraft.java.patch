@@ -270,7 +270,7 @@
 +	 * The minecriftVerString will be automatically updated by the build scripts, do not modify here.
 +	 * Modify minecriftversion.py in root minecrift dir.
 +	 */
-+    public final String minecriftVerString = "Vivecraft 1.12.2 jrbudda-9-b8";
++    public final String minecriftVerString = "Vivecraft 1.12.2 jrbudda-9-r3";
 +	/* end version */
 +	/** END MINECRIFT */
 +    
@@ -2279,7 +2279,7 @@
 +		if(loaded){
 +			SoundSystem sndSystem = (SoundSystem) MCReflection.SoundManager_sndSystem.get(this.mcSoundHandler.sndManager);
 +			Vec3d up = vrPlayer.vrdata_world_render.hmd.getCustomVector(new Vec3d(0, 1, 0));
-+			Vec3d hmdPos = vrPlayer.vrdata_world_render.hmd.getPosition();
++			Vec3d hmdPos = vrPlayer.vrdata_world_render.getHeadPivot();
 +			Vec3d hmdDir = vrPlayer.vrdata_world_render.hmd.getDirection();
 +
 +			if (sndSystem != null)

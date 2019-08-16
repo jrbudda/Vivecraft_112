@@ -534,7 +534,7 @@
 +    				boolean vive = MCOpenVR.isVive();
 +
 +    				boolean sword = false, tool = false;
-+    				boolean bow = BowTracker.isBow(itemstack);
++    				boolean bow = BowTracker.isBow(itemstack) && mc.bowTracker.isActive((EntityPlayerSP) player);
 +
 +    				if(bow && item.getClass().getName().equals("FryPan")){
 +    					bow = false;
@@ -1114,7 +1114,7 @@
 -            GlStateManager.rotate((float)(i * 2 - 1) * 10.0F, 0.0F, 1.0F, 0.0F);
 +            GlStateManager.rotate((float)(i * 90.0F - mc.vrPlayer.vrdata_world_render.getBodyYaw()), 0.0F, 1.0F, 0.0F);
 +            float f5 = 0.3f;  
-+            float f6 = (float) (mc.vrPlayer.vrdata_world_render.hmd.getPosition().y - mc.entityRenderer.rveY);
++            float f6 = (float) (mc.vrPlayer.vrdata_world_render.getHeadPivot().y - mc.entityRenderer.rveY);
 +            GlStateManager.translate(0, -f6, 0.0F);
              bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
              bufferbuilder.setSprite(textureatlassprite);

@@ -91,7 +91,7 @@ public class NetworkHelper {
 			Matrix4f matrix = new Matrix4f();
 			matrix.load(buffer);
 
-			Vec3d headPosition = player.vrdata_world_post.hmd.getPosition();
+			Vec3d headPosition = player.vrdata_world_post.getHeadPivot();
 			Quaternion headRotation = new Quaternion(matrix);
 			
 			ByteBuf payload = Unpooled.buffer();

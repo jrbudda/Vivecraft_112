@@ -1,6 +1,7 @@
 package org.vivecraft.provider;
 
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -11,11 +12,13 @@ import java.lang.reflect.Field;
 import java.nio.IntBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,7 +38,6 @@ import org.vivecraft.control.VRInputActionSet;
 import org.vivecraft.gameplay.screenhandlers.GuiHandler;
 import org.vivecraft.gameplay.screenhandlers.KeyboardHandler;
 import org.vivecraft.gameplay.screenhandlers.RadialHandler;
-import org.vivecraft.gui.settings.GuiVRControls;
 import org.vivecraft.render.RenderPass;
 import org.vivecraft.settings.VRHotkeys;
 import org.vivecraft.settings.VRSettings;
@@ -49,7 +51,6 @@ import org.vivecraft.utils.MenuWorldExporter;
 import org.vivecraft.utils.OpenVRUtil;
 import org.vivecraft.utils.Quaternion;
 import org.vivecraft.utils.Utils;
-import org.vivecraft.utils.Vector2;
 import org.vivecraft.utils.Vector3;
 import org.vivecraft.utils.jkatvr;
 
@@ -73,12 +74,8 @@ import jopenvr.JOpenVRLibrary.EVREventType;
 import jopenvr.JOpenVRLibrary.EVRInputError;
 import jopenvr.RenderModel_ComponentState_t;
 import jopenvr.RenderModel_ControllerMode_State_t;
-import jopenvr.Texture_t;
 import jopenvr.TrackedDevicePose_t;
 import jopenvr.VRActiveActionSet_t;
-import jopenvr.VRControllerAxis_t;
-import jopenvr.VRControllerState_t;
-import jopenvr.VREvent_Controller_t;
 import jopenvr.VREvent_t;
 import jopenvr.VRTextureBounds_t;
 import jopenvr.VRTextureDepthInfo_t;
@@ -92,11 +89,11 @@ import jopenvr.VR_IVROverlay_FnTable;
 import jopenvr.VR_IVRRenderModels_FnTable;
 import jopenvr.VR_IVRSettings_FnTable;
 import jopenvr.VR_IVRSystem_FnTable;
-import net.java.games.input.ControllerEnvironment;
 import net.minecraft.block.BlockTorch;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiWinGame;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.main.Main;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
@@ -195,7 +192,6 @@ public class MCOpenVR
 
 	private static Queue<VREvent_t> vrEvents = new LinkedList<>();
 
-	public static double startedOpeningInventory = 0;
 	public static boolean hudPopup = true;
 
 
@@ -209,7 +205,7 @@ public class MCOpenVR
 	private static ControllerType freeRotateController;
 	private static float walkaboutYawStart;
 	private static float hmdForwardYaw;
-	public static boolean unpressBindingsNextFrame = false;
+	public static boolean ignorePressesNextFrame = false;
 
 	private static Map<String, VRInputAction> inputActions = new HashMap<>();
 	private static Map<String, VRInputAction> inputActionsByKeyBinding = new HashMap<>();
@@ -239,6 +235,8 @@ public class MCOpenVR
 	public static float mrControllerRoll;
 
 	private static Set<KeyBinding> keyBindingSet;
+	// Vivecraft bindings included
+	private static Set<KeyBinding> vanillaBindingSet;
 
 	public String getName() {
 		return "OpenVR";
@@ -476,7 +474,10 @@ public class MCOpenVR
 		for (KeyBinding keyBinding : getKeyBindings())
 			keyBindings = ArrayUtils.add(keyBindings, keyBinding);
 
-				Map<String, Integer> co = (Map<String, Integer>) MCReflection.KeyBinding_CATEGORY_ORDER.get(null);
+		// Copy the bindings array here so we know which ones are from mods
+		setVanillaBindings(keyBindings);
+
+		Map<String, Integer> co = (Map<String, Integer>) MCReflection.KeyBinding_CATEGORY_ORDER.get(null);
 		co.put("vivecraft.key.category.gui", 8);
 		co.put("vivecraft.key.category.climbey", 9);
 		co.put("vivecraft.key.category.keyboard", 10);
@@ -577,7 +578,8 @@ public class MCOpenVR
 		// TODO: implement VR interact
 		getInputAction(MCOpenVR.keyVRInteract).setPriority(5).setEnabled(false);
 		getInputAction(MCOpenVR.keyClimbeyGrab).setPriority(10).setEnabled(false);
-		getInputAction(MCOpenVR.keyClimbeyJump).setPriority(10).setEnabled(false);
+		//getInputAction(MCOpenVR.keyClimbeyJump).setPriority(10).setEnabled(false);
+		getInputAction(MCOpenVR.keyClimbeyJump).setEnabled(false);
 		getInputAction(GuiHandler.keyKeyboardClick).setPriority(50);
 		getInputAction(GuiHandler.keyKeyboardShift).setPriority(50);
 	}
@@ -620,12 +622,62 @@ public class MCOpenVR
 		addActionParams(map, GuiHandler.keyKeyboardClick, "mandatory", "boolean", null);
 		addActionParams(map, GuiHandler.keyKeyboardShift, "suggested", "boolean", null);
 
+		File file = new File("customactionsets.txt");
+		if (file.exists()) {
+			System.out.println("Loading custom action set definitions...");
+			try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+				String line;
+				while ((line = br.readLine()) != null) {
+					String[] tokens = line.split(":", 2);
+					if (tokens.length < 2) {
+						System.out.println("Invalid tokens: " + line);
+						continue;
+					}
+
+					KeyBinding keyBinding = findKeyBinding(tokens[0]);
+					if (keyBinding == null) {
+						System.out.println("Unknown key binding: " + tokens[0]);
+						continue;
+					}
+					if (getKeyBindings().contains(keyBinding)) {
+						System.out.println("NO! Don't touch Vivecraft bindings!");
+						continue;
+					}
+
+					VRInputActionSet actionSet = null;
+					switch (tokens[1].toLowerCase()) {
+						case "ingame":
+							actionSet = VRInputActionSet.INGAME;
+							break;
+						case "gui":
+							actionSet = VRInputActionSet.GUI;
+							break;
+						case "global":
+							actionSet = VRInputActionSet.GLOBAL;
+							break;
+					}
+					if (actionSet == null) {
+						System.out.println("Unknown action set: " + tokens[1]);
+						continue;
+					}
+
+					addActionParams(map, keyBinding, "optional", "boolean", actionSet);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
 		return map;
 	}
 
 	private static void addActionParams(Map<String, ActionParams> map, KeyBinding keyBinding, String requirement, String type, VRInputActionSet actionSetOverride) {
 		ActionParams params = new ActionParams(requirement, type, actionSetOverride);
 		map.put(keyBinding.getKeyDescription(), params);
+	}
+
+	private static KeyBinding findKeyBinding(String name) {
+		return Arrays.stream(mc.gameSettings.keyBindings).filter(kb -> name.equals(kb.getKeyDescription())).findFirst().orElse(null);
 	}
 
 	public static final String ACTION_LEFT_HAND = "/actions/global/in/lefthand";
@@ -1341,14 +1393,18 @@ public class MCOpenVR
 	}
 
 	private static void processInputAction(VRInputAction action) {
-		if (!action.isActive() || !action.isEnabled() || unpressBindingsNextFrame) {
+		if (!action.isActive() || !action.isEnabledRaw()) {
 			action.unpressBinding();
 		} else {
 			if (action.isButtonChanged()) {
-				if (action.isButtonPressed())
-					action.pressBinding();
-				else
+				if (action.isButtonPressed() && action.isEnabled()) {
+					// We do this so shit like closing a GUI by clicking a button won't
+					// also click in the world immediately after.
+					if (!ignorePressesNextFrame)
+						action.pressBinding();
+				} else {
 					action.unpressBinding();
+				}
 			}
 		}
 	}
@@ -1383,7 +1439,7 @@ public class MCOpenVR
 		processSwipeInput(keyHotbarSwipeY, null, null, () -> changeHotbar(-1), () -> changeHotbar(1));
 
 		// Reset this flag
-		unpressBindingsNextFrame = false;
+		ignorePressesNextFrame = false;
 	}
 
 	public static void processBindings() {
@@ -1499,19 +1555,15 @@ public class MCOpenVR
 		}
 
 		// if you start teleporting, close any UI
-		if (gui && !sleeping && mc.gameSettings.keyBindForward.isKeyDown() && !(mc.currentScreen instanceof GuiWinGame))
+		if (gui && !sleeping && keyTeleport.isKeyDown() && !(mc.currentScreen instanceof GuiWinGame))
 		{
 			if(mc.player !=null) mc.player.closeScreen();
 		}
 
-		if(!mc.gameSettings.keyBindInventory.isKeyDown()){
-			startedOpeningInventory = 0;
-		}
-
 		//GuiContainer.java only listens directly to the keyboard to close.
-		if(gui && !(mc.currentScreen instanceof GuiWinGame) && mc.gameSettings.keyBindInventory.isKeyDown()){ //inventory will repeat open/close while button is held down. TODO: fix.
-			if((getCurrentTimeSecs() - startedOpeningInventory) > 0.5 && mc.player != null) mc.player.closeScreen();
-			getInputAction(mc.gameSettings.keyBindInventory).unpressKey(); //minecraft.java will open a new window otherwise.
+		if (mc.currentScreen instanceof GuiContainer && mc.gameSettings.keyBindInventory.isPressed()) {
+			if (mc.player != null)
+				mc.player.closeScreen();
 		}
 
 		// allow toggling chat window with chat keybind
@@ -2236,6 +2288,13 @@ public class MCOpenVR
 
 	public static void triggerHapticPulse(ControllerType controller, float durationSeconds, float frequency, float amplitude, float delaySeconds) {
 		if (Minecraft.getMinecraft().vrSettings.seated || !inputInitialized) return;
+		if (mc.vrSettings.vrReverseHands) {
+			if (controller == ControllerType.RIGHT)
+				controller = ControllerType.LEFT;
+			else
+				controller = ControllerType.RIGHT;
+		}
+
 		hapticScheduler.queueHapticPulse(controller, durationSeconds, frequency, amplitude, delaySeconds);
 	}
 
@@ -2539,9 +2598,17 @@ public class MCOpenVR
 		offset=new Vector3(0,0,0);
 	}
 
+	public static void setVanillaBindings(KeyBinding[] bindings) {
+		vanillaBindingSet = new HashSet<>(Arrays.asList(bindings));
+	}
+
 	public static boolean isSafeBinding(KeyBinding kb) {
 		// Stupid hard-coded junk
 		return getKeyBindings().contains(kb) || kb == mc.gameSettings.keyBindChat || kb == mc.gameSettings.keyBindInventory;
+	}
+
+	public static boolean isModBinding(KeyBinding kb) {
+		return !vanillaBindingSet.contains(kb);
 	}
 
 	public static boolean isHMDTracking() {

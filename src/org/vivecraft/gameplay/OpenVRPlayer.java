@@ -142,7 +142,7 @@ public class OpenVRPlayer
 		VRData temp = new VRData(roomOrigin, mc.vrSettings.walkMultiplier, this.worldScale, vrdata_world_pre.rotation_radians);		
 		float end = mc.vrSettings.vrWorldRotation;
 		float start = (float) Math.toDegrees(vrdata_world_pre.rotation_radians);	
-		rotateOriginAround(-end+start, temp.hmd.getPosition());
+		rotateOriginAround(-end+start, temp.getHeadPivot());
 		//
 		
 		this.vrdata_room_post = new VRData(new Vec3d(0, 0, 0), mc.vrSettings.walkMultiplier, 1, 0);
@@ -241,7 +241,7 @@ public class OpenVRPlayer
 
 		if(instant) temp = new VRData(roomOrigin, mc.vrSettings.walkMultiplier, this.worldScale, (float) Math.toRadians(mc.vrSettings.vrWorldRotation));
 
-		Vec3d campos = temp.hmd.getPosition().subtract(temp.origin);
+		Vec3d campos = temp.getHeadPivot().subtract(temp.origin);
 
 		double x,y,z;
 
@@ -362,7 +362,7 @@ tracker.idleTick(mc.player);
 		
 		if(mc.vehicleTracker.canRoomscaleDismount(mc.player)) {
 			Vec3d mountpos = mc.player.getRidingEntity().getPositionVector();
-			Vec3d tp = vrdata_world_pre.hmd.getPosition();
+			Vec3d tp = vrdata_world_pre.getHeadPivot();
 			double dist = Math.sqrt((tp.x - mountpos.x) * (tp.x - mountpos.x) + (tp.z - mountpos.z) *(tp.z - mountpos.z));
 			if (dist > 0.85) {
 				mc.sneakTracker.sneakCounter = 5;
@@ -380,7 +380,7 @@ tracker.idleTick(mc.player);
 
 		//OK this is the first place I've found where we reallly need to update the VR data before doing this calculation.
 
-		Vec3d eyePos = temp.hmd.getPosition();
+		Vec3d eyePos = temp.getHeadPivot();
 
 		double x = eyePos.x;
 		double y = player.posY;

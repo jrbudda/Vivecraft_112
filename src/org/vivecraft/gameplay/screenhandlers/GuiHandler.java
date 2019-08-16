@@ -377,7 +377,7 @@ public class GuiHandler {
 		}*/
 
 		if (unpressKeys)
-			MCOpenVR.unpressBindingsNextFrame = true;
+			MCOpenVR.ignorePressesNextFrame = true;
 
 		if(newScreen == null) {
 			//just insurance

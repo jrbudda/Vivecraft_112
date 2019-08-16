@@ -56,7 +56,7 @@ public class JumpTracker extends Tracker {
  	
 	@Override
 	public void idleTick(EntityPlayerSP player) {
-		MCOpenVR.getInputAction(MCOpenVR.keyClimbeyJump).setEnabled(isClimbeyJump());
+		MCOpenVR.getInputAction(MCOpenVR.keyClimbeyJump).setEnabled(isClimbeyJumpEquipped() && (this.isActive(player) || (mc.climbTracker.isClimbeyClimbEquipped() && mc.climbTracker.isGrabbingLadder())));
 	}
  	
 	@Override
@@ -127,9 +127,15 @@ public class JumpTracker extends Tracker {
 
 				Vec3d m = (MCOpenVR.controllerHistory[0].netMovement(0.3)
 						.add(MCOpenVR.controllerHistory[1].netMovement(0.3)));
-	
+				
+				double sp =  (MCOpenVR.controllerHistory[0].averageSpeed(0.3) + MCOpenVR.controllerHistory[1].averageSpeed(0.3)) / 2 ;	
+									
+				m = m.scale(0.33f * sp);
+							
 				//cap
-				float limit = 1.5f;
+				float limit = 0.66f;
+				if(m.lengthVector() > limit) m = m.scale(limit/m.lengthVector());
+				
 				if(m.lengthVector() > limit) m = m.scale(limit/m.lengthVector());
 						
 				if (player.isPotionActive(MobEffects.JUMP_BOOST))

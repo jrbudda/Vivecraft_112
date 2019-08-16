@@ -308,7 +308,7 @@ public class Utils
 					is = new FileInputStream(p5.toFile());
 				}
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			handleAssetException(e, name, required);
 		}
 
@@ -562,6 +562,14 @@ public class Utils
 
 		// Return the interpolated quaternion
 		return new Quaternion(w, x, y, z);
+	}
+
+	public static float applyDeadzone(float axis, float deadzone) {
+		final float scalar = 1 / (1 - deadzone);
+		float newAxis = 0;
+		if (Math.abs(axis) > deadzone)
+			newAxis = (Math.abs(axis) - deadzone) * scalar * Math.signum(axis);
+		return newAxis;
 	}
 
 	public static long microTime() {

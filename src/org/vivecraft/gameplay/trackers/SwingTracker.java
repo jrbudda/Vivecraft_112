@@ -2,6 +2,7 @@ package org.vivecraft.gameplay.trackers;
 
 import java.util.List;
 
+import org.vivecraft.control.ControllerType;
 import org.vivecraft.provider.MCOpenVR;
 import org.vivecraft.utils.MCReflection;
 
@@ -203,8 +204,8 @@ public class SwingTracker extends Tracker{
 
         	if(!inAnEntity && !sword){
         		if(mc.climbTracker.isClimbeyClimb()){
-        			if(c == 0 && mc.gameSettings.keyBindAttack.isKeyDown() || !tool ) continue;
-        			if(c == 1 && mc.gameSettings.keyBindForward.isKeyDown() || !tool ) continue;
+        			if(c == 0 && MCOpenVR.keyClimbeyGrab.isKeyDown(ControllerType.RIGHT) || !tool ) continue;
+        			if(c == 1 && MCOpenVR.keyClimbeyGrab.isKeyDown(ControllerType.LEFT) || !tool ) continue;
         		}
         		
         		BlockPos bp =null;

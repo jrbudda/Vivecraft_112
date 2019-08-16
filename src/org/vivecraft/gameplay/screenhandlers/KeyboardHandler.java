@@ -198,11 +198,11 @@ public class KeyboardHandler {
 			}
 
 			if (PointedR && GuiHandler.keyKeyboardClick.isPressed(ControllerType.RIGHT)) {
-				UI.mouseDown((int)d0, (int)d1, 0, false);
+				UI.mouseDown((int)d2, (int)d3, 0, false);
 				lastPressedClickR = true;
 			}
 			if (!GuiHandler.keyKeyboardClick.isKeyDown(ControllerType.RIGHT) && lastPressedClickR) {
-				UI.mouseUp((int)d0, (int)d1, 0, false);
+				UI.mouseUp((int)d2, (int)d3, 0, false);
 				lastPressedClickR = false;
 			}
 

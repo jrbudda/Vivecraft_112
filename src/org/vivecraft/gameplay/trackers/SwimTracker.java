@@ -42,7 +42,7 @@ public class SwimTracker extends Tracker {
 
 		{//float
 			Vec3d face = mc.vrPlayer.vrdata_world_pre.hmd.getPosition();
-			float height = (float) (mc.vrPlayer.vrdata_room_pre.hmd.getPosition().y * 0.9);
+			float height = (float) (mc.vrPlayer.vrdata_room_pre.getHeadPivot().y * 0.9);
 			if(height > 1.6)height = 1.6f;
 			Vec3d feets = face.subtract(0,height, 0);
 			double waterLine=256;

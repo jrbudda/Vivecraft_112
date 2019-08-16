@@ -70,12 +70,15 @@ def main(mcp_dir, patch_dir = "patches", orig_dir = ".minecraft_orig"):
         mod_dir   = os.path.join( org_src_dir,    pkg )
         patch_dir = os.path.join( patch_base_dir, pkg )
         patchsrc_dir = os.path.join( patchsrc_base_dir, pkg )
-        if not os.path.exists(new_dir):
-            os.mkdir(new_dir)
-        if not os.path.exists(patch_dir):
-            os.mkdir(patch_dir)
-        if not os.path.exists(patchsrc_dir):
-            os.mkdir(patchsrc_dir)
+        try:
+            if not os.path.exists(new_dir):
+                os.mkdir(new_dir)
+            if not os.path.exists(patch_dir):
+                os.mkdir(patch_dir)
+            if not os.path.exists(patchsrc_dir):
+                os.mkdir(patchsrc_dir)
+        except OSerror as e:
+            quit
         for file_ in files:
             mod_file = os.path.join(src_dir, file_)
             org_file = os.path.join(mod_dir, file_)
