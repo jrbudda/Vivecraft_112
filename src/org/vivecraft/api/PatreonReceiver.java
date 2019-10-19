@@ -1,49 +1,80 @@
 package org.vivecraft.api;
 
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import org.vivecraft.render.PlayerModelController;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.src.Config;
-import net.minecraft.util.text.TextComponentString;
-import net.optifine.http.IFileDownloadListener;
+import net.optifine.http.FileDownloadThread;
 
-public class PatreonReceiver implements IFileDownloadListener
+public class PatreonReceiver
 {
-    private String player = null;
-    private EntityPlayer p;
-    
-    public PatreonReceiver(String p_i65_1_, EntityPlayer p)
-    {
-        this.player = p_i65_1_;
-        this.p = p;
-    	PlayerModelController.getInstance().setHMD(p.getUniqueID(), 0);
-    }
+	private static final Object lock = new Object();
+	private static List<EntityPlayer> queuedPlayers = new LinkedList<>();
+	private static Map<String, Integer> cache;
+	private static boolean downloadStarted;
+	private static boolean downloadFailed;
 
-    public void fileDownloadFinished(String p_fileDownloadFinished_1_, byte[] p_fileDownloadFinished_2_, Throwable p_fileDownloadFinished_3_)
-    {
-        if (p_fileDownloadFinished_2_ != null)
-        {
-            try
-            {         
-            	String s = new String(p_fileDownloadFinished_2_, "ASCII");
-            	String lines[] = s.split("\\r?\\n");
-            	for (String string : lines) {
-            		try{
-    					String[] bits = string.split(":");
-    					if(bits[0].equalsIgnoreCase(player)) {
-    						int level = Integer.parseInt(bits[1]);
-    		            	PlayerModelController.getInstance().setHMD(p.getUniqueID(), level );
-    					}
-        			} catch(Exception e){
-        				System.out.println("error with donors txt " + e.getMessage());
-        				continue;
-        			}
+    private static void fileDownloadFinished(String url, byte[] data, Throwable exception) {
+		synchronized (lock) {
+			if (data != null) {
+				try {
+					HashMap<String, Integer> map = new HashMap<>();
+					String s = new String(data, StandardCharsets.UTF_8);
+
+					String[] lines = s.split("\\r?\\n");
+					for (String string : lines) {
+						try {
+							String[] bits = string.split(":");
+							int level = Integer.parseInt(bits[1]);
+							map.put(bits[0], level);
+
+							for (EntityPlayer player : queuedPlayers) {
+								if (bits[0].equalsIgnoreCase(player.getGameProfile().getName())) {
+									PlayerModelController.getInstance().setHMD(player.getUniqueID(), level);
+								}
+							}
+						} catch (Exception e) {
+							System.out.println("error with donors txt " + e.getMessage());
+						}
+					}
+
+					cache = map;
+				} catch (Exception e) {
+					Config.dbg("Error parsing data: " + url + ", " + e.getClass().getName() + ": " + e.getMessage());
+					downloadFailed = true;
 				}
-            }
-            catch (Exception exception)
-            {
-                Config.dbg("Error parsing data: " + p_fileDownloadFinished_1_ + ", " + exception.getClass().getName() + ": " + exception.getMessage());
-            }
-        }
-    }
+			} else {
+				downloadFailed = true;
+			}
+
+			queuedPlayers.clear();
+		}
+	}
+
+	public static void addPlayerInfo(EntityPlayer p) {
+		if (downloadFailed)
+			return;
+
+		synchronized (lock) {
+			if (cache == null) {
+				queuedPlayers.add(p);
+				PlayerModelController.getInstance().setHMD(p.getUniqueID(), 0);
+
+				if (!downloadStarted) {
+					downloadStarted = true;
+					String s = "http://www.vivecraft.org/patreon/current.txt";
+					FileDownloadThread filedownloadthread = new FileDownloadThread(s, PatreonReceiver::fileDownloadFinished);
+					filedownloadthread.start();
+				}
+			} else {
+				PlayerModelController.getInstance().setHMD(p.getUniqueID(), cache.getOrDefault(p.getGameProfile().getName(), 0));
+			}
+		}
+	}
 }

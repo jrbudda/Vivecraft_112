@@ -9,23 +9,12 @@
  import java.io.File;
  import javax.annotation.Nullable;
  import net.minecraft.client.Minecraft;
-@@ -20,6 +22,7 @@
- import net.minecraft.util.StringUtils;
- import net.minecraft.world.GameType;
- import net.minecraft.world.World;
-+import net.optifine.http.FileDownloadThread;
- import net.optifine.player.CapeUtils;
- import net.optifine.player.PlayerConfigurations;
- import net.optifine.reflect.Reflector;
-@@ -48,6 +51,11 @@
+@@ -48,6 +50,8 @@
  
          CapeUtils.downloadCape(this);
          PlayerConfigurations.getPlayerConfiguration(this);
 +        
-+        PatreonReceiver pr = new PatreonReceiver(nameClear, this);
-+        String s = "http://www.vivecraft.org/patreon/current.txt";
-+        FileDownloadThread filedownloadthread = new FileDownloadThread(s, pr);
-+        filedownloadthread.start();
++        PatreonReceiver.addPlayerInfo(this);
      }
  
      /**

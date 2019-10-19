@@ -691,6 +691,8 @@ public class MCOpenVR
 
 		List<Map<String, Object>> actionSets = new ArrayList<>();
 		for (VRInputActionSet actionSet : VRInputActionSet.values()) {
+			if (actionSet == VRInputActionSet.MOD && !Reflector.forgeExists())
+				continue;
 			String usage = actionSet.usage;
 			if (actionSet.advanced && !mc.vrSettings.allowAdvancedBindings)
 				usage = "hidden";
@@ -735,6 +737,7 @@ public class MCOpenVR
 		defaultBindings.add(ImmutableMap.<String, Object>builder().put("controller_type", "oculus_touch").put("binding_url", "oculus_defaults.json").build());
 		defaultBindings.add(ImmutableMap.<String, Object>builder().put("controller_type", "holographic_controller").put("binding_url", "wmr_defaults.json").build());
 		defaultBindings.add(ImmutableMap.<String, Object>builder().put("controller_type", "knuckles").put("binding_url", "knuckles_defaults.json").build());
+		defaultBindings.add(ImmutableMap.<String, Object>builder().put("controller_type", "vive_cosmos_controller").put("binding_url", "cosmos_defaults.json").build());
 		defaultBindings.add(ImmutableMap.<String, Object>builder().put("controller_type", "vive_tracker_camera").put("binding_url", "tracker_defaults.json").build());
 		jsonMap.put("default_bindings", defaultBindings);
 
@@ -752,6 +755,7 @@ public class MCOpenVR
 		Utils.loadAssetToFile("input/oculus_defaults" + rev + ".json", new File("openvr/input/oculus_defaults.json"), false);
 		Utils.loadAssetToFile("input/wmr_defaults" + rev + ".json", new File("openvr/input/wmr_defaults.json"), false);
 		Utils.loadAssetToFile("input/knuckles_defaults" + rev + ".json", new File("openvr/input/knuckles_defaults.json"), false);
+		Utils.loadAssetToFile("input/cosmos_defaults" + rev + ".json", new File("openvr/input/cosmos_defaults.json"), false);
 		Utils.loadAssetToFile("input/tracker_defaults.json", new File("openvr/input/tracker_defaults.json"), false);
 	}
 
@@ -800,6 +804,8 @@ public class MCOpenVR
 	private static VRActiveActionSet_t[] getActiveActionSets() {
 		ArrayList<VRInputActionSet> list = new ArrayList<>();
 		list.add(VRInputActionSet.GLOBAL);
+		if (Reflector.forgeExists())
+			list.add(VRInputActionSet.MOD);
 		list.add(VRInputActionSet.MIXED_REALITY);
 		list.add(VRInputActionSet.TECHNICAL);
 		if (mc.currentScreen == null) {

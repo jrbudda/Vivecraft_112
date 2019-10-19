@@ -123,7 +123,7 @@
 +            GlStateManager.rotate(-80.0F, 1.0F, 0.0F, 0.0F);        		
 +    	}   
 +        GlStateManager.translate(0, 0.155F, -0.215F);
-+        
++        Minecraft.getMinecraft().getItemRenderer().renderItemSide(0, p_188358_1_, p_188358_2_, p_188358_3_, flag);
 +    }
 +    
 +    

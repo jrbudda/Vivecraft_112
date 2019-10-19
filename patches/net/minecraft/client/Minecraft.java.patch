@@ -270,7 +270,7 @@
 +	 * The minecriftVerString will be automatically updated by the build scripts, do not modify here.
 +	 * Modify minecriftversion.py in root minecrift dir.
 +	 */
-+    public final String minecriftVerString = "Vivecraft 1.12.2 jrbudda-9-r3";
++    public final String minecriftVerString = "Vivecraft 1.12.2 jrbudda-9-r6";
 +	/* end version */
 +	/** END MINECRIFT */
 +    
@@ -1361,6 +1361,15 @@
          this.mcProfiler.startSection("gui");
  
          if (!this.isGamePaused)
+@@ -1852,7 +2363,7 @@
+         }
+ 
+         this.mcProfiler.endSection();
+-        this.entityRenderer.getMouseOver(1.0F);
++        this.entityRenderer.getMouseOverVR(1.0F);
+         this.tutorial.onMouseHover(this.world, this.objectMouseOver);
+         this.mcProfiler.startSection("gameMode");
+ 
 @@ -1863,10 +2374,17 @@
  
          this.mcProfiler.endStartSection("textures");
