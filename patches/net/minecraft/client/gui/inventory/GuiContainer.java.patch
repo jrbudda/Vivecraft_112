@@ -36,3 +36,12 @@
                              ClickType clicktype = ClickType.PICKUP;
  
                              if (flag2)
+@@ -516,7 +517,7 @@
+                 }
+             }
+         }
+-        else if (this.dragSplitting && slot != null && !itemstack.isEmpty() && (itemstack.getCount() > this.dragSplittingSlots.size() || this.dragSplittingLimit == 2) && Container.canAddItemToSlot(slot, itemstack, true) && slot.isItemValid(itemstack) && this.inventorySlots.canDragIntoSlot(slot))
++        else if (!GuiScreen.isShiftKeyDown() && this.dragSplitting && slot != null && !itemstack.isEmpty() && (itemstack.getCount() > this.dragSplittingSlots.size() || this.dragSplittingLimit == 2) && Container.canAddItemToSlot(slot, itemstack, true) && slot.isItemValid(itemstack) && this.inventorySlots.canDragIntoSlot(slot))
+         {
+             this.dragSplittingSlots.add(slot);
+             this.updateDragSplitting();

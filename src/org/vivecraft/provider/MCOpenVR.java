@@ -593,14 +593,14 @@ public class MCOpenVR
 		addActionParams(map, mc.gameSettings.keyBindBack, "optional", "vector1", null);
 		addActionParams(map, mc.gameSettings.keyBindLeft, "optional", "vector1", null);
 		addActionParams(map, mc.gameSettings.keyBindRight, "optional", "vector1", null);
-		addActionParams(map, mc.gameSettings.keyBindInventory, "mandatory", "boolean", VRInputActionSet.GLOBAL);
-		addActionParams(map, mc.gameSettings.keyBindAttack, "mandatory", "boolean", null);
-		addActionParams(map, mc.gameSettings.keyBindUseItem, "mandatory", "boolean", null);
+		addActionParams(map, mc.gameSettings.keyBindInventory, "suggested", "boolean", VRInputActionSet.GLOBAL);
+		addActionParams(map, mc.gameSettings.keyBindAttack, "suggested", "boolean", null);
+		addActionParams(map, mc.gameSettings.keyBindUseItem, "suggested", "boolean", null);
 		addActionParams(map, mc.gameSettings.keyBindChat, "optional", "boolean", VRInputActionSet.GLOBAL);
 		addActionParams(map, MCOpenVR.keyHotbarScroll, "optional", "vector2", null);
 		addActionParams(map, MCOpenVR.keyHotbarSwipeX, "optional", "vector2", null);
 		addActionParams(map, MCOpenVR.keyHotbarSwipeY, "optional", "vector2", null);
-		addActionParams(map, MCOpenVR.keyMenuButton, "mandatory", "boolean", VRInputActionSet.GLOBAL);
+		addActionParams(map, MCOpenVR.keyMenuButton, "suggested", "boolean", VRInputActionSet.GLOBAL);
 		addActionParams(map, MCOpenVR.keyTeleportFallback, "suggested", "vector1", null);
 		addActionParams(map, MCOpenVR.keyFreeMoveRotate, "optional", "vector2", null);
 		addActionParams(map, MCOpenVR.keyFreeMoveStrafe, "optional", "vector2", null);
@@ -615,11 +615,11 @@ public class MCOpenVR
 		addActionParams(map, MCOpenVR.keyVRInteract, "suggested", "boolean", VRInputActionSet.CONTEXTUAL);
 		addActionParams(map, MCOpenVR.keyClimbeyGrab, "suggested", "boolean", null);
 		addActionParams(map, MCOpenVR.keyClimbeyJump, "suggested", "boolean", null);
-		addActionParams(map, GuiHandler.keyLeftClick, "mandatory", "boolean", null);
+		addActionParams(map, GuiHandler.keyLeftClick, "suggested", "boolean", null);
 		addActionParams(map, GuiHandler.keyScrollAxis, "optional", "vector2", null);
 		addActionParams(map, GuiHandler.keyRightClick, "suggested", "boolean", null);
 		addActionParams(map, GuiHandler.keyShift, "suggested", "boolean", null);
-		addActionParams(map, GuiHandler.keyKeyboardClick, "mandatory", "boolean", null);
+		addActionParams(map, GuiHandler.keyKeyboardClick, "suggested", "boolean", null);
 		addActionParams(map, GuiHandler.keyKeyboardShift, "suggested", "boolean", null);
 
 		File file = new File("customactionsets.txt");
@@ -2577,16 +2577,6 @@ public class MCOpenVR
 
 	public static HardwareType getHardwareType() {
 		return mc.vrSettings.forceHardwareDetection > 0 ? HardwareType.values()[mc.vrSettings.forceHardwareDetection - 1] : detectedHardware;
-	}
-
-	public static boolean isVive() {
-		switch (getHardwareType()) {
-		case VIVE:
-		case WINDOWSMR:
-			return true;
-		default:
-			return false;
-		}
 	}
 
 	private static boolean gunStyle = false; 

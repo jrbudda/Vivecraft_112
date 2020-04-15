@@ -108,13 +108,12 @@ public class GuiMenuWorldSettings extends BaseGuiSettings implements GuiEventEx
                 this.reinit = true;
             }
 			else if (par1GuiButton.id == 300) {
-				if (mc.menuWorldRenderer.getWorld() != null) {
-					try {
+				try {
+					if (mc.menuWorldRenderer.isReady())
 						mc.menuWorldRenderer.destroy();
-						mc.menuWorldRenderer.init();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+					mc.menuWorldRenderer.init();
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 			else if (par1GuiButton.id == 301) {

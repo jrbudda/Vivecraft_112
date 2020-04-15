@@ -20,6 +20,24 @@
      public GuiVideoSettings(GuiScreen parentScreenIn, GameSettings gameSettingsIn)
      {
          this.parentGuiScreen = parentScreenIn;
+@@ -101,7 +107,7 @@
+     {
+         if (p_actionPerformed_1_.enabled)
+         {
+-            int i = this.guiGameSettings.guiScale;
++            int i = this.guiGameSettings.guiScaleUser;
+ 
+             if (p_actionPerformed_1_.id < 200 && p_actionPerformed_1_ instanceof GuiOptionButton)
+             {
+@@ -115,7 +121,7 @@
+                 this.mc.displayGuiScreen(this.parentGuiScreen);
+             }
+ 
+-            if (this.guiGameSettings.guiScale != i)
++            if (this.guiGameSettings.guiScaleUser != i)
+             {
+                 ScaledResolution scaledresolution = new ScaledResolution(this.mc);
+                 int j = scaledresolution.getScaledWidth();
 @@ -172,11 +178,11 @@
                      return;
                  }

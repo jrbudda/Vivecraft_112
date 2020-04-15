@@ -107,7 +107,7 @@ public class GuiHandler {
 	public static Framebuffer guiFramebuffer = null;
 
 	public static void processGui() {
-		if(mc.currentScreen == null)return;
+		//if(mc.currentScreen == null)return;
 		if(mc.vrSettings.seated) return;
 		if(guiRotation_room == null) return;
 

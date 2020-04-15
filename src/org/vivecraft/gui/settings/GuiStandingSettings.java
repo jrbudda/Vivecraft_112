@@ -22,12 +22,11 @@ public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
 {
     static VRSettings.VrOptions[] locomotionSettings = new VRSettings.VrOptions[]
     {
-    		VRSettings.VrOptions.REVERSE_HANDS,
             VRSettings.VrOptions.WALK_UP_BLOCKS,
             VRSettings.VrOptions.VEHICLE_ROTATION,
-            VRSettings.VrOptions.BCB_ON,
             VRSettings.VrOptions.WALK_MULTIPLIER,
             VRSettings.VrOptions.WORLD_ROTATION_INCREMENT,
+            VRSettings.VrOptions.BCB_ON,
             VRSettings.VrOptions.ALLOW_STANDING_ORIGIN_OFFSET,
             VRSettings.VrOptions.FORCE_STANDING_FREE_MOVE
     };

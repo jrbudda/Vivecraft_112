@@ -124,7 +124,7 @@
 +            	break;
 +            case 104:
 +            	this.mc.displayGuiScreen((GuiScreen)null);
-+            	this.mc.grabScreenShot = 10;
++            	this.mc.grabScreenShot = true;
 +            	break;
 +	        case 105:
 +		        AutoCalibration.calibrateManual();

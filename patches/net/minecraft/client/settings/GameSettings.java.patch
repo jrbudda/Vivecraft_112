@@ -26,7 +26,15 @@
      public TutorialSteps tutorialStep = TutorialSteps.MOVEMENT;
      public KeyBinding keyBindForward = new KeyBinding("key.forward", 17, "key.categories.movement");
      public KeyBinding keyBindLeft = new KeyBinding("key.left", 30, "key.categories.movement");
-@@ -228,7 +229,7 @@
+@@ -193,6 +194,7 @@
+ 
+     /** GUI scale */
+     public int guiScale;
++    public int guiScaleUser;
+ 
+     /** Determines amount of particles. 0 = All, 1 = Decreased, 2 = Minimal */
+     public int particleSetting;
+@@ -228,7 +230,7 @@
      public boolean ofStars = true;
      public boolean ofSunMoon = true;
      public int ofVignette = 0;
@@ -35,7 +43,7 @@
      public boolean ofChunkUpdatesDynamic = false;
      public int ofTime = 0;
      public boolean ofClearWater = false;
-@@ -250,7 +251,7 @@
+@@ -250,7 +252,7 @@
      public int ofTranslucentBlocks = 0;
      public boolean ofDynamicFov = true;
      public boolean ofAlternateBlocks = true;
@@ -44,7 +52,7 @@
      public boolean ofCustomEntityModels = true;
      public boolean ofCustomGuis = true;
      public boolean ofShowGlErrors = true;
-@@ -292,6 +293,7 @@
+@@ -292,6 +294,7 @@
      {
          this.setForgeKeybindProperties();
          this.keyBindings = (KeyBinding[])ArrayUtils.addAll(new KeyBinding[] {this.keyBindAttack, this.keyBindUseItem, this.keyBindForward, this.keyBindLeft, this.keyBindBack, this.keyBindRight, this.keyBindJump, this.keyBindSneak, this.keyBindSprint, this.keyBindDrop, this.keyBindInventory, this.keyBindChat, this.keyBindPlayerList, this.keyBindPickBlock, this.keyBindCommand, this.keyBindScreenshot, this.keyBindTogglePerspective, this.keyBindSmoothCamera, this.keyBindFullscreen, this.keyBindSpectatorOutlines, this.keyBindSwapHands, this.keyBindSaveToolbar, this.keyBindLoadToolbar, this.keyBindAdvancements}, this.keyBindsHotbar);
@@ -52,7 +60,7 @@
          this.difficulty = EnumDifficulty.NORMAL;
          this.lastServer = "";
          this.fovSetting = 70.0F;
-@@ -469,7 +471,7 @@
+@@ -469,7 +472,7 @@
                  this.mc.getTextureMapBlocks().setMipmapLevels(this.mipmapLevels);
                  this.mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
                  this.mc.getTextureMapBlocks().setBlurMipmapDirect(false, this.mipmapLevels > 0);
@@ -61,7 +69,74 @@
              }
          }
  
-@@ -2037,7 +2039,7 @@
+@@ -504,11 +507,11 @@
+ 
+         if (settingsOption == GameSettings.Options.GUI_SCALE)
+         {
+-            this.guiScale += value;
++            this.guiScaleUser += value;
+ 
+             if (GuiScreen.isShiftKeyDown())
+             {
+-                this.guiScale = 0;
++                this.guiScaleUser = 0;
+             }
+ 
+             DisplayMode displaymode = Config.getLargestDisplayMode();
+@@ -516,19 +519,19 @@
+             int j = displaymode.getHeight() / 240;
+             int k = Math.min(i, j);
+ 
+-            if (this.guiScale < 0)
++            if (this.guiScaleUser < 0)
+             {
+-                this.guiScale = k - 1;
++                this.guiScaleUser = k - 1;
+             }
+ 
+-            if (this.mc.isUnicode() && this.guiScale % 2 != 0)
++            if (this.mc.isUnicode() && this.guiScaleUser % 2 != 0)
+             {
+-                this.guiScale += value;
++                this.guiScaleUser += value;
+             }
+ 
+-            if (this.guiScale < 0 || this.guiScale >= k)
++            if (this.guiScaleUser < 0 || this.guiScaleUser >= k)
+             {
+-                this.guiScale = 0;
++                this.guiScaleUser = 0;
+             }
+         }
+ 
+@@ -932,7 +935,7 @@
+             }
+             else if (settingOption == GameSettings.Options.GUI_SCALE)
+             {
+-                return this.guiScale >= GUISCALES.length ? s1 + this.guiScale + "x" : s1 + getTranslation(GUISCALES, this.guiScale);
++                return this.guiScaleUser >= GUISCALES.length ? s1 + this.guiScaleUser + "x" : s1 + getTranslation(GUISCALES, this.guiScaleUser);
+             }
+             else if (settingOption == GameSettings.Options.CHAT_VISIBILITY)
+             {
+@@ -1046,7 +1049,7 @@
+ 
+                     if ("guiScale".equals(s1))
+                     {
+-                        this.guiScale = Integer.parseInt(s2);
++                        this.guiScaleUser = Integer.parseInt(s2);
+                     }
+ 
+                     if ("particles".equals(s1))
+@@ -1456,7 +1459,7 @@
+             printwriter.println("gamma:" + this.gammaSetting);
+             printwriter.println("saturation:" + this.saturation);
+             printwriter.println("renderDistance:" + this.renderDistanceChunks);
+-            printwriter.println("guiScale:" + this.guiScale);
++            printwriter.println("guiScale:" + this.guiScaleUser);
+             printwriter.println("particles:" + this.particleSetting);
+             printwriter.println("bobView:" + this.viewBobbing);
+             printwriter.println("anaglyph3d:" + this.anaglyph);
+@@ -2037,7 +2040,7 @@
          {
              ++this.ofChunkUpdates;
  
@@ -70,7 +145,7 @@
              {
                  this.ofChunkUpdates = 1;
              }
-@@ -2147,18 +2149,18 @@
+@@ -2147,18 +2150,18 @@
  
          if (p_setOptionValueOF_1_ == GameSettings.Options.FAST_RENDER)
          {
@@ -98,7 +173,7 @@
  
              Config.updateFramebufferSize();
          }
-@@ -3038,7 +3040,7 @@
+@@ -3038,7 +3041,7 @@
                      if (astring[0].equals("ofChunkUpdates") && astring.length >= 2)
                      {
                          this.ofChunkUpdates = Integer.valueOf(astring[1]).intValue();
@@ -107,7 +182,7 @@
                      }
  
                      if (astring[0].equals("ofChunkUpdatesDynamic") && astring.length >= 2)
-@@ -3189,13 +3191,13 @@
+@@ -3189,13 +3192,13 @@
  
                      if (astring[0].equals("ofFastMath") && astring.length >= 2)
                      {
@@ -123,7 +198,7 @@
                      }
  
                      if (astring[0].equals("ofTranslucentBlocks") && astring.length >= 2)
-@@ -3218,6 +3220,14 @@
+@@ -3218,6 +3221,14 @@
  
              KeyBinding.resetKeyBindingArrayAndHash();
              bufferedreader.close();
@@ -138,8 +213,12 @@
          }
          catch (Exception exception11)
          {
-@@ -3357,7 +3367,7 @@
-         this.guiScale = 0;
+@@ -3354,10 +3365,10 @@
+         this.clouds = 2;
+         this.fovSetting = 70.0F;
+         this.gammaSetting = 0.0F;
+-        this.guiScale = 0;
++        this.guiScaleUser = 0;
          this.particleSetting = 0;
          this.heldItemTooltips = true;
 -        this.useVbo = false;
@@ -147,7 +226,7 @@
          this.forceUnicodeFont = false;
          this.ofFogType = 1;
          this.ofFogStart = 0.8F;
-@@ -3370,7 +3380,7 @@
+@@ -3370,7 +3381,7 @@
          this.ofLazyChunkLoading = false;
          this.ofRenderRegions = false;
          this.ofFastMath = false;
@@ -156,7 +235,7 @@
          this.ofTranslucentBlocks = 0;
          this.ofDynamicFov = true;
          this.ofAlternateBlocks = true;
-@@ -3396,7 +3406,7 @@
+@@ -3396,7 +3407,7 @@
          this.ofStars = true;
          this.ofSunMoon = true;
          this.ofVignette = 0;
@@ -165,7 +244,7 @@
          this.ofChunkUpdatesDynamic = false;
          this.ofTime = 0;
          this.ofClearWater = false;
-@@ -3542,6 +3552,7 @@
+@@ -3542,6 +3553,7 @@
          }
      }
  
@@ -173,7 +252,7 @@
      public void onGuiClosed()
      {
          if (this.needsResourceRefresh)
-@@ -3550,6 +3561,7 @@
+@@ -3550,6 +3562,7 @@
              this.needsResourceRefresh = false;
          }
      }

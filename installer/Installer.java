@@ -127,6 +127,8 @@ public class Installer extends JPanel  implements PropertyChangeListener
 	private String osType;
 	private boolean isWindows = false;
 	private String appDataDir;
+	boolean isMultiMC = false;
+	File mmcinst = null;
 
 	public Installer(File target)
 	{
@@ -492,13 +494,54 @@ public class Installer extends JPanel  implements PropertyChangeListener
 		String str =  ((String)optionPane.getValue());
 		if (str !=null && ((String)optionPane.getValue()).equalsIgnoreCase("Install"))
 		{
+		
+		String check = System.getenv("_JAVA_OPTIONS");
+		if (check != null && check.toLowerCase().contains("xmx")){
+				JOptionPane.showOptionDialog(
+				null,
+				"The installer has detected a java override environment variable on your system\n"+
+				"This will limit the maximum amount of memory available to java and may cause Minecraft to crash or run poorly.\n"+
+				"You should remove this variable before launching the game.\n\n"+
+				"Found _JAVA_OPTIONS " + check, 
+				"Warning!",
+				JOptionPane.DEFAULT_OPTION,
+				JOptionPane.ERROR_MESSAGE, null, null, null);
+			}
+			
+			//check for multimc
+			for(File f : targetDir.listFiles()){
+				if(f.getName().equalsIgnoreCase("multimc.exe") || (f.getName().equalsIgnoreCase("multimc") && f.isFile()) || f.getName().equalsIgnoreCase("multimc.cfg")){
+					ArrayList<File> ilist = new ArrayList<File>();
+					File insts = new File(targetDir, "instances");
+					for(File inst : insts.listFiles()){
+						if(inst.isDirectory() && !inst.getName().startsWith("_"))
+							ilist.add(inst);
+					}	
+					JComboBox icb = new JComboBox(ilist.toArray());
+					File sel =(File) JOptionPane.showInputDialog(null,"Select MultiMC Instance.","MultiMC Detected", JOptionPane.PLAIN_MESSAGE, null, ilist.toArray(), null);
+					if(sel != null){
+						mmcinst = sel;
+						isMultiMC = true;
+					} else {
+						dialog.dispose();
+						emptyFrame.dispose();
+					}
+					break; // don't ask multiple times
+				}
+			}
+			//
+			
 			int option = 0;
-			if(createProfile.isSelected())
+			String msg = "Please ensure you have closed the Minecraft Launcher before proceeding.";
+			
+			if(isMultiMC)
+				msg = "Please ensure you have closed MultiMC before proceeding.";
+				
+			if(createProfile.isSelected() || isMultiMC)
 				option = JOptionPane.showOptionDialog(
 						null,
-						"Please ensure you have closed the Minecraft launcher before proceeding.\n" 
-						//"Also, if installing with Forge please ensure you have installed Forge " + FORGE_VERSION + " first.",
-						,"Important!",
+						msg,
+						"Important!",
 						JOptionPane.OK_CANCEL_OPTION,
 						JOptionPane.WARNING_MESSAGE, null, null, null);
 
@@ -529,8 +572,6 @@ public class Installer extends JPanel  implements PropertyChangeListener
 		 */
 		public String finalMessage;
 
-		File mmcinst = null;
-		boolean isMultiMC = false;
 
 		@Override
 		public Void doInBackground()
@@ -544,29 +585,6 @@ public class Installer extends JPanel  implements PropertyChangeListener
 
 			if (useForge.isSelected()) 
 				mod = "-forge";
-
-			//check for multimc
-			for(File f : targetDir.listFiles()){
-				if(f.getName().equalsIgnoreCase("multimc.exe") || (f.getName().equalsIgnoreCase("multimc") && f.isFile()) || f.getName().equalsIgnoreCase("multimc.cfg")){
-					ArrayList<File> ilist = new ArrayList<File>();
-					File insts = new File(targetDir, "instances");
-					for(File inst : insts.listFiles()){
-						if(inst.isDirectory() && !inst.getName().startsWith("_"))
-							ilist.add(inst);
-					}	
-					JComboBox icb = new JComboBox(ilist.toArray());
-					File sel =(File) JOptionPane.showInputDialog(null,"Select MultiMC Instance.","MultiMC Detected", JOptionPane.PLAIN_MESSAGE, null, ilist.toArray(), null);
-					if(sel != null){
-						mmcinst = sel;
-						isMultiMC = true;
-					} else {
-						finalMessage = "Install Cancelled. ";
-					    return null;
-					}
-					break; // don't ask multiple times
-				}
-			}
-			//
 
 			monitor.setProgress(0);
 
@@ -1311,14 +1329,17 @@ public class Installer extends JPanel  implements PropertyChangeListener
 					prof.put("created", dateFormat.format(new java.util.Date()));
 					profiles.put(profileName, prof);
 				}
-
 				prof.put("lastVersionId", minecriftVer + mod);
 				prof.put("javaArgs", "-Xmx" + ramAllocation.getSelectedItem() + "G -Xms" + ramAllocation.getSelectedItem() + "G -XX:+UseParallelGC -XX:ParallelGCThreads=3 -XX:MaxGCPauseMillis=3 -Xmn256M -Dfml.ignoreInvalidMinecraftCertificates=true -Dfml.ignorePatchDiscrepancies=true");
 				prof.put("name", profileName);
 				prof.put("icon", "Creeper_Head");
 				prof.put("type", "custom");
 				prof.put("lastUsed", dateFormat.format(new java.util.Date()));
+				
 				if(chkCustomGameDir.isSelected() && txtCustomGameDir.getText().trim() != ""){
+					String dir = txtCustomGameDir.getText();
+					if (dir.endsWith("\\mods")) dir = dir.substring(0, dir.length()-5);
+					if (dir.endsWith("\\mods\\")) dir = dir.substring(0, dir.length()-6);
 					prof.put("gameDir", txtCustomGameDir.getText());
 				} else {
 					prof.remove("gameDir");

@@ -6,6 +6,7 @@ package org.vivecraft.settings;
 
 import org.vivecraft.api.VRData;
 import org.vivecraft.provider.MCOpenVR;
+import org.vivecraft.settings.VRSettings.VrOptions;
 import org.vivecraft.utils.Angle;
 import org.vivecraft.utils.Axis;
 import org.vivecraft.utils.Quaternion;
@@ -30,7 +31,30 @@ public class VRHotkeys {
 	private static float startCamposY;
 	private static float startCamposZ;
 	private static Quaternion startCamrotQuat;
+	
+	public static boolean handleKeyboardGUIInputs(Minecraft mc)
+	{
+		// Support cool-off period for key presses - otherwise keys can get spammed...
+		if (nextRead != 0 && System.currentTimeMillis() < nextRead)
+		return false;
 
+		// Capture Minecrift key events
+		boolean gotKey = false;
+		
+		if(Keyboard.getEventKey() == Keyboard.KEY_F5 && Keyboard.getEventKeyState() == true) {
+			mc.vrSettings.setOptionValue(VrOptions.MIRROR_DISPLAY, mc.vrSettings.displayMirrorMode);
+			mc.notifyMirror(mc.vrSettings.getKeyBinding(VrOptions.MIRROR_DISPLAY), false, 3000);
+			gotKey = true;
+		}
+		// VIVE END - hotkeys
+
+		if (gotKey) {
+			mc.vrSettings.saveOptions();
+		}
+
+		return gotKey;
+	}
+	
 	public static boolean handleKeyboardInputs(Minecraft mc)
 	{
 		// Support cool-off period for key presses - otherwise keys can get spammed...
@@ -154,7 +178,6 @@ public class VRHotkeys {
             //mc.displayGuiScreen(new GuiWinGame(false, Runnables.doNothing()));
 			gotKey = true;
 		}
-
 		// VIVE END - hotkeys
 
 		if (gotKey) {

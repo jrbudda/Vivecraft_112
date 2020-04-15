@@ -387,7 +387,7 @@
          if (this.debugView)
          {
              return 90.0F;
-@@ -715,244 +896,237 @@
+@@ -715,244 +896,243 @@
       */
      private void orientCamera(float partialTicks)
      {
@@ -814,6 +814,12 @@
 +
 +			float var6 = 5.0F / (var4 * var4 + 5.0F) - var4 * 0.04F;
 +			var6 *= var6;
++			
++            //Vivecraft tone that shit down
++            var7 = (byte) (var7 / 5);
++            var6 = 1.1f;
++            //
++            
 +			GL11.glRotatef(((float)this.rendererUpdateCount + partialTicks) * (float)var7, 0.0F, 1.0F, 1.0F);
 +			GL11.glScalef(1.0F / var6, 1.0F, 1.0F);
 +			GL11.glRotatef(-((float)this.rendererUpdateCount + partialTicks) * (float)var7, 0.0F, 1.0F, 1.0F);
@@ -855,7 +861,7 @@
  
      /**
       * Render player hand
-@@ -962,86 +1136,65 @@
+@@ -962,86 +1142,65 @@
          this.renderHand(partialTicks, pass, true, true, false);
      }
  
@@ -1000,7 +1006,7 @@
  
      public void disableLightmap()
      {
-@@ -1058,12 +1211,12 @@
+@@ -1058,12 +1217,12 @@
      public void enableLightmap()
      {
          GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
@@ -1015,7 +1021,7 @@
          this.mc.getTextureManager().bindTexture(this.locationLightMap);
          GlStateManager.glTexParameteri(3553, 10241, 9729);
          GlStateManager.glTexParameteri(3553, 10240, 9729);
-@@ -1259,200 +1412,114 @@
+@@ -1259,200 +1418,114 @@
      }
  
      public void updateCameraAndRender(float partialTicks, long nanoTime)
@@ -1315,7 +1321,7 @@
      }
  
      private void createWorldIcon()
-@@ -1497,12 +1564,15 @@
+@@ -1497,12 +1570,15 @@
  
      private boolean isDrawBlockOutline()
      {
@@ -1332,7 +1338,7 @@
              Entity entity = this.mc.getRenderViewEntity();
              boolean flag = entity instanceof EntityPlayer && !this.mc.gameSettings.hideGUI;
  
-@@ -1531,22 +1601,18 @@
+@@ -1531,22 +1607,18 @@
          }
      }
  
@@ -1361,7 +1367,7 @@
          GlStateManager.enableDepth();
          GlStateManager.enableAlpha();
          GlStateManager.alphaFunc(516, 0.1F);
-@@ -1572,64 +1638,135 @@
+@@ -1572,64 +1644,135 @@
  
      private void renderWorldPass(int pass, float partialTicks, long finishTimeNano)
      {
@@ -1518,7 +1524,7 @@
          {
              ShadersRender.setFrustrumPosition(icamera, d0, d1, d2);
          }
-@@ -1638,31 +1775,39 @@
+@@ -1638,31 +1781,39 @@
              icamera.setPosition(d0, d1, d2);
          }
  
@@ -1568,7 +1574,7 @@
          }
          else
          {
-@@ -1670,13 +1815,18 @@
+@@ -1670,13 +1821,18 @@
          }
  
          this.setupFog(0, partialTicks);
@@ -1588,7 +1594,7 @@
          this.mc.mcProfiler.endStartSection("prepareterrain");
          this.setupFog(0, partialTicks);
          this.mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-@@ -1684,7 +1834,7 @@
+@@ -1684,7 +1840,7 @@
          this.mc.mcProfiler.endStartSection("terrain_setup");
          this.checkLoadVisibleChunks(entity, partialTicks, icamera, this.mc.player.isSpectator());
  
@@ -1597,7 +1603,7 @@
          {
              ShadersRender.setupTerrain(renderglobal, entity, (double)partialTicks, icamera, this.frameCount++, this.mc.player.isSpectator());
          }
-@@ -1693,7 +1843,7 @@
+@@ -1693,7 +1849,7 @@
              renderglobal.setupTerrain(entity, (double)partialTicks, icamera, this.frameCount++, this.mc.player.isSpectator());
          }
  
@@ -1606,7 +1612,7 @@
          {
              this.mc.mcProfiler.endStartSection("updatechunks");
              Lagometer.timerChunkUpload.start();
-@@ -1704,18 +1854,18 @@
+@@ -1704,18 +1860,18 @@
          this.mc.mcProfiler.endStartSection("terrain");
          Lagometer.timerTerrain.start();
  
@@ -1629,7 +1635,7 @@
          {
              ShadersRender.beginTerrainSolid();
          }
-@@ -1723,7 +1873,7 @@
+@@ -1723,7 +1879,7 @@
          renderglobal.renderBlockLayer(BlockRenderLayer.SOLID, (double)partialTicks, pass, entity);
          GlStateManager.enableAlpha();
  
@@ -1638,7 +1644,7 @@
          {
              ShadersRender.beginTerrainCutoutMipped();
          }
-@@ -1733,7 +1883,7 @@
+@@ -1733,7 +1889,7 @@
          this.mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
          this.mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
  
@@ -1647,7 +1653,7 @@
          {
              ShadersRender.beginTerrainCutout();
          }
-@@ -1741,7 +1891,7 @@
+@@ -1741,7 +1897,7 @@
          renderglobal.renderBlockLayer(BlockRenderLayer.CUTOUT, (double)partialTicks, pass, entity);
          this.mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
  
@@ -1656,7 +1662,7 @@
          {
              ShadersRender.endTerrain();
          }
-@@ -1750,40 +1900,36 @@
+@@ -1750,40 +1906,36 @@
          GlStateManager.shadeModel(7424);
          GlStateManager.alphaFunc(516, 0.1F);
  
@@ -1708,7 +1714,7 @@
              {
                  renderglobal.drawSelectionBox(entityplayer, this.mc.objectMouseOver, 0, partialTicks);
              }
-@@ -1793,32 +1939,91 @@
+@@ -1793,32 +1945,91 @@
  
          if (this.mc.debugRenderer.shouldRender())
          {
@@ -1808,7 +1814,7 @@
              {
                  Shaders.beginLitParticles();
              }
-@@ -1826,16 +2031,17 @@
+@@ -1826,16 +2037,17 @@
              particlemanager.renderLitParticles(entity, partialTicks);
              RenderHelper.disableStandardItemLighting();
              this.setupFog(0, partialTicks);
@@ -1828,7 +1834,7 @@
              {
                  Shaders.endParticles();
              }
-@@ -1853,14 +2059,14 @@
+@@ -1853,14 +2065,14 @@
          GlStateManager.enableCull();
          this.mc.mcProfiler.endStartSection("weather");
  
@@ -1845,7 +1851,7 @@
          {
              Shaders.endWeather();
          }
-@@ -1868,9 +2074,9 @@
+@@ -1868,9 +2080,9 @@
          GlStateManager.depthMask(true);
          renderglobal.renderWorldBorder(entity, partialTicks);
  
@@ -1857,7 +1863,7 @@
              Shaders.preWater();
          }
  
-@@ -1885,26 +2091,27 @@
+@@ -1885,26 +2097,27 @@
          GlStateManager.shadeModel(7425);
          this.mc.mcProfiler.endStartSection("translucent");
  
@@ -1890,7 +1896,7 @@
              RenderHelper.disableStandardItemLighting();
          }
  
-@@ -1914,44 +2121,52 @@
+@@ -1914,44 +2127,52 @@
          GlStateManager.disableBlend();
          GlStateManager.disableFog();
  
@@ -1964,7 +1970,7 @@
      }
  
      private void renderCloudsCheck(RenderGlobal renderGlobalIn, float partialTicks, int pass, double x, double y, double z)
-@@ -1961,7 +2176,12 @@
+@@ -1961,7 +2182,12 @@
              this.mc.mcProfiler.endStartSection("clouds");
              GlStateManager.matrixMode(5889);
              GlStateManager.loadIdentity();
@@ -1978,7 +1984,7 @@
              GlStateManager.matrixMode(5888);
              GlStateManager.pushMatrix();
              this.setupFog(0, partialTicks);
-@@ -1970,7 +2190,11 @@
+@@ -1970,7 +2196,11 @@
              GlStateManager.popMatrix();
              GlStateManager.matrixMode(5889);
              GlStateManager.loadIdentity();
@@ -1991,7 +1997,7 @@
              GlStateManager.matrixMode(5888);
          }
      }
-@@ -2269,7 +2493,7 @@
+@@ -2269,7 +2499,7 @@
              double d0 = MathHelper.sin(world.getCelestialAngleRadians(partialTicks)) > 0.0F ? -1.0D : 1.0D;
              Vec3d vec3d2 = new Vec3d(d0, 0.0D, 0.0D);
              float f5 = (float)entity.getLook(partialTicks).dotProduct(vec3d2);
@@ -2000,7 +2006,7 @@
              if (f5 < 0.0F)
              {
                  f5 = 0.0F;
-@@ -2313,26 +2537,30 @@
+@@ -2313,26 +2543,30 @@
              this.fogColorBlue *= f11;
          }
  
@@ -2040,7 +2046,7 @@
          {
              float f12 = 0.0F;
  
-@@ -2351,14 +2579,14 @@
+@@ -2351,14 +2585,14 @@
              this.fogColorGreen = 0.02F + f12;
              this.fogColorBlue = 0.2F + f12;
          }
@@ -2057,7 +2063,7 @@
          {
              Vec3d vec3d6 = CustomColors.getUnderwaterColor(this.mc.world, this.mc.getRenderViewEntity().posX, this.mc.getRenderViewEntity().posY + 1.0D, this.mc.getRenderViewEntity().posZ);
  
-@@ -2369,7 +2597,7 @@
+@@ -2369,7 +2603,7 @@
                  this.fogColorBlue = (float)vec3d6.z;
              }
          }
@@ -2066,7 +2072,7 @@
          {
              Vec3d vec3d7 = CustomColors.getUnderlavaColor(this.mc.world, this.mc.getRenderViewEntity().posX, this.mc.getRenderViewEntity().posY + 1.0D, this.mc.getRenderViewEntity().posZ);
  
-@@ -2459,7 +2687,7 @@
+@@ -2459,7 +2693,7 @@
  
          if (Reflector.EntityViewRenderEvent_FogColors_Constructor.exists())
          {
@@ -2075,7 +2081,7 @@
              Reflector.postForgeBusEvent(object);
              this.fogColorRed = Reflector.callFloat(object, Reflector.EntityViewRenderEvent_FogColors_getRed);
              this.fogColorGreen = Reflector.callFloat(object, Reflector.EntityViewRenderEvent_FogColors_getGreen);
-@@ -2480,7 +2708,13 @@
+@@ -2480,7 +2714,13 @@
          this.setupFogColor(false);
          GlStateManager.glNormal3f(0.0F, -1.0F, 0.0F);
          GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
@@ -2090,7 +2096,7 @@
          float f = -1.0F;
  
          if (Reflector.ForgeHooksClient_getFogDensity.exists())
-@@ -2540,7 +2774,7 @@
+@@ -2540,7 +2780,7 @@
  
              GlStateManager.setFogDensity(0.1F);
          }
@@ -2099,7 +2105,7 @@
          {
              if (Config.isShaders())
              {
-@@ -2570,7 +2804,7 @@
+@@ -2570,7 +2810,7 @@
                  GlStateManager.setFogDensity(f1);
              }
          }
@@ -2108,7 +2114,7 @@
          {
              if (Config.isShaders())
              {
-@@ -2810,17 +3044,19 @@
+@@ -2810,17 +3050,19 @@
  
          if (this.updatedWorld != world)
          {
@@ -2133,7 +2139,7 @@
  
          if (this.mc.currentScreen != null && this.mc.currentScreen.getClass() == GuiChat.class)
          {
-@@ -2843,39 +3079,6 @@
+@@ -2843,39 +3085,6 @@
          }
      }
  
@@ -2173,7 +2179,7 @@
      public boolean setFxaaShader(int p_setFxaaShader_1_)
      {
          if (!OpenGlHelper.isFramebufferEnabled())
-@@ -3080,8 +3283,9 @@
+@@ -3080,8 +3289,9 @@
          this.itemActivationOffY = this.random.nextFloat() * 2.0F - 1.0F;
      }
  
@@ -2185,7 +2191,7 @@
          if (this.itemActivationItem != null && this.itemActivationTicks > 0)
          {
              int i = 40 - this.itemActivationTicks;
-@@ -3090,26 +3294,2259 @@
+@@ -3090,26 +3300,2263 @@
              float f2 = f * f1;
              float f3 = 10.25F * f2 * f1 + -24.95F * f1 * f1 + 25.5F * f2 + -13.8F * f1 + 4.0F * f;
              float f4 = f3 * (float)Math.PI;
@@ -3088,11 +3094,15 @@
 +					}
 +				}
 +				
-+				GlStateManager.disableLighting();
-+				GlStateManager.tryBlendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ZERO);
-+				//inventory messes up fog color sometimes... This fixes
++
 +				
 +			}
++			
++            GlStateManager.enableColorMaterial();
++  		    GlStateManager.disableBlend();
++			GlStateManager.disableLighting();
++			GlStateManager.tryBlendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ONE);
++			//inventory messes up fog color sometimes... This fixes
 +			
 +			mc.toastGui.drawToast(new ScaledResolution(mc));
 +			

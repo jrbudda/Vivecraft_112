@@ -79,7 +79,7 @@ public class OpenVRStereoRenderer
 	private float[][] hiddenMesheVertecies = new float[2][];
 	private Tuple<Integer, Integer> resolution;
 
-	public Tuple<Integer, Integer> getRenderTextureSizes(float renderScaleFactor)
+	public Tuple<Integer, Integer> getRenderTextureSizes()
 	{
 		if (resolution != null)
 			return resolution;
@@ -451,11 +451,11 @@ public class OpenVRStereoRenderer
 //			reinitFrameBuffers("Display Resized");
 //		}
 		
-		if (lastGuiScale != mc.gameSettings.guiScale)
-		{
-			lastGuiScale = mc.gameSettings.guiScale;
-			reinitFrameBuffers("GUI Scale Changed");
-		}
+//		if (lastGuiScale != mc.gameSettings.guiScale)
+//		{
+//			lastGuiScale = mc.gameSettings.guiScale;
+//			reinitFrameBuffers("GUI Scale Changed");
+//		}
 
 		//mc.showNativeMouseCursor(!mc.isGameFocused());
 
@@ -494,7 +494,7 @@ public class OpenVRStereoRenderer
 				throw new RenderConfigException(RENDER_SETUP_FAILURE_MESSAGE + getName(), " " + getinitError());
 			}
 
-			Tuple<Integer, Integer> renderTextureInfo = getRenderTextureSizes(mc.vrSettings.renderScaleFactor);
+			Tuple<Integer, Integer> renderTextureInfo = getRenderTextureSizes();
 
 			eyew  = renderTextureInfo.getFirst();
 			eyeh  = renderTextureInfo.getSecond();
@@ -574,11 +574,11 @@ public class OpenVRStereoRenderer
 
 			checkGLError("Render Texture setup");
 
-			framebufferEye0 = new Framebuffer("L Eye", eyew, eyeh, true,  false, false, 0, LeftEyeTextureId, false);
+			framebufferEye0 = new Framebuffer("L Eye", eyew, eyeh, true,  false, true, false, 0, LeftEyeTextureId, false);
 			mc.print(framebufferEye0.toString());
 			checkGLError("Left Eye framebuffer setup");
 			
-			framebufferEye1 = new Framebuffer("R Eye", eyew, eyeh, true,  false, false,0, RightEyeTextureId, false);
+			framebufferEye1 = new Framebuffer("R Eye", eyew, eyeh, true,  false, true, false,0, RightEyeTextureId, false);
 			mc.print(framebufferEye1.toString());
 			checkGLError("Right Eye framebuffer setup");
 			
@@ -588,7 +588,7 @@ public class OpenVRStereoRenderer
 			displayFBWidth = (int) Math.ceil(eyew * mc.vrSettings.renderScaleFactor);
 			displayFBHeight = (int) Math.ceil(eyeh * mc.vrSettings.renderScaleFactor);
 			
-			framebufferVrRender = new Framebuffer("3D Render", displayFBWidth , displayFBHeight, true, false);
+			framebufferVrRender = new Framebuffer("3D Render", displayFBWidth , displayFBHeight, true, false, true);
 			mc.print(framebufferVrRender.toString());
 			checkGLError("3D framebuffer setup");
 			
@@ -613,26 +613,27 @@ public class OpenVRStereoRenderer
 			}
 			
 			if (renderPasses.contains(RenderPass.THIRD)) {
-				framebufferMR = new Framebuffer("Mixed Reality Render", mirrorFBWidth, mirrorFBHeight, true, false);
+				framebufferMR = new Framebuffer("Mixed Reality Render", mirrorFBWidth, mirrorFBHeight, true, false, false);
 				mc.print(framebufferMR.toString());
 				checkGLError("Mixed reality framebuffer setup");
 			}
 			
 			if (renderPasses.contains(RenderPass.CENTER)) {
-				framebufferUndistorted = new Framebuffer("Undistorted View Render", mirrorFBWidth, mirrorFBHeight, true, false);
+				framebufferUndistorted = new Framebuffer("Undistorted View Render", mirrorFBWidth, mirrorFBHeight, true, false, false);
 				mc.print(framebufferUndistorted.toString());
 				checkGLError("Undistorted view framebuffer setup");
 			}
 			
-			GuiHandler.guiFramebuffer  = new Framebuffer("GUI", mc.displayWidth, mc.displayHeight, true, true);
+			
+			GuiHandler.guiFramebuffer  = new Framebuffer("GUI", mc.displayWidth, mc.displayHeight, true, true, true);
 			mc.print(GuiHandler.guiFramebuffer.toString());
 			checkGLError("GUI framebuffer setup");
 
-			KeyboardHandler.Framebuffer  = new Framebuffer("Keyboard",  mc.displayWidth, mc.displayHeight, true, true);
+			KeyboardHandler.Framebuffer  = new Framebuffer("Keyboard",  mc.displayWidth, mc.displayHeight, true, true, true);
 			mc.print(KeyboardHandler.Framebuffer.toString());
 			checkGLError("Keyboard framebuffer setup");
 
-			RadialHandler.Framebuffer  = new Framebuffer("Radial Menu",  mc.displayWidth, mc.displayHeight, true, true);
+			RadialHandler.Framebuffer  = new Framebuffer("Radial Menu",  mc.displayWidth, mc.displayHeight, true, true, true);
 			mc.print(RadialHandler.Framebuffer.toString());
 			checkGLError("Radial framebuffer setup");
 
@@ -654,9 +655,9 @@ public class OpenVRStereoRenderer
 					// GL11.GL_RGBA8
 					checkGLError("pre FSAA FBO creation");
 					// Lanczos downsample FBOs
-					fsaaFirstPassResultFBO = new Framebuffer("FSAA Pass1 FBO",eyew, displayFBHeight, true, false,false, 0, -1, true);
+					fsaaFirstPassResultFBO = new Framebuffer("FSAA Pass1 FBO",eyew, displayFBHeight, true, false, false, false, 0, -1, true);
 					//TODO: ugh, support multiple color attachments in Framebuffer....
-					fsaaLastPassResultFBO = new Framebuffer("FSAA Pass2 FBO",eyew, eyeh, true, false,false, 0, -1, true);
+					fsaaLastPassResultFBO = new Framebuffer("FSAA Pass2 FBO",eyew, eyeh, true, false, false, false, 0, -1, true);
 			
 					mc.print(fsaaFirstPassResultFBO.toString());
 					mc.print(fsaaLastPassResultFBO.toString());
@@ -702,7 +703,7 @@ public class OpenVRStereoRenderer
 
 
 			System.out.println("[Minecrift] New render config:" +
-					"\nRender target width:  " + eyew + eyew +
+					"\nRender target width: " + eyew +
 					", height: " + eyeh +
 					(true ? " [Render scale: " + mc.vrSettings.renderScaleFactor + "]" : "") +
 					(mc.vrSettings.useFsaa ? " [FSAA Scale: " + mc.vrSettings.renderScaleFactor + "]" : "") +

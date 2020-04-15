@@ -569,7 +569,10 @@ tracker.idleTick(mc.player);
 			//entity.rotationPitch = (float)mc.vrPlayer.getHMDPitch_World();
 		} else { //default to looking 'at' the crosshair position.
 			if(mc.entityRenderer.crossVec != null){
-				Vec3d playerToCrosshair = entity.getPositionEyes(1).subtract(mc.entityRenderer.crossVec); //backwards
+				Vec3d aimPos = mc.entityRenderer.crossVec;
+				if (this.mc.objectMouseOver != null && mc.objectMouseOver.typeOfHit != RayTraceResult.Type.MISS)
+					aimPos = this.mc.objectMouseOver.hitVec;
+				Vec3d playerToCrosshair = entity.getPositionEyes(1).subtract(aimPos); //backwards
 				double what = playerToCrosshair.y/playerToCrosshair.lengthVector();
 				if(what > 1) what = 1;
 				if(what < -1) what = -1;

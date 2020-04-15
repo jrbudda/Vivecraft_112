@@ -41,7 +41,7 @@ public class VehicleTracker extends Tracker {
 	}
 
 	public double getVehicleFloor(Entity vehicle, double original) {
-		if(vehicle instanceof AbstractHorse)
+		if(!(vehicle instanceof EntityMinecart))
 			return original; //horses are fine.
 		
 		return vehicle.posY;

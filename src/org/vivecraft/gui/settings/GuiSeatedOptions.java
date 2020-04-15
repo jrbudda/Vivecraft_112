@@ -19,6 +19,7 @@ public class GuiSeatedOptions extends BaseGuiSettings implements GuiEventEx
 			VRSettings.VrOptions.Y_SENSITIVITY,
 			VRSettings.VrOptions.KEYHOLE,
             VRSettings.VrOptions.SEATED_HUD_XHAIR,
+			VRSettings.VrOptions.WALK_UP_BLOCKS,
             VRSettings.VrOptions.WORLD_ROTATION_INCREMENT,
             VRSettings.VrOptions.SEATED_FREE_MOVE        
 	};

@@ -190,7 +190,7 @@
          }
      }
  
-@@ -392,16 +458,16 @@
+@@ -392,16 +458,21 @@
          }
      }
  
@@ -204,8 +204,14 @@
 +            this.renderItemModel(par1, stack, ibakedmodel, transform, leftHanded);
          }
      }
- 
+-
 -    protected void renderItemModel(ItemStack stack, IBakedModel bakedmodel, ItemCameraTransforms.TransformType transform, boolean leftHanded)
++    
++    public void renderItem(ItemStack stack, EntityLivingBase entitylivingbaseIn, ItemCameraTransforms.TransformType transform, boolean leftHanded)
++    {
++    	this.renderItem(0, stack, entitylivingbaseIn, transform, leftHanded);
++    }
++    
 +    protected void renderItemModel(float par1, ItemStack stack, IBakedModel bakedmodel, ItemCameraTransforms.TransformType transform, boolean leftHanded)
      {
          if (!stack.isEmpty())

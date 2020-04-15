@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import org.vivecraft.settings.VRSettings;
 import org.vivecraft.utils.FakeBlockAccess;
 import org.vivecraft.utils.MCReflection;
 import org.vivecraft.utils.MenuWorldDownloader;
@@ -83,6 +84,11 @@ public class MenuWorldRenderer {
 	}
 
 	public void init() {
+		if (mc.vrSettings.menuWorldSelection == VRSettings.MENU_WORLD_NONE) {
+			System.out.println("Main menu worlds disabled.");
+			return;
+		}
+
 		try {
 			InputStream inputStream = MenuWorldDownloader.getRandomWorld();
 			if (inputStream != null) {

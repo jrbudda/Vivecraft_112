@@ -9,7 +9,7 @@
  import java.awt.Toolkit;
  import java.awt.datatransfer.ClipboardOwner;
  import java.awt.datatransfer.DataFlavor;
-@@ -16,6 +13,20 @@
+@@ -16,6 +13,21 @@
  import java.util.List;
  import java.util.Locale;
  import java.util.Set;
@@ -21,6 +21,7 @@
 +import org.lwjgl.input.Mouse;
 +import org.vivecraft.gameplay.screenhandlers.GuiHandler;
 +import org.vivecraft.gameplay.screenhandlers.KeyboardHandler;
++import org.vivecraft.settings.VRHotkeys;
 +import org.vivecraft.settings.VRSettings;
 +
 +import com.google.common.base.Splitter;
@@ -30,7 +31,7 @@
  import net.minecraft.client.Minecraft;
  import net.minecraft.client.renderer.BufferBuilder;
  import net.minecraft.client.renderer.GlStateManager;
-@@ -24,6 +35,7 @@
+@@ -24,6 +36,7 @@
  import net.minecraft.client.renderer.Tessellator;
  import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
  import net.minecraft.client.util.ITooltipFlag;
@@ -38,7 +39,7 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.nbt.JsonToNBT;
  import net.minecraft.nbt.NBTBase;
-@@ -33,11 +45,7 @@
+@@ -33,11 +46,7 @@
  import net.minecraft.util.text.TextFormatting;
  import net.minecraft.util.text.event.ClickEvent;
  import net.minecraft.util.text.event.HoverEvent;
@@ -51,7 +52,7 @@
  
  public abstract class GuiScreen extends Gui implements GuiYesNoCallback
  {
-@@ -46,7 +54,7 @@
+@@ -46,7 +55,7 @@
      private static final Splitter NEWLINE_SPLITTER = Splitter.on('\n');
  
      /** Reference to the Minecraft object. */
@@ -60,7 +61,7 @@
  
      /**
       * Holds a instance of RenderItem, used to draw the achievement icons on screen (is based on ItemStack)
-@@ -77,6 +85,13 @@
+@@ -77,6 +86,13 @@
      private URI clickedLinkURI;
      private boolean focused;
  
@@ -74,7 +75,7 @@
      /**
       * Draws the screen and all the components in it.
       */
-@@ -101,6 +116,10 @@
+@@ -101,6 +117,10 @@
      {
          if (keyCode == 1)
          {
@@ -85,7 +86,7 @@
              this.mc.displayGuiScreen((GuiScreen)null);
  
              if (this.mc.currentScreen == null)
-@@ -109,6 +128,10 @@
+@@ -109,6 +129,10 @@
              }
          }
      }
@@ -96,7 +97,7 @@
  
      protected <T extends GuiButton> T addButton(T buttonIn)
      {
-@@ -204,7 +227,16 @@
+@@ -204,7 +228,16 @@
       */
      public void drawHoveringText(List<String> textLines, int x, int y)
      {
@@ -114,7 +115,7 @@
          {
              GlStateManager.disableRescaleNormal();
              RenderHelper.disableStandardItemLighting();
-@@ -449,10 +481,17 @@
+@@ -449,10 +482,17 @@
  
      public void sendChatMessage(String msg, boolean addToChat)
      {
@@ -132,7 +133,7 @@
  
          this.mc.player.sendChatMessage(msg);
      }
-@@ -470,9 +509,19 @@
+@@ -470,9 +510,19 @@
  
                  if (guibutton.mousePressed(this.mc, mouseX, mouseY))
                  {
@@ -152,7 +153,7 @@
                  }
              }
          }
-@@ -516,8 +565,11 @@
+@@ -516,8 +566,11 @@
          this.fontRenderer = mc.fontRenderer;
          this.width = width;
          this.height = height;
@@ -164,7 +165,7 @@
      }
  
      /**
-@@ -546,7 +598,16 @@
+@@ -546,7 +599,16 @@
          {
              while (Mouse.next())
              {
@@ -181,7 +182,7 @@
              }
          }
  
-@@ -554,7 +615,10 @@
+@@ -554,7 +616,10 @@
          {
              while (Keyboard.next())
              {
@@ -192,7 +193,7 @@
              }
          }
      }
-@@ -568,6 +632,13 @@
+@@ -568,6 +633,13 @@
          int j = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
          int k = Mouse.getEventButton();
  
@@ -206,7 +207,7 @@
          if (Mouse.getEventButtonState())
          {
              if (this.mc.gameSettings.touchscreen && this.touchValue++ > 0)
-@@ -601,9 +672,14 @@
+@@ -601,9 +673,21 @@
       */
      public void handleKeyboardInput() throws IOException
      {
@@ -214,7 +215,14 @@
 +        	KeyboardHandler.setOverlayShowing(false);
 +        	return;
 +        }
-+        
++		/** MINECRIFT */
++		
++		{
++			if (VRHotkeys.handleKeyboardGUIInputs(mc))
++				return;
++		}
++		/** END MINECRIFT */
++		
          char c0 = Keyboard.getEventCharacter();
  
 -        if (Keyboard.getEventKey() == 0 && c0 >= ' ' || Keyboard.getEventKeyState())
@@ -222,7 +230,7 @@
          {
              this.keyTyped(c0, Keyboard.getEventKey());
          }
-@@ -631,13 +707,23 @@
+@@ -631,13 +715,23 @@
      public void drawDefaultBackground()
      {
          this.drawWorldBackground(0);
@@ -247,7 +255,7 @@
          }
          else
          {
-@@ -722,7 +808,7 @@
+@@ -722,7 +816,7 @@
       */
      public static boolean isShiftKeyDown()
      {
@@ -256,7 +264,7 @@
      }
  
      /**
-@@ -760,4 +846,77 @@
+@@ -760,4 +854,77 @@
      {
          this.setWorldAndResolution(mcIn, w, h);
      }

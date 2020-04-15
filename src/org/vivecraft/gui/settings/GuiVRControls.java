@@ -28,12 +28,13 @@ import net.minecraft.util.text.TextFormatting;
 public class GuiVRControls extends BaseGuiSettings implements GuiEventEx{
 
 	private static VRSettings.VrOptions[] controlsSettings = new VRSettings.VrOptions[] {
+			VRSettings.VrOptions.REVERSE_HANDS,
 			VRSettings.VrOptions.ALLOW_ADVANCED_BINDINGS
 	};
 	
 	public GuiVRControls(GuiScreen par1GuiScreen, VRSettings par2vrSettings) {
 		super(par1GuiScreen, par2vrSettings);
-        screenTitle = "VR Control Remapping";
+        screenTitle = "Controller Settings";
 	}
 
    
@@ -73,8 +74,8 @@ public class GuiVRControls extends BaseGuiSettings implements GuiEventEx{
      */
     public void drawScreen(int par1, int par2, float par3) {
 		super.drawScreen(par1, par2, par3);
-		this.drawCenteredString(this.fontRenderer, "Bindings are now handled by SteamVR Input.", this.width / 2, this.height / 2 - this.fontRenderer.FONT_HEIGHT / 2 - this.fontRenderer.FONT_HEIGHT - 3, 16777215);
-		this.drawCenteredString(this.fontRenderer, "Go to Settings > Controller Binding in the dashboard.", this.width / 2, this.height / 2 - this.fontRenderer.FONT_HEIGHT / 2, 16777215);
+		this.drawCenteredString(this.fontRenderer, "Bindings are handled by SteamVR Input.", this.width / 2, this.height / 2 - this.fontRenderer.FONT_HEIGHT / 2 - this.fontRenderer.FONT_HEIGHT - 3, 16777215);
+		this.drawCenteredString(this.fontRenderer, "Go to Settings > Controllers > Manage Controller Bindings in the dashboard.", this.width / 2, this.height / 2 - this.fontRenderer.FONT_HEIGHT / 2, 16777215);
 		this.drawCenteredString(this.fontRenderer, TextFormatting.GOLD + "Steam must be running " + TextFormatting.ITALIC + "before" + TextFormatting.RESET + TextFormatting.GOLD + " SteamVR is started, or bindings will not save.", this.width / 2, this.height / 2 - this.fontRenderer.FONT_HEIGHT / 2 + this.fontRenderer.FONT_HEIGHT + 3, 16777215);
     }
     
@@ -91,6 +92,7 @@ public class GuiVRControls extends BaseGuiSettings implements GuiEventEx{
 			else if (par1GuiButton.id == ID_GENERIC_DEFAULTS)
 			{
 				VRSettings vrSettings = mc.vrSettings;
+				vrSettings.vrReverseHands = false;
 				vrSettings.allowAdvancedBindings = false;
 				Minecraft.getMinecraft().vrSettings.saveOptions();
 				this.reinit = true;

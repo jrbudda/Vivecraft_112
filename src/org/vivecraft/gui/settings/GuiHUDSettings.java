@@ -46,8 +46,6 @@ public class GuiHUDSettings extends BaseGuiSettings
     	this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, "Done"));
     	this.buttonList.add(new GuiButtonEx(302, this.width / 2 - 155  + 160, this.height / 6 +150 ,150,20, "Menu World Settings..."));
 
-    	if(!mc.vrSettings.seated)
-    		this.buttonList.add(new GuiButtonEx(300, this.width / 2 - 155 , this.height / 6 + 95,150,20, "GUI Bindings..."));
     	VRSettings.VrOptions[] buttons = hudOptions;
 
     	for (int var12 = 2; var12 < buttons.length + 2; ++var12)
@@ -142,12 +140,6 @@ public class GuiHUDSettings extends BaseGuiSettings
 
                 Minecraft.getMinecraft().vrSettings.saveOptions();
                 this.reinit = true;
-            }
-            else if (par1GuiButton.id == 300)
-            {
-            	this.guivrSettings.saveOptions();
-            	GuiVRControls guiVRControls = new GuiVRControls(this, this.guivrSettings);
-                this.mc.displayGuiScreen(guiVRControls);
             }
             else if (par1GuiButton.id == 301)
             {

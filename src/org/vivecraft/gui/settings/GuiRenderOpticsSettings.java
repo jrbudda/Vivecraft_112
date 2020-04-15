@@ -32,8 +32,9 @@ public class GuiRenderOpticsSettings  extends BaseGuiSettings implements GuiEven
             VRSettings.VrOptions.RENDER_SCALEFACTOR,
             VRSettings.VrOptions.MIRROR_DISPLAY,     
             VRSettings.VrOptions.FSAA,
-            VRSettings.VrOptions.STENCIL_ON,
-            VRSettings.VrOptions.DUMMY,
+			VRSettings.VrOptions.STENCIL_ON,
+			VRSettings.VrOptions.DUMMY,
+			VRSettings.VrOptions.MIRROR_EYE,
 
     };
     
@@ -81,8 +82,17 @@ public class GuiRenderOpticsSettings  extends BaseGuiSettings implements GuiEven
     	this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, "Reset To Defaults"));
     	this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, "Done"));
 
-    	addButtons(openVRDisplayOptions,0);
-    	if(mc.vrSettings.displayMirrorMode == vrSettings.MIRROR_MIXED_REALITY){
+		{
+			VRSettings.VrOptions[] buttons = new VRSettings.VrOptions[openVRDisplayOptions.length];
+			System.arraycopy(openVRDisplayOptions, 0, buttons, 0, openVRDisplayOptions.length);
+			for (int i = 0; i < buttons.length; i++) {
+				VRSettings.VrOptions option = buttons[i];
+				if (option == VRSettings.VrOptions.MIRROR_EYE && mc.vrSettings.displayMirrorMode != VRSettings.MIRROR_ON_CROPPED && mc.vrSettings.displayMirrorMode != VRSettings.MIRROR_ON_SINGLE)
+					buttons[i] = VRSettings.VrOptions.DUMMY;
+			}
+			addButtons(buttons,0);
+		}
+    	if(mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_MIXED_REALITY){
     		GuiSmallButtonEx mr = new GuiSmallButtonEx(0, this.width / 2 - 68, this.height / 6 + 65, "Mixed Reality Options");
     		mr.enabled = false;
     		this.buttonList.add(mr);
@@ -101,12 +111,12 @@ public class GuiRenderOpticsSettings  extends BaseGuiSettings implements GuiEven
     		}
     		addButtons(buttons, 75);
 
-    	}else if(mc.vrSettings.displayMirrorMode == vrSettings.MIRROR_FIRST_PERSON ){
+    	}else if(mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_FIRST_PERSON ){
     		GuiSmallButtonEx mr = new GuiSmallButtonEx(0, this.width / 2 - 68, this.height / 6 + 65, "Undistorted Mirror Options");
     		mr.enabled = false;
     		this.buttonList.add(mr);
     		addButtons(UDOptions,75);
-    	}else if( mc.vrSettings.displayMirrorMode == vrSettings.MIRROR_THIRD_PERSON){
+    	}else if( mc.vrSettings.displayMirrorMode == VRSettings.MIRROR_THIRD_PERSON){
     		GuiSmallButtonEx mr = new GuiSmallButtonEx(0, this.width / 2 - 68, this.height / 6 + 65, "Undistorted Mirror Options");
     		mr.enabled = false;
     		this.buttonList.add(mr);
@@ -138,9 +148,9 @@ public class GuiRenderOpticsSettings  extends BaseGuiSettings implements GuiEven
 
                 if (var8 == VRSettings.VrOptions.RENDER_SCALEFACTOR)
                 {
-                    minValue = 0.5f;
-                    maxValue = 4.0f;
-                    increment = 0.1f;
+                    minValue = (float)Math.sqrt(0.1);
+                    maxValue = (float)Math.sqrt(9);
+                    increment = 0.01f;
                 }
                 else if (var8 == VRSettings.VrOptions.MONO_FOV || var8 == VRSettings.VrOptions.MIXED_REALITY_FOV)
                 {
@@ -187,7 +197,8 @@ public class GuiRenderOpticsSettings  extends BaseGuiSettings implements GuiEven
             {
 
                 minecraft.vrSettings.renderScaleFactor = 1.0f;
-                minecraft.vrSettings.displayMirrorMode = VRSettings.MIRROR_ON_DUAL;
+                minecraft.vrSettings.displayMirrorMode = VRSettings.MIRROR_ON_CROPPED;
+                minecraft.vrSettings.displayMirrorLeftEye = false;
                 minecraft.vrSettings.mixedRealityKeyColor = new Color();
                 minecraft.vrSettings.mixedRealityRenderHands = false;
                 minecraft.vrSettings.insideBlockSolidColor = false;
@@ -317,11 +328,15 @@ public class GuiRenderOpticsSettings  extends BaseGuiSettings implements GuiEven
             case MIRROR_DISPLAY:
                 return new String[] {
                         "Mirrors image on HMD to separate desktop window.",
-                        "Can be set to OFF, single or dual hmd-view, ",
+                        "Can be set to OFF, cropped, single or dual hmd-view, ",
                         "first-person undistorted, third person undistorted",
                         "and Mixed Reality. The undistorted and MR views have",
                         "a performance cost"
                 };
+			case MIRROR_EYE:
+				return new String[] {
+						"Which eye to use in cropped and single modes."
+				};
             case MIXED_REALITY_KEY_COLOR:
                 return new String[] {
                         "The color drawn to the \"transparent\" areas of the",
