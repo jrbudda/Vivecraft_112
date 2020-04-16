@@ -25,6 +25,7 @@ import org.vivecraft.utils.Vector3;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.util.Tuple;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -163,7 +164,7 @@ public class VRSettings
     //Rendering
     public boolean useFsaa = true;   // default to off
     public boolean useFOVReduction = false;   // default to off
-    public boolean vrUseStencil = false;
+    public boolean vrUseStencil = true;
     public boolean insideBlockSolidColor = false; //unused
     public float renderScaleFactor = 1.0f;
     public int displayMirrorMode = MIRROR_ON_CROPPED;
@@ -934,8 +935,8 @@ public class VRSettings
             case HUD_HIDE:
                 return this.mc.gameSettings.hideGUI ? var4 + "YES" : var4 + "NO";
             case RENDER_SCALEFACTOR:
-                Tuple<Integer, Integer> res = mc.stereoProvider.getRenderTextureSizes();
-            	return var4 + Math.round(this.renderScaleFactor * this.renderScaleFactor * 100) + "% (" + (int)Math.ceil(res.getFirst() * this.renderScaleFactor) + "x" + (int)Math.ceil(res.getSecond() * this.renderScaleFactor) + ")";
+                Framebuffer eye0 = mc.stereoProvider.framebufferEye0;
+            	return var4 + Math.round(this.renderScaleFactor * 100) + "% (" + (int)Math.ceil(eye0.framebufferWidth * Math.sqrt(this.renderScaleFactor)) + "x" + (int)Math.ceil(eye0.framebufferHeight * Math.sqrt(this.renderScaleFactor)) + ")";
             case FSAA:
             	return this.useFsaa ? var4 + "ON" : var4 + "OFF";
             case CROSSHAIR_SCALE:

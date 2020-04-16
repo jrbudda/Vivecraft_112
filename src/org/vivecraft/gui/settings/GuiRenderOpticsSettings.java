@@ -148,9 +148,9 @@ public class GuiRenderOpticsSettings  extends BaseGuiSettings implements GuiEven
 
                 if (var8 == VRSettings.VrOptions.RENDER_SCALEFACTOR)
                 {
-                    minValue = (float)Math.sqrt(0.1);
-                    maxValue = (float)Math.sqrt(9);
-                    increment = 0.01f;
+                    minValue = 0.1f;
+                    maxValue = 9f;
+                    increment = 0.1f;
                 }
                 else if (var8 == VRSettings.VrOptions.MONO_FOV || var8 == VRSettings.VrOptions.MIXED_REALITY_FOV)
                 {

@@ -66,7 +66,8 @@ public class OpenVRStereoRenderer
 	public boolean lastEnableVsync = true;
 	public DimensionType lastDimensionId = DimensionType.OVERWORLD;
 	public int lastGuiScale = 0;
-	
+	public float renderScale;
+
 	public static final String RENDER_SETUP_FAILURE_MESSAGE = "Failed to initialise stereo rendering plugin: ";
 
 	private boolean reinitFramebuffers = true;
@@ -585,8 +586,9 @@ public class OpenVRStereoRenderer
 			MCOpenVR.texType0.depth.handle = Pointer.createConstant(framebufferEye0.depthBuffer);	
 			MCOpenVR.texType1.depth.handle = Pointer.createConstant(framebufferEye1.depthBuffer);	
 
-			displayFBWidth = (int) Math.ceil(eyew * mc.vrSettings.renderScaleFactor);
-			displayFBHeight = (int) Math.ceil(eyeh * mc.vrSettings.renderScaleFactor);
+			this.renderScale = (float)Math.sqrt(mc.vrSettings.renderScaleFactor);
+			displayFBWidth = (int) Math.ceil(eyew * renderScale);
+			displayFBHeight = (int) Math.ceil(eyeh * renderScale);
 			
 			framebufferVrRender = new Framebuffer("3D Render", displayFBWidth , displayFBHeight, true, false, true);
 			mc.print(framebufferVrRender.toString());
@@ -702,12 +704,18 @@ public class OpenVRStereoRenderer
 			}
 
 
+			long mainWindowPixels = mc.displayWidth * mc.displayHeight;
+			long pixelsPerFrame = displayFBWidth * displayFBHeight * 2;
+			if (renderPasses.contains(RenderPass.CENTER))
+				pixelsPerFrame += mainWindowPixels;
+			if (renderPasses.contains(RenderPass.THIRD))
+				pixelsPerFrame += mainWindowPixels;
 			System.out.println("[Minecrift] New render config:" +
-					"\nRender target width: " + eyew +
-					", height: " + eyeh +
-					(true ? " [Render scale: " + mc.vrSettings.renderScaleFactor + "]" : "") +
-					(mc.vrSettings.useFsaa ? " [FSAA Scale: " + mc.vrSettings.renderScaleFactor + "]" : "") +
-					"\nDisplay target width: " + displayFBWidth + ", height: " + displayFBHeight);
+					"\nOpenVR target width: " + eyew + ", height: " + eyeh + " [" + String.format("%.1f", (eyew * eyeh) / 1000000F) + " MP]" +
+					"\nRender target width: " + displayFBWidth + ", height: " + displayFBHeight + " [Render scale: " + Math.round(mc.vrSettings.renderScaleFactor * 100) + "%, " + String.format("%.1f", (displayFBWidth * displayFBHeight) / 1000000F) + " MP]" +
+					"\nMain window width: " + mc.displayWidth + ", height: " + mc.displayHeight + " [" + String.format("%.1f", mainWindowPixels / 1000000F) + " MP]" +
+					"\nTotal shaded pixels per frame: " + String.format("%.1f", pixelsPerFrame / 1000000F) + " MP (eye stencil not accounted for)"
+			);
 
 
 			//loadingScreen = new LoadingScreenRenderer(this);
@@ -772,7 +780,7 @@ public class OpenVRStereoRenderer
 			GL11.glBegin(GL11.GL_TRIANGLES);
 
 			for (int ix = 0; ix < verts.length; ix += 2) {
-				GL11.glVertex2f(verts[ix] * mc.vrSettings.renderScaleFactor, verts[ix + 1] * mc.vrSettings.renderScaleFactor);
+				GL11.glVertex2f(verts[ix] * mc.stereoProvider.renderScale, verts[ix + 1] * mc.stereoProvider.renderScale);
 			}
 			GL11.glEnd();
 
