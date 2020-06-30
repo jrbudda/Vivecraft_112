@@ -16,7 +16,7 @@
          Map map1 = new HashMap();
  
 -        for (Entry entry : p_detectMinimumSpriteSize_1_.entrySet())
-+        for (Entry entry : (Iterable<Entry>)p_detectMinimumSpriteSize_1_.entrySet())
++        for (Entry entry : (Set<Entry>)(Set<?>)p_detectMinimumSpriteSize_1_.entrySet())
          {
              TextureAtlasSprite textureatlassprite6 = (TextureAtlasSprite)entry.getValue();
              ResourceLocation resourcelocation1 = new ResourceLocation(textureatlassprite6.getIconName());

@@ -58,11 +58,11 @@ public class Installer extends JPanel  implements PropertyChangeListener
     private static final String MC_VERSION        = "1.12.2";
     private static final String MC_MD5            = "8c0443868b9e46c77d39db61c755679d";
 	private static final String OF_LIB_PATH       = "libraries/optifine/OptiFine/";
-    private static final String OF_FILE_NAME      = "1.12.2_HD_U_E3";
+    private static final String OF_FILE_NAME      = "1.12.2_HD_U_F5";
     private static final String OF_JSON_NAME      = "1.12.2_HD_U_E3";
-    private static final String OF_MD5            = "7EC95C57AC1A224D6EB93BD370E4AC37";
+    private static final String OF_MD5            = "043ac1db6f7441ea4cf31bcb621aff0b";
     private static final String OF_VERSION_EXT    = ".jar";
-    private static String FORGE_VERSION     = "14.23.5.2847";
+    private static String FORGE_VERSION     = "14.23.5.2854";
 	/* END OF DO NOT RENAME */
 
 	private static final String DEFAULT_PROFILE_NAME = "Vivecraft " + MINECRAFT_VERSION;
@@ -808,11 +808,11 @@ public class Installer extends JPanel  implements PropertyChangeListener
 			boolean deleted = false;
 
 			try {
-				File fod = new File(targetDir,OF_LIB_PATH+OF_FILE_NAME);
+				File fod = new File(targetDir,OF_LIB_PATH+OF_FILE_NAME+"_LIB");
 				if(isMultiMC)
 					fod = new File(mmcinst,"libraries");
 				fod.mkdirs();
-				File fo = new File(fod,"OptiFine-"+OF_FILE_NAME+".jar");
+				File fo = new File(fod,"OptiFine-"+OF_FILE_NAME+"_LIB.jar");
 
 				// Attempt to get the Optifine MD5
 				String optOnDiskMd5 = GetMd5(fo);
@@ -843,7 +843,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 				}
 
 				// Need to attempt download...
-				success = downloadFile("http://vivecraft.org/jar/Optifine/OptiFine_" + OF_FILE_NAME + OF_VERSION_EXT, fo);
+				success = downloadFile("http://vivecraft.org/jar/Optifine/OptiFine_" + OF_FILE_NAME + "_LIB" + OF_VERSION_EXT, fo);
 				// Check (potentially) downloaded optifine md5
 				optOnDiskMd5 = GetMd5(fo);
 				if (success == false || optOnDiskMd5 == null || !optOnDiskMd5.equalsIgnoreCase(OF_MD5)) {
@@ -1536,6 +1536,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
+			updateInstructions();
 			if (useForge.isSelected()) ramAllocation.setSelectedIndex(2);
 			else ramAllocation.setSelectedIndex(1);
 			updateInstructions();
@@ -1591,6 +1592,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 		txtCustomForgeVersion.setEnabled(optCustomForgeVersion.isSelected());
 		txtCustomForgeVersion.setVisible(useForge.isSelected());
 		optCustomForgeVersion.setVisible(useForge.isSelected());
+		this.revalidate();		
 	}
 
 	private void updateFilePath()

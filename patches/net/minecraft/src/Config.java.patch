@@ -1,6 +1,6 @@
 --- a/net/minecraft/src/Config.java
 +++ b/net/minecraft/src/Config.java
-@@ -140,18 +140,23 @@
+@@ -144,18 +144,23 @@
  
      public static void initGameSettings(GameSettings p_initGameSettings_0_)
      {
@@ -27,7 +27,7 @@
          antialiasingLevel = gameSettings.ofAaLevel;
          checkDisplaySettings();
          checkDisplayMode();
-@@ -2267,14 +2272,7 @@
+@@ -2271,14 +2276,7 @@
  
      public static void updateFramebufferSize()
      {
@@ -43,7 +43,7 @@
      }
  
      public static Object[] addObjectToArray(Object[] p_addObjectToArray_0_, Object p_addObjectToArray_1_)
-@@ -2524,6 +2522,7 @@
+@@ -2557,6 +2555,7 @@
  
      public static boolean isDynamicLights()
      {

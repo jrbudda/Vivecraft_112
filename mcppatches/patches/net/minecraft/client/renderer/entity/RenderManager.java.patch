@@ -14,7 +14,7 @@
      }
  
 -    public Map<Class, Render> getEntityRenderMap()
-+    public Map<Class<? extends Entity>, Render<? extends Entity>> getEntityRenderMap()
++    public Map getEntityRenderMap()
      {
          return this.entityRenderMap;
      }

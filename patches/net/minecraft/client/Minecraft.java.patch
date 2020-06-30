@@ -269,7 +269,7 @@
 +	 * The minecriftVerString will be automatically updated by the build scripts, do not modify here.
 +	 * Modify minecriftversion.py in root minecrift dir.
 +	 */
-+    public final String minecriftVerString = "Vivecraft 1.12.2 jrbudda-10-release";
++    public final String minecriftVerString = "Vivecraft 1.12.2 jrbudda-10-r2";
 +	/* end version */
 +	/** END MINECRIFT */
 +    
@@ -1859,7 +1859,7 @@
          int i = Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey();
  
          if (i != 0 && !Keyboard.isRepeatEvent())
-@@ -3582,4 +4235,682 @@
+@@ -3582,4 +4235,679 @@
      {
          return this.tutorial;
      }
@@ -2028,9 +2028,6 @@
 +		if (!alphaMask) GlStateManager.clearColor(vrSettings.mixedRealityKeyColor.getRed() / 255F, vrSettings.mixedRealityKeyColor.getGreen() / 255F, vrSettings.mixedRealityKeyColor.getBlue() / 255F, 1);
 +		else GlStateManager.clearColor(0, 0, 0, 1);
 +		GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-+
-+		// create view matrix	
-+		getMRTransform();
 +
 +		Vec3d camplayer = new Vec3d(-thirdPassViewMatrix.m30, -thirdPassViewMatrix.m31, -thirdPassViewMatrix.m32).subtract(vrPlayer.vrdata_world_render.getEye(RenderPass.CENTER).getPosition());
 +

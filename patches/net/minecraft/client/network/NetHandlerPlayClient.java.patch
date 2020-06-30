@@ -61,20 +61,18 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-@@ -309,6 +322,12 @@
+@@ -309,6 +322,10 @@
          this.netManager = networkManagerIn;
          this.profile = profileIn;
          this.advancementManager = new ClientAdvancementManager(mcIn);
 +
 +        //VIVECRAFT
-+        NetworkHelper.serverAllowsClimbey =false;
-+        NetworkHelper.serverWantsData = false;
-+        NetworkHelper.serverSupportsDirectTeleport = false;
++        NetworkHelper.resetServerSettings();
 +        //
      }
  
      /**
-@@ -327,7 +346,19 @@
+@@ -327,7 +344,19 @@
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
          this.gameController.playerController = new PlayerControllerMP(this.gameController, this);
@@ -95,25 +93,18 @@
          this.gameController.gameSettings.difficulty = packetIn.getDifficulty();
          this.gameController.loadWorld(this.clientWorldController);
          this.gameController.player.dimension = packetIn.getDimension();
-@@ -338,6 +369,17 @@
+@@ -338,6 +367,10 @@
          this.gameController.playerController.setGameType(packetIn.getGameType());
          this.gameController.gameSettings.sendSettingsToServer();
          this.netManager.sendPacket(new CPacketCustomPayload("MC|Brand", (new PacketBuffer(Unpooled.buffer())).writeString(ClientBrandRetriever.getClientModName())));
 +        
 +        // VIVE START - ask server if it's running this mod
-+        byte[] version = Minecraft.getMinecraft().minecriftVerString.getBytes(Charsets.UTF_8);
-+        String s = "Vivecraft";
-+        PacketBuffer pb = new PacketBuffer(Unpooled.buffer());
-+		pb.writeBytes(s.getBytes());
-+        this.netManager.sendPacket(new CPacketCustomPayload("REGISTER", pb ));
-+        this.netManager.sendPacket(new CPacketCustomPayload("MC|Vive|Version", (new PacketBuffer(Unpooled.buffer())).writeString(Minecraft.getMinecraft().minecriftVerString)));
-+        this.netManager.sendPacket(NetworkHelper.getVivecraftClientPacket(PacketDiscriminators.VERSION, version));
-+        this.gameController.vrPlayer.teleportWarningTimer = 20 * 3;
++        NetworkHelper.sendVersionInfo();
 +        // VIVE END - ask server if it's running this mod
      }
  
      /**
-@@ -837,10 +879,15 @@
+@@ -837,10 +870,15 @@
              BlockPos blockpos = new BlockPos(nbttagcompound.getInteger("x"), nbttagcompound.getInteger("y"), nbttagcompound.getInteger("z"));
              TileEntity tileentity = this.clientWorldController.getTileEntity(blockpos);
  
@@ -130,7 +121,7 @@
          }
      }
  
-@@ -864,7 +911,11 @@
+@@ -864,7 +902,11 @@
       */
      public void handleDisconnect(SPacketDisconnect packetIn)
      {
@@ -143,7 +134,7 @@
      }
  
      /**
-@@ -916,8 +967,8 @@
+@@ -916,8 +958,8 @@
              else
              {
                  this.clientWorldController.playSound(entity.posX, entity.posY, entity.posZ, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, (this.avRandomizer.nextFloat() - this.avRandomizer.nextFloat()) * 1.4F + 2.0F, false);
@@ -154,7 +145,7 @@
              if (entity instanceof EntityItem)
              {
                  ((EntityItem)entity).getItem().setCount(packetIn.getAmount());
-@@ -934,7 +985,24 @@
+@@ -934,7 +976,24 @@
      public void handleChat(SPacketChat packetIn)
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
@@ -180,7 +171,7 @@
      }
  
      /**
-@@ -1077,7 +1145,14 @@
+@@ -1077,7 +1136,14 @@
  
                      if (entity1 == this.gameController.player && !flag)
                      {
@@ -196,7 +187,7 @@
                      }
                  }
              }
-@@ -1160,7 +1235,8 @@
+@@ -1160,11 +1226,16 @@
          {
              this.doneLoadingTerrain = false;
              Scoreboard scoreboard = this.clientWorldController.getScoreboard();
@@ -206,7 +197,15 @@
              this.clientWorldController.setWorldScoreboard(scoreboard);
              this.gameController.loadWorld(this.clientWorldController);
              this.gameController.player.dimension = packetIn.getDimensionID();
-@@ -1355,7 +1431,19 @@
+             this.gameController.displayGuiScreen(new GuiDownloadTerrain());
++            //VIVECRAFT
++            NetworkHelper.resetServerSettings();
++            NetworkHelper.sendVersionInfo();
++            //
+         }
+ 
+         this.gameController.setDimensionAndSpawnPlayer(packetIn.getDimensionID());
+@@ -1355,7 +1426,19 @@
              {
                  tileentity.readFromNBT(packetIn.getNbtCompound());
              }
@@ -227,7 +226,7 @@
              if (flag && this.gameController.currentScreen instanceof GuiCommandBlock)
              {
                  ((GuiCommandBlock)this.gameController.currentScreen).updateGui();
-@@ -1469,15 +1557,41 @@
+@@ -1469,15 +1552,41 @@
              }
              else if (f == 101.0F)
              {
@@ -272,7 +271,7 @@
              }
          }
          else if (i == 6)
-@@ -1647,7 +1761,7 @@
+@@ -1647,7 +1756,7 @@
  
          if (entity instanceof EntityLivingBase)
          {
@@ -281,7 +280,7 @@
  
              if (potion != null)
              {
-@@ -2029,6 +2143,7 @@
+@@ -2029,6 +2138,7 @@
              }
              finally
              {
@@ -289,7 +288,7 @@
                  packetbuffer.release();
              }
          }
-@@ -2068,6 +2183,111 @@
+@@ -2068,6 +2178,111 @@
              String s1 = packetbuffer3.readString(256);
              this.gameController.getSoundHandler().stop(s1, SoundCategory.getByName(s));
          }
@@ -401,7 +400,7 @@
      }
  
      /**
-@@ -2358,4 +2578,12 @@
+@@ -2358,4 +2573,12 @@
      {
          return this.advancementManager;
      }

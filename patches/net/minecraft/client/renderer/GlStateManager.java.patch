@@ -9,7 +9,7 @@
      private static final GlStateManager.DepthState depthState;
      private static final GlStateManager.FogState fogState;
      private static final GlStateManager.CullState cullState;
-@@ -1200,7 +1200,7 @@
+@@ -1282,7 +1282,7 @@
          }
      }
  

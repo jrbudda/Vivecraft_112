@@ -1,41 +1,45 @@
 --- a/net/optifine/ConnectedTextures.java
 +++ b/net/optifine/ConnectedTextures.java
-@@ -2339,13 +2339,13 @@
+@@ -2402,13 +2402,13 @@
          return !set1.isEmpty();
      }
  
 -    private static ConnectedProperties[][] propertyListToArray(List list)
-+    private static ConnectedProperties[][] propertyListToArray(List listp)
++    private static ConnectedProperties[][] propertyListToArray(List listin)
      {
 -        ConnectedProperties[][] aconnectedproperties = new ConnectedProperties[list.size()][];
-+        ConnectedProperties[][] aconnectedproperties = new ConnectedProperties[listp.size()][];
++        ConnectedProperties[][] aconnectedproperties = new ConnectedProperties[listin.size()][];
  
 -        for (int i = 0; i < list.size(); ++i)
-+        for (int i = 0; i < listp.size(); ++i)
++        for (int i = 0; i < listin.size(); ++i)
          {
 -            List list = (List)list.get(i);
-+            List list = (List)listp.get(i);
++            List list = (List)listin.get(i);
  
              if (list != null)
              {
-@@ -2413,15 +2413,15 @@
-             list.add((Object)null);
+@@ -2469,19 +2469,19 @@
+         }
+     }
+ 
+-    private static void addToList(ConnectedProperties cp, List list, int id)
++    private static void addToList(ConnectedProperties cp, List listin, int id)
+     {
+-        while (id >= list.size())
++        while (id >= listin.size())
+         {
+-            list.add((Object)null);
++            listin.add((Object)null);
          }
  
 -        List list = (List)list.get(id);
-+        List sublist = (List)list.get(id);
++        List list = (List)listin.get(id);
  
--        if (list == null)
-+        if (sublist == null)
+         if (list == null)
          {
--            list = new ArrayList();
+             list = new ArrayList();
 -            list.set(id, list);
-+            sublist = new ArrayList();
-+            list.set(id, sublist);
++            listin.set(id, list);
          }
  
--        list.add(cp);
-+        sublist.add(cp);
-     }
- 
-     private static String[] getDefaultCtmPaths()
+         list.add(cp);

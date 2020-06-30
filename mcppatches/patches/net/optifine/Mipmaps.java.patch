@@ -1,15 +1,16 @@
 --- a/net/optifine/Mipmaps.java
 +++ b/net/optifine/Mipmaps.java
-@@ -173,9 +173,9 @@
+@@ -171,10 +171,10 @@
+         return k << 24 | j2 << 16 | k2 << 8 | l2;
+     }
  
-     private int averageColor(int i, int j)
+-    private int averageColor(int i, int j)
++    private int averageColor(int ii, int jj)
      {
 -        int i = (i & -16777216) >> 24 & 255;
 -        int j = (j & -16777216) >> 24 & 255;
--        return (i + j >> 1 << 24) + ((i & 16711422) + (j & 16711422) >> 1);
-+        int ii = (i & -16777216) >> 24 & 255;
-+        int jj = (j & -16777216) >> 24 & 255;
-+        return (ii + jj >> 1 << 24) + ((ii & 16711422) + (jj & 16711422) >> 1);
++        int i = (ii & -16777216) >> 24 & 255;
++        int j = (jj & -16777216) >> 24 & 255;
+         return (i + j >> 1 << 24) + ((i & 16711422) + (j & 16711422) >> 1);
      }
  
-     public static IntBuffer[] makeMipmapBuffers(Dimension[] mipmapDimensions, int[][] mipmapDatas)

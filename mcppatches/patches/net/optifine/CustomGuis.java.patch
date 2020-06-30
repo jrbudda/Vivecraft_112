@@ -1,6 +1,6 @@
 --- a/net/optifine/CustomGuis.java
 +++ b/net/optifine/CustomGuis.java
-@@ -309,7 +309,7 @@
+@@ -310,7 +310,7 @@
  
              while (listProps.size() <= i)
              {

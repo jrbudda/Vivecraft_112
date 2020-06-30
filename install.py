@@ -7,13 +7,14 @@ import errno
 import platform
 import shutil
 import time
+import fnmatch
 import distutils.core
 from shutil import move
 from tempfile import mkstemp
 from os import remove, close
 from minecriftversion import mc_version, of_file_name, minecrift_version_num, \
     minecrift_build, of_file_extension, of_file_md5, of_build_md5, mcp_version, mc_file_md5, \
-    mcp_download_url, mcp_uses_generics
+    mcp_download_url, mcp_uses_generics 
 from hashlib import md5  # pylint: disable-msg=E0611
 from optparse import OptionParser
 from applychanges import applychanges, apply_patch
@@ -25,6 +26,7 @@ base_dir = os.path.dirname(os.path.abspath(__file__))
 preferredarch = ''
 nomerge = False
 nopatch = False
+testpatches = False
 nocompilefixpatch = False
 clean = False
 force = False
@@ -202,41 +204,41 @@ def download_deps( mcp_dir, download_mc, forgedep=False ):
     # Use optifine json name for destination dir and jar names
     optifine_dest_dir = os.path.join(jars,"libraries","optifine","OptiFine",of_file_name )
     mkdir_p( optifine_dest_dir )
-
-    print 'Checking Optifine...'
-    optifine_jar = "OptiFine-"+of_file_name+".jar"
-    optifine_dest_file = os.path.join( optifine_dest_dir, optifine_jar )
- 
-    download_optifine = False
-    optifine_md5 = ''
-    if not is_non_zero_file( optifine_dest_file ):
+   
+    if not nomerge:
         print 'Checking Optifine...'
-        print 'Optifine not Found at' + optifine_dest_file
-        download_optifine = True
-    else:
-        optifine_md5 = get_md5( optifine_dest_file )
-        print 'Optifine md5: %s' % optifine_md5
-        if optifine_md5 != of_build_md5:
-            download_optifine = True
-            print 'Bad MD5!'
-        else:
-            print 'MD5 good!'
+        optifine_jar = "OptiFine-"+of_file_name+".jar"
+        optifine_dest_file = os.path.join( optifine_dest_dir, optifine_jar )
     
-    if download_optifine: 
-        # Use optifine filename for URL
-        optifine_url = "http://vivecraft.org/jar/build/OptiFine-"+of_file_name+of_file_extension
-        print 'Downloading Optifine from ' + optifine_url
-        if not download_file( optifine_url, optifine_dest_file):
-            print 'FAILED to download Optifine!'
-            sys.exit(1)
+        download_optifine = False
+        optifine_md5 = ''
+        if not is_non_zero_file( optifine_dest_file ):
+            print 'Optifine not Found at' + optifine_dest_file
+            download_optifine = True
         else:
-            shutil.copy(optifine_dest_file,os.path.join(flat_lib_dir, os.path.basename(optifine_dest_file)))
-            
-    if of_build_md5 == "":
-        optifine_md5 = get_md5( optifine_dest_file )
-        print 'Optifine md5: %s' % optifine_md5
-        sys.exit(0)
-
+            optifine_md5 = get_md5( optifine_dest_file )
+            print 'Optifine md5: %s' % optifine_md5
+            if optifine_md5 != of_build_md5:
+                download_optifine = True
+                print 'Bad MD5!'
+            else:
+                print 'MD5 good!'
+        
+        if download_optifine: 
+            # Use optifine filename for URL
+            optifine_url = "http://vivecraft.org/jar/build/OptiFine-"+of_file_name+of_file_extension
+            print 'Downloading Optifine from ' + optifine_url
+            if not download_file( optifine_url, optifine_dest_file):
+                print 'FAILED to download Optifine!'
+                sys.exit(1)
+            else:
+                shutil.copy(optifine_dest_file,os.path.join(flat_lib_dir, os.path.basename(optifine_dest_file)))
+                
+        if of_build_md5 == "":
+            optifine_md5 = get_md5( optifine_dest_file )
+            print 'Optifine md5: %s' % optifine_md5
+            sys.exit(0)
+   
     json_obj = []
     with open(source_json_file,"rb") as f:
         #data=f.read()
@@ -470,7 +472,7 @@ def main(mcp_dir):
     decompile(conffile=None,      # -c
               force_jad=False,    # -j
               force_csv=False,    # -s
-              no_recompile=False, # -r
+              no_recompile=not nocompilefixpatch, # -r
               no_comments=False,  # -d
               no_reformat=False,  # -a
               no_renamer=False,   # -n
@@ -492,6 +494,12 @@ def main(mcp_dir):
     org_src_dir = os.path.join(mcp_dir, "src",".minecraft_orig")
     if os.path.exists( org_src_dir ):
         shutil.rmtree( org_src_dir, True )
+    #cleanup expected hunk failure artifacts
+    print("Cleaning up...")
+    removeFilesByMatchingPattern(src_dir,"*~")
+    removeFilesByMatchingPattern(src_dir,"*#")
+    
+    #Copy to org
     shutil.copytree( src_dir, org_src_dir )
 
     if nocompilefixpatch == False:
@@ -531,7 +539,11 @@ def main(mcp_dir):
     if nopatch == False:
         # Patch stage 2: Now apply our main Minecrift patches, only
         # changes needed for Minecrift functionality
-        print("Applying full Minecrift patches...")
+        if testpatches:
+            print("Applying merge fix patches...")
+            applychanges( mcp_dir, patch_dir="mcppatches/patches", backup=False, copyOriginal=False, mergeInNew=False )
+        else:
+            print("Applying full Vivecraft patches...")
         applychanges( mcp_dir )
     else:
         print("Apply patches skipped!")
@@ -593,6 +605,18 @@ def replacelineinfile(file_path, pattern, subst, firstmatchonly=False):
     #Move new file
     move(abs_path, file_path)
     
+def removeFilesByMatchingPattern(dirPath, pattern):
+    listOfFilesWithError = []
+    for parentDir, dirnames, filenames in os.walk(dirPath):
+        for filename in fnmatch.filter(filenames, pattern):
+            try:
+                os.remove(os.path.join(parentDir, filename))
+            except:
+                print("Error while deleting file : ", os.path.join(parentDir, filename))
+                listOfFilesWithError.append(os.path.join(parentDir, filename))
+ 
+    return listOfFilesWithError
+    
 if __name__ == '__main__':
     parser = OptionParser()
     parser.add_option('-o', '--no-optifine', dest='nomerge', default=False, action='store_true', help='If specified, no optifine merge will be carried out')
@@ -601,6 +625,7 @@ if __name__ == '__main__':
     parser.add_option('-d', '--dependenciesOnly', dest='dep', default=False, action='store_true', help='Gets the dependencies only - no merge, compile or apply changes are performed.')
     parser.add_option('-n', '--no-patch', dest='nopatch', default=False, action='store_true', help='If specified, no patches will be applied at the end of installation')
     parser.add_option('-x', '--no-fix-patch', dest='nocompilefixpatch', default=False, action='store_true', help='If specified, no compile fix patches will be applied at the end of installation')
+    parser.add_option('-t', '--test-patches', dest='testpatches', default=False, action='store_true', help='If specified, use mcppatches\patches instead of root \patches. Overrides -o -n and -x')
     parser.add_option('-m', '--mcp-dir', action='store', dest='mcp_dir', help='Path to MCP to use', default=None)
     parser.add_option('-a', '--architecture', action='store', dest='arch', help='Architecture to use (\'32\' or \'64\'); prefer 32 or 64bit dlls', default=None)
     parser.add_option('-i', '--includeForge', dest='includeForge', default=False, action='store_true', help='Also include download of Forge dependencies')
@@ -618,7 +643,15 @@ if __name__ == '__main__':
         
     nomerge = options.nomerge
     nopatch = options.nopatch
+    testpatches = options.testpatches
     nocompilefixpatch = options.nocompilefixpatch
+
+    if testpatches: 
+        nopatch=False
+        nomerge=False   
+        nocompilefixpatch=True
+        
+    if nomerge: nocompilefixpatch = True
     clean = options.clean
     force = options.force
     dependenciesOnly = options.dep

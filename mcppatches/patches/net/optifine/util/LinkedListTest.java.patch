@@ -8,14 +8,41 @@
  import java.util.List;
  import java.util.Random;
  import net.optifine.render.VboRange;
-@@ -82,8 +83,9 @@
-     {
-         StringBuffer stringbuffer = new StringBuffer();
+@@ -78,23 +79,21 @@
+         }
+     }
  
+-    private static void dbgLinkedList(LinkedList<VboRange> linkedList)
+-    {
+-        StringBuffer stringbuffer = new StringBuffer();
+-
 -        for (LinkedList.Node<VboRange> node : linkedList)
-+        for (Iterator<LinkedList.Node<VboRange>> it = linkedList.iterator(); it.hasNext();)
-         {
-+        	LinkedList.Node<VboRange> node = (LinkedList.Node)it.next();
-             VboRange vborange = node.getItem();
+-        {
+-            VboRange vborange = node.getItem();
+-
+-            if (stringbuffer.length() > 0)
+-            {
+-                stringbuffer.append(", ");
++    private static void dbgLinkedList(LinkedList<VboRange> linkedList) {
++        StringBuffer sb = new StringBuffer();
++        Iterator it = linkedList.iterator();
++        do {
++            if (!it.hasNext()) {
++                LinkedListTest.dbg((String)("List: " + sb));
++                return;
++            }
++            LinkedList.Node node = (LinkedList.Node)it.next();
++            VboRange range = (VboRange)node.getItem();
++            if (sb.length() > 0) {
++                sb.append(", ");
+             }
+-
+-            stringbuffer.append(vborange.getPosition());
+-        }
+-
+-        dbg("List: " + stringbuffer);
++            sb.append(range.getPosition());
++        } while (true);
+     }
  
-             if (stringbuffer.length() > 0)
+     private static void checkLinkedList(LinkedList<VboRange> linkedList, int used)

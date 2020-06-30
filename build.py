@@ -1,5 +1,5 @@
 import os, os.path, sys, json, datetime, StringIO
-import shutil, tempfile,zipfile, fnmatch
+import shutil, tempfile,zipfile, fnmatch,install
 from xml.dom.minidom import parse
 from optparse import OptionParser
 import subprocess, shlex
@@ -186,10 +186,9 @@ def create_install(mcp_dir):
                     install_out.write(os.path.join(dirName,afile), os.path.join(relpath,afile))
             
         # Add json files
-        install_out.writestr("version.json", process_json("", version,minecrift_version_num,"",of_file_name))
-        install_out.writestr("version-forge.json", process_json("-forge", version,minecrift_version_num,forge_version,of_file_name ))
-        install_out.writestr("version-multimc.json", process_json("-multimc", version,minecrift_version_num,"",of_file_name ))
-        
+        install_out.writestr("version.json", process_json("", version,minecrift_version_num,"",of_file_name + "_LIB"))
+        install_out.writestr("version-forge.json", process_json("-forge", version,minecrift_version_num,forge_version,of_file_name + "_LIB"))
+        install_out.writestr("version-multimc.json", process_json("-multimc", version,minecrift_version_num,"",of_file_name + "_LIB"))
         # Add release notes
         install_out.write("CHANGES.md", "release_notes.txt")
         
@@ -261,7 +260,11 @@ def main(mcp_dir):
 if __name__ == '__main__':
     parser = OptionParser()
     parser.add_option('-m', '--mcp-dir', action='store', dest='mcp_dir', help='Path to MCP to use', default=None)
+    parser.add_option('-o', '--no-optifine', dest='nomerge', default=False, action='store_true', help='If specified, no optifine merge will be carried out')
+
     options, _ = parser.parse_args()
+  
+    install.nomerge = options.nomerge
 
     if not options.mcp_dir is None:
         main(os.path.abspath(options.mcp_dir))

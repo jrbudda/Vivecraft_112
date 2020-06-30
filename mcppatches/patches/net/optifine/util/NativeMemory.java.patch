@@ -18,18 +18,19 @@
              }
 -
 +            
-+            final Object objectF = object;
-+            final Method methodF = method;
++        	final Object o = object;
++            final Method method1 = method;
 +            
              LongSupplier longsupplier = new LongSupplier()
              {
                  private boolean disabled = false;
-@@ -82,7 +85,7 @@
+@@ -82,7 +85,8 @@
                      {
                          try
                          {
 -                            return ((Long)method.invoke(object)).longValue();
-+                            return ((Long)methodF.invoke(objectF)).longValue();
++                    
++                            return (long) method1.invoke(o);
                          }
                          catch (Throwable throwable)
                          {

@@ -1,24 +1,24 @@
 --- a/net/minecraft/client/renderer/RenderGlobal.java
 +++ b/net/minecraft/client/renderer/RenderGlobal.java
-@@ -754,7 +754,7 @@
+@@ -757,7 +757,7 @@
              List<Entity> list2 = Lists.<Entity>newArrayList();
              BlockPos.PooledMutableBlockPos blockpos$pooledmutableblockpos = BlockPos.PooledMutableBlockPos.retain();
  
 -            for (RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation : this.renderInfosEntities)
-+            for (RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation :  (Iterable<RenderGlobal.ContainerLocalRenderInformation>)this.renderInfosEntities)
++            for (RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation :  (Collection<RenderGlobal.ContainerLocalRenderInformation>)(Collection<?>)this.renderInfosEntities)
              {
                  Chunk chunk = renderglobal$containerlocalrenderinformation.renderChunk.getChunk();
                  ClassInheritanceMultiMap<Entity> classinheritancemultimap = chunk.getEntityLists()[renderglobal$containerlocalrenderinformation.renderChunk.getPosition().getY() / 16];
-@@ -922,7 +922,7 @@
-             double d9 = d8 * d8;
-             label255:
+@@ -932,7 +932,7 @@
+             TileEntitySignRenderer.updateTextRenderDistance();
+             label253:
  
 -            for (RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation1 : this.renderInfosTileEntities)
-+            for (RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation1 : (Iterable<RenderGlobal.ContainerLocalRenderInformation>)this.renderInfosTileEntities)
++            for (RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation1 : (Collection<RenderGlobal.ContainerLocalRenderInformation>)(Collection<?>)this.renderInfosTileEntities)
              {
                  List<TileEntity> list3 = renderglobal$containerlocalrenderinformation1.renderChunk.getCompiledChunk().getTileEntities();
  
-@@ -1576,10 +1576,7 @@
+@@ -1572,10 +1572,7 @@
                  GlStateManager.disableFog();
              }
  

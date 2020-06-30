@@ -1,19 +1,19 @@
 --- a/net/optifine/config/ConnectedParser.java
 +++ b/net/optifine/config/ConnectedParser.java
-@@ -11,6 +11,7 @@
- import java.util.HashMap;
- import java.util.List;
- import java.util.Map;
-+import java.util.Set;
- import net.minecraft.block.Block;
- import net.minecraft.block.BlockDoublePlant;
- import net.minecraft.block.BlockObserver;
-@@ -429,7 +430,7 @@
+@@ -4,6 +4,7 @@
+ import it.unimi.dsi.fastutil.ints.IntArraySet;
+ import it.unimi.dsi.fastutil.ints.IntSet;
+ import java.lang.reflect.Array;
++import java.lang.reflect.Field;
+ import java.util.ArrayList;
+ import java.util.Arrays;
+ import java.util.Collection;
+@@ -449,7 +450,7 @@
  
      public static Comparable getPropertyValue(String value, Collection propertyValues)
      {
 -        for (Comparable comparable : propertyValues)
-+        for (Comparable comparable :(Set<Comparable>)(Set<?>) propertyValues)
++        for (Comparable comparable : (Collection<Comparable>)(Collection<?>)propertyValues)
          {
              if (getValueName(comparable).equals(value))
              {

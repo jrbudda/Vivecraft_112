@@ -9,6 +9,7 @@ import org.vivecraft.gameplay.OpenVRPlayer;
 import org.vivecraft.render.PlayerModelController;
 import org.vivecraft.utils.Quaternion;
 
+import com.google.common.base.Charsets;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
@@ -169,6 +170,24 @@ public class NetworkHelper {
 				sendTo.player.connection.sendPacket(pack);
 			}
 		}
+	}
+
+	public static void sendVersionInfo() {
+		byte[] version = Minecraft.getMinecraft().minecriftVerString.getBytes(Charsets.UTF_8);
+		String s = "Vivecraft";
+		PacketBuffer pb = new PacketBuffer(Unpooled.buffer());
+		pb.writeBytes(s.getBytes());
+		Minecraft.getMinecraft().getConnection().sendPacket(new CPacketCustomPayload("REGISTER", pb ));
+		Minecraft.getMinecraft().getConnection().sendPacket(new CPacketCustomPayload("MC|Vive|Version", (new PacketBuffer(Unpooled.buffer())).writeString(Minecraft.getMinecraft().minecriftVerString)));
+		Minecraft.getMinecraft().getConnection().sendPacket(NetworkHelper.getVivecraftClientPacket(PacketDiscriminators.VERSION, version));
+		Minecraft.getMinecraft().vrPlayer.teleportWarningTimer = 20 * 3;
+	}
+
+	public static void resetServerSettings() {
+		worldScallast = 0;
+		serverAllowsClimbey = false;
+		serverWantsData = false;
+		serverSupportsDirectTeleport = false;
 	}
 	
 }

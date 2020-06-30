@@ -1,6 +1,6 @@
 --- a/net/optifine/shaders/Shaders.java
 +++ b/net/optifine/shaders/Shaders.java
-@@ -95,6 +95,7 @@
+@@ -103,6 +103,7 @@
  import net.optifine.util.TimedEvent;
  import org.apache.commons.io.IOUtils;
  import org.lwjgl.BufferUtils;
@@ -8,15 +8,15 @@
  import org.lwjgl.opengl.ARBGeometryShader4;
  import org.lwjgl.opengl.ARBShaderObjects;
  import org.lwjgl.opengl.ARBVertexShader;
-@@ -790,6 +791,7 @@
+@@ -799,6 +800,7 @@
  
      public static void loadShaderPack()
      {
 +    	mc = Minecraft.getMinecraft();
          boolean flag = shaderPackLoaded;
          boolean flag1 = isOldLighting();
-         shaderPackLoaded = false;
-@@ -1048,7 +1050,7 @@
+ 
+@@ -1078,7 +1080,7 @@
          Set set = props.keySet();
          List<ICustomTexture> list = new ArrayList<ICustomTexture>();
  
@@ -25,7 +25,7 @@
          {
              if (s1.startsWith(s))
              {
-@@ -1392,7 +1394,7 @@
+@@ -1578,7 +1580,7 @@
  
                      if (shaderoption == null)
                      {
@@ -34,47 +34,71 @@
                      }
                      else if (shaderoption instanceof ShaderOptionRest)
                      {
-@@ -2258,11 +2260,11 @@
+@@ -2449,11 +2451,11 @@
  
      private static int getDrawBuffer(Program p, String str, int i)
      {
 -        int i = 0;
-+        int d = 0;
++        int drawBuffer = 0;
  
          if (i >= str.length())
          {
 -            return i;
-+            return d;
++            return drawBuffer;
          }
          else
          {
-@@ -4081,13 +4083,13 @@
+@@ -2463,23 +2465,23 @@
+             {
+                 if (j >= 0 && j <= 1)
+                 {
+-                    i = j + 36064;
++                	drawBuffer = j + 36064;
+                     usedShadowColorBuffers = Math.max(usedShadowColorBuffers, j);
+                 }
+ 
+-                return i;
++                return drawBuffer;
+             }
+             else
+             {
+                 if (j >= 0 && j <= 7)
+                 {
+                     p.getToggleColorTextures()[j] = true;
+-                    i = j + 36064;
++                    drawBuffer = j + 36064;
+                     usedColorAttachs = Math.max(usedColorAttachs, j);
+                     usedColorBuffers = Math.max(usedColorBuffers, j);
+                 }
+ 
+-                return i;
++                return drawBuffer;
+             }
+         }
+     }
+@@ -4281,15 +4283,15 @@
+         GlStateManager.setActiveTexture(33984);
+     }
+ 
+-    public static void checkWorldChanged(World world)
++    public static void checkWorldChanged(World worldin)
      {
-         if (currentWorld != world)
+-        if (currentWorld != world)
++        if (currentWorld != worldin)
          {
 -            World world = currentWorld;
-+        	World oldworld = currentWorld;
-             currentWorld = world;
+-            currentWorld = world;
++            World oldworld = currentWorld;
++            currentWorld = worldin;
              setCameraOffset(mc.getRenderViewEntity());
+-            int i = getDimensionId(world);
+-            int j = getDimensionId(world);
++            int i = getDimensionId(oldworld);
++            int j = getDimensionId(worldin);
  
--            if (world != null && world != null)
-+            if (world != null && oldworld != null)
+             if (j != i)
              {
--                int i = world.provider.getDimensionType().getId();
-+                int i = oldworld.provider.getDimensionType().getId();
-                 int j = world.provider.getDimensionType().getId();
-                 boolean flag = shaderPackDimensions.contains(Integer.valueOf(i));
-                 boolean flag1 = shaderPackDimensions.contains(Integer.valueOf(j));
-@@ -5246,8 +5248,6 @@
-     public static void setFog(GlStateManager.FogMode fogMode)
-     {
-         GlStateManager.setFog(fogMode);
--        fogMode = fogMode.capabilityId;
--
-         if (fogEnabled)
-         {
-             setProgramUniform1i(uniform_fogMode, fogMode.capabilityId);
-@@ -5428,7 +5428,7 @@
+@@ -5751,7 +5753,7 @@
                          Lang.loadLocaleData(inputstream, properties);
                          inputstream.close();
  

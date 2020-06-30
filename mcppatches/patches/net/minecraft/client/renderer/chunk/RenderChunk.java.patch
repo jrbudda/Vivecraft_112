@@ -1,20 +1,24 @@
 --- a/net/minecraft/client/renderer/chunk/RenderChunk.java
 +++ b/net/minecraft/client/renderer/chunk/RenderChunk.java
-@@ -205,7 +205,7 @@
+@@ -1,9 +1,12 @@
+ package net.minecraft.client.renderer.chunk;
+ 
+ import com.google.common.collect.Sets;
++
++import java.lang.reflect.Field;
+ import java.nio.FloatBuffer;
+ import java.util.BitSet;
+ import java.util.HashSet;
++import java.util.List;
+ import java.util.Set;
+ import java.util.concurrent.locks.ReentrantLock;
+ import javax.annotation.Nullable;
+@@ -205,7 +208,7 @@
              boolean flag = Reflector.ForgeBlock_canRenderInLayer.exists();
              boolean flag1 = Reflector.ForgeHooksClient_setRenderLayer.exists();
  
 -            for (BlockPosM blockposm : BlockPosM.getAllInBoxMutable(blockpos, blockpos1))
-+            for (BlockPosM blockposm : (Iterable<BlockPosM>)BlockPosM.getAllInBoxMutable(blockpos, blockpos1))
++            for (BlockPosM blockposm : (Iterable<BlockPosM>)(Iterable<?>)BlockPosM.getAllInBoxMutable(blockpos, blockpos1))
              {
                  IBlockState iblockstate = chunkcacheof.getBlockState(blockposm);
                  Block block = iblockstate.getBlock();
-@@ -296,7 +296,7 @@
- 
-                 if (flag1)
-                 {
--                    Reflector.callVoid(Reflector.ForgeHooksClient_setRenderLayer, null);
-+                    Reflector.callVoid(Reflector.ForgeHooksClient_setRenderLayer);
-                 }
-             }
- 

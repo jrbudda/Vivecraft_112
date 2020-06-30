@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/GuiOverlayDebug.java
 +++ b/net/minecraft/client/gui/GuiOverlayDebug.java
-@@ -290,7 +290,7 @@
+@@ -295,7 +295,7 @@
                  {
                      Entry < IProperty<?>, Comparable<? >> entry = (Entry)unmodifiableiterator.next();
                      iproperty = (IProperty)entry.getKey();

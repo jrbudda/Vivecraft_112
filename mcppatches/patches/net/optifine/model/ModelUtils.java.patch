@@ -1,41 +1,38 @@
 --- a/net/optifine/model/ModelUtils.java
 +++ b/net/optifine/model/ModelUtils.java
-@@ -4,6 +4,7 @@
+@@ -1,5 +1,6 @@
+ package net.optifine.model;
+ 
++import java.lang.reflect.Field;
+ import java.util.ArrayList;
  import java.util.HashMap;
  import java.util.List;
- import java.util.Map;
-+
- import net.minecraft.block.state.IBlockState;
- import net.minecraft.client.renderer.block.model.BakedQuad;
- import net.minecraft.client.renderer.block.model.IBakedModel;
-@@ -32,7 +33,7 @@
-         }
-     }
+@@ -34,7 +35,7 @@
  
--    private static void dbgQuads(String name, List quads, String prefix)
-+    private static void dbgQuads(String name, List<BakedQuad> quads, String prefix)
+     private static void dbgQuads(String name, List quads, String prefix)
      {
-         for (BakedQuad bakedquad : quads)
+-        for (BakedQuad bakedquad : quads)
++        for (BakedQuad bakedquad : (List<BakedQuad>)(List<?>)quads)
          {
-@@ -82,17 +83,17 @@
-         return simplebakedmodel;
-     }
+             dbgQuad(name, bakedquad, prefix);
+         }
+@@ -84,15 +85,15 @@
  
--    public static List duplicateQuadList(List list)
-+    public static List duplicateQuadList(List<BakedQuad> list)
+     public static List duplicateQuadList(List list)
      {
 -        List list = new ArrayList();
-+        List list2 = new ArrayList();
++        List sublist = new ArrayList();
  
-         for (BakedQuad bakedquad : list)
+-        for (BakedQuad bakedquad : list)
++        for (BakedQuad bakedquad : (List<BakedQuad>)(List<?>)list)
          {
              BakedQuad bakedquad1 = duplicateQuad(bakedquad);
 -            list.add(bakedquad1);
-+            list2.add(bakedquad1);
++            sublist.add(bakedquad1);
          }
  
 -        return list;
-+        return list2;
++        return sublist;
      }
  
      public static BakedQuad duplicateQuad(BakedQuad quad)

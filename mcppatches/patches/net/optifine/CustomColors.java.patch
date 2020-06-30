@@ -1,6 +1,6 @@
 --- a/net/optifine/CustomColors.java
 +++ b/net/optifine/CustomColors.java
-@@ -330,7 +330,7 @@
+@@ -331,7 +331,7 @@
  
          if (ainteger.length <= 0)
          {
@@ -9,7 +9,7 @@
          }
          else
          {
-@@ -468,7 +468,7 @@
+@@ -469,7 +469,7 @@
          String s = "palette.block.";
          Map map = new HashMap();
  
@@ -18,7 +18,7 @@
          {
              String s2 = props.getProperty(s1);
  
-@@ -622,15 +622,15 @@
+@@ -623,15 +623,15 @@
              list.add((Object)null);
          }
  
@@ -39,7 +39,7 @@
      }
  
      private static CustomColormap[][] blockListToArray(List list)
-@@ -639,11 +639,11 @@
+@@ -640,11 +640,11 @@
  
          for (int i = 0; i < list.size(); ++i)
          {
@@ -54,7 +54,7 @@
                  acustomcolormap[i] = acustomcolormap1;
              }
          }
-@@ -1375,7 +1375,7 @@
+@@ -1376,7 +1376,7 @@
          Set set = props.keySet();
          int i = 0;
  
@@ -63,7 +63,7 @@
          {
              String s1 = props.getProperty(s);
  
-@@ -1514,7 +1514,7 @@
+@@ -1515,7 +1515,7 @@
          float[][] afloat1 = new float[aenumdyecolor.length][];
          int k = 0;
  
@@ -72,7 +72,7 @@
          {
              String s1 = props.getProperty(s);
  
-@@ -1587,7 +1587,7 @@
+@@ -1588,7 +1588,7 @@
          Arrays.fill(aint, -1);
          int i = 0;
  
@@ -81,7 +81,7 @@
          {
              String s1 = props.getProperty(s);
  
-@@ -1643,7 +1643,7 @@
+@@ -1644,7 +1644,7 @@
          Arrays.fill(aint, -1);
          int i = 0;
  
@@ -90,7 +90,7 @@
          {
              String s1 = props.getProperty(s);
  
-@@ -1682,7 +1682,7 @@
+@@ -1683,7 +1683,7 @@
          Arrays.fill(aint, -1);
          int i = 0;
  

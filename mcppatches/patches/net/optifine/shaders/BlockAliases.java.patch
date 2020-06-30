@@ -9,7 +9,7 @@
  import net.minecraft.client.Minecraft;
  import net.minecraft.src.Config;
  import net.minecraft.util.ResourceLocation;
-@@ -129,7 +131,7 @@
+@@ -132,7 +134,7 @@
                  Config.dbg("[Shaders] Parsing block mappings: " + path);
                  ConnectedParser connectedparser = new ConnectedParser("Shaders");
  
@@ -17,8 +17,8 @@
 +                for (String s : (Set<String>)(Set<?>)properties.keySet())
                  {
                      String s1 = properties.getProperty(s);
-                     String s2 = "block.";
-@@ -181,7 +183,7 @@
+ 
+@@ -197,7 +199,7 @@
  
              while (j >= blocksAliases.size())
              {

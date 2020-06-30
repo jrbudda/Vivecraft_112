@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/OpenGlHelper.java
 +++ b/net/minecraft/client/renderer/OpenGlHelper.java
-@@ -988,20 +988,12 @@
+@@ -989,20 +989,12 @@
          }
      }
  

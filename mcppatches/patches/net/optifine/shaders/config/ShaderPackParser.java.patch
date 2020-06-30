@@ -36,7 +36,7 @@
                          }
                          else
                          {
-@@ -750,7 +750,7 @@
+@@ -757,7 +757,7 @@
          Map<String, IExpression> map = new HashMap<String, IExpression>();
          List<CustomUniform> list = new ArrayList<CustomUniform>();
  
@@ -45,7 +45,7 @@
          {
              String[] astring = Config.tokenize(s4, ".");
  
-@@ -847,7 +847,7 @@
+@@ -854,7 +854,7 @@
  
      public static void parseAlphaStates(Properties props)
      {
@@ -54,7 +54,7 @@
          {
              String[] astring = Config.tokenize(s, ".");
  
-@@ -911,7 +911,7 @@
+@@ -918,7 +918,7 @@
  
      public static void parseBlendStates(Properties props)
      {
@@ -63,7 +63,7 @@
          {
              String[] astring = Config.tokenize(s, ".");
  
-@@ -986,7 +986,7 @@
+@@ -993,7 +993,7 @@
  
      public static void parseRenderScales(Properties props)
      {
@@ -72,7 +72,7 @@
          {
              String[] astring = Config.tokenize(s, ".");
  
-@@ -1050,7 +1050,7 @@
+@@ -1057,7 +1057,7 @@
  
      public static void parseBuffersFlip(Properties props)
      {

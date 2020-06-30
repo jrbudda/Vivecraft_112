@@ -5,7 +5,7 @@
              List list2 = new ArrayList();
  
 -            for (Field field1 : list)
-+            for (Field field1 : (List<Field>)list)
++            for (Field field1 : (List<Field>)(List<?>)list)
              {
                  list2.add(field1.get(chunk));
              }
@@ -14,7 +14,7 @@
              List list3 = new ArrayList();
  
 -            for (Field field2 : list)
-+            for (Field field2 : (List<Field>)list)
++            for (Field field2 : (List<Field>)(List<?>)list)
              {
                  list3.add(field2.get(chunk));
              }
