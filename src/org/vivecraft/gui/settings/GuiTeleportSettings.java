@@ -11,6 +11,7 @@ import org.vivecraft.settings.VRSettings.VrOptions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.optifine.Lang;
 
 public class GuiTeleportSettings extends BaseGuiSettings implements GuiEventEx {
 	private static VRSettings.VrOptions[] teleportSettings = new VRSettings.VrOptions[] {
@@ -26,15 +27,15 @@ public class GuiTeleportSettings extends BaseGuiSettings implements GuiEventEx {
 
 	public GuiTeleportSettings(GuiScreen guiScreen, VRSettings settings) {
 		super(guiScreen, settings);
-		screenTitle = "Teleport Settings";
+		screenTitle = "vivecraft.options.screen.teleport";
 	}
 
 	@Override
 	public void initGui()
 	{
 		this.buttonList.clear();
-		this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, "Reset To Defaults"));
-		this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, "Done"));
+		this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, Lang.get("vivecraft.gui.loaddefaults")));
+		this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, Lang.get("gui.done")));
 
 		addButtons(teleportSettings, 0);
 		if (guivrSettings.vrLimitedSurvivalTeleport)
@@ -126,41 +127,7 @@ public class GuiTeleportSettings extends BaseGuiSettings implements GuiEventEx {
 			}
 		}
 	}
-	 @Override
-	    protected String[] getTooltipLines(String displayString, int buttonId)
-	    {
-	        VRSettings.VrOptions e = VRSettings.VrOptions.getEnumOptions(buttonId);
-	        if( e != null )
-	            switch(e)
-	            {
-	                case TELEPORT_DOWN_LIMIT:
-	                    return new String[] {
-	                            "Limit the number of blocks you can teleport below you"
-	                    };
-	                case TELEPORT_UP_LIMIT:
-	                    return new String[] {
-	                            "Limit the number of blocks you can teleport above you"
-	                    };
-	                case TELEPORT_HORIZ_LIMIT:
-	                    return new String[] {
-	                            "Limit the number of blocks you can teleport sideways you"
-	                    };
-	                default:
-	                    return null;
-	            }
-	        else
-	            switch(buttonId)
-	            {
-//	                case 201:
-//	                    return new String[] {
-//	                            "Open this configuration screen to adjust the Head",
-//	                            "  Tracker orientation (direction) settings. ",
-//	                            "  Ex: Head Tracking Selection (Hydra/Oculus), Prediction"
-//	                    };
-	                default:
-	                    return null;
-	            }
-	    }
+
 	@Override
 	public boolean event(int id, VrOptions enumm) {
 		// TODO Auto-generated method stub

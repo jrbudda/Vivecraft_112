@@ -2,6 +2,7 @@ package org.vivecraft.gameplay.trackers;
 
 import java.util.List;
 
+import org.vivecraft.api.Vec3History;
 import org.vivecraft.control.ControllerType;
 import org.vivecraft.provider.MCOpenVR;
 import org.vivecraft.utils.MCReflection;
@@ -38,7 +39,8 @@ public class SwingTracker extends Tracker{
     private boolean[] lastWeaponSolid = new boolean[2];
 	private Vec3d[] weaponEnd= new Vec3d[2];
 	private Vec3d[] weaponEndlast= new Vec3d[]{new Vec3d(0, 0, 0), new Vec3d(0,0,0)};
-	
+	public Vec3History[] tipHistory = new Vec3History[] { new Vec3History(), new Vec3History()};
+
     public boolean[] shouldIlookatMyHand= new boolean[2];
     public boolean[] IAmLookingAtMyHand= new boolean[2];
     
@@ -49,32 +51,34 @@ public class SwingTracker extends Tracker{
 	}
 
 	public boolean isActive(EntityPlayerSP p){
-    	if(p == null) return false;
-    	if(p.isDead) return false;
-    	if(p.isPlayerSleeping()) return false;
-    	Minecraft mc = Minecraft.getMinecraft();
-    	if (!mc.vrSettings.weaponCollision)
-    		return false;
-    	if (mc.vrSettings.seated)
-    		return false;
-    	if(mc.vrSettings.vrFreeMoveMode == mc.vrSettings.FREEMOVE_RUNINPLACE && p.moveForward > 0){
-    		return false; //dont hit things while RIPing.
-    	}
-    	if(p.isActiveItemStackBlocking()){
-    		return false; //dont hit things while blocking.
-    	}
-    	if(mc.jumpTracker.isjumping()) 
-    		return false;
-    	return true;    
-    }
+		if(p == null) return false;
+		if(p.isDead) return false;
+		if(p.isPlayerSleeping()) return false;
+		Minecraft mc = Minecraft.getMinecraft();
+		if (mc.vrSettings.weaponCollision == 0)
+			return false;
+		if (mc.vrSettings.weaponCollision == 2)
+			return !p.isCreative();
+		if (mc.vrSettings.seated)
+			return false;
+		if(mc.vrSettings.vrFreeMoveMode == mc.vrSettings.FREEMOVE_RUNINPLACE && p.moveForward > 0){
+			return false; //dont hit things while RIPing.
+		}
+		if(p.isActiveItemStackBlocking()){
+			return false; //dont hit things while blocking.
+		}
+		if(mc.jumpTracker.isjumping()) 
+			return false;
+		return true;    
+	}
 	
+	private double speedthresh = 2.0f;
+	Vec3d forward = new Vec3d(0,0,-1);
 
 	public void doProcess(EntityPlayerSP player){ //on tick
-
         
         mc.mcProfiler.startSection("updateSwingAttack");
         
-        Vec3d forward = new Vec3d(0,0,-1);
         
         for(int c =0 ;c<2;c++){
 
@@ -86,7 +90,6 @@ public class SwingTracker extends Tracker{
         	ItemStack is = player.getHeldItem(c==0?EnumHand.MAIN_HAND:EnumHand.OFF_HAND);
         	Item item = null;
 
-        	double speedthresh = 1.8f;
         	float weaponLength;
         	float entityReachAdd;
 
@@ -116,12 +119,12 @@ public class SwingTracker extends Tracker{
             }    
 
             if (sword){
-                 	entityReachAdd = 2.5f;
-            		weaponLength = 0.3f;
+				entityReachAdd = 1.8f;
+				weaponLength = 0.7f;
             		tool = true;
             } else if (tool){
-            	entityReachAdd = 1.8f;
-            	weaponLength = 0.3f;
+				entityReachAdd = 1.0f;
+				weaponLength = 0.5f;
         		tool = true;
             } else if (item !=null){
             	weaponLength = 0.1f;
@@ -130,13 +133,15 @@ public class SwingTracker extends Tracker{
             	weaponLength = 0.0f;
             	entityReachAdd = 0.3f;
             }
-
+            
         	weaponLength *= mc.vrPlayer.vrdata_world_pre.worldScale;
 
         	weaponEnd[c] = new Vec3d(
         			handPos.x + handDirection.x * weaponLength,
         			handPos.y + handDirection.y * weaponLength,
         			handPos.z + handDirection.z * weaponLength);     
+        	
+			tipHistory[c].add(weaponEnd[c].subtract(mc.vrPlayer.vrdata_world_pre.origin));
 
         	if (disableSwing > 0 ) {
         		disableSwing--;
@@ -146,7 +151,7 @@ public class SwingTracker extends Tracker{
         	}
 
 
-        	float speed = (float) MCOpenVR.controllerHistory[c].averageSpeed(0.1);
+			float speed = (float) tipHistory[c].averageSpeed(0.33);
 
         	weaponEndlast[c] = new Vec3d(weaponEnd[c].x, weaponEnd[c].y, weaponEnd[c].z);
 
@@ -167,14 +172,7 @@ public class SwingTracker extends Tracker{
 
         	//Check EntityCollisions first
         	//experiment.
-        	AxisAlignedBB weaponBB = new AxisAlignedBB(
-        			handPos.x < extWeapon.x ? handPos.x : extWeapon.x  ,
-        					handPos.y < extWeapon.y ? handPos.y : extWeapon.y  ,
-        							handPos.z < extWeapon.z ? handPos.z : extWeapon.z  ,
-        									handPos.x > extWeapon.x ? handPos.x : extWeapon.x  ,
-        											handPos.y > extWeapon.y ? handPos.y : extWeapon.y  ,
-        													handPos.z > extWeapon.z ? handPos.z : extWeapon.z  
-        			);
+        	AxisAlignedBB weaponBB = new AxisAlignedBB(handPos, extWeapon);
 
         	List entities = mc.world.getEntitiesWithinAABBExcludingEntity(
         			mc.player, weaponBB);
@@ -207,7 +205,7 @@ public class SwingTracker extends Tracker{
         			if(c == 0 && MCOpenVR.keyClimbeyGrab.isKeyDown(ControllerType.RIGHT) || !tool ) continue;
         			if(c == 1 && MCOpenVR.keyClimbeyGrab.isKeyDown(ControllerType.LEFT) || !tool ) continue;
         		}
-        		
+
         		BlockPos bp =null;
         		bp = new BlockPos(weaponEnd[c]);
         		IBlockState block = mc.world.getBlockState(bp);
@@ -217,9 +215,9 @@ public class SwingTracker extends Tracker{
         		// and damage the block it collides with... 
 
         		RayTraceResult col = mc.world.rayTraceBlocks(lastWeaponEndAir[c], weaponEnd[c], true, false, true);
-        		
+
         		if (col != null) mc.playerController.hitVecOverride = col.hitVec;
-        		
+
         		boolean flag = col!=null && col.getBlockPos().equals(bp); //fix ladder but prolly break everything else.
         		if (flag && (shouldIlookatMyHand[c] || (col != null && col.typeOfHit == Type.BLOCK)))
         		{
@@ -244,47 +242,34 @@ public class SwingTracker extends Tracker{
         							Minecraft.getMinecraft().playerController.
         							processRightClickBlock(player, (WorldClient) player.world,bp,col.sideHit, col.hitVec, c==0?EnumHand.MAIN_HAND:EnumHand.OFF_HAND);
         						}else{
-        							p += (speed - speedthresh) / 2;
+        							p += Math.min((speed - speedthresh), 4);			
 
-        							for (int i = 0; i < p; i++)
-        							{
-        								//set delay to 0
-        								clearBlockHitDelay();			
-        								boolean test = mc.climbTracker.isGrabbingLadder();
-        								//all this comes from plaeyrControllerMP clickMouse and friends.
+        							mc.playerController.clickBlock(col.getBlockPos(), col.sideHit);
+        							if(getIsHittingBlock()) { //seems to be the only way to tell it didnt insta-broke.
+        								for (int i = 0; i < p; i++)
+        								{	//send multiple ticks worth of 'holding left click' to it.
 
-        								//all this does is sets the block you're currently hitting, has no effect in survival mode after that.
-        								//but if in creaive mode will clickCreative on the block
-        								mc.playerController.clickBlock(col.getBlockPos(), col.sideHit);
+        									if(mc.playerController.onPlayerDamageBlock(col.getBlockPos(), col.sideHit))
+        										mc.effectRenderer.addBlockHitEffects(col.getBlockPos(), col.sideHit);
 
-        								if(!getIsHittingBlock()) //seems to be the only way to tell it broke.
-        									break;
-
-        								//apply destruction for survival only
-        								mc.playerController.onPlayerDamageBlock(col.getBlockPos(), col.sideHit);
-
-        								if(!getIsHittingBlock()) //seems to be the only way to tell it broke.
-        									break;
-
-        								//something effects
-        								mc.effectRenderer.addBlockHitEffects(col.getBlockPos(), col.sideHit);
+        									clearBlockHitDelay();		
+        									if(!getIsHittingBlock()) //seems to be the only way to tell it broke.
+        										break;
+        								}
 
         							}
-        							
+        							mc.vrPlayer.blockDust(col.hitVec.x, col.hitVec.y, col.hitVec.z, 3*p, block);
+        							lastWeaponSolid[c] = true;
         						}
-        						mc.vrPlayer.blockDust(col.hitVec.x, col.hitVec.y, col.hitVec.z, 3*p, block);
-
         						MCOpenVR.triggerHapticPulse(c, 250*p);
-        						//   System.out.println("Hit block speed =" + speed + " mot " + mot + " thresh " + speedthresh) ;            				
-        						lastWeaponSolid[c] = true;
+        						insolidBlock = true;
         					}
-        					insolidBlock = true;
         				}
         			}
+        			mc.playerController.hitVecOverride = null;
         		}
-        		mc.playerController.hitVecOverride = null;
         	}
-
+        	
             if ((!inAnEntity && !insolidBlock ) || lastWeaponEndAir[c].lengthVector() ==0)
         	{
         		this.lastWeaponEndAir[c] = new Vec3d(

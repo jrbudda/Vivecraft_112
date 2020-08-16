@@ -9,6 +9,7 @@ import org.vivecraft.settings.VRSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.optifine.Lang;
 
 public class GuiOtherHUDSettings extends BaseGuiSettings
 {
@@ -29,7 +30,7 @@ public class GuiOtherHUDSettings extends BaseGuiSettings
 
     public GuiOtherHUDSettings(GuiScreen guiScreen, VRSettings guivrSettings) {
         super( guiScreen, guivrSettings );
-        screenTitle = "Chat/Crosshair Settings";
+        screenTitle = "vivecraft.options.screen.guiother";
     }
 
     /**
@@ -38,8 +39,8 @@ public class GuiOtherHUDSettings extends BaseGuiSettings
     public void initGui()
     {
         this.buttonList.clear();
-        this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, "Reset To Defaults"));
-        this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, "Done"));
+        this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, Lang.get("vivecraft.gui.loaddefaults")));
+        this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, Lang.get("gui.done")));
         
         VRSettings.VrOptions[] buttons = hudOptions;
 
@@ -111,77 +112,5 @@ public class GuiOtherHUDSettings extends BaseGuiSettings
                 par1GuiButton.displayString = this.guivrSettings.getKeyBinding(VRSettings.VrOptions.getEnumOptions(par1GuiButton.id));
             }
         }
-    }
-
-    @Override
-    protected String[] getTooltipLines(String displayString, int buttonId)
-    {
-        VRSettings.VrOptions e = VRSettings.VrOptions.getEnumOptions(buttonId);
-        if( e != null )
-            switch(e)
-            {
-            case RENDER_CROSSHAIR_MODE:
-                return new String[] {
-                        "Set the in-game crosshair display mode",
-                        "  Always:   The crosshair is always shown even if the",
-                        "            HUD is disabled",
-                        "  With HUD: The crosshair is only shown when the HUD",
-                        "            is enabled",
-                        "  Never:    The crosshair is never shown"
-                };
-            case CROSSHAIR_SCALE:
-                return new String[] {
-                        "Sets the size of the in-game crosshair"
-                };
-            case MENU_CROSSHAIR_SCALE:
-                return new String[] {
-                        "Sets the size of the menu crosshair"
-                };
-            case RENDER_BLOCK_OUTLINE_MODE:
-                return new String[] {
-                        "Sets the in-game block outline display mode.",
-                        "  Always:   The block outline is always shown even if",
-                        "            the HUD is disabled",
-                        "  With HUD: The block outline is only shown when the",
-                        "            HUD is enabled",
-                        "  Never:    The block outline is never shown"
-                };
-            case CROSSHAIR_ROLL:
-                return new String[] {
-                        "Sets the crosshair roll behaviour.",
-                        "  With Head: The crosshair rolls with your head.",
-                        "  With HUD:  The crosshair appears to roll, keeping",
-                        "             the same orientation as the HUD."
-                };
-            case CROSSHAIR_SCALES_WITH_DISTANCE:
-                return new String[] {
-                        "Determines how the crosshair changes with distance.",
-                        "  ON:   The crosshair will grow larger in the distance to",
-                        "   remain the same apparent size from your viewpoint.",
-                        "  OFF: The crosshair will always be the same size",
-                        "   in the world and appear to shrink with distance."
-                };
-            case CHAT_FADE_AWAY:
-                return new String[] {
-                        "Sets the chat persistence mode.",
-                        "  Fades: The chat entries fade away with time.",
-                        "  Stays: A number of the latest chat lines will always",
-                        "         be visible."
-                };
-            default:
-                return null;
-            }
-        else
-            switch(buttonId)
-            {
-//                case 201:
-//                    return new String[] {
-//                            "Open this configuration screen to adjust the Head",
-//                            "  Tracker orientation (direction) settings. ",
-//                            "  Ex: Head Tracking Selection (Hydra/Oculus), Prediction"
-//                    };
-            default:
-                return null;
-            }
     }
 }

@@ -102,13 +102,13 @@ public class MenuWorldRenderer {
 			} else {
 				System.out.println("Failed to load any main menu world, falling back to old menu room");
 			}
-		} catch (Exception e) {
-			System.out.println("Exception thrown when loading main menu world, falling back to old menu room");
-			e.printStackTrace();
-			destroy();
-			setWorld(null);
-		} catch (OutOfMemoryError e) { // Only effective way of preventing crash on poop computers with low heap size
-			System.out.println("OutOfMemoryError while loading main menu world. Low heap size or 32-bit Java?");
+		} catch (Throwable e) {
+			if (e instanceof OutOfMemoryError || e.getCause() instanceof OutOfMemoryError) {
+				System.out.println("OutOfMemoryError while loading main menu world. Low heap size or 32-bit Java?");
+			} else {
+				System.out.println("Exception thrown when loading main menu world, falling back to old menu room");
+				e.printStackTrace();
+			}
 			destroy();
 			setWorld(null);
 		}

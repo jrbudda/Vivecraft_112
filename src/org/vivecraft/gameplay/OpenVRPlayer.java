@@ -587,12 +587,12 @@ tracker.idleTick(mc.player);
 
 		if((entity.isSprinting() && entity.movementInput.jump) || entity.isElytraFlying() || (entity.isRiding() && entity.moveForward > 0)){
 			//us needed for server side movement.
-			if(mc.vrSettings.vrFreeMoveMode == mc.vrSettings.FREEMOVE_HMD ){
-				entity.rotationYawHead = entity.rotationYaw = data.hmd.getYaw();
-				entity.rotationPitch = -data.hmd.getPitch();
-			}else{
-				entity.rotationYawHead = entity.rotationYaw = data.getController(1).getYaw();
+			if(mc.vrSettings.vrFreeMoveMode == mc.vrSettings.FREEMOVE_CONTROLLER ){
+				entity.rotationYaw = data.getController(1).getYaw();
 				entity.rotationPitch = -data.getController(1).getPitch();
+			}else{
+				entity.rotationYaw = data.hmd.getYaw();
+				entity.rotationPitch = -data.hmd.getPitch();
 			}
 		} else if(i.getItem() == Items.SNOWBALL ||
 				i.getItem() == Items.EGG  ||

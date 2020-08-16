@@ -3,6 +3,7 @@ package org.vivecraft.gui.framework;
 import org.vivecraft.settings.VRSettings;
 
 import net.minecraft.client.Minecraft;
+import net.optifine.Lang;
 
 public class VROption
 {
@@ -77,7 +78,7 @@ public class VROption
                 return Minecraft.getMinecraft().vrSettings.getKeyBinding(_e);
         }
 
-        return _title;
+        return Lang.get(_title);
     }
 
     public int getOrdinal()

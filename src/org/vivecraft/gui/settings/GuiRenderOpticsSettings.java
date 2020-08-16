@@ -16,6 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.settings.GameSettings;
+import net.optifine.Lang;
 import org.lwjgl.util.Color;
 
 public class GuiRenderOpticsSettings  extends BaseGuiSettings implements GuiEventEx
@@ -64,7 +65,7 @@ public class GuiRenderOpticsSettings  extends BaseGuiSettings implements GuiEven
     public GuiRenderOpticsSettings(GuiScreen par1GuiScreen, VRSettings par2vrSettings, GameSettings gameSettings)
     {
     	super( par1GuiScreen, par2vrSettings);
-        screenTitle = "Stereo Renderer Settings";
+        screenTitle = "vivecraft.options.screen.stereorendering";
         settings = gameSettings;
         this.vrSettings = par2vrSettings;
         this.mc = Minecraft.getMinecraft();
@@ -79,8 +80,8 @@ public class GuiRenderOpticsSettings  extends BaseGuiSettings implements GuiEven
 
     	// this.screenTitle = var1.translateKey("options.videoTitle");
     	this.buttonList.clear();
-    	this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, "Reset To Defaults"));
-    	this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, "Done"));
+    	this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, Lang.get("vivecraft.gui.loaddefaults")));
+    	this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, Lang.get("gui.done")));
 
 		{
 			VRSettings.VrOptions[] buttons = new VRSettings.VrOptions[openVRDisplayOptions.length];
@@ -218,11 +219,6 @@ public class GuiRenderOpticsSettings  extends BaseGuiSettings implements GuiEven
                // selectOption = new GuiSelectOption(this, this.guivrSettings, "Select StereoProvider", "Select the render provider:", pluginModeChangeButton.getPluginNames());
                 this.mc.displayGuiScreen(selectOption);
             }
-            else if (par1GuiButton.id == VRSettings.VrOptions.OTHER_RENDER_SETTINGS.returnEnumOrdinal())
-            {
-                Minecraft.getMinecraft().vrSettings.saveOptions();
-                this.mc.displayGuiScreen(new GuiOtherRenderOpticsSettings(this, this.guivrSettings));
-            }
             else if (par1GuiButton instanceof GuiSmallButtonEx)
             {
                 this.guivrSettings.setOptionValue(((GuiSmallButtonEx)par1GuiButton).returnVrEnumOptions(), 1);
@@ -306,108 +302,8 @@ public class GuiRenderOpticsSettings  extends BaseGuiSettings implements GuiEven
         return success;
     }
 
-    @Override
-    protected String[] getTooltipLines(String displayString, int buttonId)
-    {
-        VRSettings.VrOptions e = VRSettings.VrOptions.getEnumOptions(buttonId);
-    	if( e != null )
-    	switch(e)
-    	{
-	        case FSAA:
-	            return new String[] {
-	                    "Uses a fancier method of resampling the",
-	                    "game before sending it to the HMD. Works best",
-	                    "at high render scales. "};
-
-            case RENDER_SCALEFACTOR:
-                return new String[] {
-                        "The internal rendering scale of the game, relative",
-                        "to the native HMD display. Higher values improve visual",
-                        "quality, espeically with FSAA on, at the cost of performance"
-                };
-            case MIRROR_DISPLAY:
-                return new String[] {
-                        "Mirrors image on HMD to separate desktop window.",
-                        "Can be set to OFF, cropped, single or dual hmd-view, ",
-                        "first-person undistorted, third person undistorted",
-                        "and Mixed Reality. The undistorted and MR views have",
-                        "a performance cost"
-                };
-			case MIRROR_EYE:
-				return new String[] {
-						"Which eye to use in cropped and single modes."
-				};
-            case MIXED_REALITY_KEY_COLOR:
-                return new String[] {
-                        "The color drawn to the \"transparent\" areas of the",
-                        "mixed reality view. Other colors in-game will be",
-                        "prevented from matching this so it doesn't cause",
-                        "weirdness."
-                };
-            case MIXED_REALITY_RENDER_HANDS:
-                return new String[] {
-                        "Render hands on the mixed reality view. Only",
-                        "toggles rendering of the actual hand models, items",
-                        "will still be rendered."
-                };
-            case MIXED_REALITY_UNITY_LIKE:
-                return new String[] {
-                        "Choose between Unity-style 4-pane layout, or 2-pane",
-                        "side by side"
-                };
-            case MIXED_REALITY_UNDISTORTED:
-                return new String[] {
-                        "Include an undistorted view in 4-pane layout Requires",
-                        "an extra render pass. Otherwise the HMD view will be used."
-                };
-            case MIXED_REALITY_ALPHA_MASK:
-                return new String[] {
-                        "In Unity layout, if yes, will draw a grayscale alpha mask",
-                        "to the upper-right quadrant (like Unity) for use in",
-                        "maskingthe foreground layer. Otherwise, foreground will",
-                        "be drawn with key color for use with color key effect."
-                };
-            case MIXED_REALITY_FOV:
-                return new String[] {
-                		"The FOV used for the mixed reality mirror mode."
-                };
-            case INSIDE_BLOCK_SOLID_COLOR:
-                return new String[] {
-                        "Whether to render the block texture or a solid",
-                        "color when eye is inside of a block."
-                };
-            case MONO_FOV:
-                return new String[] {
-                        "The FOV used for the undistorted mirror mode."
-                };
-            case OTHER_RENDER_SETTINGS:
-                return new String[] {
-                        "Configure IPD and FOV border settings."
-                };
-            case STENCIL_ON:
-                return new String[] {
-                        "Mask out areas of the screen outside the FOV.",
-                        "Improves performance."
-                };
-    	default:
-    		return null;
-    	}
-    	else
-    	switch(buttonId)
-    	{
-	    	case ID_GENERIC_DEFAULTS:
-	    		return new String[] {
-	    			"Resets all values on this screen to their defaults"
-	    		};
-    		default:
-    			return null;
-    	}
-    }
-
     private boolean getEnabledState(VRSettings.VrOptions var8)
     {
-        String s = var8.getEnumString();
-
         return true;
     }
 }

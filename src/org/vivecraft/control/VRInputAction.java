@@ -32,7 +32,7 @@ public class VRInputAction {
 	public final VRInputActionSet actionSet;
 
 	private int priority = 0;
-	private boolean enabled = true;
+	private boolean[] enabled = new boolean[ControllerType.values().length];
 	private List<KeyListener> listeners = new ArrayList<>();
 	private ControllerType currentHand = ControllerType.RIGHT;
 
@@ -51,6 +51,7 @@ public class VRInputAction {
 		this.name = this.actionSet.name + "/in/" + keyBinding.getKeyDescription().replace('/', '_');
 
 		for (int i = 0; i < ControllerType.values().length; i++) {
+			enabled[i] = true;
 			digitalData[i] = new InputDigitalActionData_t.ByReference();
 			digitalData[i].setAutoRead(false);
 			digitalData[i].setAutoWrite(false);
@@ -246,17 +247,21 @@ public class VRInputAction {
 		return this;
 	}
 
+	/**
+	 * If this is a handed binding, applies to the hand from {@link VRInputAction#setCurrentHand(ControllerType)}
+	 */
 	public boolean isEnabled() {
-		if (!enabled) return false;
+		if (!isEnabledRaw(currentHand)) return false;
 
 		long lastOrigin = this.getLastOrigin();
+		ControllerType hand = MCOpenVR.getOriginControllerType(lastOrigin);
+		if (hand == null)
+			return false;
+
 		for (VRInputAction action : MCOpenVR.getInputActions()) {
-			if (action != this && action.enabled && action.isActive() && action.getPriority() > this.getPriority() && action.getOrigins().contains(lastOrigin)) {
-				if (action.isHanded()) {
-					ControllerType hand = MCOpenVR.getOriginControllerType(lastOrigin);
-					if (hand != null)
+			if (action != this && action.isEnabledRaw(hand) && action.isActive() && action.getPriority() > this.getPriority() && action.getOrigins().contains(lastOrigin)) {
+				if (action.isHanded())
 						return !((HandedKeyBinding)action.keyBinding).isPriorityOnController(hand);
-				}
 				return false;
 			}
 		}
@@ -264,12 +269,31 @@ public class VRInputAction {
 		return true;
 	}
 
+	public boolean isEnabledRaw(ControllerType hand) {
+		if (isHanded())
+			return enabled[hand.ordinal()];
+		else
+			return enabled[0];
+	}
+
 	public boolean isEnabledRaw() {
-		return enabled;
+		return Arrays.stream(ControllerType.values()).anyMatch(this::isEnabledRaw);
+	}
+
+	public VRInputAction setEnabled(ControllerType hand, boolean enabled) {
+		if (!isHanded())
+			throw new IllegalStateException("Not a handed key binding!");
+		this.enabled[hand.ordinal()] = enabled;
+		return this;
 	}
 
 	public VRInputAction setEnabled(boolean enabled) {
-		this.enabled = enabled;
+		if (isHanded()) {
+			for (ControllerType hand : ControllerType.values())
+				this.enabled[hand.ordinal()] = enabled;
+		} else {
+			this.enabled[0] = enabled;
+		}
 		return this;
 	}
 

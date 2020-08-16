@@ -4,10 +4,21 @@
  */
 package org.vivecraft.gui.framework;
 
-import org.vivecraft.settings.VRSettings;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
+import org.vivecraft.settings.VRSettings;
+import org.vivecraft.utils.Utils;
+
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
+import net.optifine.Lang;
 
 public class BaseGuiSettings extends GuiScreen
 {
@@ -65,7 +76,7 @@ public class BaseGuiSettings extends GuiScreen
 
         if( drawBackground)
         	this.drawDefaultBackground();
-        this.drawCenteredString(this.fontRenderer, this.screenTitle, this.width / 2, 15, 16777215);
+        this.drawCenteredString(this.fontRenderer, Lang.get(this.screenTitle), this.width / 2, 15, 16777215);
         super.drawScreen(par1, par2, par3);
 
         if (Math.abs(par1 - this.lastMouseX) <= 5 && Math.abs(par2 - this.lastMouseY) <= 5)
@@ -89,7 +100,7 @@ public class BaseGuiSettings extends GuiScreen
                 if (var9 != null)
                 {
                     String var10 = this.getButtonName(var9.displayString);
-                    String[] var11 = this.getTooltipLines(var10, var9.id);
+                    String[] var11 = this.getTooltipLines(var9.id, var7 - var5 - 10);
 
                     if (var11 == null)
                     {
@@ -114,9 +125,51 @@ public class BaseGuiSettings extends GuiScreen
         }
     }
 
-    protected String[] getTooltipLines(String displayString, int buttonId )
+    protected final String[] getTooltipLines(int buttonId, int boxWidth)
     {
-        return null;
+        VRSettings.VrOptions option = VRSettings.VrOptions.getEnumOptions(buttonId);
+        if (option == null)
+            return null;
+
+        String key = "vivecraft.options." + option.name() + ".tooltip";
+        String str = Lang.get(key, null);
+
+        if (str == null)
+            return null;
+
+        String[] lines = str.split("\\r?\\n", -1);
+
+        List<String> newLines = new ArrayList<>();
+        for (String line : lines) {
+            if (line.isEmpty()) {
+                newLines.add(line);
+                continue;
+            }
+
+            int spaceCount = line.indexOf(line.trim().charAt(0));
+            String spaces = String.join("", Collections.nCopies(spaceCount, " "));
+            List<ITextComponent> list = Utils.wrapText(new TextComponentString(line), boxWidth, Minecraft.getMinecraft().fontRenderer, true, spaces);
+
+            StringBuilder style = new StringBuilder();
+            for (ITextComponent text : list) {
+                newLines.add(style.toString() + text.getUnformattedText());
+
+                String s = text.getUnformattedText();
+                for (int i = 0; i < s.length(); i++) {
+                    if (s.charAt(i) == '\u00a7') {
+                        if (i + 1 >= s.length())
+                            break;
+
+                        char c = s.charAt(i + 1);
+                        style.append('\u00a7').append(c);
+
+                        i++;
+                    }
+                }
+            }
+        }
+
+        return newLines.toArray(new String[0]);
     }
 
     protected String getButtonName(String var1)

@@ -13,6 +13,7 @@ import org.vivecraft.settings.VRSettings;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
+import net.optifine.Lang;
 
 
 public class GuiQuickCommandEditor extends BaseGuiSettings {
@@ -21,7 +22,7 @@ public class GuiQuickCommandEditor extends BaseGuiSettings {
 	
 	public GuiQuickCommandEditor(GuiScreen par1GuiScreen, VRSettings par2vrSettings) {
 		super(par1GuiScreen, par2vrSettings);
-        screenTitle = "Quick Commands";
+        screenTitle = "vivecraft.options.screen.quickcommands";
 	}
 
     /**
@@ -44,8 +45,8 @@ public class GuiQuickCommandEditor extends BaseGuiSettings {
     public void initGui() {
     	this.guiList = new GuiQuickCommandsList(this, mc);
         this.buttonList.clear();
-        this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, "Reset To Defaults"));
-        this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, "Done"));
+        this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, Lang.get("vivecraft.gui.loaddefaults")));
+        this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, Lang.get("gui.done")));
     }
 
     /**

@@ -664,8 +664,7 @@
 +    public void setupCameraTransform(float partialTicks, int pass, boolean isClouds)
      {
 -        this.farPlaneDistance = (float)(this.mc.gameSettings.renderDistanceChunks * 16);
-+		/** MINECRIFT */
- 
+-
 -        if (Config.isFogFancy())
 -        {
 -            this.farPlaneDistance *= 0.95F;
@@ -691,7 +690,8 @@
 -        {
 -            this.clipDistance = 173.0F;
 -        }
--
++		/** MINECRIFT */
+ 
 -        if (this.cameraZoom != 1.0D)
 -        {
 -            GlStateManager.translate((float)this.cameraYaw, (float)(-this.cameraPitch), 0.0F);
@@ -1020,7 +1020,8 @@
 -    {
 -        this.frameInit();
 -        boolean flag = Display.isActive();
--
++    {// called each eye
+ 
 -        if (!flag && this.mc.gameSettings.pauseOnLostFocus && (!this.mc.gameSettings.touchscreen || !Mouse.isButtonDown(1)))
 -        {
 -            if (Minecraft.getSystemTime() - this.prevFrameTime > 500L)
@@ -1034,7 +1035,9 @@
 -        }
 -
 -        this.mc.mcProfiler.startSection("mouse");
--
++    	if(mc.currentPass == RenderPass.LEFT) //contains all the stuff that was in this method that only needs to be called once per frame.
++    		updateCameraAndRender_OnePass(partialTicks);
+ 
 -        if (flag && Minecraft.IS_RUNNING_ON_MAC && this.mc.inGameHasFocus && !Mouse.isInsideWindow())
 -        {
 -            Mouse.setGrabbed(false);
@@ -1051,15 +1054,12 @@
 -            float f2 = (float)this.mc.mouseHelper.deltaX * f1;
 -            float f3 = (float)this.mc.mouseHelper.deltaY * f1;
 -            int i = 1;
-+    {// called each eye
- 
+-
 -            if (this.mc.gameSettings.invertMouse)
 -            {
 -                i = -1;
 -            }
-+    	if(mc.currentPass == RenderPass.LEFT) //contains all the stuff that was in this method that only needs to be called once per frame.
-+    		updateCameraAndRender_OnePass(partialTicks);
- 
+-
 -            if (this.mc.gameSettings.smoothCamera)
 -            {
 -                this.smoothCamYaw += f2;
@@ -1075,6 +1075,32 @@
 -                this.smoothCamYaw = 0.0F;
 -                this.smoothCamPitch = 0.0F;
 -                this.mc.player.turn(f2, f3 * (float)i);
+-            }
+-        }
+-
+-        this.mc.mcProfiler.endSection();
+-
+-        if (!this.mc.skipRenderWorld)
+-        {
+-            anaglyphEnable = this.mc.gameSettings.anaglyph;
+-            final ScaledResolution scaledresolution = new ScaledResolution(this.mc);
+-            int i1 = scaledresolution.getScaledWidth();
+-            int j1 = scaledresolution.getScaledHeight();
+-            final int k1 = Mouse.getX() * i1 / this.mc.displayWidth;
+-            final int l1 = j1 - Mouse.getY() * j1 / this.mc.displayHeight - 1;
+-            int i2 = this.mc.gameSettings.limitFramerate;
+-
+-            if (this.mc.world == null)
+-            {
+-                GlStateManager.viewport(0, 0, this.mc.displayWidth, this.mc.displayHeight);
+-                GlStateManager.matrixMode(5889);
+-                GlStateManager.loadIdentity();
+-                GlStateManager.matrixMode(5888);
+-                GlStateManager.loadIdentity();
+-                this.setupOverlayRendering();
+-                this.renderEndNanoTime = System.nanoTime();
+-                TileEntityRendererDispatcher.instance.renderEngine = this.mc.getTextureManager();
+-                TileEntityRendererDispatcher.instance.fontRenderer = this.mc.fontRenderer;
 +    	if (!this.mc.skipRenderWorld)
 +    	{//RENDER WORLD
 +    		/** MINECRIFT */
@@ -1161,38 +1187,6 @@
 +                else
 +                    render2D(partialTicks, KeyboardHandler.Framebuffer, KeyboardHandler.Pos_room, KeyboardHandler.Rotation_room);
              }
--        }
- 
--        this.mc.mcProfiler.endSection();
-+    		if( mc.currentPass != RenderPass.THIRD || mc.vrSettings.mixedRealityRenderHands){
-+    			// VIVE START - render controllers in main menu
-+    			this.mc.mcProfiler.startSection("mainMenuHands");
-+    			renderMainMenuHands(partialTicks);
-+    			this.mc.mcProfiler.endSection();
-+    		}
- 
--        if (!this.mc.skipRenderWorld)
--        {
--            anaglyphEnable = this.mc.gameSettings.anaglyph;
--            final ScaledResolution scaledresolution = new ScaledResolution(this.mc);
--            int i1 = scaledresolution.getScaledWidth();
--            int j1 = scaledresolution.getScaledHeight();
--            final int k1 = Mouse.getX() * i1 / this.mc.displayWidth;
--            final int l1 = j1 - Mouse.getY() * j1 / this.mc.displayHeight - 1;
--            int i2 = this.mc.gameSettings.limitFramerate;
--
--            if (this.mc.world == null)
--            {
--                GlStateManager.viewport(0, 0, this.mc.displayWidth, this.mc.displayHeight);
--                GlStateManager.matrixMode(5889);
--                GlStateManager.loadIdentity();
--                GlStateManager.matrixMode(5888);
--                GlStateManager.loadIdentity();
--                this.setupOverlayRendering();
--                this.renderEndNanoTime = System.nanoTime();
--                TileEntityRendererDispatcher.instance.renderEngine = this.mc.getTextureManager();
--                TileEntityRendererDispatcher.instance.fontRenderer = this.mc.fontRenderer;
--            }
 -            else
 -            {
 -                this.mc.mcProfiler.startSection("level");
@@ -1201,26 +1195,21 @@
 -                long k = System.nanoTime() - nanoTime;
 -                long l = Math.max((long)(1000000000 / j / 4) - k, 0L);
 -                this.renderWorld(partialTicks, System.nanoTime() + l);
-+    		this.mc.mcProfiler.endSection();
-+    	}
- 
+-
 -                if (this.mc.isSingleplayer() && this.timeWorldIcon < Minecraft.getSystemTime() - 1000L)
 -                {
 -                    this.timeWorldIcon = Minecraft.getSystemTime();
- 
+-
 -                    if (!this.mc.getIntegratedServer().isWorldIconSet())
 -                    {
 -                        this.createWorldIcon();
 -                    }
 -                }
-+    	// Minecrift - handle notification text
-+    	handleNotificationText();
- 
+-
 -                if (OpenGlHelper.shadersSupported)
 -                {
 -                    this.mc.renderGlobal.renderEntityOutlineFramebuffer();
-+    	this.renderEndNanoTime = System.nanoTime();
- 
+-
 -                    if (this.shaderGroup != null && this.useShader)
 -                    {
 -                        GlStateManager.matrixMode(5890);
@@ -1235,7 +1224,7 @@
 -
 -                this.renderEndNanoTime = System.nanoTime();
 -                this.mc.mcProfiler.endStartSection("gui");
--
+ 
 -                if (!this.mc.gameSettings.hideGUI || this.mc.currentScreen != null)
 -                {
 -                    GlStateManager.alphaFunc(516, 0.1F);
@@ -1247,16 +1236,24 @@
 -                    {
 -                        Config.drawFps();
 -                    }
--
++    		if( mc.currentPass != RenderPass.THIRD || mc.vrSettings.mixedRealityRenderHands){
++    			// VIVE START - render controllers in main menu
++    			this.mc.mcProfiler.startSection("mainMenuHands");
++    			renderMainMenuHands(partialTicks);
++    			this.mc.mcProfiler.endSection();
++    		}
+ 
 -                    if (this.mc.gameSettings.showDebugInfo)
 -                    {
 -                        Lagometer.showLagometer(scaledresolution);
 -                    }
 -                }
--
++    		this.mc.mcProfiler.endSection();
++    	}
+ 
 -                this.mc.mcProfiler.endSection();
 -            }
--
+ 
 -            if (this.mc.currentScreen != null)
 -            {
 -                GlStateManager.clear(256);
@@ -1301,11 +1298,14 @@
 -                }
 -            }
 -        }
--
++    	// Minecrift - handle notification text
++    	handleNotificationText();
+ 
 -        this.frameFinish();
 -        this.waitForServerThread();
 -        Lagometer.updateLagometer();
--
++    	this.renderEndNanoTime = System.nanoTime();
+ 
 -        if (this.mc.gameSettings.ofProfiler)
 -        {
 -            this.mc.gameSettings.showDebugProfilerChart = true;
@@ -1461,14 +1461,12 @@
          this.mc.mcProfiler.endStartSection("camera");
 +        
          this.setupCameraTransform(partialTicks, pass);
-+		    applyCameraDepth(false); //neat
- 
+-
 -        if (flag)
-+	        if (shadersMod)
-         {
-             Shaders.setCamera(partialTicks);
-         }
- 
+-        {
+-            Shaders.setCamera(partialTicks);
+-        }
+-
 -        if (Reflector.ActiveRenderInfo_updateRenderInfo2.exists())
 -        {
 -            Reflector.call(Reflector.ActiveRenderInfo_updateRenderInfo2, this.mc.getRenderViewEntity(), this.mc.gameSettings.thirdPersonView == 2);
@@ -1477,6 +1475,13 @@
 -        {
 -            ActiveRenderInfo.updateRenderInfo(this.mc.player, this.mc.gameSettings.thirdPersonView == 2);
 -        }
++	        applyCameraDepth(false); //neat
++	
++	        if (shadersMod)
++	        {
++	        	Shaders.setCamera(partialTicks);
++	        }
++
 +//			/** MINECRIFT */ // Save our projection and modelview matrices ---- why...
 +//			GL11.glMatrixMode(GL11.GL_PROJECTION);
 +//			GL11.glPushMatrix();
@@ -1575,7 +1580,7 @@
  
 -        if (entity.posY + (double)entity.getEyeHeight() < 128.0D + (double)(this.mc.gameSettings.ofCloudsHeight * 128.0F))
 +	        //VIVE NO EYE HEIGHT
-+	        if (entity.posY < 128.0D + (double)(this.mc.gameSettings.ofCloudsHeight * 128.0F))
++        if (entity.posY < 128.0D + (double)(this.mc.gameSettings.ofCloudsHeight * 128.0F))
          {
              this.renderCloudsCheck(renderglobal, partialTicks, pass, d0, d1, d2);
          }
@@ -1654,7 +1659,7 @@
          {
              ShadersRender.endTerrain();
          }
-@@ -1750,40 +1916,36 @@
+@@ -1750,75 +1916,130 @@
          GlStateManager.shadeModel(7424);
          GlStateManager.alphaFunc(516, 0.1F);
  
@@ -1687,34 +1692,52 @@
 -            RenderHelper.disableStandardItemLighting();
 -            this.disableLightmap();
 -        }
- 
+-
 -        GlStateManager.matrixMode(5888);
 -        GlStateManager.popMatrix();
++            
 +        this.mc.mcProfiler.endStartSection("outline");
-+	   
-+        	boolean renderOutline = this.isDrawBlockOutline();
  
 -        if (flag1 && this.mc.objectMouseOver != null && !entity.isInsideOfMaterial(Material.WATER))
-+	        if (renderOutline && this.mc.objectMouseOver != null && !itemRenderer.isInsideOfMaterial(mc.vrPlayer.vrdata_world_render.getEye(mc.currentPass).getPosition(), Material.WATER))
-         {
-             EntityPlayer entityplayer = (EntityPlayer)entity;
-             GlStateManager.disableAlpha();
+-        {
+-            EntityPlayer entityplayer = (EntityPlayer)entity;
+-            GlStateManager.disableAlpha();
 -            this.mc.mcProfiler.endStartSection("outline");
- 
+-
 -            if (!Reflector.ForgeHooksClient_onDrawBlockHighlight.exists() || !Reflector.callBoolean(Reflector.ForgeHooksClient_onDrawBlockHighlight, renderglobal, entityplayer, this.mc.objectMouseOver, Integer.valueOf(0), partialTicks))
-+	            if (!Reflector.ForgeHooksClient_onDrawBlockHighlight.exists() || !Reflector.callBoolean(Reflector.ForgeHooksClient_onDrawBlockHighlight, new Object[] {renderglobal, entityplayer, this.mc.objectMouseOver, Integer.valueOf(0), Float.valueOf(partialTicks)}))
-             {
-                 renderglobal.drawSelectionBox(entityplayer, this.mc.objectMouseOver, 0, partialTicks);
-             }
-@@ -1793,32 +1955,91 @@
- 
-         if (this.mc.debugRenderer.shouldRender())
-         {
+-            {
+-                renderglobal.drawSelectionBox(entityplayer, this.mc.objectMouseOver, 0, partialTicks);
+-            }
+-
+-            GlStateManager.enableAlpha();
+-        }
+-
+-        if (this.mc.debugRenderer.shouldRender())
+-        {
 -            boolean flag2 = GlStateManager.isFogEnabled();
 -            GlStateManager.disableFog();
-             this.mc.debugRenderer.renderDebug(partialTicks, finishTimeNano);
+-            this.mc.debugRenderer.renderDebug(partialTicks, finishTimeNano);
 -            GlStateManager.setFogEnabled(flag2);
-         }
+-        }
++        	boolean renderOutline = this.isDrawBlockOutline();
++            
++            if (renderOutline && this.mc.objectMouseOver != null && !entity.isInsideOfMaterial(Material.WATER))
++        	{
++        		EntityPlayer entityplayer = (EntityPlayer)entity;
++        		GlStateManager.disableAlpha();
++
++        		if (!Reflector.ForgeHooksClient_onDrawBlockHighlight.exists() || !Reflector.callBoolean(Reflector.ForgeHooksClient_onDrawBlockHighlight, new Object[] {renderglobal, entityplayer, this.mc.objectMouseOver, Integer.valueOf(0), Float.valueOf(partialTicks)}))
++        		{
++        			renderglobal.drawSelectionBox(entityplayer, this.mc.objectMouseOver, 0, partialTicks);
++        		}
++
++        		GlStateManager.enableAlpha();
++        	}
++
++        	if (this.mc.debugRenderer.shouldRender())
++        	{
++        		this.mc.debugRenderer.renderDebug(partialTicks, finishTimeNano);
++        	}
  
 +        this.mc.mcProfiler.endStartSection("destroyProgress");
          if (!renderglobal.damagedBlocks.isEmpty())

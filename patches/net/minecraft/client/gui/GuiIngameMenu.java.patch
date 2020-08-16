@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/GuiIngameMenu.java
 +++ b/net/minecraft/client/gui/GuiIngameMenu.java
-@@ -1,11 +1,20 @@
+@@ -1,11 +1,21 @@
  package net.minecraft.client.gui;
  
  import java.io.IOException;
@@ -17,11 +17,12 @@
  import net.minecraft.client.resources.I18n;
 +import net.minecraft.client.settings.KeyBinding;
  import net.minecraft.realms.RealmsBridge;
++import net.optifine.Lang;
 +import net.optifine.reflect.Reflector;
  
  public class GuiIngameMenu extends GuiScreen
  {
-@@ -19,22 +28,41 @@
+@@ -19,22 +29,41 @@
      public void initGui()
      {
          this.saveStep = 0;
@@ -46,18 +47,18 @@
 -        this.buttonList.add(new GuiButton(6, this.width / 2 + 2, this.height / 4 + 48 + -16, 98, 20, I18n.format("gui.stats")));
 +     	this.buttonList.add(new GuiButton(4, this.width / 2 - 100, this.height / 4 + 24 + var1, I18n.format("menu.returnToGame", new Object[0])));
 +     	this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 96 + var1, 98, 20, I18n.format("menu.options", new Object[0])));
-+     	this.buttonList.add(new GuiButton(100, this.width / 2 -100, this.height / 4 + 72 + var1,98,20, "Chat"));
-+     	this.buttonList.add(new GuiButton(101, this.width / 2 + 2, this.height / 4 + 72 + var1, 98, 20, "Commands"));
-+       	this.buttonList.add(new GuiButton(102, this.width / 2 - 100,this.height / 4 + 120 + var1, 49, 20, "Overlay"));
-+       	this.buttonList.add(new GuiButton(103, this.width / 2 - 50,this.height / 4 + 120 + var1, 49, 20, "Profiler"));
-+       	this.buttonList.add(new GuiButton(104, this.width / 2 + 2,this.height / 4 + 120 + var1, 98,	 20, "Screenshot"));
++     	this.buttonList.add(new GuiButton(100, this.width / 2 -100, this.height / 4 + 72 + var1,98,20, Lang.get("vivecraft.gui.chat")));
++     	this.buttonList.add(new GuiButton(101, this.width / 2 + 2, this.height / 4 + 72 + var1, 98, 20, Lang.get("vivecraft.gui.commands")));
++       	this.buttonList.add(new GuiButton(102, this.width / 2 - 100,this.height / 4 + 120 + var1, 49, 20, Lang.get("vivecraft.gui.overlay")));
++       	this.buttonList.add(new GuiButton(103, this.width / 2 - 50,this.height / 4 + 120 + var1, 49, 20, Lang.get("vivecraft.gui.profiler")));
++       	this.buttonList.add(new GuiButton(104, this.width / 2 + 2,this.height / 4 + 120 + var1, 98,	 20, Lang.get("vivecraft.gui.screenshot")));
 +       //	this.buttonList.add(new GuiButton(999, this.width / 2 + 100,this.height / 4 + 72 + var1, 98,	 20, "DEMO MODE"));
 +  
 +       	if(Reflector.forgeExists()) //todo: test position.
-+      		this.buttonList.add(new GuiButton(12, this.width / 2 -50, this.height / 4 + 144 + var1, 98, 20, "Mod Options..."));
++      		this.buttonList.add(new GuiButton(12, this.width / 2 -50, this.height / 4 + 144 + var1, 98, 20, I18n.format("fml.menu.modoptions")));
 +      	 	
 +       	if(mc.vrSettings.seated == false)
-+       		this.buttonList.add(new GuiButton(105, this.width / 2 - 100, this.height / 4 + 144 + var1, "Calibrate Height"));
++       		this.buttonList.add(new GuiButton(105, this.width / 2 - 100, this.height / 4 + 144 + var1, Lang.get("vivecraft.gui.calibrateheight")));
 + 
 +     	GuiButton guibutton = this.addButton(new GuiButton(7, this.width / 2 + 2, this.height / 4 + 96 + var1, 98, 20, I18n.format("menu.shareToLan")));
 +     	guibutton.enabled = this.mc.isSingleplayer() && !this.mc.getIntegratedServer().getPublic();
@@ -65,12 +66,12 @@
 +     	this.buttonList.add(new GuiButton(6, this.width / 2 + 2, this.height / 4 + 48 + var1, 98, 20, I18n.format("gui.stats")));
 + 
 +     	if(Main.katvr)
-+           	this.buttonList.add(new GuiButton(106, this.width / 2 + 100,this.height / 4  + var1, 98, 20, "Align KAT WALK"));
++           	this.buttonList.add(new GuiButton(106, this.width / 2 + 100,this.height / 4  + var1, 98, 20, Lang.get("vivecraft.gui.alignkatwalk")));
 +     	
      }
  
      /**
-@@ -71,24 +99,66 @@
+@@ -71,24 +100,66 @@
  
              case 2:
              case 3:

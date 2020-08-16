@@ -17,6 +17,7 @@ import org.vivecraft.utils.HardwareType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.optifine.Lang;
 
 public class GuiMenuWorldSettings extends BaseGuiSettings implements GuiEventEx
 {
@@ -28,7 +29,7 @@ public class GuiMenuWorldSettings extends BaseGuiSettings implements GuiEventEx
     
     public GuiMenuWorldSettings(GuiScreen guiScreen, VRSettings guivrSettings) {
         super( guiScreen, guivrSettings );
-        screenTitle = "Menu World Settings";
+        screenTitle = "vivecraft.options.screen.menuworld";
     }
 
     /**
@@ -37,12 +38,12 @@ public class GuiMenuWorldSettings extends BaseGuiSettings implements GuiEventEx
     public void initGui()
     {
         this.buttonList.clear();
-        this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, "Reset To Defaults"));
-        this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, "Done"));
+        this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, Lang.get("vivecraft.gui.loaddefaults")));
+        this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, Lang.get("gui.done")));
         VRSettings.VrOptions[] buttons = miscSettings;
         addButtons(buttons,0);
-		this.buttonList.add(new GuiButtonEx(301, this.width / 2 - 155 , 60,150,20, "Refresh Menu World"));
-		this.buttonList.add(new GuiButtonEx(300, this.width / 2 + 5 , 60 ,150,20, "Load New Menu World"));
+		this.buttonList.add(new GuiButtonEx(301, this.width / 2 - 155 , 60,150,20, Lang.get("vivecraft.gui.menuworld.refresh")));
+		this.buttonList.add(new GuiButtonEx(300, this.width / 2 + 5 , 60 ,150,20, Lang.get("vivecraft.gui.menuworld.loadnew")));
   
     }
 
@@ -132,7 +133,7 @@ public class GuiMenuWorldSettings extends BaseGuiSettings implements GuiEventEx
                     this.guivrSettings.setOptionValue(((GuiSmallButtonEx)par1GuiButton).returnVrEnumOptions(), 1);
                     par1GuiButton.displayString = this.guivrSettings.getKeyBinding(VRSettings.VrOptions.getEnumOptions(par1GuiButton.id));
                     
-                    if(num == VRSettings.VrOptions.MOVE_MODE || num == VRSettings.VrOptions.FREEMOVE_MODE){
+                    if(num == VRSettings.VrOptions.FREEMOVE_MODE){
                     	this.reinit = true;
                     }
     				if(num == VRSettings.VrOptions.LIMIT_TELEPORT){
@@ -152,37 +153,6 @@ public class GuiMenuWorldSettings extends BaseGuiSettings implements GuiEventEx
     @Override
     public boolean event(int id, String s) {
         return true;
-    }
-
-    @Override
-    protected String[] getTooltipLines(String displayString, int buttonId)
-    {
-        VRSettings.VrOptions e = VRSettings.VrOptions.getEnumOptions(buttonId);
-        if( e != null )
-            switch(e)
-            {
-                case MENU_WORLD_SELECTION:
-                    return new String[] {
-                            "Which menu worlds to load on startup.",
-                            "",
-                            "If no custom worlds are found, official worlds",
-                            "will be used regardless."
-                    } ;
-                default:
-                    return null;
-            }
-        else
-            switch(buttonId)
-            {
-//                case 201:
-//                    return new String[] {
-//                            "Open this configuration screen to adjust the Head",
-//                            "  Tracker orientation (direction) settings. ",
-//                            "  Ex: Head Tracking Selection (Hydra/Oculus), Prediction"
-//                    };
-                default:
-                    return null;
-            }
     }
     
 }

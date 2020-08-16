@@ -17,6 +17,7 @@ import org.vivecraft.utils.HardwareType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.optifine.Lang;
 
 public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
 {
@@ -33,7 +34,7 @@ public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
     
     public GuiStandingSettings(GuiScreen guiScreen, VRSettings guivrSettings) {
         super( guiScreen, guivrSettings );
-        screenTitle = "Standing Locomotion Settings";
+        screenTitle = "vivecraft.options.screen.standing";
     }
 
     /**
@@ -42,12 +43,12 @@ public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
     public void initGui()
     {
         this.buttonList.clear();
-        this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, "Reset To Defaults"));
-        this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, "Done"));
+        this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, Lang.get("vivecraft.gui.loaddefaults")));
+        this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, Lang.get("gui.done")));
         VRSettings.VrOptions[] buttons = locomotionSettings;
         addButtons(buttons,0);
-		this.buttonList.add(new GuiButtonEx(300, this.width / 2 - 155 , this.height / 6 + 102,150,20, "Free Move Settings..."));
-		this.buttonList.add(new GuiButtonEx(301, this.width / 2 + 5 , this.height / 6 + 102,150,20, "Teleport Settings..."));
+		this.buttonList.add(new GuiButtonEx(300, this.width / 2 - 155 , this.height / 6 + 102,150,20, Lang.get("vivecraft.options.screen.freemove.button")));
+		this.buttonList.add(new GuiButtonEx(301, this.width / 2 + 5 , this.height / 6 + 102,150,20, Lang.get("vivecraft.options.screen.teleport.button")));
   
     }
 
@@ -66,10 +67,6 @@ public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
                 extra += 5;
                 continue;
             }
-            
-            HardwareType hw = MCOpenVR.getHardwareType();
-            if (var8 == VRSettings.VrOptions.FREEMOVE_WMR_STICK) 
-            	if(!(hw.hasTouchpad && hw.hasStick)) continue;
            
             boolean show = true;
             
@@ -85,12 +82,6 @@ public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
                     maxValue = 1.3f;
                     increment = 0.01f;
                 }
-                if (var8 == VRSettings.VrOptions.STRAFE_MULTIPLIER)
-                {
-                    minValue = 0f;
-                    maxValue = 1.0f;
-                    increment = 0.01f;
-                }
                 else if (var8 == VRSettings.VrOptions.WALK_MULTIPLIER){
                     minValue=1f;
                     maxValue=10f;
@@ -101,11 +92,6 @@ public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
                     maxValue = 4f;
                     increment = 1f;
                 }
-                else if (var8 == VRSettings.VrOptions.ANALOG_DEADZONE) {
-                    minValue = 0f;
-                    maxValue = 0.5f;
-                    increment = 0.01f;
-                }              
                 if(show) {
                 	GuiSliderEx slider = new GuiSliderEx(var8.returnEnumOrdinal(), width, height - 20, var8, this.guivrSettings.getKeyBinding(var8), minValue, maxValue, increment, this.guivrSettings.getOptionFloatValue(var8));
                 	slider.setEventHandler(this);
@@ -181,7 +167,7 @@ public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
                     this.guivrSettings.setOptionValue(((GuiSmallButtonEx)par1GuiButton).returnVrEnumOptions(), 1);
                     par1GuiButton.displayString = this.guivrSettings.getKeyBinding(VRSettings.VrOptions.getEnumOptions(par1GuiButton.id));
                     
-                    if(num == VRSettings.VrOptions.MOVE_MODE || num == VRSettings.VrOptions.FREEMOVE_MODE){
+                    if(num == VRSettings.VrOptions.FREEMOVE_MODE){
                     	this.reinit = true;
                     }
     				if(num == VRSettings.VrOptions.LIMIT_TELEPORT){
@@ -201,132 +187,6 @@ public class GuiStandingSettings extends BaseGuiSettings implements GuiEventEx
     @Override
     public boolean event(int id, String s) {
         return true;
-    }
-
-    @Override
-    protected String[] getTooltipLines(String displayString, int buttonId)
-    {
-        VRSettings.VrOptions e = VRSettings.VrOptions.getEnumOptions(buttonId);
-        if( e != null )
-            switch(e)
-            {
-                case MOVEMENT_MULTIPLIER:
-                    return new String[] {
-                            "Sets a movement multiplier, allowing slower movement",
-                            "than default. This may help reduce locomotion induced",
-                            "simulator sickness.",
-                            "WARNING: May trigger anti-cheat warnings if on a",
-                            "Multiplayer server!!",
-                            "Defaults to standard Minecraft movement (1.0)",
-                            "speed)."
-                    } ;
-                case STRAFE_MULTIPLIER:
-                    return new String[] {
-                            "Sets an additional strafe (side-to-side) movement",
-                            "multiplier. This is applied on top of the movement",
-                            "multiplier. A value of zero will disable strafe.",
-                            "This may help reduce locomotion induced simulator",
-                            "sickness. WARNING: May trigger anti-cheat warnings",
-                            "if on a Multiplayer server!!",
-                            "Defaults to 0.33 (1.0 is standard Minecraft movement",
-                            "speed)."
-                    } ;
-                case WALK_UP_BLOCKS:
-                    return new String[] {
-                            "Allows you to set the ability to walk up blocks without",
-                            "having to jump. HOTKEY - RCtrl-B",
-                            "WARNING: May trigger anti-cheat warnings if on a",
-                            "Multiplayer server!!",
-                            "  OFF: (Default) You will have to jump up blocks.",
-                            "  ON:  You can walk up single blocks. May reduce",
-                            "       locomotion induced simulator sickness for some."
-                    } ;
-                case INERTIA_FACTOR:
-                    return new String[]{
-                            "Sets the player's movement inertia in single player",
-                            "mode. Lower inertia means faster acceleration, higher",
-                            "inertia slower accelaration. High inertia may reduce",
-                            "motion sickness for some, but beware of cliff edges!!",
-                            "  Normal: (Default) Standard Minecraft player",
-                            "           movement.",
-                            "  Automan < Normal < A lot < Even More. Does not",
-                            "  affect lava, water or jumping movement currently."
-                    };
-                // VIVE START - new options
-                case ALLOW_CRAWLING:
-                    return new String[] {
-                            "If enabled the player will be able to duck under block"
-                    } ;
-                case BCB_ON:
-                    return new String[] {
-                            "Shows your body position as a square shadow on the ground.",
-                            "This is your Square Shadow Buddy (tm).",
-                            "Do not lose your Square Shadow Buddy."
-                    };
-                case VEHICLE_ROTATION:
-                    return new String[] {
-                            "Riding in a vehicle will rotate the world",
-                            "as the vehicle rotates. May be disorienting."
-                            
-                    } ;
-                case FOV_REDUCTION:
-                    return new String[] {
-                            "Shrinks the field of view while moving. Can help with",
-                            "motion sickness."
-                    } ;
-                case WORLD_ROTATION_INCREMENT:
-                    return new String[] {
-                            "How many degrees to rotate when",
-                            "rotating the world. Move all the way left for Smooth."
-                            
-                    };
-                case ANALOG_MOVEMENT:
-                    return new String[] {
-                            "Walking speed will be determined by the controller button",
-                            "axis, if the bound button has a variable axis."    ,"",
-                            "For full analog control it is better to use 'Joy/Pad mode"                      
-                    };
-                case TELEPORT_DOWN_LIMIT:
-                    return new String[] {
-                            "Limit the number of blocks you can teleport below you"
-                    };
-                case TELEPORT_UP_LIMIT:
-                    return new String[] {
-                            "Limit the number of blocks you can teleport above you"
-                    };
-                case TELEPORT_HORIZ_LIMIT:
-                    return new String[] {
-                            "Limit the number of blocks you can teleport sideways you"
-                    };
-                case FORCE_STANDING_FREE_MOVE:
-                    return new String[] {
-            				"Forces the use of the fallback walk forwards",
-            				"binding (left trigger by default). For more movement",
-            				"options, edit the SteamVR controller bindings.",
-            				"",
-            				"Note that this disables the teleport binding."
-            				};
-                case ALLOW_STANDING_ORIGIN_OFFSET:
-                	return new String[]{
-                			"Allows the \"Reset Origin\" button to be used in",
-                			"standing mode, for those that wish to play physically",
-                			"seated while using tracked controllers."
-                	};
-                default:
-                    return null;
-            }
-        else
-            switch(buttonId)
-            {
-//                case 201:
-//                    return new String[] {
-//                            "Open this configuration screen to adjust the Head",
-//                            "  Tracker orientation (direction) settings. ",
-//                            "  Ex: Head Tracking Selection (Hydra/Oculus), Prediction"
-//                    };
-                default:
-                    return null;
-            }
     }
     
 }

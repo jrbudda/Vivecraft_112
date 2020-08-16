@@ -11,6 +11,7 @@ import org.vivecraft.settings.VRSettings.VrOptions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.optifine.Lang;
 
 public class GuiHUDSettings extends BaseGuiSettings
 {
@@ -24,15 +25,16 @@ public class GuiHUDSettings extends BaseGuiSettings
             //VRSettings.VrOptions.HUD_YAW,
             VRSettings.VrOptions.HUD_OPACITY,
             VRSettings.VrOptions.RENDER_MENU_BACKGROUND,
-            VRSettings.VrOptions.TOUCH_HOTBAR,
-            VRSettings.VrOptions.MENU_ALWAYS_FOLLOW_FACE,
-            VRSettings.VrOptions.AUTO_OPEN_KEYBOARD,
+			VRSettings.VrOptions.AUTO_OPEN_KEYBOARD,
+			VRSettings.VrOptions.TOUCH_HOTBAR,
 			VRSettings.VrOptions.PHYSICAL_KEYBOARD,
+			VRSettings.VrOptions.MENU_ALWAYS_FOLLOW_FACE,
+			VRSettings.VrOptions.PHYSICAL_KEYBOARD_SCALE,
     };
 
     public GuiHUDSettings(GuiScreen guiScreen, VRSettings guivrSettings) {
         super( guiScreen, guivrSettings );
-        screenTitle = "HUD and GUI Settings";
+        screenTitle = "vivecraft.options.screen.gui";
     }
 
     /**
@@ -41,10 +43,10 @@ public class GuiHUDSettings extends BaseGuiSettings
     public void initGui()
     {
     	this.buttonList.clear();
-    	this.buttonList.add(new GuiSmallButtonEx(301, this.width / 2 - 78, this.height / 6 - 14, "Hide Hud (F1): " + mc.gameSettings.hideGUI));
-    	this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, "Reset To Defaults"));
-    	this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, "Done"));
-    	this.buttonList.add(new GuiButtonEx(302, this.width / 2 - 155  + 160, this.height / 6 +150 ,150,20, "Menu World Settings..."));
+    	this.buttonList.add(new GuiSmallButtonEx(301, this.width / 2 - 78, this.height / 6 - 14, Lang.get("vivecraft.options." + VrOptions.HUD_HIDE.name()) + ": " + mc.gameSettings.hideGUI));
+    	this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, Lang.get("vivecraft.gui.loaddefaults")));
+    	this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, Lang.get("gui.done")));
+    	this.buttonList.add(new GuiButtonEx(302, this.width / 2 - 155  + 160, this.height / 6 +150 ,150,20, Lang.get("vivecraft.options.screen.menuworld.button")));
 
     	VRSettings.VrOptions[] buttons = hudOptions;
 
@@ -75,24 +77,18 @@ public class GuiHUDSettings extends BaseGuiSettings
     				maxValue = 5.0f;
     				increment = 0.01f;
     			}
-    			else if (var8 == VRSettings.VrOptions.HUD_PITCH)
-    			{
-    				minValue = -45f;
-    				maxValue = 45f;
-    				increment = 1f;
-    			}
-    			else if (var8 == VRSettings.VrOptions.HUD_YAW)
-    			{
-    				minValue = -100f;
-    				maxValue = 100f;
-    				increment = 1f;
-    			}
     			else if (var8 == VRSettings.VrOptions.HUD_OPACITY)
     			{
     				minValue = 0.15f;
     				maxValue = 1.0f;
     				increment = 0.05f;
     			}
+				else if (var8 == VRSettings.VrOptions.PHYSICAL_KEYBOARD_SCALE)
+				{
+					minValue = 0.75f;
+					maxValue = 1.5f;
+					increment = 0.01f;
+				}
 
     			this.buttonList.add(new GuiSliderEx(var8.returnEnumOrdinal(), width, height, var8, this.guivrSettings.getKeyBinding(var8), minValue, maxValue, increment, this.guivrSettings.getOptionFloatValue(var8)));
     		}
@@ -136,6 +132,7 @@ public class GuiHUDSettings extends BaseGuiSettings
                 this.guivrSettings.menuAlwaysFollowFace = false;
                 this.guivrSettings.autoOpenKeyboard = true;
                 this.guivrSettings.physicalKeyboard = true;
+                this.guivrSettings.physicalKeyboardScale = 1.0f;
                 this.mc.gameSettings.hideGUI = false;
 
                 Minecraft.getMinecraft().vrSettings.saveOptions();
@@ -152,112 +149,5 @@ public class GuiHUDSettings extends BaseGuiSettings
 				mc.displayGuiScreen(new GuiMenuWorldSettings(this, guivrSettings));
             }
         }
-    }
-
-    @Override
-    protected String[] getTooltipLines(String displayString, int buttonId)
-    {
-        VRSettings.VrOptions e = VRSettings.VrOptions.getEnumOptions(buttonId);
-        if( e != null )
-            switch(e)
-            {
-                case HUD_OPACITY:
-                    return new String[] {
-                            "How transparent to draw the in-game HUD and UI",
-                    };
-                case HUD_SCALE:
-                return new String[] {
-                        "Relative size HUD takes up in field-of-view",
-                        "  The units are just relative, not in degrees",
-                        "  or a fraction of FOV or anything"
-                };
-                case HUD_PITCH:
-                    return new String[] {
-                            "The vertical offset of the HUD, in degrees.",
-                            "  Negative values are down, positive up."
-                    };
-                case HUD_YAW:
-                    return new String[] {
-                            "The horizontal offset of the HUD, in degrees.",
-                            "  Negative values are to the left, positive to",
-                            "  the right."
-                    };
-                case HUD_DISTANCE:
-                    return new String[] {
-                            "Distance the floating HUD is drawn in front of your body",
-                            "  The relative size of the HUD is unchanged by this",
-                            "  Distance is in meters (though isn't obstructed by blocks)"
-                    };
-                case HUD_OCCLUSION:
-                    return new String[] {
-                            "Specifies whether the HUD is occluded by closer objects.",
-                            "  ON:  The HUD will be hidden by closer objects. May",
-                            "       be hidden completely in confined environments!",
-                            "  OFF: The HUD is always visible. Stereo depth issues",
-                            "       may be noticable."
-                    };
-                case MENU_ALWAYS_FOLLOW_FACE:
-                    return new String[] {
-                            "Specifies when the main menu follows your look direction.",
-                            "  SEATED: The main menu will only follow in seated mode.",
-                            "  ALWAYS The main menu will always follow."
-                    };
-                case RENDER_MENU_BACKGROUND:
-                    return new String[] {
-                            "Specifies whether the in game GUI menus have a ",
-                            "semi-transparent background or not.",
-                            "  ON:  Semi-transparent background on in-game menus.",
-                            "  OFF: No background on in-game menus."
-                    };
-                case HUD_LOCK_TO:
-                    return new String[] {
-                            "Specifies to which orientation the HUD is locked to.",
-                            "  HAND:  The HUD will appear just above your off-hand",
-                            "  HEAD:  The HUD will always appear in your field of view",
-                            "straight ahead",
-                            "  WRIST:  The HUD will appear on the inside of your off-hand",
-                            "arm. It will 'pop out' when looked at."
-                    };
-                case OTHER_HUD_SETTINGS:
-                    return new String[] {
-                            "Configure Crosshair and overlay settings."
-                    };
-                case TOUCH_HOTBAR:
-                    return new String[] {
-                            "If enabled allow you to touch the hotbar with",
-                            "your main hand to select an item."
-                    };
-                case AUTO_OPEN_KEYBOARD:
-                    return new String[] {
-                    		"If disabled, the keyboard will only open when you",
-                    		"click a text field, or if a text field can't lose focus.",
-                    		"",
-                            "If enabled, the keyboard will open automatically",
-                            "any time a text field comes into focus. Enabling this will",
-                            "cause it to open in unwanted situations with mods."
-                    };
-				case PHYSICAL_KEYBOARD:
-					return new String[] {
-							"Which type of VR keyboard to use for typing.",
-							"Physical: A keyboard which you can type on like",
-							"a real keyboard.",
-							"Pointer: A keyboard which you can use by pointing",
-							"either controller's crosshair at and pressing buttons."
-					};
-                default:
-                    return null;
-            }
-        else
-            switch(buttonId)
-            {
-                case 300:
-                    return new String[] {
-                            "Configure which controller buttons perform",
-                            "  which mouse or keyboard function while ",
-                            "  a GUI is visible."
-                    };
-                default:
-                    return null;
-            }
     }
 }

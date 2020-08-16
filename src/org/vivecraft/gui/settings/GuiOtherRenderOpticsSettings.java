@@ -32,8 +32,8 @@ public class GuiOtherRenderOpticsSettings extends BaseGuiSettings implements Gui
     public void initGui()
     {
 //        this.buttonList.clear();
-//        this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, "Reset To Defaults"));
-//        this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, "Done"));
+//        this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, Lang.get("vivecraft.gui.loaddefaults")));
+//        this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, Lang.get("gui.done"));
 //        String eyeRelief = "";//String.format("Base Eye Relief: %.3fmm ", new Object[] { this.mc.entityRenderer.getBaseEyeRelief() * 1000f });
 //        VRSettings.VrOptions[] buttons = null;
 //        if (Minecraft.getMinecraft().vrSettings.useHalfIpds == false)
@@ -113,8 +113,6 @@ public class GuiOtherRenderOpticsSettings extends BaseGuiSettings implements Gui
 
     private boolean getEnabledState(VRSettings.VrOptions var8)
     {
-        String s = var8.getEnumString();
-
         return true;
     }
 
@@ -168,75 +166,5 @@ public class GuiOtherRenderOpticsSettings extends BaseGuiSettings implements Gui
     @Override
     public boolean event(int id, String s) {
         return true;
-    }
-
-    @Override
-    protected String[] getTooltipLines(String displayString, int buttonId)
-    {
-        VRSettings.VrOptions e = VRSettings.VrOptions.getEnumOptions(buttonId);
-        if( e != null )
-            switch(e)
-           {
-//            case EYE_RELIEF_PLACEHOLDER:
-//                return new String[] {
-//                        "The current un-adjusted eye relief value, as reported",
-//                        "from the Oculus Profile.",
-//                        "Positive values are towards your face, negative away.",
-//                };
-//            case EYE_RELIEF_ADJUST:
-//                return new String[] {
-//                        "Adjusts the eye relief value (the distance of the HMD",
-//                        "screen from the center eye position). Positive values",
-//                        "are towards your face, negative away.",
-//                        " Adjust this if vertical lines do not seem to maintain",
-//                        " their position in the world (as you slowly rotate your",
-//                        " head from side-to-side; while keeping your gaze fixed",
-//                        " on the line).",
-//                        " Can account for squashed foam padding on the HMD etc.",
-//                };
-//            case FOV_CHANGE:
-//                return new String[] {
-//                        "Adjusts the position of the rendered distortion border.",
-//                        " Positive values: reduce the size of the distortion",
-//                        "  border, possibly increasing Field-of-View (FOV) at",
-//                        "  the expense of increased rendering cost.",
-//                        " Negative values: increase the size of the distortion",
-//                        "  border, reducing render cost at the expense of a",
-//                        "  noticeable reduction in FOV.",
-//                };
-//            case USE_PROFILE_IPD:
-//            case CONFIG_IPD_MODE:
-//            case LEFT_HALF_IPD:
-//            case RIGHT_HALF_IPD:
-//            case TOTAL_IPD:
-//                return new String[] {
-//                        "Allows adjustment of IPD if not using Oculus profile",
-//                        "settings. NOTE: It is STRONGLY RECOMMENDED to use",
-//                        "the Oculus Profile settings!!",
-//                        " Select total or half IPD configuration.",
-//                        " Adjusting the IPD manually may alter in game scale;",
-//                        " however various HMD parameters configured by",
-//                        " Oculus will not be correct. USE AT YOUR OWN RISK."
-//                };
-//            case MAX_FOV:
-//                return new String[] {
-//                        "Toggles use of the default Field-of-View (FOV),",
-//                        "or the maximum FOV possible with the specified HMD.",
-//                        " Default: Default HMD FOV. A balance of FOV versus",
-//                        "          render cost.",
-//                        " Maximum: *MAY* enlarge viewable FOV at the expense of",
-//                        "          increased rendering cost.",
-//                        " NOTE with the DK2, Default and Max are almost",
-//                        " identical.",
-//                };
-            default:
-                return null;
-            }
-        else
-            switch(buttonId)
-            {
-            default:
-                return null;
-            }
     }
 }

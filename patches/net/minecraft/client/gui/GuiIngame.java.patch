@@ -92,15 +92,49 @@
      {
          GameSettings gamesettings = this.mc.gameSettings;
  
-@@ -592,6 +594,7 @@
+@@ -592,25 +594,45 @@
              int j = 182;
              int k = 91;
              this.zLevel = -90.0F;
 +            GlStateManager.enableAlpha();
              this.drawTexturedModalRect(i - 91, sr.getScaledHeight() - 22, 0, 0, 182, 22);
              this.drawTexturedModalRect(i - 91 - 1 + entityplayer.inventory.currentItem * 20, sr.getScaledHeight() - 22 - 1, 0, 22, 24, 22);
+-
+-            if (!itemstack.isEmpty())
++           
++            //Vivecraft - render hotbar context selection.
++            if(mc.interactTracker.hotbar >= 0 && mc.interactTracker.hotbar < 9 && entityplayer.inventory.currentItem != mc.interactTracker.hotbar) {
++            	GlStateManager.color(0.0F, 1.0F, 0.0F, 1.0F);
++                this.drawTexturedModalRect(i - 91 - 1 + mc.interactTracker.hotbar * 20, sr.getScaledHeight() - 22 - 1, 0, 22, 24, 22);
++                GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
++            }
++            //
++            
++            if (!itemstack.isEmpty() || mc.vrSettings.vrTouchHotbar)
+             {
+                 if (enumhandside == EnumHandSide.LEFT)
+                 {
+-                    this.drawTexturedModalRect(i - 91 - 29, sr.getScaledHeight() - 23, 24, 22, 29, 24);
++                    if(mc.interactTracker.hotbar == 9 ) {
++                    	GlStateManager.color(0.0F, 0.0F, 1.0F, 1.0F);
++                        this.drawTexturedModalRect(i - 91 - 29, sr.getScaledHeight() - 23, 24, 22, 29, 24);
++                        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
++                    } else {
++                        this.drawTexturedModalRect(i - 91 - 29, sr.getScaledHeight() - 23, 24, 22, 29, 24);
++                    }
+                 }
+                 else
+                 {
+-                    this.drawTexturedModalRect(i + 91, sr.getScaledHeight() - 23, 53, 22, 29, 24);
++                    if(mc.interactTracker.hotbar == 9) {
++                    	GlStateManager.color(0.0F, 0.0F, 1.0F, 1.0F);
++                        this.drawTexturedModalRect(i + 91, sr.getScaledHeight() - 23, 53, 22, 29, 24);
++                        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
++                    } else 
++                        this.drawTexturedModalRect(i + 91, sr.getScaledHeight() - 23, 53, 22, 29, 24);
+                 }
+             }
  
-@@ -610,7 +613,7 @@
              this.zLevel = f;
              GlStateManager.enableRescaleNormal();
              GlStateManager.enableBlend();
@@ -109,7 +143,7 @@
              RenderHelper.enableGUIStandardItemLighting();
              CustomItems.setRenderOffHand(false);
  
-@@ -788,7 +791,7 @@
+@@ -788,7 +810,7 @@
          this.mc.mcProfiler.endSection();
      }
  
@@ -118,7 +152,7 @@
      {
          Scoreboard scoreboard = objective.getScoreboard();
          Collection<Score> collection = scoreboard.getSortedScores(objective);
-@@ -846,11 +849,11 @@
+@@ -846,11 +868,11 @@
          }
      }
  
@@ -132,7 +166,7 @@
              int i = MathHelper.ceil(entityplayer.getHealth());
              boolean flag = this.healthUpdateCounter > (long)this.updateCounter && (this.healthUpdateCounter - (long)this.updateCounter) / 3L % 2L == 1L;
  
-@@ -1005,7 +1008,7 @@
+@@ -1005,7 +1027,7 @@
                      }
                  }
              }
@@ -141,7 +175,7 @@
              Entity entity = entityplayer.getRidingEntity();
  
              if (entity == null || !(entity instanceof EntityLivingBase))
-@@ -1069,7 +1072,7 @@
+@@ -1069,7 +1091,7 @@
          }
      }
  
@@ -150,7 +184,7 @@
      {
          if (this.mc.getRenderViewEntity() instanceof EntityPlayer)
          {
-@@ -1123,7 +1126,7 @@
+@@ -1123,7 +1145,7 @@
          }
      }
  
@@ -159,7 +193,7 @@
      {
          GlStateManager.disableDepth();
          GlStateManager.depthMask(false);
-@@ -1150,6 +1153,8 @@
+@@ -1150,6 +1172,8 @@
       */
      private void renderVignette(float lightLevel, ScaledResolution scaledRes)
      {
@@ -168,7 +202,7 @@
          if (!Config.isVignetteEnabled())
          {
              GlStateManager.enableDepth();
-@@ -1203,38 +1208,9 @@
+@@ -1203,38 +1227,9 @@
          }
      }
  
@@ -209,7 +243,7 @@
      }
  
      private void renderHotbarItem(int p_184044_1_, int p_184044_2_, float p_184044_3_, EntityPlayer player, ItemStack stack)
-@@ -1429,4 +1405,55 @@
+@@ -1429,4 +1424,55 @@
      {
          return this.overlayBoss;
      }

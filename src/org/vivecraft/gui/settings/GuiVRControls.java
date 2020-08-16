@@ -24,6 +24,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
+import net.optifine.Lang;
 
 public class GuiVRControls extends BaseGuiSettings implements GuiEventEx{
 
@@ -34,7 +35,7 @@ public class GuiVRControls extends BaseGuiSettings implements GuiEventEx{
 	
 	public GuiVRControls(GuiScreen par1GuiScreen, VRSettings par2vrSettings) {
 		super(par1GuiScreen, par2vrSettings);
-        screenTitle = "Controller Settings";
+        screenTitle = "vivecraft.options.screen.controls";
 	}
 
    
@@ -43,8 +44,8 @@ public class GuiVRControls extends BaseGuiSettings implements GuiEventEx{
      */
     public void initGui() {
 		this.buttonList.clear();
-		this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, "Reset To Defaults"));
-		this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, "Done"));
+		this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, Lang.get("vivecraft.gui.loaddefaults")));
+		this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, Lang.get("gui.done")));
 
 		addButtons(controlsSettings, this.height / 2 );
     }
@@ -74,9 +75,9 @@ public class GuiVRControls extends BaseGuiSettings implements GuiEventEx{
      */
     public void drawScreen(int par1, int par2, float par3) {
 		super.drawScreen(par1, par2, par3);
-		this.drawCenteredString(this.fontRenderer, "Bindings are handled by SteamVR Input.", this.width / 2, this.height / 2 - this.fontRenderer.FONT_HEIGHT / 2 - this.fontRenderer.FONT_HEIGHT - 3, 16777215);
-		this.drawCenteredString(this.fontRenderer, "Go to Settings > Controllers > Manage Controller Bindings in the dashboard.", this.width / 2, this.height / 2 - this.fontRenderer.FONT_HEIGHT / 2, 16777215);
-		this.drawCenteredString(this.fontRenderer, TextFormatting.GOLD + "Steam must be running " + TextFormatting.ITALIC + "before" + TextFormatting.RESET + TextFormatting.GOLD + " SteamVR is started, or bindings will not save.", this.width / 2, this.height / 2 - this.fontRenderer.FONT_HEIGHT / 2 + this.fontRenderer.FONT_HEIGHT + 3, 16777215);
+		this.drawCenteredString(this.fontRenderer, Lang.get("vivecraft.messages.controls.1"), this.width / 2, this.height / 2 - this.fontRenderer.FONT_HEIGHT / 2 - this.fontRenderer.FONT_HEIGHT - 3, 16777215);
+		this.drawCenteredString(this.fontRenderer, Lang.get("vivecraft.messages.controls.2"), this.width / 2, this.height / 2 - this.fontRenderer.FONT_HEIGHT / 2, 16777215);
+		this.drawCenteredString(this.fontRenderer, Lang.get("vivecraft.messages.controls.3"), this.width / 2, this.height / 2 - this.fontRenderer.FONT_HEIGHT / 2 + this.fontRenderer.FONT_HEIGHT + 3, 16777215);
     }
     
     @Override

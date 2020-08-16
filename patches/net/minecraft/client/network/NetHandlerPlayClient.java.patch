@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/network/NetHandlerPlayClient.java
 +++ b/net/minecraft/client/network/NetHandlerPlayClient.java
-@@ -1,17 +1,28 @@
+@@ -1,17 +1,29 @@
  package net.minecraft.client.network;
  
 +import com.google.common.base.Charsets;
@@ -13,6 +13,7 @@
 +import org.vivecraft.gameplay.OpenVRPlayer;
 +import org.vivecraft.render.PlayerModelController;
 +import org.vivecraft.utils.BlockWithData;
++import org.vivecraft.utils.LangHelper;
 +
  import io.netty.buffer.Unpooled;
 +
@@ -29,7 +30,7 @@
  import java.util.Arrays;
  import java.util.Collection;
  import java.util.Iterator;
-@@ -20,7 +31,6 @@
+@@ -20,7 +32,6 @@
  import java.util.Random;
  import java.util.UUID;
  import java.util.Map.Entry;
@@ -37,15 +38,16 @@
  import javax.annotation.Nullable;
  import net.minecraft.advancements.Advancement;
  import net.minecraft.block.Block;
-@@ -224,6 +234,7 @@
+@@ -224,6 +235,8 @@
  import net.minecraft.scoreboard.Scoreboard;
  import net.minecraft.scoreboard.Team;
  import net.minecraft.stats.RecipeBook;
++import net.optifine.Lang;
 +import net.optifine.reflect.Reflector;
  import net.minecraft.stats.StatBase;
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.tileentity.TileEntityBanner;
-@@ -246,6 +257,7 @@
+@@ -246,6 +259,7 @@
  import net.minecraft.util.StringUtils;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.MathHelper;
@@ -53,7 +55,7 @@
  import net.minecraft.util.text.ITextComponent;
  import net.minecraft.util.text.TextComponentTranslation;
  import net.minecraft.util.text.TextFormatting;
-@@ -256,6 +268,7 @@
+@@ -256,6 +270,7 @@
  import net.minecraft.world.WorldSettings;
  import net.minecraft.world.chunk.Chunk;
  import net.minecraft.world.storage.MapData;
@@ -61,7 +63,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-@@ -309,6 +322,10 @@
+@@ -309,6 +324,10 @@
          this.netManager = networkManagerIn;
          this.profile = profileIn;
          this.advancementManager = new ClientAdvancementManager(mcIn);
@@ -72,7 +74,7 @@
      }
  
      /**
-@@ -327,7 +344,19 @@
+@@ -327,7 +346,19 @@
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
          this.gameController.playerController = new PlayerControllerMP(this.gameController, this);
@@ -93,7 +95,7 @@
          this.gameController.gameSettings.difficulty = packetIn.getDifficulty();
          this.gameController.loadWorld(this.clientWorldController);
          this.gameController.player.dimension = packetIn.getDimension();
-@@ -338,6 +367,10 @@
+@@ -338,6 +369,10 @@
          this.gameController.playerController.setGameType(packetIn.getGameType());
          this.gameController.gameSettings.sendSettingsToServer();
          this.netManager.sendPacket(new CPacketCustomPayload("MC|Brand", (new PacketBuffer(Unpooled.buffer())).writeString(ClientBrandRetriever.getClientModName())));
@@ -104,7 +106,7 @@
      }
  
      /**
-@@ -837,10 +870,15 @@
+@@ -837,10 +872,15 @@
              BlockPos blockpos = new BlockPos(nbttagcompound.getInteger("x"), nbttagcompound.getInteger("y"), nbttagcompound.getInteger("z"));
              TileEntity tileentity = this.clientWorldController.getTileEntity(blockpos);
  
@@ -121,7 +123,7 @@
          }
      }
  
-@@ -864,7 +902,11 @@
+@@ -864,7 +904,11 @@
       */
      public void handleDisconnect(SPacketDisconnect packetIn)
      {
@@ -134,7 +136,7 @@
      }
  
      /**
-@@ -916,8 +958,8 @@
+@@ -916,8 +960,8 @@
              else
              {
                  this.clientWorldController.playSound(entity.posX, entity.posY, entity.posZ, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, (this.avRandomizer.nextFloat() - this.avRandomizer.nextFloat()) * 1.4F + 2.0F, false);
@@ -145,7 +147,7 @@
              if (entity instanceof EntityItem)
              {
                  ((EntityItem)entity).getItem().setCount(packetIn.getAmount());
-@@ -934,7 +976,24 @@
+@@ -934,7 +978,24 @@
      public void handleChat(SPacketChat packetIn)
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
@@ -171,7 +173,7 @@
      }
  
      /**
-@@ -1077,7 +1136,14 @@
+@@ -1077,7 +1138,14 @@
  
                      if (entity1 == this.gameController.player && !flag)
                      {
@@ -187,7 +189,7 @@
                      }
                  }
              }
-@@ -1160,11 +1226,16 @@
+@@ -1160,11 +1228,16 @@
          {
              this.doneLoadingTerrain = false;
              Scoreboard scoreboard = this.clientWorldController.getScoreboard();
@@ -205,7 +207,7 @@
          }
  
          this.gameController.setDimensionAndSpawnPlayer(packetIn.getDimensionID());
-@@ -1355,7 +1426,19 @@
+@@ -1355,7 +1428,19 @@
              {
                  tileentity.readFromNBT(packetIn.getNbtCompound());
              }
@@ -226,7 +228,7 @@
              if (flag && this.gameController.currentScreen instanceof GuiCommandBlock)
              {
                  ((GuiCommandBlock)this.gameController.currentScreen).updateGui();
-@@ -1469,15 +1552,41 @@
+@@ -1469,15 +1554,41 @@
              }
              else if (f == 101.0F)
              {
@@ -271,7 +273,7 @@
              }
          }
          else if (i == 6)
-@@ -1647,7 +1756,7 @@
+@@ -1647,7 +1758,7 @@
  
          if (entity instanceof EntityLivingBase)
          {
@@ -280,7 +282,7 @@
  
              if (potion != null)
              {
-@@ -2029,6 +2138,7 @@
+@@ -2029,6 +2140,7 @@
              }
              finally
              {
@@ -288,7 +290,7 @@
                  packetbuffer.release();
              }
          }
-@@ -2068,6 +2178,111 @@
+@@ -2068,6 +2180,111 @@
              String s1 = packetbuffer3.readString(256);
              this.gameController.getSoundHandler().stop(s1, SoundCategory.getByName(s));
          }
@@ -309,7 +311,7 @@
 +        		String v = packetbuffer.readString(1024);
 +        		this.gameController.vrPlayer.setTeleportSupported(true);
 +        		this.gameController.vrPlayer.teleportWarningTimer = -1;
-+        		this.gameController.printChatMessage("Vivecraft server mod detected: " + v);
++        		this.gameController.printChatMessage(LangHelper.get("vivecraft.messages.serverplugin", v));
 +        		break;
 +        	case REQUESTDATA:
 +        		NetworkHelper.serverWantsData = true;
@@ -400,7 +402,7 @@
      }
  
      /**
-@@ -2358,4 +2573,12 @@
+@@ -2358,4 +2575,12 @@
      {
          return this.advancementManager;
      }

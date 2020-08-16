@@ -11,6 +11,7 @@ import org.vivecraft.settings.VRSettings.VrOptions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.optifine.Lang;
 
 public class GuiSeatedOptions extends BaseGuiSettings implements GuiEventEx
 {
@@ -27,7 +28,7 @@ public class GuiSeatedOptions extends BaseGuiSettings implements GuiEventEx
 	
 	public GuiSeatedOptions(GuiScreen guiScreen, VRSettings guivrSettings) {
 		super( guiScreen, guivrSettings );
-		screenTitle = "Seated Settings";
+		screenTitle = "vivecraft.options.screen.seated";
 	}
 
 	/**
@@ -36,15 +37,15 @@ public class GuiSeatedOptions extends BaseGuiSettings implements GuiEventEx
 	public void initGui()
 	{
 		this.buttonList.clear();
-		this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, "Reset To Defaults"));
-		this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, "Done"));
+		this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, Lang.get("vivecraft.gui.loaddefaults")));
+		this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, Lang.get("gui.done")));
 
 		VRSettings.VrOptions[] buttons = seatedOptions;
 
 		addButtons(buttons, 0);
 		
-		this.buttonList.add(new GuiButtonEx(300, this.width / 2 - 155 , this.height / 6 + 102,150,20, "Free Move Settings..."));
-		this.buttonList.add(new GuiButtonEx(301, this.width / 2 + 5 , this.height / 6 + 102,150,20, "Teleport Settings..."));
+		this.buttonList.add(new GuiButtonEx(300, this.width / 2 - 155 , this.height / 6 + 102,150,20, Lang.get("vivecraft.options.screen.freemove.button")));
+		this.buttonList.add(new GuiButtonEx(301, this.width / 2 + 5 , this.height / 6 + 102,150,20, Lang.get("vivecraft.options.screen.teleport.button")));
 
 	}
 
@@ -160,91 +161,6 @@ public class GuiSeatedOptions extends BaseGuiSettings implements GuiEventEx
 			}
 		}
 	}
-
-	@Override
-	protected String[] getTooltipLines(String displayString, int buttonId)
-	{
-        VRSettings.VrOptions e = VRSettings.VrOptions.getEnumOptions(buttonId);
-        if( e != null )
-            switch(e)
-            {
-            case KEYHOLE:
-                return new String[] {
-                        "The number of degrees to the left and right of center",
-                        "Where the view will begin to rotate."
-                };
-            case X_SENSITIVITY:
-                return new String[] {
-                        "Speed the view will rotate when pushed on the edge of the keyhole"
-                };
-            case Y_SENSITIVITY:
-                return new String[] {
-                        "Vertical speed of the crosshair related to the mouse"
-                };
-            case MOVE_MODE:
-                return new String[] {
-                        "Free Move with WASD or Teleport with W"
-                };
-            case LIMIT_TELEPORT:
-                return new String[] {
-                        "If enabled the arc teleporter will be have restrictions",
-                        "in survival mode. It will not be able to jump up the side", 
-                        "of blocks, it will consume food, and it will have an energy",
-                        "bar that refills over time."
-                } ;
-            case SIMULATE_FALLING:
-                return new String[] {
-                        "If enabled the player will falls to the ground in TP mode",
-                        "when standing above empty space. Also allows jumping"
-                } ;
-            case SEATED_HMD:
-                return new String[] {
-                        "The direction the forward (W) key will go. You can ",
-                        "HMD view direction or crosshair pointing direction"
-                } ;
-            case SEATED_HUD_XHAIR:
-                return new String[] {
-                        "The direction the HUD will be placed.",
-                        "HMD view direction or crosshair pointing direction"
-                } ;
-            case FOV_REDUCTION:
-                return new String[] {
-                        "Shrinks the field of view while moving. Can help with",
-                        "motion sickness."
-                } ;
-            case WORLD_ROTATION_INCREMENT:
-                return new String[] {
-                        "How many degrees to rotate when",
-                        "rotating the world."
-                        
-                };
-            case TELEPORT_DOWN_LIMIT:
-                return new String[] {
-                        "Limit the number of blocks you can teleport below you"
-                };
-            case TELEPORT_UP_LIMIT:
-                return new String[] {
-                        "Limit the number of blocks you can teleport above you"
-                };
-            case TELEPORT_HORIZ_LIMIT:
-                return new String[] {
-                        "Limit the number of blocks you can teleport sideways you"
-                };
-            case SEATED_FREE_MOVE:
-                return new String[] {
-                        "Which locomotion mode to use in seated mode.",
-                        "",
-                        "Teleport: Press any direction to activate.",
-                        "Free Move: WASD movement like vanilla Minecraft."
-                        };
-            default:
-                return null;
-            }
-        else{
-
-        }
-		return null;
-    }
 
 	@Override
 	public boolean event(int id, VrOptions enumm) {

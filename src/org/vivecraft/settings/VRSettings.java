@@ -19,6 +19,7 @@ import org.vivecraft.provider.MCOpenVR;
 import org.vivecraft.settings.profile.ProfileManager;
 import org.vivecraft.settings.profile.ProfileReader;
 import org.vivecraft.settings.profile.ProfileWriter;
+import org.vivecraft.utils.LangHelper;
 import org.vivecraft.utils.Quaternion;
 import org.vivecraft.utils.Vector3;
 
@@ -27,6 +28,7 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.util.Tuple;
+import net.optifine.Lang;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
@@ -81,7 +83,8 @@ public class VRSettings
     public static final int FREEMOVE_HMD= 2;
     public static final int FREEMOVE_RUNINPLACE= 3;
     public static final int FREEMOVE_JOYPAD = 4;
-    
+    public static final int FREEMOVE_ROOM = 5;
+
     public static final int MENU_WORLD_BOTH = 0;
     public static final int MENU_WORLD_CUSTOM = 1;
     public static final int MENU_WORLD_OFFICIAL = 2;
@@ -129,7 +132,7 @@ public class VRSettings
     public int inertiaFactor = INERTIA_NORMAL;
     public boolean walkUpBlocks = true;     // VIVE default to enable climbing
     public boolean simulateFalling = true;  // VIVE if HMD is over empty space, fall
-    public boolean weaponCollision = true;  // VIVE weapon hand collides with blocks/enemies
+    public int weaponCollision = 2;  // VIVE weapon hand collides with blocks/enemies
     public float movementSpeedMultiplier = 1.0f;   // VIVE - use full speed by default
     public int vrFreeMoveMode = this.FREEMOVE_CONTROLLER;
     public boolean vrLimitedSurvivalTeleport = true;
@@ -215,6 +218,7 @@ public class VRSettings
 	public int forceHardwareDetection = 0; // 0 = off, 1 = vive, 2 = oculus
 	public boolean radialModeHold = true;
     public boolean physicalKeyboard = true;
+    public float physicalKeyboardScale = 1.0f;
 	public boolean allowAdvancedBindings = false;
     //
      	
@@ -475,9 +479,9 @@ public class VRSettings
                     {
                         this.simulateFalling = optionTokens[1].equals("true");
                     }
-                    if (optionTokens[0].equals("weaponCollision"))
+                    if (optionTokens[0].equals("weaponCollisionNew"))
                     {
-                        this.weaponCollision = optionTokens[1].equals("true");
+                        this.weaponCollision = Integer.parseInt(optionTokens[1]);
                     }
                     if (optionTokens[0].equals("animalTouching"))
                     {
@@ -703,6 +707,10 @@ public class VRSettings
 					    this.physicalKeyboard = optionTokens[1].equals("true");
                     }
 
+                    if(optionTokens[0].equals("physicalKeyboardScale")){
+                        this.physicalKeyboardScale = parseFloat(optionTokens[1]);
+                    }
+
 					if(optionTokens[0].equals("originOffset")){
                         String[] split = optionTokens[1].split(",");
 					    MCOpenVR.offset = new Vector3(Float.parseFloat(split[0]), Float.parseFloat(split[1]), Float.parseFloat(split[2]));
@@ -832,198 +840,182 @@ public class VRSettings
     
     public String getKeyBinding( VRSettings.VrOptions par1EnumOptions )
     {
-        String var2 = par1EnumOptions.getEnumString();
+        String var2 = Lang.get("vivecraft.options." + par1EnumOptions.name());
 
         String var3 = var2 + ": ";
         String var4 = var3;
         String var5;
 
         switch( par1EnumOptions) {
-            case OTHER_HUD_SETTINGS:
-                return var2;
-            case OTHER_RENDER_SETTINGS:
-                return var2;
-            case LOCOMOTION_SETTINGS:
-                return var2;
 	        case MOVEMENT_MULTIPLIER:
 	            return var4 + String.format("%.2f", this.movementSpeedMultiplier);
 	        case HUD_OPACITY:
 	        	if( this.hudOpacity > 0.99)
-	        		return var4 + "Opaque";
+	        		return var4 + Lang.get("vivecraft.options.opaque");
 	            return var4 + String.format("%.2f", this.hudOpacity);
             case RENDER_MENU_BACKGROUND:
-                return this.menuBackground ? var4 + "ON" : var4 + "OFF";
-	        case RENDER_FULL_FIRST_PERSON_MODEL_MODE:
-                if (this.renderFullFirstPersonModelMode == RENDER_FIRST_PERSON_FULL)
-                    return var4 + "Full";
-                else if (this.renderFullFirstPersonModelMode == RENDER_FIRST_PERSON_HAND)
-                    return var4 + "Hand";
-                else if (this.renderFullFirstPersonModelMode == RENDER_FIRST_PERSON_NONE)
-                    return var4 + "None";
+                return this.menuBackground ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case MIRROR_DISPLAY:
                 switch(this.displayMirrorMode) {
                     case MIRROR_OFF:
                     default:
-                        return var4 + "OFF";
+                        return var4 + Lang.get("vivecraft.options.mirror.off");
                     case MIRROR_ON_DUAL:
-                        return var4 + "Dual";
+                        return var4 + Lang.get("vivecraft.options.mirror.dual");
                     case MIRROR_ON_SINGLE:
-                        return var4 + "Single";
+                        return var4 + Lang.get("vivecraft.options.mirror.single");
                     case MIRROR_FIRST_PERSON:
-                        return var4 + "1st Person";
+                        return var4 + Lang.get("vivecraft.options.mirror.firstperson");
                     case MIRROR_THIRD_PERSON:
-                        return var4 + "3rd Person";
+                        return var4 + Lang.get("vivecraft.options.mirror.thirdperson");
                     case MIRROR_MIXED_REALITY:
-                        return var4 + "Mixed Reality";
+                        return var4 + Lang.get("vivecraft.options.mirror.mixedreality");
                     case MIRROR_ON_CROPPED:
-                        return var4 + "Cropped";
+                        return var4 + Lang.get("vivecraft.options.mirror.cropped");
 
                 }
             case MIRROR_EYE:
-                return this.displayMirrorLeftEye ? var4 + "Left" : var4 + "Right";
+                return this.displayMirrorLeftEye ? var4 + Lang.get("vivecraft.options.left") : var4 + Lang.get("vivecraft.options.right");
             case MIXED_REALITY_KEY_COLOR:
                 if (this.mixedRealityKeyColor.equals(new Color(0, 0, 0))) {
-                	return var4 + "Black";
+                    return var4 + Lang.get("vivecraft.options.color.black");
                 } else if (this.mixedRealityKeyColor.equals(new Color(255, 0, 0))) {
-                	return var4 + "Red";
+                    return var4 + Lang.get("vivecraft.options.color.red");
                 } else if (this.mixedRealityKeyColor.equals(new Color(255, 255, 0))) {
-                	return var4 + "Yellow";
+                    return var4 + Lang.get("vivecraft.options.color.yellow");
                 } else if (this.mixedRealityKeyColor.equals(new Color(0, 255, 0))) {
-                	return var4 + "Green";
+                    return var4 + Lang.get("vivecraft.options.color.green");
                 } else if (this.mixedRealityKeyColor.equals(new Color(0, 255, 255))) {
-                	return var4 + "Cyan";
+                    return var4 + Lang.get("vivecraft.options.color.cyan");
                 } else if (this.mixedRealityKeyColor.equals(new Color(0, 0, 255))) {
-                	return var4 + "Blue";
+                    return var4 + Lang.get("vivecraft.options.color.blue");
                 } else if (this.mixedRealityKeyColor.equals(new Color(255, 0, 255))) {
-                	return var4 + "Magenta";
+                    return var4 + Lang.get("vivecraft.options.color.magenta");
                 }
                 return var4 + this.mixedRealityKeyColor.getRed() + " " + this.mixedRealityKeyColor.getGreen() + " " + this.mixedRealityKeyColor.getBlue();
              case MIXED_REALITY_RENDER_HANDS:
-                return this.mixedRealityRenderHands ? var4 + "ON" : var4 + "OFF";
+                return this.mixedRealityRenderHands ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case MIXED_REALITY_UNITY_LIKE:
-                 return this.mixedRealityUnityLike ? var4 + "Unity" : var4 + "Side-by-Side";
+                 return this.mixedRealityUnityLike ? var4 + Lang.get("vivecraft.options.unity") : var4 + Lang.get("vivecraft.options.sidebyside");
             case MIXED_REALITY_UNDISTORTED:
-                return this.mixedRealityMRPlusUndistorted ? var4 + "ON" : var4 + "OFF";
+                return this.mixedRealityMRPlusUndistorted ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case MIXED_REALITY_ALPHA_MASK:
-                return this.mixedRealityAlphaMask ? var4 + "ON" : var4 + "OFF";
+                return this.mixedRealityAlphaMask ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case MIXED_REALITY_FOV:
             	return var4 + String.format("%.0f\u00B0", this.mc.vrSettings.mixedRealityFov);
-            case INSIDE_BLOCK_SOLID_COLOR:
-            	return this.insideBlockSolidColor ? var4 + "Solid Color" : var4 + "Texture";
             case WALK_UP_BLOCKS:
-                return this.walkUpBlocks ? var4 + "ON" : var4 + "OFF";
+                return this.walkUpBlocks ? var4 + Lang.getOn() : var4 + Lang.getOff();
  	        case HUD_SCALE:
 	            return var4 + String.format("%.2f", this.hudScale);
             case HUD_LOCK_TO:
                 switch (this.vrHudLockMode) {
                 // VIVE - lock to hand instead of body
                 case HUD_LOCK_HAND:
-                	return var4 + "Hand";
+                    return var4 + Lang.get("vivecraft.options.hand");
                 case HUD_LOCK_HEAD:
-                	return var4 + "Head";
+                    return var4 + Lang.get("vivecraft.options.head");
                 case HUD_LOCK_WRIST:
-                	return var4 + "Wrist";
+                    return var4 + Lang.get("vivecraft.options.wrist");
                 case HUD_LOCK_BODY:
-                    return var4 + "Body";
+                    return var4 + Lang.get("vivecraft.options.body");
                 }
 	        case HUD_DISTANCE:
 	            return var4 + String.format("%.2f", this.hudDistance);
-	        case HUD_PITCH:
-	            return var4 + String.format("%.0f", this.hudPitchOffset);
-            case HUD_YAW:
-            	return var4 + String.format("%.0f", this.hudYawOffset);
             case HUD_HIDE:
-                return this.mc.gameSettings.hideGUI ? var4 + "YES" : var4 + "NO";
+                return this.mc.gameSettings.hideGUI ? var4 + LangHelper.getYes() : var4 + LangHelper.getNo();
             case RENDER_SCALEFACTOR:
                 Framebuffer eye0 = mc.stereoProvider.framebufferEye0;
             	return var4 + Math.round(this.renderScaleFactor * 100) + "% (" + (int)Math.ceil(eye0.framebufferWidth * Math.sqrt(this.renderScaleFactor)) + "x" + (int)Math.ceil(eye0.framebufferHeight * Math.sqrt(this.renderScaleFactor)) + ")";
             case FSAA:
-            	return this.useFsaa ? var4 + "ON" : var4 + "OFF";
+            	return this.useFsaa ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case CROSSHAIR_SCALE:
 	            return var4 + String.format("%.2f", this.crosshairScale);
             case MENU_CROSSHAIR_SCALE:
                 return var4 + String.format("%.2f", this.menuCrosshairScale);
             case CROSSHAIR_SCALES_WITH_DISTANCE:
-	        	return this.crosshairScalesWithDistance ? var4 + "ON" : var4 + "OFF";
+	        	return this.crosshairScalesWithDistance ? var4 + Lang.getOn() : var4 + Lang.getOff();
 	        case RENDER_CROSSHAIR_MODE:
                 if (this.renderInGameCrosshairMode == RENDER_CROSSHAIR_MODE_HUD)
-                    return var4 + "With HUD";
+                    return var4 + Lang.get("vivecraft.options.withhud");
                 else if (this.renderInGameCrosshairMode == RENDER_CROSSHAIR_MODE_ALWAYS)
-                    return var4 + "Always";
+                    return var4 + Lang.get("vivecraft.options.always");
                 else if (this.renderInGameCrosshairMode == RENDER_CROSSHAIR_MODE_NEVER)
-                    return var4 + "Never";
+                    return var4 + Lang.get("vivecraft.options.never");
 	        case RENDER_BLOCK_OUTLINE_MODE:
                 if (this.renderBlockOutlineMode == RENDER_BLOCK_OUTLINE_MODE_HUD)
-                    return var4 + "With HUD";
+                    return var4 + Lang.get("vivecraft.options.withhud");
                 else if (this.renderBlockOutlineMode == RENDER_BLOCK_OUTLINE_MODE_ALWAYS)
-                    return var4 + "Always";
+                    return var4 + Lang.get("vivecraft.options.always");
                 else if (this.renderBlockOutlineMode == RENDER_BLOCK_OUTLINE_MODE_NEVER)
-                    return var4 + "Never";
+                    return var4 + Lang.get("vivecraft.options.never");
 	        case HUD_OCCLUSION:
-	        	return this.hudOcclusion ? var4 + "ON" : var4 + "OFF";
+	        	return this.hudOcclusion ? var4 + Lang.getOn() : var4 + Lang.getOff();
 	        case MENU_ALWAYS_FOLLOW_FACE:
-	        	return this.menuAlwaysFollowFace ? var4 + "Always" : var4 + "Seated";
+	        	return this.menuAlwaysFollowFace ? var4 + Lang.get("vivecraft.options.always") : var4 + Lang.get("vivecraft.options.seated");
 	        case CROSSHAIR_OCCLUSION:
-	        	return this.useCrosshairOcclusion ? var4 + "ON" : var4 + "OFF";
+	        	return this.useCrosshairOcclusion ? var4 + Lang.getOn() : var4 + Lang.getOff();
 	        case MONO_FOV:
 	        	return var4 + String.format("%.0f\u00B0", this.mc.gameSettings.fovSetting);
 	        case INERTIA_FACTOR:
-	        	if (this.inertiaFactor == INERTIA_NONE)
-	        		return var4 + "Automan";
-	        	else if (this.inertiaFactor == INERTIA_NORMAL)
-	        		return var4 + "Normal";
+                if (this.inertiaFactor == INERTIA_NONE)
+                    return var4 + Lang.get("vivecraft.options.inertia.none");
+                else if (this.inertiaFactor == INERTIA_NORMAL)
+                    return var4 + Lang.get("vivecraft.options.inertia.normal");
                 else if (this.inertiaFactor == INERTIA_LARGE)
-                    return var4 + "A Lot";
+                    return var4 + Lang.get("vivecraft.options.inertia.large");
                 else if (this.inertiaFactor == INERTIA_MASSIVE)
-                    return var4 + "Even More";
+                    return var4 + Lang.get("vivecraft.options.inertia.massive");
                 // VIVE START - new options
             case SIMULATE_FALLING:
-                return this.simulateFalling ? var4 + "ON" : var4 + "OFF";
+                return this.simulateFalling ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case WEAPON_COLLISION:
-                return this.weaponCollision ? var4 + "ON" : var4 + "OFF";
+                if(this.weaponCollision == 0)
+              	  return var4 + Lang.getOff();
+                else if(this.weaponCollision == 1)
+              	  return var4 + Lang.getOn();
+                else if(this.weaponCollision == 2)
+              	  return var4 + Lang.get("vivecraft.options.auto");
             case ANIMAL_TOUCHING:
-                return this.animaltouching ? var4 + "ON" : var4 + "OFF";
+                return this.animaltouching ? var4 + Lang.getOn() : var4 + Lang.getOff();
                 // VIVE END - new options
                 //JRBUDDA
             case ALLOW_CRAWLING:
-                return this.vrAllowCrawling ? var4 + "ON" : var4 + "OFF"; 
+                return this.vrAllowCrawling ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case LIMIT_TELEPORT:
-                return this.vrLimitedSurvivalTeleport ? var4 + "ON" : var4 + "OFF";
+                return this.vrLimitedSurvivalTeleport ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case REVERSE_HANDS:
-            	return this.vrReverseHands ? var4 + "ON" : var4 + "OFF";
+            	return this.vrReverseHands ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case STENCIL_ON:
-            	return this.vrUseStencil ? var4 + "ON" : var4 + "OFF";
+            	return this.vrUseStencil ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case BCB_ON:
-            	return this.vrShowBlueCircleBuddy ? var4 + "ON" : var4 + "OFF";
+            	return this.vrShowBlueCircleBuddy ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case WORLD_SCALE:
 	            return var4 + String.format("%.2f", this.vrWorldScale)+ "x" ;
             case WORLD_ROTATION:
 	            return var4 + String.format("%.0f", this.vrWorldRotation);
             case WORLD_ROTATION_INCREMENT:
-	            return var4 + (this.vrWorldRotationIncrement == 0 ? "Smooth" : String.format("%.0f", this.vrWorldRotationIncrement));
+	            return var4 + (this.vrWorldRotationIncrement == 0 ? Lang.get("vivecraft.options.smooth") : String.format("%.0f", this.vrWorldRotationIncrement));
             case TOUCH_HOTBAR:
-            	return this.vrTouchHotbar ? var4 + "ON" : var4 + "OFF";
+            	return this.vrTouchHotbar ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case PLAY_MODE_SEATED:
-            	return this.seated ? var4 + "Seated" : var4 + "Standing";
+            	return this.seated ? var4 + Lang.get("vivecraft.options.seated") : var4 + Lang.get("vivecraft.options.standing");
                 //END JRBUDDA
             case REALISTIC_JUMP:
-                return this.realisticJumpEnabled ? var4 + "ON" : var4 + "OFF";
+                return this.realisticJumpEnabled ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case SEATED_HMD:
-                return this.seatedUseHMD ? var4 + "HMD" : var4 + "Crosshair";
+                return this.seatedUseHMD ? var4 + Lang.get("vivecraft.options.hmd") : var4 + Lang.get("vivecraft.options.crosshair");
             case SEATED_HUD_XHAIR:
-                return this.seatedHudAltMode ? var4 + "Crosshair" : var4 + "HMD";
+                return this.seatedHudAltMode ? var4 + Lang.get("vivecraft.options.crosshair") : var4 + Lang.get("vivecraft.options.hmd");
             case REALISTIC_SNEAK:
-                return this.realisticSneakEnabled ? var4 + "ON" : var4 + "OFF";
+                return this.realisticSneakEnabled ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case REALISTIC_CLIMB:
-                return this.realisticClimbEnabled ? var4 + "ON" : var4 + "OFF";
+                return this.realisticClimbEnabled ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case REALISTIC_SWIM:
-                return this.realisticSwimEnabled ? var4 + "ON" : var4 + "OFF";
+                return this.realisticSwimEnabled ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case REALISTIC_ROW:
-                return this.realisticRowEnabled ? var4 + "ON" : var4 + "OFF";
+                return this.realisticRowEnabled ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case VEHICLE_ROTATION:
-                return this.vehicleRotation ? var4 + "ON" : var4 + "OFF";
-            case CALIBRATE_HEIGHT:
-                return var2;
+                return this.vehicleRotation ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case WALK_MULTIPLIER:
                 return var4+ String.format("%.1f",walkMultiplier);
             case X_SENSITIVITY:
@@ -1038,60 +1030,64 @@ public class VRSettings
                 switch (this.vrFreeMoveMode) {
                 // VIVE - lock to hand instead of body
                 case FREEMOVE_CONTROLLER:
-                	return var4 + "Controller";
+                    return var4 + Lang.get("vivecraft.options.controller");
                 case FREEMOVE_HMD:
-                	return var4 + "HMD";
+                    return var4 + Lang.get("vivecraft.options.hmd");
                 case FREEMOVE_RUNINPLACE:
-                	return var4 + "RunInPlace";
+                    return var4 + Lang.get("vivecraft.options.runinplace");
+                case FREEMOVE_ROOM:
+                    return var4 + Lang.get("vivecraft.options.room");
                 }
             case FOV_REDUCTION:
-                return this.useFOVReduction ? var4 + "ON" : var4 + "OFF";
+                return this.useFOVReduction ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case AUTO_OPEN_KEYBOARD:
-                return this.autoOpenKeyboard ? var4 + "ON" : var4 + "OFF";
+                return this.autoOpenKeyboard ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case BACKPACK_SWITCH:
-                return this.backpackSwitching ? var4 + "ON" : var4 + "OFF";
+                return this.backpackSwitching ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case ANALOG_MOVEMENT:
-                return this.analogMovement ? var4 + "ON" : var4 + "OFF";
+                return this.analogMovement ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case AUTO_SPRINT:
-                return this.autoSprint ? var4 + "ON" : var4 + "OFF";
+                return this.autoSprint ? var4 + Lang.getOn() : var4 + Lang.getOff();
             case AUTO_SPRINT_THRESHOLD:
                 return var4 + String.format("%.2f", autoSprintThreshold);
             case RADIAL_MODE_HOLD:
-                return this.radialModeHold ? var4 + "HOLD" : var4 + "PRESS";
+                return this.radialModeHold ? var4 + Lang.get("vivecraft.options.hold") : var4 + Lang.get("vivecraft.options.press");
             case PHYSICAL_KEYBOARD:
-                return this.physicalKeyboard ? var4 + "Physical" : var4 + "Pointer";
+                return this.physicalKeyboard ? var4 + Lang.get("vivecraft.options.keyboard.physical") : var4 + Lang.get("vivecraft.options.keyboard.pointer");
+            case PHYSICAL_KEYBOARD_SCALE:
+                return var4 + Math.round(this.physicalKeyboardScale * 100) + "%";
             case BOW_MODE:
             	if(this.bowMode == BOW_MODE_OFF)
-            		return var4 + " OFF";
+            		return var4 + Lang.getOff();
             	else if(this.bowMode == BOW_MODE_ON)
-            		return var4 + " ON";
+            		return var4 + Lang.getOn();
             	else if (this.bowMode == BOW_MODE_VANILLA)
-            		return var4 + "VANILLA";
-            	else return var4 + " wtf?";
+            		return var4 +  Lang.get("vivecraft.options.vanilla");
+            	else return var4 + "wtf?";
             case TELEPORT_UP_LIMIT:
-	            return var4 +  (this.vrTeleportUpLimit > 0 ? this.vrTeleportUpLimit+ " Blocks" :" OFF");
+	            return var4 +  (this.vrTeleportUpLimit > 0 ? LangHelper.get("vivecraft.options.teleportlimit", this.vrTeleportUpLimit) : Lang.getOff());
             case TELEPORT_DOWN_LIMIT:
-	            return var4 +  (this.vrTeleportDownLimit > 0 ? this.vrTeleportDownLimit+ " Blocks" :" OFF");
+	            return var4 +  (this.vrTeleportDownLimit > 0 ? LangHelper.get("vivecraft.options.teleportlimit", this.vrTeleportDownLimit) : Lang.getOff());
             case TELEPORT_HORIZ_LIMIT:
-	            return var4 +  (this.vrTeleportHorizLimit > 0 ? this.vrTeleportHorizLimit+ " Blocks" :" OFF");
+	            return var4 +  (this.vrTeleportHorizLimit > 0 ? LangHelper.get("vivecraft.options.teleportlimit", this.vrTeleportHorizLimit) : Lang.getOff());
             case ALLOW_STANDING_ORIGIN_OFFSET:
-                return this.allowStandingOriginOffset ? var4 + "YES" : var4 + "NO";
+                return this.allowStandingOriginOffset ? var4 + LangHelper.getYes() : var4 + LangHelper.getNo();
             case SEATED_FREE_MOVE:
-                return this.seatedFreeMove ? var4 + "Free Move" : var4 + "Teleport";
+                return this.seatedFreeMove ? var4 + Lang.get("vivecraft.options.freemove") : var4 + Lang.get("vivecraft.options.teleport");
 			case FORCE_STANDING_FREE_MOVE:
-				return this.forceStandingFreeMove ? var4 + "YES" : var4 + "NO";
+				return this.forceStandingFreeMove ? var4 + LangHelper.getYes() : var4 + LangHelper.getNo();
             case ALLOW_ADVANCED_BINDINGS:
-                return this.allowAdvancedBindings ? var4 + "YES" : var4 + "NO";
+                return this.allowAdvancedBindings ? var4 + LangHelper.getYes() : var4 + LangHelper.getNo();
             case MENU_WORLD_SELECTION:
                 switch (this.menuWorldSelection) {
                     case MENU_WORLD_BOTH:
-                        return var4 + "Official & Custom";
+                        return var4 + Lang.get("vivecraft.options.menuworld.both");
                     case MENU_WORLD_CUSTOM:
-                        return var4 + "Custom Only";
+                        return var4 + Lang.get("vivecraft.options.menuworld.custom");
                     case MENU_WORLD_OFFICIAL:
-                        return var4 + "Official Only";
+                        return var4 + Lang.get("vivecraft.options.menuworld.official");
                     case MENU_WORLD_NONE:
-                        return var4 + "None";
+                        return var4 + Lang.get("vivecraft.options.menuworld.none");
                 }
  	        default:
 	        	return "";
@@ -1109,10 +1105,6 @@ public class VRSettings
 				return this.hudOpacity ;
 			case HUD_DISTANCE :
 				return this.hudDistance ;
-			case HUD_PITCH :
-				return this.hudPitchOffset ;
-            case HUD_YAW :
-                return this.hudYawOffset ;
 			case CROSSHAIR_SCALE :
 				return this.crosshairScale ;
             case MENU_CROSSHAIR_SCALE :
@@ -1169,6 +1161,8 @@ public class VRSettings
             	return this.vrTeleportDownLimit;
             case TELEPORT_HORIZ_LIMIT:          	
             	return this.vrTeleportHorizLimit;
+            case PHYSICAL_KEYBOARD_SCALE:
+                return this.physicalKeyboardScale;
 
             // VIVE END - new options
             default:
@@ -1185,11 +1179,6 @@ public class VRSettings
             case RENDER_MENU_BACKGROUND:
                 this.menuBackground = !this.menuBackground;
                 break;
-	        case RENDER_FULL_FIRST_PERSON_MODEL_MODE:
-                this.renderFullFirstPersonModelMode++;
-                if (this.renderFullFirstPersonModelMode > RENDER_FIRST_PERSON_NONE)
-                    this.renderFullFirstPersonModelMode = RENDER_FIRST_PERSON_FULL;
-	            break;
              case MIRROR_DISPLAY:
                 switch (this.displayMirrorMode) {
                     case MIRROR_OFF:
@@ -1254,9 +1243,6 @@ public class VRSettings
             	this.mixedRealityAlphaMask = !this.mixedRealityAlphaMask;
             	mc.stereoProvider.reinitFrameBuffers("Settings Change");
             	break;
-            case INSIDE_BLOCK_SOLID_COLOR:
-            	this.insideBlockSolidColor = !this.insideBlockSolidColor;
-            	break;
             case WALK_UP_BLOCKS:
                 this.walkUpBlocks = !this.walkUpBlocks;
                 break;
@@ -1273,6 +1259,7 @@ public class VRSettings
                    	this.vrHudLockMode = HUD_LOCK_HAND;
                 	break;
                 case HUD_LOCK_BODY:
+                default:
                     this.vrHudLockMode = HUD_LOCK_HAND;
                 }
                 break;
@@ -1312,7 +1299,9 @@ public class VRSettings
                 this.simulateFalling = !this.simulateFalling;
                 break;
             case WEAPON_COLLISION:
-                this.weaponCollision = !this.weaponCollision;
+                this.weaponCollision++;
+                if(this.weaponCollision > 2)
+                	this.weaponCollision = 0;
                 break;
             case ANIMAL_TOUCHING:
                 this.animaltouching = !this.animaltouching;
@@ -1368,12 +1357,6 @@ public class VRSettings
             case VEHICLE_ROTATION:
                 vehicleRotation = !vehicleRotation;
                 break;
-            case CALIBRATE_HEIGHT:
-                if(seated) {
-                    MCOpenVR.resetPosition();
-                }
-                playerEyeHeight = (float) Minecraft.getMinecraft().vrPlayer.vrdata_room_pre.getHeadPivot().y;
-                break;
             case FREEMOVE_MODE:
                 switch (this.vrFreeMoveMode) {
                 case FREEMOVE_CONTROLLER:
@@ -1383,6 +1366,10 @@ public class VRSettings
                    	this.vrFreeMoveMode = FREEMOVE_RUNINPLACE;
                 	break;
                 case FREEMOVE_RUNINPLACE:
+                   	this.vrFreeMoveMode = FREEMOVE_ROOM;
+                	break;
+                case FREEMOVE_ROOM:
+                default:
                    	this.vrFreeMoveMode = FREEMOVE_CONTROLLER;
                 	break;
                 }
@@ -1436,6 +1423,7 @@ public class VRSettings
                         this.menuWorldSelection = MENU_WORLD_NONE;
                         break;
                     case MENU_WORLD_NONE:
+                    default:
                         this.menuWorldSelection = MENU_WORLD_BOTH;
                         break;
                 }
@@ -1462,12 +1450,6 @@ public class VRSettings
 	        case HUD_DISTANCE:
 	            this.hudDistance = par2;
 	        	break;
-	        case HUD_PITCH:
-	            this.hudPitchOffset = par2;
-	        	break;
-            case HUD_YAW:
-                this.hudYawOffset = par2;
-                break;
 	        case CROSSHAIR_SCALE:
 	            this.crosshairScale = par2;
 	        	break;
@@ -1538,6 +1520,10 @@ public class VRSettings
             	break;
             case AUTO_SPRINT_THRESHOLD:
                 this.autoSprintThreshold = par2;
+            case PHYSICAL_KEYBOARD_SCALE:
+                this.physicalKeyboardScale = par2;
+                KeyboardHandler.physicalKeyboard.setScale(par2);
+                break;
             	// VIVE END - new options
             default:
             	break;
@@ -1608,7 +1594,7 @@ public class VRSettings
             var5.println("smoothTick:" + this.smoothTick);
             //VIVE
             var5.println("simulateFalling:" + this.simulateFalling);
-            var5.println("weaponCollision:" + this.weaponCollision);
+            var5.println("weaponCollisionNew:" + this.weaponCollision);
             var5.println("animalTouching:" + this.animaltouching);
             //END VIVE
             
@@ -1667,6 +1653,7 @@ public class VRSettings
             var5.println("keyboardKeysShift:" + this.keyboardKeysShift);
             var5.println("radialModeHold:" + this.radialModeHold);
             var5.println("physicalKeyboard:" + this.physicalKeyboard);
+            var5.println("physicalKeyboardScale:" + this.physicalKeyboardScale);
             var5.println("originOffset:" + MCOpenVR.offset.getX() + "," + MCOpenVR.offset.getY() + "," + MCOpenVR.offset.getZ());
             var5.println("allowStandingOriginOffset:" + this.allowStandingOriginOffset);
             var5.println("seatedFreeMove:" + this.seatedFreeMove);
@@ -1754,129 +1741,98 @@ public class VRSettings
 
     public static enum VrOptions
     {
-        HUD_SCALE("HUD Size", true, false),
-        HUD_DISTANCE("HUD Distance", true, false),
-        HUD_PITCH("HUD Vertical Offset", true, false),
-        HUD_YAW("HUD Horiz. Offset", true, false),
-        HUD_LOCK_TO("HUD Orientation Lock", false, true),
-        HUD_OPACITY("HUD Opacity", true, false),
-        RENDER_MENU_BACKGROUND("HUD/GUI Background", false, true),
-        HUD_OCCLUSION("HUD Occlusion", false, true),
-        MENU_ALWAYS_FOLLOW_FACE("Main Menu Follow", false, true),
-        CROSSHAIR_OCCLUSION("Crosshair Occlusion", false, true),
-        CHAT_FADE_AWAY("Chat Persistence", false, true),
-        DUMMY("Dummy", false, true),
-        DUMMY_SMALL("Dummy", false, true),
-        VR_RENDERER("Stereo Renderer", false, true),
-        VR_HEAD_ORIENTATION("Head Orientation", false, true),
-        VR_HEAD_POSITION("Head Position", false, true),
-        VR_CONTROLLER("Controller", false, true),
-        CROSSHAIR_SCALE("Crosshair Size", true, false),
-        MENU_CROSSHAIR_SCALE("Menu Crosshair Size", true, false),
-        RENDER_CROSSHAIR_MODE("Show Crosshair", false, true),
-        CROSSHAIR_ROLL("Roll Crosshair", false, true),
-        CROSSHAIR_SCALES_WITH_DISTANCE("Crosshair Scaling", false, true),
-        RENDER_BLOCK_OUTLINE_MODE("Show Block Outline", false, true),
-        LOAD_MUMBLE_LIB("Load Mumble Lib", false, true),
-        RENDER_OWN_HEADWEAR("Render Own Headwear", false, true),
-        RENDER_FULL_FIRST_PERSON_MODEL_MODE("First Person Model", false, true),
-        RENDER_PLAYER_OFFSET("View Body Offset", true, false),
-        AUTO_OPEN_KEYBOARD("Always Open Keyboard", false, true),
-        RADIAL_MODE_HOLD("Radial Menu Mode", false, true),
+        HUD_SCALE(true, false), // HUD Size
+        HUD_DISTANCE(true, false), // HUD Distance
+        HUD_LOCK_TO(false, true), // HUD Orientation Lock
+        HUD_OPACITY(true, false), // HUD Opacity
+        RENDER_MENU_BACKGROUND(false, true), // HUD/GUI Background
+        HUD_OCCLUSION(false, true), // HUD Occlusion
+        MENU_ALWAYS_FOLLOW_FACE(false, true), // Main Menu Follow
+        CROSSHAIR_OCCLUSION(false, true), // Crosshair Occlusion
+        DUMMY(false, true), // Dummy
+        DUMMY_SMALL(false, true), // Dummy
+        CROSSHAIR_SCALE(true, false), // Crosshair Size
+        MENU_CROSSHAIR_SCALE(true, false), // Menu Crosshair Size
+        RENDER_CROSSHAIR_MODE(false, true), // Show Crosshair
+        CROSSHAIR_SCALES_WITH_DISTANCE(false, true), // Crosshair Scaling
+        RENDER_BLOCK_OUTLINE_MODE(false, true), // Show Block Outline
+        AUTO_OPEN_KEYBOARD(false, true), // Always Open Keyboard
+        RADIAL_MODE_HOLD(false, true), // Radial Menu Mode
 
 
         //HMD/render
-        FSAA("Lanczos Scaler", false, true),
-        MIRROR_DISPLAY("Mirror Display", false, true),
-        MIRROR_EYE("Mirror Eye", false, true),
-        MIXED_REALITY_KEY_COLOR("Key Color", false, false),
-        MIXED_REALITY_RENDER_HANDS("Show Hands", false, true),
-        MIXED_REALITY_UNITY_LIKE("Layout", false, true),
-        MIXED_REALITY_UNDISTORTED("Undistorted Pass", false, true),
-        MIXED_REALITY_ALPHA_MASK("Alpha Mask", false, true),
-        MIXED_REALITY_FOV("Camera FOV", true, false),
-        
-        INSIDE_BLOCK_SOLID_COLOR("Inside Block", false, true),
-        WALK_UP_BLOCKS("Walk up blocks", false, true),
+        FSAA(false, true), // Lanczos Scaler
+        MIRROR_DISPLAY(false, true), // Mirror Display
+        MIRROR_EYE(false, true), // Mirror Eye
+        MIXED_REALITY_KEY_COLOR(false, false), // Key Color
+        MIXED_REALITY_RENDER_HANDS(false, true), // Show Hands
+        MIXED_REALITY_UNITY_LIKE(false, true), // Layout
+        MIXED_REALITY_UNDISTORTED(false, true), // Undistorted Pass
+        MIXED_REALITY_ALPHA_MASK(false, true), // Alpha Mask
+        MIXED_REALITY_FOV(true, false), // Camera FOV
+
+        WALK_UP_BLOCKS(false, true), // Walk up blocks
         //Movement/aiming controls
-        DECOUPLE_LOOK_MOVE("Decouple Look/Move", false, true),
-        MOVEMENT_MULTIPLIER("Move. Speed Multiplier", true, false),
-        STRAFE_MULTIPLIER("Strafe Speed Multiplier", true, false),
-        PITCH_AFFECTS_CAMERA("Pitch Affects Camera", false, true),
-        JOYSTICK_DEADZONE("Joystick Deadzone",true,false),
-        KEYHOLE_HEAD_RELATIVE("Keyhole Moves With Head",false,true),
-        MOUSE_AIM_TYPE("Aim Type",false,true),
-        CROSSHAIR_HEAD_RELATIVE("Cursor Relative To",false,true),
-        MOVEAIM_HYDRA_USE_CONTROLLER_ONE("Controller", false, true),
-        JOYSTICK_AIM_TYPE("Aim Type", false, false),
-        AIM_PITCH_OFFSET("Vertical Cursor Offset",true,false),
-        INERTIA_FACTOR("Player Inertia",false,true),
+        MOVEMENT_MULTIPLIER(true, false), // Move. Speed Multiplier
+        INERTIA_FACTOR(false, true), // Player Inertia
 
         // VIVE START - new options
-        SIMULATE_FALLING("Simulate falling", false, true),
-        WEAPON_COLLISION("Weapon collision", false, true),
-        ANIMAL_TOUCHING("Animal Interaction", false, true),
+        SIMULATE_FALLING(false, true), // Simulate falling
+        WEAPON_COLLISION(false, true), // Weapon collision
+        ANIMAL_TOUCHING(false, true), // Animal Interaction
         // VIVE END - new options
 
         //JRBUDDA VIVE
-        ALLOW_CRAWLING("Allow crawling",false, true),
-        ALLOW_MODE_SWITCH("Allow Mode Switch",false, true),
-        MOVE_MODE("Move Mode",false, true),
-        LIMIT_TELEPORT("Limit TP in Survival",false, true),
-        REVERSE_HANDS("Reverse Hands",false, true),
-        STENCIL_ON("Use Eye Stencil", false, true), 
-        BCB_ON("Show Body Position", false, true),    
-        WORLD_SCALE("World Scale", true, false),
-        WORLD_ROTATION("World Rotation", true, false),
-        WORLD_ROTATION_INCREMENT("Rotation Increment", true, false),
-        TOUCH_HOTBAR("Touch Hotbar Enabled", false, true),
-        PLAY_MODE_SEATED("Play Mode", false, true),
-        RENDER_SCALEFACTOR("Resolution", true, false),
-        MONO_FOV("Undistorted FOV", true, false),
+        ALLOW_CRAWLING(false, true), // Allow crawling
+        LIMIT_TELEPORT(false, true), // Limit TP in Survival
+        REVERSE_HANDS(false, true), // Reverse Hands
+        STENCIL_ON(false, true),  // Use Eye Stencil
+        BCB_ON(false, true),     // Show Body Position
+        WORLD_SCALE(true, false), // World Scale
+        WORLD_ROTATION(true, false), // World Rotation
+        WORLD_ROTATION_INCREMENT(true, false), // Rotation Increment
+        TOUCH_HOTBAR(false, true), // Touch Hotbar Enabled
+        PLAY_MODE_SEATED(false, true), // Play Mode
+        RENDER_SCALEFACTOR(true, false), // Resolution
+        MONO_FOV(true, false), // Undistorted FOV
         //END JRBUDDA
-        REALISTIC_JUMP("Roomscale Jumping",false,true),
-        REALISTIC_SNEAK("Roomscale Sneaking",false,true),
-        REALISTIC_CLIMB("Roomscale Climbing",false,true),
-        REALISTIC_SWIM("Roomscale Swimming",false,true),
-        REALISTIC_ROW("Roomscale Rowing",false,true),
-        CALIBRATE_HEIGHT("Calibrate Height",false,true),
-        WALK_MULTIPLIER("Walking Multipier",true,false),
-        FREEMOVE_MODE("Free Move Type", false, true),
-        FREEMOVE_WMR_STICK("Freemove Control", false, true),
-        ANALOG_DEADZONE("Analog Deadzone", true, false),
-        VEHICLE_ROTATION("Vehicle Rotation",false,true),
+        REALISTIC_JUMP(false, true), // Roomscale Jumping
+        REALISTIC_SNEAK(false, true), // Roomscale Sneaking
+        REALISTIC_CLIMB(false, true), // Roomscale Climbing
+        REALISTIC_SWIM(false, true), // Roomscale Swimming
+        REALISTIC_ROW(false, true), // Roomscale Rowing
+        WALK_MULTIPLIER(true, false), // Walking Multipier
+        FREEMOVE_MODE(false, true), // Free Move Type
+        VEHICLE_ROTATION(false, true), // Vehicle Rotation
         //SEATED
-        RESET_ORIGIN("Reset Origin",false,true),
-        X_SENSITIVITY("Rotation Speed",true,false),
-        Y_SENSITIVITY("Y Sensitivity",true,false),
-        KEYHOLE("Keyhole",true,false),
-        FOV_REDUCTION("FOV Comfort Reduction",false,true),
+        RESET_ORIGIN(false, true), // Reset Origin
+        X_SENSITIVITY(true, false), // Rotation Speed
+        Y_SENSITIVITY(true, false), // Y Sensitivity
+        KEYHOLE(true, false), // Keyhole
+        FOV_REDUCTION(false, true), // FOV Comfort Reduction
         // OTher buttons
-        OTHER_HUD_SETTINGS("Overlay/Crosshair/Chat...", false, true),
-        OTHER_RENDER_SETTINGS("IPD / FOV...", false, true),
-        LOCOMOTION_SETTINGS("Locomotion Settings...", false, true), 
-        SEATED_HMD("Forward Direction",false,true),
-        SEATED_HUD_XHAIR("HUD Follows",false,true), 
-        BACKPACK_SWITCH("Backpack Switching",false,true),
-        ANALOG_MOVEMENT("Analog Movement",false,true), 
-        BOW_MODE("Roomscale Bow Mode", false, true),
-        TELEPORT_DOWN_LIMIT("Teleport Down Limit", true, false ),
-        TELEPORT_UP_LIMIT("Teleport Up Limit", true, false ),
-        TELEPORT_HORIZ_LIMIT("Teleport Distance Limit", true, false ),
-        ALLOW_STANDING_ORIGIN_OFFSET("Allow Origin Offset", false, true), 
-        PHYSICAL_KEYBOARD("Keyboard Type", false, true),
-        HUD_HIDE("Hide Hud", false, true),
-        AUTO_SPRINT("Auto-sprint", false, true),
-        AUTO_SPRINT_THRESHOLD("Auto-sprint Threshold", true, false),
-        SEATED_FREE_MOVE("Movement Type", false, true),
-        FORCE_STANDING_FREE_MOVE("Force Free Move", false, true),
-        ALLOW_ADVANCED_BINDINGS("Show Advanced Bindings", false, true),
-        MENU_WORLD_SELECTION("Worlds", false, false)
+        SEATED_HMD(false, true), // Forward Direction
+        SEATED_HUD_XHAIR(false, true),  // HUD Follows
+        BACKPACK_SWITCH(false, true), // Backpack Switching
+        ANALOG_MOVEMENT(false, true),  // Analog Movement
+        BOW_MODE(false, true), // Roomscale Bow Mode
+        TELEPORT_DOWN_LIMIT(true, false), // Teleport Down Limit
+        TELEPORT_UP_LIMIT(true, false), // Teleport Up Limit
+        TELEPORT_HORIZ_LIMIT(true, false), // Teleport Distance Limit
+        ALLOW_STANDING_ORIGIN_OFFSET(false, true),  // Allow Origin Offset
+        PHYSICAL_KEYBOARD(false, true), // Keyboard Type
+        PHYSICAL_KEYBOARD_SCALE(true, false), // Physical Keyboard Scale
+        HUD_HIDE(false, true), // Hide Hud
+        AUTO_SPRINT(false, true), // Auto-sprint
+        AUTO_SPRINT_THRESHOLD(true, false), // Auto-sprint Threshold
+        SEATED_FREE_MOVE(false, true), // Movement Type
+        FORCE_STANDING_FREE_MOVE(false, true), // Force Free Move
+        ALLOW_ADVANCED_BINDINGS(false, true), // Show Advanced Bindings
+        MENU_WORLD_SELECTION(false, false) // Worlds
         ;    	
 
         private final boolean enumFloat;
         private final boolean enumBoolean;
-        private final String enumString;
         private final float valueStep;
         private float valueMin;
         private float valueMax;
@@ -1901,14 +1857,13 @@ public class VRSettings
             return null;
         }
 
-        private VrOptions(String par3Str, boolean isfloat, boolean isbool)
+        private VrOptions(boolean isfloat, boolean isbool)
         {
-            this(par3Str, isfloat, isbool, 0.0F, 1.0F, 0.0F);
+            this(isfloat, isbool, 0.0F, 1.0F, 0.0F);
         }
 
-        private VrOptions(String p_i45004_3_, boolean p_i45004_4_, boolean p_i45004_5_, float p_i45004_6_, float p_i45004_7_, float p_i45004_8_)
+        private VrOptions(boolean p_i45004_4_, boolean p_i45004_5_, float p_i45004_6_, float p_i45004_7_, float p_i45004_8_)
         {
-            this.enumString = p_i45004_3_;
             this.enumFloat = p_i45004_4_;
             this.enumBoolean = p_i45004_5_;
             this.valueMin = p_i45004_6_;
@@ -1931,11 +1886,6 @@ public class VRSettings
             return this.ordinal();
         }
 
-        public String getEnumString()
-        {
-            return this.enumString;
-        }
-
         public float getValueMax()
         {
             return this.valueMax;
@@ -1956,9 +1906,9 @@ public class VRSettings
             return p_148264_1_;
         }
 
-        VrOptions(String p_i45005_3_, boolean p_i45005_4_, boolean p_i45005_5_, float p_i45005_6_, float p_i45005_7_, float p_i45005_8_, Object p_i45005_9_)
+        VrOptions(boolean p_i45005_4_, boolean p_i45005_5_, float p_i45005_6_, float p_i45005_7_, float p_i45005_8_, Object p_i45005_9_)
         {
-            this(p_i45005_3_, p_i45005_4_, p_i45005_5_, p_i45005_6_, p_i45005_7_, p_i45005_8_);
+            this(p_i45005_4_, p_i45005_5_, p_i45005_6_, p_i45005_7_, p_i45005_8_);
         }
     }
 

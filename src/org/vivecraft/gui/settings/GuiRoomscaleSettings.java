@@ -10,6 +10,7 @@ import org.vivecraft.settings.VRSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.optifine.Lang;
 
 public class GuiRoomscaleSettings extends BaseGuiSettings implements GuiEventEx
 {
@@ -28,7 +29,7 @@ public class GuiRoomscaleSettings extends BaseGuiSettings implements GuiEventEx
     
     public GuiRoomscaleSettings(GuiScreen guiScreen, VRSettings guivrSettings) {
         super( guiScreen, guivrSettings );
-        screenTitle = "Roomscale Interactions Settings";
+        screenTitle = "vivecraft.options.screen.roomscale";
     }
 
     /**
@@ -37,8 +38,8 @@ public class GuiRoomscaleSettings extends BaseGuiSettings implements GuiEventEx
     public void initGui()
     {
         this.buttonList.clear();
-        this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, "Reset To Defaults"));
-        this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, "Done"));
+        this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, Lang.get("vivecraft.gui.loaddefaults")));
+        this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, Lang.get("gui.done")));
         VRSettings.VrOptions[] buttons = roomscaleSettings;
         addButtons(buttons,0);
     }
@@ -69,12 +70,6 @@ public class GuiRoomscaleSettings extends BaseGuiSettings implements GuiEventEx
                 {
                     minValue = 0.15f;
                     maxValue = 1.3f;
-                    increment = 0.01f;
-                }
-                if (var8 == VRSettings.VrOptions.STRAFE_MULTIPLIER)
-                {
-                    minValue = 0f;
-                    maxValue = 1.0f;
                     increment = 0.01f;
                 }
                 else if (var8 == VRSettings.VrOptions.WALK_MULTIPLIER){
@@ -134,7 +129,7 @@ public class GuiRoomscaleSettings extends BaseGuiSettings implements GuiEventEx
             else if (par1GuiButton.id == ID_GENERIC_DEFAULTS)
             {
                 //jrbudda//
-                vr.weaponCollision = true;
+                vr.weaponCollision = 2;
                 vr.animaltouching = true;
                 vr.realisticClimbEnabled = true;
                 vr.realisticJumpEnabled = true;
@@ -156,10 +151,6 @@ public class GuiRoomscaleSettings extends BaseGuiSettings implements GuiEventEx
                     this.guivrSettings.setOptionValue(((GuiSmallButtonEx)par1GuiButton).returnVrEnumOptions(), 1);
                     par1GuiButton.displayString = this.guivrSettings.getKeyBinding(VRSettings.VrOptions.getEnumOptions(par1GuiButton.id));
                     
-                    if(num == VRSettings.VrOptions.MOVE_MODE){
-                    	this.reinit = true;
-                    }
-                    
             }
         }
     }
@@ -173,91 +164,5 @@ public class GuiRoomscaleSettings extends BaseGuiSettings implements GuiEventEx
     @Override
     public boolean event(int id, String s) {
         return true;
-    }
-
-    @Override
-    protected String[] getTooltipLines(String displayString, int buttonId)
-    {
-        VRSettings.VrOptions e = VRSettings.VrOptions.getEnumOptions(buttonId);
-        if( e != null )
-            switch(e)
-            {
-                // VIVE START - new options
-                case SIMULATE_FALLING:
-                    return new String[] {
-                            "If enabled the player will falls to the ground in TP mode",
-                            "when standing above empty space. Also allows jumping"
-                    } ;
-                case WEAPON_COLLISION:
-                    return new String[] {
-                            "If enabled, you can swing your pickaxe at blocks to",
-                            "mine them, or your sword at enemies to hit them."
-                    } ;
-                case ANIMAL_TOUCHING:
-                    return new String[] {
-                            "If enabled, touching a passive mob (animal) without a",
-                            "weapon will right-click (interact) instead of attacking.",
-                            "Turn off for Piggy Slapping, Josh.",
-                    } ;
-                // VIVE END - new options
-                    //JRBUDDA
-                case ALLOW_CRAWLING:
-                    return new String[] {
-                            "If enabled the player will be able to duck under block"
-                    } ;
-                case REALISTIC_JUMP:
-                    return new String[]{
-                            "If turned on, once you jump in real life",
-                            "Your player will also jump. Also enables",
-                            "Jump Boots."
-                    };
-                case REALISTIC_SNEAK:
-                    return new String[]{
-                            "If turned on, once you duck in real life",
-                            "Your player will also sneak"
-                    };
-                case REALISTIC_CLIMB:
-                    return new String[]{
-                            "If turned on, allow climbing ladders and vines",
-                            "by touching them. Also enables Climb Claws."
-                    };
-                case BACKPACK_SWITCH:
-                    return new String[]{
-                            "If turned on, reaching behind your head with the right",
-                            "controller will swap to the 1st hotbar slot, or back to the",
-                            "previous slot. Doing the same with the left controller will",
-                            "swap the left and right hand items."
-                    };
-                case REALISTIC_SWIM:
-                    return new String[]{
-                            "If turned on, allow swimming by doing the breaststoke",
-                            "with the controllers."
-                    };
-                case REALISTIC_ROW:
-                    return new String[]{
-                            "Row, row, row your boat... by flapping your arms like mad."
-                    };
-                case BOW_MODE:
-                    return new String[]{
-                            "Sets when to use Roomscale Archery",
-                            "OFF: Never",
-                            "Vanilla: Only for the vanilla bow, no mod items",
-                            "ON: Always for any item that uses the 'bow' action"                        
-                    };
-                default:
-                    return null;
-            }
-        else
-            switch(buttonId)
-            {
-//                case 201:
-//                    return new String[] {
-//                            "Open this configuration screen to adjust the Head",
-//                            "  Tracker orientation (direction) settings. ",
-//                            "  Ex: Head Tracking Selection (Hydra/Oculus), Prediction"
-//                    };
-                default:
-                    return null;
-            }
     }
 }

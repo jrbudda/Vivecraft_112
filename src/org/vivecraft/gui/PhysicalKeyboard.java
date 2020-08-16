@@ -36,12 +36,21 @@ public class PhysicalKeyboard {
 	private boolean shiftSticky;
 	private List<KeyButton> keys;
 
-	private int rows = 4;
-	private int columns = 13;
-	private float spacing = .008f;
-	private float keyWidth = .05f;
-	private float keyHeight = .05f;
-	private float keyWidthSpecial = keyWidth * 2 + spacing;
+	// base values
+	private static final int ROWS = 4;
+	private static final int COLUMNS = 13;
+	private static final float SPACING = .0064f;
+	private static final float KEY_WIDTH = .04f;
+	private static final float KEY_HEIGHT = .04f;
+	private static final float KEY_WIDTH_SPECIAL = KEY_WIDTH * 2 + SPACING;
+
+	private int rows;
+	private int columns;
+	private float spacing;
+	private float keyWidth;
+	private float keyHeight;
+	private float keyWidthSpecial;
+	private float scale = 1.0f;
 
 	private KeyButton[] pressedKey = new KeyButton[2];
 	private long[] pressTime = new long[2];
@@ -59,6 +68,13 @@ public class PhysicalKeyboard {
 
 	public void init() {
 		this.keys.clear();
+
+		rows = ROWS;
+		columns = COLUMNS;
+		spacing = SPACING * scale;
+		keyWidth = KEY_WIDTH * scale;
+		keyHeight = KEY_HEIGHT * scale;
+		keyWidthSpecial = KEY_WIDTH_SPECIAL * scale;
 
 		String chars = mc.vrSettings.keyboardKeys;
 		if (this.shift)
@@ -83,6 +99,10 @@ public class PhysicalKeyboard {
 						GuiKeyboard.pressKey(Character.toString(chr));
 						if (!shiftSticky)
 							setShift(false, false);
+						if (chr == '/' && mc.currentScreen == null && Display.isActive()) { // this is dumb but whatever
+							KeyboardSimulator.pressRaw(KeyEvent.VK_SLASH);
+							KeyboardSimulator.unpressRaw(KeyEvent.VK_SLASH);
+						}
 					}
 				});
 			}
@@ -264,7 +284,7 @@ public class PhysicalKeyboard {
 
 	public void processBindings() {
 		if (GuiHandler.keyKeyboardShift.isPressed()) {
-			setShift(true, false);
+			setShift(true, true);
 			lastPressedShift = true;
 		}
 		if (!GuiHandler.keyKeyboardShift.isKeyDown() && lastPressedShift) {
@@ -330,19 +350,18 @@ public class PhysicalKeyboard {
 			}
 		}
 
+		// Shaders goes crazy without this
+		// TODO: How the fuck do I load this on 1.12?
+		mc.getTextureManager().bindTexture(new ResourceLocation("/assets/vivecraft/textures/white.png"));
+
 		Tessellator tess = Tessellator.getInstance();
+		BufferBuilder buf = tess.getBuffer();
+		buf.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR_NORMAL);
 		for (KeyButton key : keys) {
 			AxisAlignedBB box = key.getRenderBoundingBox();
 			GlStateManager.Color color = key.getRenderColor();
 
-			// Shaders goes crazy without this
-			// TODO: How the fuck do I load this on 1.12?
-			mc.getTextureManager().bindTexture(new ResourceLocation("/assets/vivecraft/textures/white.png"));
-
 			// Alright let's draw a box
-			BufferBuilder buf = tess.getBuffer();
-			buf.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR_NORMAL);
-
 			buf.pos(box.minX, box.minY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(0, 0, -1).endVertex();
 			buf.pos(box.minX, box.maxY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(0, 0, -1).endVertex();
 			buf.pos(box.maxX, box.maxY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(0, 0, -1).endVertex();
@@ -372,16 +391,19 @@ public class PhysicalKeyboard {
 			buf.pos(box.maxX, box.minY, box.maxZ).color(color.red, color.green, color.blue, color.alpha).normal(1, 0, 0).endVertex();
 			buf.pos(box.maxX, box.minY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(1, 0, 0).endVertex();
 			buf.pos(box.maxX, box.maxY, box.minZ).color(color.red, color.green, color.blue, color.alpha).normal(1, 0, 0).endVertex();
-
 			// Woo that was fun
-			tess.draw();
+		}
 
-			FontRenderer fontRenderer = mc.fontRenderer;
-			GlStateManager.enableTexture2D();
-			GlStateManager.disableLighting();
+		tess.draw();
+		GlStateManager.enableTexture2D();
+		GlStateManager.disableLighting();
+
+		FontRenderer fontRenderer = mc.fontRenderer;
+		for (KeyButton key : keys) {
+			AxisAlignedBB box = key.getRenderBoundingBox();
 
 			// Calculate text position
-			float textScale = 0.0025F;
+			float textScale = 0.002F * scale;
 			float stringWidth = fontRenderer.getStringWidth(key.label) * textScale;
 			float stringHeight = fontRenderer.FONT_HEIGHT * textScale;
 			float textX = (float)box.minX + ((float)box.maxX - (float)box.minX) / 2 - stringWidth / 2;
@@ -391,21 +413,18 @@ public class PhysicalKeyboard {
 			// Draw the text
 			GlStateManager.translate(0, 0, textZ);
 			GlStateManager.scale(textScale, textScale, 1.0F);
-			fontRenderer.drawStringWithShadow(key.label, textX / textScale, textY / textScale, 0xFFFFFFFF);
+			fontRenderer.drawString(key.label, textX / textScale, textY / textScale, 0xFFFFFFFF, false);
 			GlStateManager.scale(1.0F / textScale, 1.0F / textScale, 1.0F);
 			GlStateManager.translate(0, 0, -textZ);
-
-			GlStateManager.disableTexture2D();
-			GlStateManager.enableLighting();
 		}
 
-		GlStateManager.enableTexture2D();
 		GlStateManager.enableCull();
 	}
 
 	public void show() {
 		if (!this.shiftSticky)
 			this.shift = false;
+		this.scale = this.mc.vrSettings.physicalKeyboardScale;
 		this.reinit = true;
 	}
 
@@ -430,6 +449,15 @@ public class PhysicalKeyboard {
 		}
 	}
 
+	public float getScale() {
+		return scale;
+	}
+
+	public void setScale(float scale) {
+		this.scale = scale;
+		this.reinit = true;
+	}
+
 	private abstract class KeyButton {
 		public final int id;
 		public final String label;
@@ -440,18 +468,18 @@ public class PhysicalKeyboard {
 		public KeyButton(int id, String label, float x, float y, float width, float height) {
 			this.id = id;
 			this.label = label;
-			this.boundingBox = new AxisAlignedBB(x, y, 0.0, x + width, y + height, 0.035);
+			this.boundingBox = new AxisAlignedBB(x, y, 0.0, x + width, y + height, 0.028 * scale);
 		}
 
 		public AxisAlignedBB getRenderBoundingBox() {
 			if (pressed)
-				return boundingBox.offset(0, 0, 0.015);
+				return boundingBox.offset(0, 0, 0.012 * scale);
 			return boundingBox;
 		}
 
 		public AxisAlignedBB getCollisionBoundingBox() {
 			if (pressed)
-				return boundingBox.expand(0, 0, 0.05);
+				return boundingBox.expand(0, 0, 0.08);
 			return boundingBox;
 		}
 

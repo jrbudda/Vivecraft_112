@@ -13,6 +13,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
+import net.optifine.Lang;
 import org.apache.commons.lang3.ArrayUtils;
 
 public class GuiRadialConfiguration extends BaseGuiSettings
@@ -26,7 +27,7 @@ public class GuiRadialConfiguration extends BaseGuiSettings
 
     public GuiRadialConfiguration(GuiScreen guiScreen, VRSettings guivrSettings) {
         super( guiScreen, guivrSettings );
-        screenTitle = "Radial Menu Configuration";
+        screenTitle = "vivecraft.options.screen.radialmenu";
     }
     
     private String[] arr;
@@ -65,16 +66,16 @@ public class GuiRadialConfiguration extends BaseGuiSettings
     	this.buttonList.clear();
 
     	if(this.isselectmode) {
-        	this.buttonList.add(new GuiButtonEx(251, this.width / 2 - 155 ,  this.height -25 ,150,20, "Clear"));
-        	this.buttonList.add(new GuiButtonEx(250, this.width / 2 - 180  + 160, this.height -25,150,20, "Cancel"));
+        	this.buttonList.add(new GuiButtonEx(251, this.width / 2 - 155 ,  this.height -25 ,150,20, Lang.get("vivecraft.gui.clear")));
+        	this.buttonList.add(new GuiButtonEx(250, this.width / 2 - 180  + 160, this.height -25,150,20, Lang.get("gui.cancel")));
     	}else {
     		
-        	this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, "Reset To Defaults"));
-        	this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 180  + 160, this.height -25,150,20, "Done"));
+        	this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, Lang.get("vivecraft.gui.loaddefaults")));
+        	this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 180  + 160, this.height -25,150,20, Lang.get("gui.done")));
         	if(this.isShift)
-        		this.buttonList.add(new GuiButton(201, this.width / 2 - 180+160, 32, 150, 20, "Main Set"));         
+        		this.buttonList.add(new GuiButton(201, this.width / 2 - 180+160, 32, 150, 20, Lang.get("vivecraft.gui.radialmenu.mainset")));
         	else
-        		this.buttonList.add(new GuiButton(201, this.width / 2 - 180+160 ,32, 150, 20, "Alternate Set"));         
+        		this.buttonList.add(new GuiButton(201, this.width / 2 - 180+160 ,32, 150, 20, Lang.get("vivecraft.gui.radialmenu.alternateset")));
 
         	VRSettings.VrOptions[] buttons = options;
 
@@ -209,44 +210,18 @@ public class GuiRadialConfiguration extends BaseGuiSettings
     	
 //    	if(!MCOpenVR.isBound(MCOpenVR.keyRadialMenu))
 //    		this.drawCenteredString(this.fontRenderer, "The radial menu is not currently bound to a controller button.", this.width / 2, this.height - 50, 13777215);
-//    	
+//
+		if (!this.isselectmode)
+			this.drawCenteredString(this.fontRenderer, Lang.get("vivecraft.messages.radialmenubind.1"), this.width / 2, this.height - 50, 0x55FF55);
+
     	if(this.isShift)
-    		this.drawCenteredString(this.fontRenderer, "Hold (Gui Shift) with the radial menu open to switch to this set", this.width / 2, this.height - 36, 13777015);
+    		this.drawCenteredString(this.fontRenderer, Lang.get("vivecraft.messages.radialmenubind.2"), this.width / 2, this.height - 36, 13777015);
 
     	if(this.isselectmode)
     		list.drawScreen(par1, par2, par3);    
     	
     	super.drawScreen(par1, par2, par3, false);
 
-    }
-
-    @Override
-    protected String[] getTooltipLines(String displayString, int buttonId)
-    {
-        VRSettings.VrOptions e = VRSettings.VrOptions.getEnumOptions(buttonId);
-        if( e != null )
-            switch(e)
-            {
-            case RADIAL_MODE_HOLD:
-                return new String[] {
-                        "HOLD: Hold radial menu button, hover over",
-                        "selection and release.",
-                        "PRESS: Press radial menu button, click buttons,",
-                        "press menu button again to dismiss."
-                };
-            default:
-                return null;
-            }
-        else
-            switch(buttonId)
-            {
-                case 201:
-                    return new String[] {
-                            "Switch between alternate and main set of items"
-                    };
-            default:
-                return null;
-            }
     }
     
     /**

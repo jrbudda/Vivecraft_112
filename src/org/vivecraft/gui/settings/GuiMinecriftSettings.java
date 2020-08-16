@@ -20,16 +20,17 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.settings.GameSettings;
+import net.optifine.Lang;
 
 
 public class GuiMinecriftSettings extends BaseGuiSettings implements GuiEventEx
 {    
     static VROption[] vrAlwaysOptions = new VROption[]
         {
-            new VROption(202,VROption.Position.POS_LEFT,  1,  VROption.ENABLED, "HUD and GUI Settings..."),
-            new VROption(206,VROption.Position.POS_LEFT,   0, VROption.ENABLED, "Stereo Rendering..."),
-            new VROption(207,VROption.Position.POS_RIGHT,  0, VROption.ENABLED, "Quick Commands..."),
-            new VROption(210,VROption.Position.POS_RIGHT,  1, VROption.ENABLED, "Crosshair Settings..."),
+            new VROption(202,VROption.Position.POS_LEFT,  1,  VROption.ENABLED, "vivecraft.options.screen.gui.button"),
+            new VROption(206,VROption.Position.POS_LEFT,   0, VROption.ENABLED, "vivecraft.options.screen.stereorendering.button"),
+            new VROption(207,VROption.Position.POS_RIGHT,  0, VROption.ENABLED, "vivecraft.options.screen.quickcommands.button"),
+            new VROption(210,VROption.Position.POS_RIGHT,  1, VROption.ENABLED, "vivecraft.options.screen.guiother.button"),
             new VROption(VRSettings.VrOptions.WORLD_SCALE,       	VROption.Position.POS_LEFT,   6f, VROption.ENABLED, null),
             new VROption(VRSettings.VrOptions.WORLD_ROTATION,       VROption.Position.POS_RIGHT,   6f, VROption.ENABLED, null),
  
@@ -37,23 +38,23 @@ public class GuiMinecriftSettings extends BaseGuiSettings implements GuiEventEx
     
     static VROption[] vrStandingOptions = new VROption[]
             {
-                new VROption(209,VROption.Position.POS_LEFT,   4f, VROption.ENABLED, "Locomotion Settings..."),
-                new VROption(221,VROption.Position.POS_RIGHT,   4f, VROption.ENABLED, "Interaction Settings..."),
-                new VROption(220,VROption.Position.POS_LEFT,   5f, VROption.ENABLED, "Controller Settings..."),
-                new VROption(224,VROption.Position.POS_RIGHT,   5f, VROption.ENABLED, "Radial Menu..."),
+                new VROption(209,VROption.Position.POS_LEFT,   4f, VROption.ENABLED, "vivecraft.options.screen.standing.button"),
+                new VROption(221,VROption.Position.POS_RIGHT,   4f, VROption.ENABLED, "vivecraft.options.screen.roomscale.button"),
+                new VROption(220,VROption.Position.POS_LEFT,   5f, VROption.ENABLED, "vivecraft.options.screen.controls.button"),
+                new VROption(224,VROption.Position.POS_RIGHT,   5f, VROption.ENABLED, "vivecraft.options.screen.radialmenu.button"),
                // new VROption(VRSettings.VrOptions.REVERSE_HANDS,   VROption.Position.POS_RIGHT,   5f, VROption.ENABLED, null),
             };
     
     static VROption[] vrSeatedOptions = new VROption[]
             {
-                    new VROption(211, VROption.Position.POS_LEFT, 4f, VROption.ENABLED, "Seated Settings..."),
+                    new VROption(211, VROption.Position.POS_LEFT, 4f, VROption.ENABLED, "vivecraft.options.screen.seated.button"),
                     new VROption(VRSettings.VrOptions.RESET_ORIGIN, VROption.Position.POS_RIGHT,   4f, VROption.ENABLED, null),
             };
     
     static VROption[] vrConfirm = new VROption[]
             {
-                    new VROption(222, VROption.Position.POS_RIGHT,  2,  VROption.ENABLED, "Cancel"),
-                    new VROption(223, VROption.Position.POS_LEFT,   2, VROption.ENABLED, "OK"),	
+                    new VROption(222, VROption.Position.POS_RIGHT,  2,  VROption.ENABLED, "gui.cancel"),
+                    new VROption(223, VROption.Position.POS_LEFT,   2, VROption.ENABLED, "vivecraft.gui.ok"),
             };
     
     boolean isConfirm = false;
@@ -66,7 +67,7 @@ public class GuiMinecriftSettings extends BaseGuiSettings implements GuiEventEx
                                 GameSettings gameSettings)
     {
     	super( par1GuiScreen, par2vrSettings );
-    	screenTitle = "VR Settings";
+    	screenTitle = "vivecraft.options.screen.main";
         settings = gameSettings;
     }
     
@@ -79,13 +80,13 @@ public class GuiMinecriftSettings extends BaseGuiSettings implements GuiEventEx
     	int profileButtonWidth = 120;
 
     	if(!isConfirm){
-    		screenTitle = "VR Settings";
+    		screenTitle = "vivecraft.options.screen.main";
     		VROption mode = new VROption(VRSettings.VrOptions.PLAY_MODE_SEATED,VROption.Position.POS_RIGHT,  2,  VROption.ENABLED, null);
-    		GuiSmallButtonEx profilesButton = new GuiSmallButtonEx(mode.getOrdinal(), (this.width / 2 - profileButtonWidth/2 ) , this.height / 4 + 24 , mode._e, mode.getButtonText());
+    		GuiSmallButtonEx profilesButton = new GuiSmallButtonEx(mode.getOrdinal(), (this.width / 2 - profileButtonWidth/2 ) , this.height / 4 + 24 , mode._e, Lang.get(mode.getButtonText()));
     		profilesButton.setWidth(profileButtonWidth);
     		this.buttonList.add(profilesButton);
-    		this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, "Reset To Defaults"));
-    		this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, "Done"));
+    		this.buttonList.add(new GuiButtonEx(ID_GENERIC_DEFAULTS, this.width / 2 - 155 ,  this.height -25 ,150,20, Lang.get("vivecraft.gui.loaddefaults")));
+    		this.buttonList.add(new GuiButtonEx(ID_GENERIC_DONE, this.width / 2 - 155  + 160, this.height -25,150,20, Lang.get("gui.done")));
     		VROption[] buttons = null;
 
     		buttons = vrAlwaysOptions;
@@ -105,7 +106,7 @@ public class GuiMinecriftSettings extends BaseGuiSettings implements GuiEventEx
 
     	}
     	else {
-            this.screenTitle = "Switching to Seated Mode will disable controller input. Continue?";
+            this.screenTitle = "vivecraft.messages.seatedmode";
 			processButtons(vrConfirm);
     	}
     }
@@ -274,123 +275,6 @@ public class GuiMinecriftSettings extends BaseGuiSettings implements GuiEventEx
             	this.reinit = true;
             }   	
         }
-    }
-
-    @Override
-    protected String[] getTooltipLines(String displayString, int buttonId)
-    {
-        VRSettings.VrOptions e = VRSettings.VrOptions.getEnumOptions(buttonId);
-
-    	if( e != null )
-    	switch(e)
-    	{
-     	case REVERSE_HANDS:
-    		return new String[] {
-				"Swap left/right hands as dominant",
-				"  ON: Left dominant",
-				"  OFF: Right dominant",
-				"",
-				"To swap the buttons, restart the game and make",
-				"sure default bindings are selected in SteamVR."
-    		};
-        case WORLD_SCALE:
-            return new String[] {
-                    "Scales the player in the world.",
-                    "Above one makes you larger",
-                    "And below one makes you small",
-                    "And the ones that mother gives you",
-                    "don't do anything at all."
-            };
-        case WORLD_ROTATION:
-            return new String[] {
-                    "Adds extra rotation to your HMD.",
-                    "More useful bound to a button or ",
-                    "changed with the arrow keys."
-            };
-        case WORLD_ROTATION_INCREMENT:
-            return new String[] {
-                    "How many degrees to rotate when",
-                    "rotating the world."
-                    
-            };
-        case PLAY_MODE_SEATED:
-            return new String[] {
-                    "Standing or seated play mode",
-                    "Standing is vastly superior."
-                    
-            };
-        case RESET_ORIGIN:
-                return new String[] {
-                        "Recenter the player's feet in the world to 1.62m below the current",
-                        "HMD position. For non-lighthouse tracking systems."
-                };
-            default:
-    		return null;
-    	}
-    	else
-    	switch(buttonId)
-    	{
-            case 201:
-                return new String[] {
-                        "Open this configuration screen to adjust the Player",
-                        "  avatar preferences, select Oculus profiles etc.",
-                        "  Ex: IPD, Player (Eye) Height"
-                };
-            case 202:
-                return new String[] {
-                        "Open this configuration screen to adjust the Heads-",
-                        "Up Display (HUD) overlay properties.",
-                };
-            case 203:
-                return new String[] {
-                        "Open this configuration screen to adjust device",
-                        "calibration settings.",
-                        "  Ex: Initial calibration time"
-                };
-	    	case 205:
-	    		return new String[] {
-	    			"Open this configuration screen to adjust the Head",
-	    			"  Tracker orientation (direction) settings. ",
-	    			"  Ex: Head Tracking Selection (Hydra/Oculus), Prediction"
-	    		};
-	    	case 206:
-	    		return new String[] {
-	    			"Options for how the game is rendered and displayed on",
-	    			"the HMD and desktop mirror."
-	    		};
-	    	case 207:
-	    		return new String[] {
-	    			"Edit a list of commands or chat strings that will",
-	    			"be available in-game in the Quick Commands menu."
-	    		};
-	    	case 208:
-	    		return new String[] {
-	    			"Open this configuration screen to adjust how the ",
-	    			"  character is controlled. ",
-	    			"  Ex: Look/move/aim decouple, joystick sensitivty, " ,
-	    			"     Keyhole width, Mouse-pitch-affects camera" ,
-	    		};
-            case 209:
-                return new String[] {
-                        "Configure the locomotion based settings: movement",
-                        "attributes, VR comfort mode etc..."
-                } ;
-            case 210:
-                return new String[] {
-                        "Options for how the game crosshair displays"
-                } ;
-            case 211:
-                return new String[] {
-                        "Options for Seated Play mode"
-                };
-            case 220:
-                return new String[] {
-                        "Rebind the VR motion controller buttons to in-game",
-                        "actions"
-                } ;
-    		default:
-    			return null;
-    	}
     }
 
 	@Override
