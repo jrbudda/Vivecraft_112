@@ -689,7 +689,7 @@ public class Installer extends JPanel  implements PropertyChangeListener
 					
 				FULL_FORGE_VERSION = MINECRAFT_VERSION + "-" + FORGE_VERSION;
 				forgeInstaller = new File(tempDir + "/forge-" + FULL_FORGE_VERSION + "-installer.jar");
-				forge_url = "http://maven.minecraftforge.net/net/minecraftforge/forge/" + FULL_FORGE_VERSION + "/forge-" + FULL_FORGE_VERSION + "-installer.jar";
+				forge_url = "https://maven.minecraftforge.net/net/minecraftforge/forge/" + FULL_FORGE_VERSION + "/forge-" + FULL_FORGE_VERSION + "-installer.jar";
 
 				if( targetDir.exists() ) {
 					File ForgeDir = new File( targetDir, "libraries"+File.separator+"net"+File.separator+"minecraftforge"+File.separator+"forge");
