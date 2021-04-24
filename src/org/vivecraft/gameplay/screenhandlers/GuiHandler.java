@@ -411,7 +411,7 @@ public class GuiHandler {
 			guiPos_room = new Vec3d(
 					(float) (0),
 					(float) (1.3f),
-					(float) (playArea != null ? -playArea[1] / 2f : -1.5f));			
+					(float) -Math.max(playArea != null ? playArea[1] / 2f : 0, 1.5f));
 
 			guiRotation_room = new Matrix4f();
 			guiRotation_room.M[0][0] = guiRotation_room.M[1][1] = guiRotation_room.M[2][2] = guiRotation_room.M[3][3] = 1.0F;

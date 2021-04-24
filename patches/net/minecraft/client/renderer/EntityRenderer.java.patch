@@ -683,15 +683,15 @@
 -        {
 -            GlStateManager.translate((float)(-(pass * 2 - 1)) * 0.07F, 0.0F, 0.0F);
 -        }
--
++		/** MINECRIFT */
+ 
 -        this.clipDistance = this.farPlaneDistance * 2.0F;
 -
 -        if (this.clipDistance < 173.0F)
 -        {
 -            this.clipDistance = 173.0F;
 -        }
-+		/** MINECRIFT */
- 
+-
 -        if (this.cameraZoom != 1.0D)
 -        {
 -            GlStateManager.translate((float)this.cameraYaw, (float)(-this.cameraPitch), 0.0F);
@@ -1035,9 +1035,7 @@
 -        }
 -
 -        this.mc.mcProfiler.startSection("mouse");
-+    	if(mc.currentPass == RenderPass.LEFT) //contains all the stuff that was in this method that only needs to be called once per frame.
-+    		updateCameraAndRender_OnePass(partialTicks);
- 
+-
 -        if (flag && Minecraft.IS_RUNNING_ON_MAC && this.mc.inGameHasFocus && !Mouse.isInsideWindow())
 -        {
 -            Mouse.setGrabbed(false);
@@ -1054,7 +1052,9 @@
 -            float f2 = (float)this.mc.mouseHelper.deltaX * f1;
 -            float f3 = (float)this.mc.mouseHelper.deltaY * f1;
 -            int i = 1;
--
++    	if(mc.currentPass == RenderPass.LEFT) //contains all the stuff that was in this method that only needs to be called once per frame.
++    		updateCameraAndRender_OnePass(partialTicks);
+ 
 -            if (this.mc.gameSettings.invertMouse)
 -            {
 -                i = -1;
@@ -1218,13 +1218,13 @@
 -                        this.shaderGroup.render(partialTicks);
 -                        GlStateManager.popMatrix();
 -                    }
--
+ 
 -                    this.mc.getFramebuffer().bindFramebuffer(true);
 -                }
 -
 -                this.renderEndNanoTime = System.nanoTime();
 -                this.mc.mcProfiler.endStartSection("gui");
- 
+-
 -                if (!this.mc.gameSettings.hideGUI || this.mc.currentScreen != null)
 -                {
 -                    GlStateManager.alphaFunc(516, 0.1F);
@@ -1685,19 +1685,15 @@
              if (Reflector.ForgeHooksClient_setRenderPass.exists())
 -            {
 -                Reflector.callVoid(Reflector.ForgeHooksClient_setRenderPass, Integer.valueOf(-1));
-+	            {//forge diff sets this to 0, optifine has it as -1 ...
-+	                Reflector.callVoid(Reflector.ForgeHooksClient_setRenderPass, Integer.valueOf(-1));
-             }
- 
+-            }
+-
 -            RenderHelper.disableStandardItemLighting();
 -            this.disableLightmap();
 -        }
 -
 -        GlStateManager.matrixMode(5888);
 -        GlStateManager.popMatrix();
-+            
-+        this.mc.mcProfiler.endStartSection("outline");
- 
+-
 -        if (flag1 && this.mc.objectMouseOver != null && !entity.isInsideOfMaterial(Material.WATER))
 -        {
 -            EntityPlayer entityplayer = (EntityPlayer)entity;
@@ -1707,11 +1703,15 @@
 -            if (!Reflector.ForgeHooksClient_onDrawBlockHighlight.exists() || !Reflector.callBoolean(Reflector.ForgeHooksClient_onDrawBlockHighlight, renderglobal, entityplayer, this.mc.objectMouseOver, Integer.valueOf(0), partialTicks))
 -            {
 -                renderglobal.drawSelectionBox(entityplayer, this.mc.objectMouseOver, 0, partialTicks);
--            }
--
++	            {//forge diff sets this to 0, optifine has it as -1 ...
++	                Reflector.callVoid(Reflector.ForgeHooksClient_setRenderPass, Integer.valueOf(-1));
+             }
+ 
 -            GlStateManager.enableAlpha();
 -        }
--
++            
++        this.mc.mcProfiler.endStartSection("outline");
+ 
 -        if (this.mc.debugRenderer.shouldRender())
 -        {
 -            boolean flag2 = GlStateManager.isFogEnabled();
@@ -2206,7 +2206,7 @@
          if (this.itemActivationItem != null && this.itemActivationTicks > 0)
          {
              int i = 40 - this.itemActivationTicks;
-@@ -3053,26 +3273,2264 @@
+@@ -3053,26 +3273,2270 @@
              float f2 = f * f1;
              float f3 = 10.25F * f2 * f1 + -24.95F * f1 * f1 + 25.5F * f2 + -13.8F * f1 + 4.0F * f;
              float f4 = f3 * (float)Math.PI;
@@ -2238,9 +2238,8 @@
 -            RenderHelper.disableStandardItemLighting();
 -            GlStateManager.enableCull();
 -            GlStateManager.disableDepth();
--        }
 +                    }
-     }
++    }
 +    
 +    //VIVECRAFT ADDITIONS *********************************************************
 +	public void setupClipPlanes()
@@ -2784,7 +2783,7 @@
 +            matrixBuffer.rewind();
 +            this.thirdPassProjectionMatrix.load(matrixBuffer);
 +            matrixBuffer.rewind();
-+        }
+         }
 +
 +        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
 +        GlStateManager.pushMatrix();
@@ -2799,7 +2798,7 @@
 +        GlStateManager.disableRescaleNormal();
 +        GL11.glMatrixMode(GL11.GL_MODELVIEW);
 +  	    GlStateManager.popMatrix();
-+    }
+     }
 +
 +
 +	/** Renders the pre-generated 2-d framebuffer into the world at the appropriate location..
@@ -2849,7 +2848,13 @@
 +					///MAIN MENU ENVIRONMENT            
 +					if(inMenuRoom){		
 +						if (mc.menuWorldRenderer != null && mc.menuWorldRenderer.isReady()) {
-+							renderTechjarsAwesomeMainMenuRoom();
++                            try {
++                                renderTechjarsAwesomeMainMenuRoom();
++                            } catch (Exception e) {
++                                System.out.println("Error rendering main menu world, unloading to prevent more errors");
++                                e.printStackTrace();
++                                mc.menuWorldRenderer.destroy();
++                            }
 +						} else {
 +							renderJrbuddasAwesomeMainMenuRoom();
 +						}

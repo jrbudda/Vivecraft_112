@@ -99,7 +99,7 @@ public class GuiMinecriftSettings extends BaseGuiSettings implements GuiEventEx
     			processButtons(vrStandingOptions);
     			if(mc.vrSettings.allowStandingOriginOffset)
     				processButtons(new VROption[] {
-    						new VROption(VRSettings.VrOptions.RESET_ORIGIN, VROption.Position.POS_RIGHT,   4f, VROption.ENABLED, null),
+    						new VROption(VRSettings.VrOptions.RESET_ORIGIN, VROption.Position.POS_RIGHT,   7f, VROption.ENABLED, null),
     				}
     						);
     		}

@@ -1,0 +1,10 @@
+--- a/net/optifine/shaders/EntityAliases.java
++++ b/net/optifine/shaders/EntityAliases.java
+@@ -102,6 +102,7 @@
+ 
+     private static void loadEntityAliases(InputStream in, String path, List<Integer> listEntityAliases)
+     {
++    	if (Reflector.forgeExists()) return; //temp fix crash til next optifine.
+         if (in != null)
+         {
+             try
