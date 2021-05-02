@@ -1,0 +1,29 @@
+--- a/net/optifine/shaders/BlockAliases.java
++++ b/net/optifine/shaders/BlockAliases.java
+@@ -5,6 +5,8 @@
+ import java.util.ArrayList;
+ import java.util.List;
+ import java.util.Properties;
++import java.util.Set;
++
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.src.Config;
+ import net.minecraft.util.ResourceLocation;
+@@ -132,7 +134,7 @@
+                 Config.dbg("[Shaders] Parsing block mappings: " + path);
+                 ConnectedParser connectedparser = new ConnectedParser("Shaders");
+ 
+-                for (String s : properties.keySet())
++                for (String s : (Set<String>)(Set<?>)properties.keySet())
+                 {
+                     String s1 = properties.getProperty(s);
+ 
+@@ -197,7 +199,7 @@
+ 
+             while (j >= blocksAliases.size())
+             {
+-                blocksAliases.add((Object)null);
++                blocksAliases.add((List<BlockAlias>)null);
+             }
+ 
+             List<BlockAlias> list = (List)blocksAliases.get(j);

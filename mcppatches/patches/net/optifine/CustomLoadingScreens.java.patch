@@ -1,0 +1,11 @@
+--- a/net/optifine/CustomLoadingScreens.java
++++ b/net/optifine/CustomLoadingScreens.java
+@@ -76,7 +76,7 @@
+ 
+         if (ainteger.length <= 0)
+         {
+-            return new ImmutablePair<CustomLoadingScreen[], Integer>((Object)null, Integer.valueOf(0));
++            return new ImmutablePair<CustomLoadingScreen[], Integer>((CustomLoadingScreen[])null, Integer.valueOf(0));
+         }
+         else
+         {

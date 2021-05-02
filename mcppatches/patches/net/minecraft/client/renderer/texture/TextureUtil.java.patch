@@ -1,0 +1,28 @@
+--- a/net/minecraft/client/renderer/texture/TextureUtil.java
++++ b/net/minecraft/client/renderer/texture/TextureUtil.java
+@@ -273,7 +273,7 @@
+     public static int[] readImageData(IResourceManager resourceManager, ResourceLocation imageLocation) throws IOException
+     {
+         IResource iresource = null;
+-        Object i;
++        Object out;
+ 
+         try
+         {
+@@ -290,14 +290,14 @@
+                 return aint;
+             }
+ 
+-            i = null;
++            out = null;
+         }
+         finally
+         {
+             IOUtils.closeQuietly((Closeable)iresource);
+         }
+ 
+-        return (int[])i;
++        return (int[])out;
+     }
+ 
+     public static BufferedImage readBufferedImage(InputStream imageStream) throws IOException

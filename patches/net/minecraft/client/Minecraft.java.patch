@@ -1,0 +1,633 @@
+--- a/net/minecraft/client/Minecraft.java
++++ b/net/minecraft/client/Minecraft.java
+@@ -13,23 +13,32 @@
+ import com.mojang.authlib.minecraft.MinecraftSessionService;
+ import com.mojang.authlib.properties.PropertyMap;
+ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
++
+ import java.awt.image.BufferedImage;
+ import java.io.File;
+ import java.io.IOException;
+ import java.io.InputStream;
++import java.lang.reflect.Field;
++import java.lang.reflect.Method;
+ import java.net.Proxy;
+ import java.net.SocketAddress;
+ import java.nio.ByteBuffer;
+ import java.nio.ByteOrder;
++import java.nio.FloatBuffer;
+ import java.nio.IntBuffer;
+ import java.text.DecimalFormat;
+ import java.text.SimpleDateFormat;
++import java.util.ArrayDeque;
++import java.util.Arrays;
+ import java.util.Collections;
+ import java.util.Date;
++import java.util.Deque;
+ import java.util.Iterator;
++import java.util.LinkedList;
+ import java.util.List;
+ import java.util.Locale;
+ import java.util.Queue;
++import java.util.Random;
+ import java.util.Set;
+ import java.util.UUID;
+ import java.util.concurrent.Callable;
+@@ -201,6 +210,8 @@
+ import net.minecraft.world.storage.ISaveFormat;
+ import net.minecraft.world.storage.ISaveHandler;
+ import net.minecraft.world.storage.WorldInfo;
++import net.optifine.reflect.Reflector;
++
+ import org.apache.commons.io.Charsets;
+ import org.apache.commons.io.IOUtils;
+ import org.apache.commons.lang3.Validate;
+@@ -217,12 +228,15 @@
+ import org.lwjgl.opengl.OpenGLException;
+ import org.lwjgl.opengl.PixelFormat;
+ import org.lwjgl.util.glu.GLU;
++import org.vivecraft.render.PlayerModelController;
++import org.vivecraft.utils.LangHelper;
+ 
+ public class Minecraft implements IThreadListener, ISnooperInfo
+ {
+     private static final Logger LOGGER = LogManager.getLogger();
+     private static final ResourceLocation LOCATION_MOJANG_PNG = new ResourceLocation("textures/gui/title/mojang.png");
+     public static final boolean IS_RUNNING_ON_MAC = Util.getOSType() == Util.EnumOS.OSX;
++	public boolean integratedServerLaunchInProgress = false;
+ 
+     /**
+      * A 10MiB preallocation to ensure the heap is reasonably sized. {@linkplain #freeMemory() Freed} when the game runs
+@@ -257,7 +271,7 @@
+ 
+     /** True if the player is connected to a realms server */
+     private boolean connectedToRealms;
+-    private final Timer timer = new Timer(20.0F);
++    public final Timer timer = new Timer(20.0F);
+ 
+     /** Instance of PlayerUsageSnooper. */
+     private final Snooper usageSnooper = new Snooper("client", this, MinecraftServer.getCurrentTimeMillis());
+@@ -369,8 +383,9 @@
+     private long debugCrashKeyPressTime = -1L;
+     private IReloadableResourceManager mcResourceManager;
+     private final MetadataSerializer metadataSerializer_ = new MetadataSerializer();
+-    private final List<IResourcePack> defaultResourcePacks = Lists.<IResourcePack>newArrayList();
+-    private final DefaultResourcePack mcDefaultResourcePack;
++    //Forge make public
++    public final List<IResourcePack> defaultResourcePacks = Lists.<IResourcePack>newArrayList();
++    public final DefaultResourcePack mcDefaultResourcePack;
+     private ResourcePackRepository mcResourcePackRepository;
+     private LanguageManager mcLanguageManager;
+     private BlockColors blockColors;
+@@ -543,17 +558,45 @@
+         this.setWindowIcon();
+         this.setInitialDisplayMode();
+         this.createDisplay();
++        this.checkGLError("post display");
++        Display.setTitle(this.minecriftVerString);
+         OpenGlHelper.initializeTextures();
++        this.checkGLError("post textures");
++        System.out.println(OpenGlHelper.getLogText());
+         this.framebufferMc = new Framebuffer(this.displayWidth, this.displayHeight, true);
++        this.checkGLError("post fb");
+         this.framebufferMc.setFramebufferColor(0.0F, 0.0F, 0.0F, 0.0F);
++        this.checkGLError("post fbc");
+         this.registerMetadataSerializers();
+         this.mcResourcePackRepository = new ResourcePackRepository(this.fileResourcepacks, new File(this.mcDataDir, "server-resource-packs"), this.mcDefaultResourcePack, this.metadataSerializer_, this.gameSettings);
+         this.mcResourceManager = new SimpleReloadableResourceManager(this.metadataSerializer_);
+         this.mcLanguageManager = new LanguageManager(this.metadataSerializer_, this.gameSettings.language);
+         this.mcResourceManager.registerReloadListener(this.mcLanguageManager);
+-        this.refreshResources();
++        //Forge
++        Object fmlClientHandler = null;
++		if( Reflector.FMLClientHandler_instance.exists())
++		{
++			fmlClientHandler = Reflector.call( Reflector.FMLClientHandler_instance);
++		}
++		if( fmlClientHandler != null)
++		{
++			Reflector.callVoid(fmlClientHandler, Reflector.FMLClientHandler_beginMinecraftLoading, new Object[] {this, this.defaultResourcePacks,this.mcResourceManager, this.metadataSerializer_});
++		}
++		else {
++			this.refreshResources();
++		}
++		//
+         this.renderEngine = new TextureManager(this.mcResourceManager);
+         this.mcResourceManager.registerReloadListener(this.renderEngine);
++		//Forge
++        boolean hasForge = Reflector.forgeExists();
++		if (hasForge) {
++			Reflector.callVoid(Reflector.SplashProgress_drawVanillaScreen, this.renderEngine);
++		}
++		else {
++			this.drawSplashScreen(this.renderEngine);
++		}
++		//
+         this.drawSplashScreen(this.renderEngine);
+         this.skinManager = new SkinManager(this.renderEngine, new File(this.fileAssets, "skins"), this.sessionService);
+         this.saveLoader = new AnvilSaveConverter(new File(this.mcDataDir, "saves"), this.dataFixer);
+@@ -573,6 +616,11 @@
+         this.mcResourceManager.registerReloadListener(this.standardGalacticFontRenderer);
+         this.mcResourceManager.registerReloadListener(new GrassColorReloadListener());
+         this.mcResourceManager.registerReloadListener(new FoliageColorReloadListener());
++		Object bar = null;
++		if (hasForge) {
++			bar = Reflector.call(Reflector.FMLCommonProgressManager_push, "Rendering Setup", 5, true);
++			Reflector.callVoid(bar, Reflector.FMLCommonProgressManager_ProgressBar_step, "Loading Render Manager");
++		}
+         this.mouseHelper = new MouseHelper();
+         this.checkGLError("Pre startup");
+         GlStateManager.enableTexture2D();
+@@ -587,19 +635,29 @@
+         GlStateManager.loadIdentity();
+         GlStateManager.matrixMode(5888);
+         this.checkGLError("Startup");
+-        this.textureMapBlocks = new TextureMap("textures");
++		if (hasForge) Reflector.callVoid(bar, Reflector.FMLCommonProgressManager_ProgressBar_step, "Loading Texture Map");
++        this.textureMapBlocks = new TextureMap("textures", true);
+         this.textureMapBlocks.setMipmapLevels(this.gameSettings.mipmapLevels);
+         this.renderEngine.loadTickableTexture(TextureMap.LOCATION_BLOCKS_TEXTURE, this.textureMapBlocks);
+         this.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+         this.textureMapBlocks.setBlurMipmapDirect(false, this.gameSettings.mipmapLevels > 0);
++		if (hasForge) Reflector.callVoid(bar, Reflector.FMLCommonProgressManager_ProgressBar_step, "Loading Model Manager");
++
+         this.modelManager = new ModelManager(this.textureMapBlocks);
+         this.mcResourceManager.registerReloadListener(this.modelManager);
+         this.blockColors = BlockColors.init();
+         this.itemColors = ItemColors.init(this.blockColors);
+         this.renderItem = new RenderItem(this.renderEngine, this.modelManager, this.itemColors);
+         this.renderManager = new RenderManager(this.renderEngine, this.renderItem);
++		if (hasForge) Reflector.callVoid(bar, Reflector.FMLCommonProgressManager_ProgressBar_step, "Loading Item Renderer");
++
+         this.itemRenderer = new ItemRenderer(this);
+         this.mcResourceManager.registerReloadListener(this.renderItem);
++		if (hasForge){
++			Reflector.callVoid(bar, Reflector.FMLCommonProgressManager_ProgressBar_step, "Loading Item Renderer");
++			Reflector.callVoid(Reflector.SplashProgress_pause);
++		}
++
+         this.entityRenderer = new EntityRenderer(this, this.mcResourceManager);
+         this.mcResourceManager.registerReloadListener(this.entityRenderer);
+         this.blockRenderDispatcher = new BlockRendererDispatcher(this.modelManager.getBlockModelShapes(), this.blockColors);
+@@ -610,20 +668,55 @@
+         this.mcResourceManager.registerReloadListener(this.searchTreeManager);
+         GlStateManager.viewport(0, 0, this.displayWidth, this.displayHeight);
+         this.effectRenderer = new ParticleManager(this.world, this.renderEngine);
++        
++        //Forge
++        if (hasForge){
++        	Reflector.callVoid(Reflector.SplashProgress_resume);
++        	Reflector.call(Reflector.FMLCommonProgressManager_pop, bar);
++        	Reflector.callVoid(fmlClientHandler, Reflector.FMLClientHandler_finishMinecraftLoading);
++        } else {
++        	this.refreshResources();
++        }
++    
+         this.checkGLError("Post startup");
+-        this.ingameGUI = new GuiIngame(this);
++        
++		if(hasForge)
++		{
++			this.ingameGUI = (GuiIngame)Reflector.newInstance(Reflector.ForgeGuiIngame_Constructor, this);
++		}
++		else
++		{
++			this.ingameGUI = new GuiIngame(this);
++		}
++	    //
+ 
+         if (this.serverName != null)
+-        {
+-            this.displayGuiScreen(new GuiConnecting(new GuiMainMenu(), this, this.serverName, this.serverPort));
+-        }
++        {        	//Forge
++			if( fmlClientHandler != null ) {
++				Reflector.callVoid(fmlClientHandler, Reflector.FMLClientHandler_connectToServerAtStartup, new Object[]{this.serverName, this.serverPort});
++			}
++			else {
++				this.displayGuiScreen(new GuiConnecting(new GuiMainMenu(), this, this.serverName, this.serverPort));
++			}
++			//
++		}
+         else
+         {
+             this.displayGuiScreen(new GuiMainMenu());
+         }
+ 
+-        this.renderEngine.deleteTexture(this.mojangLogo);
+-        this.mojangLogo = null;
++        //Forge
++		if (hasForge) {
++			Reflector.callVoid(Reflector.SplashProgress_clearVanillaResources, new Object[] {renderEngine, mojangLogo});
++		}
++		else {
++			this.renderEngine.deleteTexture(this.mojangLogo);
++		}      
++		//
++		if( hasForge ) {
++			Reflector.callVoid(fmlClientHandler, Reflector.FMLClientHandler_onInitializationComplete);
++		}
++		this.mojangLogo = null;
+         this.loadingScreen = new LoadingScreenRenderer(this);
+         this.debugRenderer = new DebugRenderer(this);
+ 
+@@ -643,6 +736,9 @@
+         }
+ 
+         this.renderGlobal.makeEntityOutlineShader();
++
++        // VIVECRAFT
++        LangHelper.registerResourceListener();
+     }
+ 
+     /**
+@@ -848,22 +944,30 @@
+         File file1 = new File(getMinecraft().mcDataDir, "crash-reports");
+         File file2 = new File(file1, "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-client.txt");
+         Bootstrap.printToSYSOUT(crashReportIn.getCompleteReport());
+-
++        int retVal;
++        
+         if (crashReportIn.getFile() != null)
+         {
+             Bootstrap.printToSYSOUT("#@!@# Game crashed! Crash report saved to: #@!@# " + crashReportIn.getFile());
+-            System.exit(-1);
++            retVal = -1;
+         }
+         else if (crashReportIn.saveToFile(file2))
+         {
+             Bootstrap.printToSYSOUT("#@!@# Game crashed! Crash report saved to: #@!@# " + file2.getAbsolutePath());
+-            System.exit(-1);
++            retVal = -1;
+         }
+         else
+         {
+             Bootstrap.printToSYSOUT("#@?@# Game crashed! Crash report could not be saved. #@?@#");
+-            System.exit(-2);
++            retVal = -2;
+         }
++        
++        if(Reflector.forgeExists()){
++        	Object object = Reflector.call(Reflector.FMLCommonHandler_instance);
++            Reflector.call(object, Reflector.FMLCommonHandler_handleExit, new Object[] {retVal});
++        } else
++        	System.exit(retVal);
++        
+     }
+ 
+     public boolean isUnicode()
+@@ -981,8 +1085,8 @@
+         this.displayWidth = displaymode.getWidth();
+         this.displayHeight = displaymode.getHeight();
+     }
+-
+-    private void drawSplashScreen(TextureManager textureManagerInstance) throws LWJGLException
++    //Forge make public
++    public void drawSplashScreen(TextureManager textureManagerInstance) throws LWJGLException
+     {
+         ScaledResolution scaledresolution = new ScaledResolution(this);
+         int i = scaledresolution.getScaleFactor();
+@@ -1075,7 +1179,8 @@
+      */
+     public void displayGuiScreen(@Nullable GuiScreen guiScreenIn)
+     {
+-        if (this.currentScreen != null)
++    	
++        if (Reflector.forgeExists() == false && this.currentScreen != null)
+         {
+             this.currentScreen.onGuiClosed();
+         }
+@@ -1089,6 +1194,21 @@
+             guiScreenIn = new GuiGameOver((ITextComponent)null);
+         }
+ 
++        if (Reflector.forgeExists())
++        {
++        	GuiScreen old = this.currentScreen;
++        	Object event = Reflector.newInstance(Reflector.ForgeGuiOpenEvent_Constructor, new Object[] {guiScreenIn});
++
++        	if (Reflector.postForgeBusEvent(event)) return;
++
++        	guiScreenIn = (GuiScreen)Reflector.getFieldValue(event, Reflector.ForgeGuiOpenEvent_gui);
++        	if (old != null && guiScreenIn != old)
++        	{
++        		old.onGuiClosed();
++        	}
++        }
++
++
+         if (guiScreenIn instanceof GuiMainMenu || guiScreenIn instanceof GuiMultiplayer)
+         {
+             this.gameSettings.showDebugInfo = false;
+@@ -1224,11 +1344,21 @@
+ 
+         if (!this.skipRenderWorld)
+         {
++			Object fmlCommonHandler = null;
++			if (Reflector.FMLCommonHandler_instance.exists()) {
++				fmlCommonHandler = Reflector.call(Reflector.FMLCommonHandler_instance);
++				Reflector.callVoid(fmlCommonHandler, Reflector.FMLCommonHandler_onRenderTickStart, new Object[]{this.timer.renderPartialTicks});
++			}
++			
+             this.mcProfiler.endStartSection("gameRenderer");
+             this.entityRenderer.updateCameraAndRender(this.isGamePaused ? this.renderPartialTicksPaused : this.timer.renderPartialTicks, i);
+             this.mcProfiler.endStartSection("toasts");
+             this.toastGui.drawToast(new ScaledResolution(this));
+             this.mcProfiler.endSection();
++            
++			if (fmlCommonHandler != null) {
++				Reflector.callVoid(fmlCommonHandler, Reflector.FMLCommonHandler_onRenderTickEnd, new Object[]{this.timer.renderPartialTicks});		
++			}
+         }
+ 
+         this.mcProfiler.endSection();
+@@ -1607,10 +1737,16 @@
+             {
+                 BlockPos blockpos = this.objectMouseOver.getBlockPos();
+ 
+-                if (this.world.getBlockState(blockpos).getMaterial() != Material.AIR && this.playerController.onPlayerDamageBlock(blockpos, this.objectMouseOver.sideHit))
++                //Forge changes this from a material check to isAirBlock...
++                if (!this.world.isAirBlock(blockpos) && this.playerController.onPlayerDamageBlock(blockpos, this.objectMouseOver.sideHit))
+                 {
+-                    this.effectRenderer.addBlockHitEffects(blockpos, this.objectMouseOver.sideHit);
+-                    this.player.swingArm(EnumHand.MAIN_HAND);
++                	if(Reflector.forgeExists())
++                		//y u gotta be different?
++                		Reflector.call(this.effectRenderer, Reflector.ForgeParticleManager_addBlockHitEffects, blockpos, this.objectMouseOver);
++                	else
++                		this.effectRenderer.addBlockHitEffects(blockpos, this.objectMouseOver.sideHit);
++                	
++                	this.player.swingArm(EnumHand.MAIN_HAND);
+                 }
+             }
+             else
+@@ -1657,6 +1793,9 @@
+                         }
+ 
+                         this.player.resetCooldown();
++                    	if(Reflector.forgeExists())
++                       	   Reflector.callVoid(Reflector.ForgeHooks_onEmptyLeftClick, this.player, this.player.getHeldItemMainhand());
++
+                 }
+ 
+                 this.player.swingArm(EnumHand.MAIN_HAND);
+@@ -1706,7 +1845,7 @@
+                             case BLOCK:
+                                 BlockPos blockpos = this.objectMouseOver.getBlockPos();
+ 
+-                                if (this.world.getBlockState(blockpos).getMaterial() != Material.AIR)
++                                if (!this.world.isAirBlock(blockpos)) //Forge DOES NOT change this to isairblock but it prolly is supposed to... right?
+                                 {
+                                     int i = itemstack.getCount();
+                                     EnumActionResult enumactionresult = this.playerController.processRightClickBlock(this.player, this.world, blockpos, this.objectMouseOver.sideHit, this.objectMouseOver.hitVec, enumhand);
+@@ -1714,6 +1853,9 @@
+                                     if (enumactionresult == EnumActionResult.SUCCESS)
+                                     {
+                                         this.player.swingArm(enumhand);
++                                        if(Reflector.forgeExists())
++                                        	if (itemstack==null&& (this.objectMouseOver == null || this.objectMouseOver.typeOfHit == RayTraceResult.Type.MISS)) 
++                                        		Reflector.callVoid(Reflector.ForgeHooks_onEmptyClick,this.player, enumhand);
+ 
+                                         if (!itemstack.isEmpty() && (itemstack.getCount() != i || this.playerController.isInCreativeMode()))
+                                         {
+@@ -1801,7 +1943,7 @@
+     /**
+      * Called to resize the current screen.
+      */
+-    private void resize(int width, int height)
++    public void resize(int width, int height)
+     {
+         this.displayWidth = Math.max(1, width);
+         this.displayHeight = Math.max(1, height);
+@@ -1843,7 +1985,12 @@
+         {
+             --this.rightClickDelayTimer;
+         }
+-
++        Object fmlCommonHandler = null;
++        boolean hasForge = Reflector.forgeExists();
++		if( hasForge) {
++			fmlCommonHandler = Reflector.call( Reflector.FMLCommonHandler_instance);
++			Reflector.callVoid(fmlCommonHandler, Reflector.FMLCommonHandler_onPreClientTick);
++		}
+         this.mcProfiler.startSection("gui");
+ 
+         if (!this.isGamePaused)
+@@ -1956,6 +2103,9 @@
+                     this.joinPlayerCounter = 0;
+                     this.world.joinEntityInSurroundings(this.player);
+                 }
++                if(hasForge)
++                	Reflector.callVoid(fmlCommonHandler, Reflector.FMLCommonHandler_fireMouseInput);
++
+             }
+ 
+             this.mcProfiler.endStartSection("gameRenderer");
+@@ -1989,6 +2139,8 @@
+             this.entityRenderer.stopUseShader();
+         }
+ 
++        PlayerModelController.getInstance().tick();
++        
+         if (!this.isGamePaused)
+         {
+             this.mcMusicTicker.update();
+@@ -2045,6 +2197,9 @@
+         }
+ 
+         this.mcProfiler.endSection();
++        if(hasForge)
++        	Reflector.callVoid(fmlCommonHandler, Reflector.FMLCommonHandler_onPostClientTick);
++
+         this.systemTime = getSystemTime();
+     }
+ 
+@@ -2150,6 +2305,10 @@
+                     }
+                 }
+             }
++            //Forge
++            if(Reflector.forgeExists())
++            	Reflector.callVoid(Reflector.call( Reflector.FMLCommonHandler_instance), Reflector.FMLCommonHandler_fireKeyInput);
++            //
+         }
+ 
+         this.processKeyBinds();
+@@ -2407,6 +2566,10 @@
+     {
+         while (Mouse.next())
+         {
++			if (Reflector.forgeExists()) {
++				if (Reflector.callBoolean(Reflector.ForgeHooksClient_postMouseEvent)) continue;
++			}
++			
+             int i = Mouse.getEventButton();
+             KeyBinding.setKeyBindState(i - 100, Mouse.getEventButtonState());
+ 
+@@ -2475,6 +2638,15 @@
+      */
+     public void launchIntegratedServer(String folderName, String worldName, @Nullable WorldSettings worldSettingsIn)
+     {
++		Object fmlClientHandler = null;
++		if( Reflector.FMLClientHandler_instance.exists()) {
++			fmlClientHandler = Reflector.call( Reflector.FMLClientHandler_instance);
++		}
++		if( fmlClientHandler != null) {
++			Reflector.callVoid(fmlClientHandler, Reflector.FMLClientHandler_startIntegratedServer, new Object[] {folderName, worldName, worldSettingsIn});
++		}
++		
++    	integratedServerLaunchInProgress = true;
+         this.loadWorld((WorldClient)null);
+         System.gc();
+         ISaveHandler isavehandler = this.saveLoader.getSaveLoader(folderName, false);
+@@ -2517,6 +2689,16 @@
+ 
+         while (!this.integratedServer.serverIsInRunLoop())
+         {
++			if (Reflector.forgeExists())
++			{
++				if (!Reflector.callBoolean(Reflector.FMLStartupQuery_check))
++				{
++					loadWorld(null);
++					displayGuiScreen(null);
++					return;
++				}
++			}
++			
+             String s = this.integratedServer.getUserMessage();
+ 
+             if (s != null)
+@@ -2537,12 +2719,20 @@
+                 ;
+             }
+         }
+-
++        integratedServerLaunchInProgress = false;
+         this.displayGuiScreen(new GuiScreenWorking());
+         SocketAddress socketaddress = this.integratedServer.getNetworkSystem().addLocalEndpoint();
+         NetworkManager networkmanager = NetworkManager.provideLocalClient(socketaddress);
+         networkmanager.setNetHandler(new NetHandlerLoginClient(networkmanager, this, (GuiScreen)null));
+-        networkmanager.sendPacket(new C00Handshake(socketaddress.toString(), 0, EnumConnectionState.LOGIN));
++        networkmanager.sendPacket(new C00Handshake(socketaddress.toString(), 0, EnumConnectionState.LOGIN, Reflector.forgeExists()));
++        //Forge thing
++        if(Reflector.forgeExists())
++        	if (!Reflector.callBoolean(this.getSession(), Reflector.ForgeSession_hasCachedProperties))
++        	{
++        		com.mojang.authlib.GameProfile gameProfile = this.getSession().getProfile();
++        		gameProfile = sessionService.fillProfileProperties(gameProfile, true); //Forge: Fill profile properties upon game load. Fixes MC-52974.
++        		Reflector.call(this.getSession(), Reflector.ForgeSession_setProperties, new Object[]{gameProfile.getProperties()});
++        	}
+         networkmanager.sendPacket(new CPacketLoginStart(this.getSession().getProfile()));
+         this.myNetworkManager = networkmanager;
+     }
+@@ -2560,6 +2750,10 @@
+      */
+     public void loadWorld(@Nullable WorldClient worldClientIn, String loadingMessage)
+     {
++		if (this.world != null && Reflector.EventBus.exists())
++		{
++			Reflector.postForgeBusEvent(Reflector.ForgeWorldEvent_Unload_Constructor, this.world);
++		}
+         if (worldClientIn == null)
+         {
+             NetHandlerPlayClient nethandlerplayclient = this.getConnection();
+@@ -2572,6 +2766,22 @@
+             if (this.integratedServer != null && this.integratedServer.isAnvilFileSet())
+             {
+                 this.integratedServer.initiateShutdown();
++            	//Forge
++            	if(Reflector.forgeExists()){
++            		if (loadingScreen != null && this.running)
++            		{
++            			this.loadingScreen.displayLoadingString(I18n.format("forge.client.shutdown.internal"));
++            		}
++            		while (!integratedServer.isServerStopped())
++            		{
++            			try
++            			{
++            				Thread.sleep(10);
++            			}
++            			catch (InterruptedException ie) {}
++            		}
++            	}
++            	//
+             }
+ 
+             this.integratedServer = null;
+@@ -2595,6 +2805,11 @@
+             this.ingameGUI.resetPlayersOverlayFooterHeader();
+             this.setServerData((ServerData)null);
+             this.integratedServerIsRunning = false;
++			//Forge
++            if(Reflector.forgeExists()) {
++				Reflector.callVoid(Reflector.call( Reflector.FMLClientHandler_instance), Reflector.FMLClientHandler_handleClientWorldClosing, new Object[]{this.world});
++			}
++            //
+         }
+ 
+         this.mcSoundHandler.stopSounds();
+@@ -2719,6 +2934,12 @@
+      */
+     private void middleClickMouse()
+     {
++    	if(Reflector.forgeExists()){
++    		if (Reflector.callBoolean(Reflector.ForgeHooks_onPickBlock, new Object[]{this.objectMouseOver,this.player,this.world}))
++    		{
++    			return;
++    		}
++    	}
+         if (this.objectMouseOver != null && this.objectMouseOver.typeOfHit != RayTraceResult.Type.MISS)
+         {
+             boolean flag = this.player.capabilities.isCreativeMode;
+@@ -2882,7 +3103,7 @@
+         }
+     }
+ 
+-    private ItemStack storeTEInStack(ItemStack stack, TileEntity te)
++    public ItemStack storeTEInStack(ItemStack stack, TileEntity te)
+     {
+         NBTTagCompound nbttagcompound = te.writeToNBT(new NBTTagCompound());
+ 
+@@ -3212,6 +3433,10 @@
+      */
+     public static int getGLMaximumTextureSize()
+     {
++    	//Forge
++    	if(Reflector.forgeExists())
++    		return Reflector.callInt(Reflector.SplashProgress_getMaxTextureSize);
++    	//
+         for (int i = 16384; i > 0; i >>= 1)
+         {
+             GlStateManager.glTexImage2D(32868, 0, 6408, i, i, 0, 6408, 5121, (IntBuffer)null);
+@@ -3516,6 +3741,12 @@
+         return this.searchTreeManager.<T>get(key);
+     }
+ 
++    public SearchTreeManager getSearchTreeManager()
++    {
++    	return this.searchTreeManager;
++    }
++    //
++    
+     public static int getDebugFPS()
+     {
+         return debugFPS;
+@@ -3582,4 +3813,18 @@
+     {
+         return this.tutorial;
+     }
++    
++	public void printChatMessage(String msg)
++	{
++		if (this.world != null) {
++			ITextComponent chatText = new TextComponentString(msg);
++			this.ingameGUI.getChatGUI().printChatMessage(chatText);
++		}
++	}
++    public final String minecriftVerString = "Vivecraft 1.12.2 jrbudda-NONVR-11-r4";
++	// FORGE
++	public ItemColors getItemColors()
++	{
++		return this.itemColors;
++	}
+ }

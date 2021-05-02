@@ -1,0 +1,32 @@
+--- a/net/minecraft/client/renderer/RenderGlobal.java
++++ b/net/minecraft/client/renderer/RenderGlobal.java
+@@ -757,7 +757,7 @@
+             List<Entity> list2 = Lists.<Entity>newArrayList();
+             BlockPos.PooledMutableBlockPos blockpos$pooledmutableblockpos = BlockPos.PooledMutableBlockPos.retain();
+ 
+-            for (RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation : this.renderInfosEntities)
++            for (RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation :  (Collection<RenderGlobal.ContainerLocalRenderInformation>)(Collection<?>)this.renderInfosEntities)
+             {
+                 Chunk chunk = renderglobal$containerlocalrenderinformation.renderChunk.getChunk();
+                 ClassInheritanceMultiMap<Entity> classinheritancemultimap = chunk.getEntityLists()[renderglobal$containerlocalrenderinformation.renderChunk.getPosition().getY() / 16];
+@@ -932,7 +932,7 @@
+             TileEntitySignRenderer.updateTextRenderDistance();
+             label253:
+ 
+-            for (RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation1 : this.renderInfosTileEntities)
++            for (RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation1 : (Collection<RenderGlobal.ContainerLocalRenderInformation>)(Collection<?>)this.renderInfosTileEntities)
+             {
+                 List<TileEntity> list3 = renderglobal$containerlocalrenderinformation1.renderChunk.getCompiledChunk().getTileEntities();
+ 
+@@ -1572,10 +1572,7 @@
+                 GlStateManager.disableFog();
+             }
+ 
+-            this.mc.mcProfiler.func_194339_b(() ->
+-            {
+-                return "render_" + p_lambda$renderBlockLayer$0_0_;
+-            });
++            this.mc.mcProfiler.startSection("render_" + blockLayerIn);
+             this.renderBlockLayer(blockLayerIn);
+             this.mc.mcProfiler.endSection();
+             return l;

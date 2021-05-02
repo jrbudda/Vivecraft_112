@@ -1,0 +1,45 @@
+--- a/net/optifine/ConnectedTextures.java
++++ b/net/optifine/ConnectedTextures.java
+@@ -2402,13 +2402,13 @@
+         return !set1.isEmpty();
+     }
+ 
+-    private static ConnectedProperties[][] propertyListToArray(List list)
++    private static ConnectedProperties[][] propertyListToArray(List listin)
+     {
+-        ConnectedProperties[][] aconnectedproperties = new ConnectedProperties[list.size()][];
++        ConnectedProperties[][] aconnectedproperties = new ConnectedProperties[listin.size()][];
+ 
+-        for (int i = 0; i < list.size(); ++i)
++        for (int i = 0; i < listin.size(); ++i)
+         {
+-            List list = (List)list.get(i);
++            List list = (List)listin.get(i);
+ 
+             if (list != null)
+             {
+@@ -2469,19 +2469,19 @@
+         }
+     }
+ 
+-    private static void addToList(ConnectedProperties cp, List list, int id)
++    private static void addToList(ConnectedProperties cp, List listin, int id)
+     {
+-        while (id >= list.size())
++        while (id >= listin.size())
+         {
+-            list.add((Object)null);
++            listin.add((Object)null);
+         }
+ 
+-        List list = (List)list.get(id);
++        List list = (List)listin.get(id);
+ 
+         if (list == null)
+         {
+             list = new ArrayList();
+-            list.set(id, list);
++            listin.set(id, list);
+         }
+ 
+         list.add(cp);

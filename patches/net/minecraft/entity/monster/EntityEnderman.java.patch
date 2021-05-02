@@ -1,0 +1,109 @@
+--- a/net/minecraft/entity/monster/EntityEnderman.java
++++ b/net/minecraft/entity/monster/EntityEnderman.java
+@@ -4,13 +4,20 @@
+ import com.google.common.base.Optional;
+ import com.google.common.base.Predicate;
+ import com.google.common.collect.Sets;
++
+ import java.util.Random;
+ import java.util.Set;
+ import java.util.UUID;
+ import javax.annotation.Nullable;
++
++import org.vivecraft.api.NetworkHelper;
++import org.vivecraft.api.VivePlayer;
++
+ import net.minecraft.block.Block;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.state.IBlockState;
++import net.minecraft.client.Minecraft;
++import net.minecraft.client.entity.EntityPlayerSP;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityLiving;
+ import net.minecraft.entity.EntityLivingBase;
+@@ -47,6 +54,7 @@
+ import net.minecraft.util.math.Vec3d;
+ import net.minecraft.world.World;
+ import net.minecraft.world.storage.loot.LootTableList;
++import net.optifine.reflect.Reflector;
+ 
+ public class EntityEnderman extends EntityMob
+ {
+@@ -209,7 +217,17 @@
+         }
+         else
+         {
+-            Vec3d vec3d = player.getLook(1.0F).normalize();
++        	//VIVE FIX
++            Vec3d vec3d;
++            VivePlayer vp = NetworkHelper.vivePlayers.get(player.getUniqueID());
++            if (vp !=null && vp.isVR())
++            {
++            	vec3d = vp.getHMDDir();
++            } else {
++            	vec3d = player.getLookVec();
++            }
++        	//
++        	
+             Vec3d vec3d1 = new Vec3d(this.posX - player.posX, this.getEntityBoundingBox().minY + (double)this.getEyeHeight() - (player.posY + (double)player.getEyeHeight()), this.posZ - player.posZ);
+             double d0 = vec3d1.lengthVector();
+             vec3d1 = vec3d1.normalize();
+@@ -292,7 +310,18 @@
+      */
+     private boolean teleportTo(double x, double y, double z)
+     {
+-        boolean flag = this.attemptTeleport(x, y, z);
++        boolean flag = false;
++        if (Reflector.EnderTeleportEvent_Constuctor.exists())
++        {
++           Object event = null;
++           event = Reflector.newInstance(Reflector.EnderTeleportEvent_Constuctor, new Object[] {this,x,y,z,0});
++           if (Reflector.postForgeBusEvent(event))
++               return false;
++           flag = this.attemptTeleport(Reflector.callDouble(event, Reflector.EnderTeleportEvent_getTargetX),Reflector.callDouble(event, Reflector.EnderTeleportEvent_getTargetY),Reflector.callDouble(event, Reflector.EnderTeleportEvent_getTargetZ));
++        } else {
++            flag = this.attemptTeleport(x, y, z);
++        }
++        
+ 
+         if (flag)
+         {
+@@ -524,7 +553,8 @@
+             {
+                 return false;
+             }
+-            else if (!this.enderman.world.getGameRules().getBoolean("mobGriefing"))
++            else if ((!Reflector.forgeExists() && !this.enderman.world.getGameRules().getBoolean("mobGriefing")) ||
++            		(Reflector.forgeExists() && !Reflector.callBoolean(Reflector.ForgeEventFactory_getMobGriefingEvent, this.enderman.world, this.enderman)))
+             {
+                 return false;
+             }
+@@ -589,7 +619,8 @@
+             {
+                 return false;
+             }
+-            else if (!this.enderman.world.getGameRules().getBoolean("mobGriefing"))
++            else if ((!Reflector.forgeExists() && !this.enderman.world.getGameRules().getBoolean("mobGriefing")) ||
++            		(Reflector.forgeExists() && !Reflector.callBoolean(Reflector.ForgeEventFactory_getMobGriefingEvent, this.enderman.world, this.enderman)))
+             {
+                 return false;
+             }
+@@ -619,4 +650,18 @@
+             }
+         }
+     }
++    
++        /*===================================== Forge Start ==============================*/
++        public static void setCarriable(Block block, boolean canCarry)
++        {
++            if (canCarry) CARRIABLE_BLOCKS.add(block);
++            else          CARRIABLE_BLOCKS.remove(block);
++        }
++        public static boolean getCarriable(Block block)
++        {
++            return CARRIABLE_BLOCKS.contains(block);
++        }
++        /*===================================== Forge End ==============================*/
++    
++    
+ }

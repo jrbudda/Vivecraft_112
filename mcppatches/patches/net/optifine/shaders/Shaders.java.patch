@@ -1,0 +1,109 @@
+--- a/net/optifine/shaders/Shaders.java
++++ b/net/optifine/shaders/Shaders.java
+@@ -103,6 +103,7 @@
+ import net.optifine.util.TimedEvent;
+ import org.apache.commons.io.IOUtils;
+ import org.lwjgl.BufferUtils;
++import org.lwjgl.opengl.ARBFragmentShader;
+ import org.lwjgl.opengl.ARBGeometryShader4;
+ import org.lwjgl.opengl.ARBShaderObjects;
+ import org.lwjgl.opengl.ARBVertexShader;
+@@ -799,6 +800,7 @@
+ 
+     public static void loadShaderPack()
+     {
++    	mc = Minecraft.getMinecraft();
+         boolean flag = shaderPackLoaded;
+         boolean flag1 = isOldLighting();
+ 
+@@ -1078,7 +1080,7 @@
+         Set set = props.keySet();
+         List<ICustomTexture> list = new ArrayList<ICustomTexture>();
+ 
+-        for (String s1 : set)
++        for (String s1 : (Set<String>)(Set<?>)set)
+         {
+             if (s1.startsWith(s))
+             {
+@@ -1578,7 +1580,7 @@
+ 
+                     if (shaderoption == null)
+                     {
+-                        list.add((Object)null);
++                        list.add((ShaderOption)null);
+                     }
+                     else if (shaderoption instanceof ShaderOptionRest)
+                     {
+@@ -2449,11 +2451,11 @@
+ 
+     private static int getDrawBuffer(Program p, String str, int i)
+     {
+-        int i = 0;
++        int drawBuffer = 0;
+ 
+         if (i >= str.length())
+         {
+-            return i;
++            return drawBuffer;
+         }
+         else
+         {
+@@ -2463,23 +2465,23 @@
+             {
+                 if (j >= 0 && j <= 1)
+                 {
+-                    i = j + 36064;
++                	drawBuffer = j + 36064;
+                     usedShadowColorBuffers = Math.max(usedShadowColorBuffers, j);
+                 }
+ 
+-                return i;
++                return drawBuffer;
+             }
+             else
+             {
+                 if (j >= 0 && j <= 7)
+                 {
+                     p.getToggleColorTextures()[j] = true;
+-                    i = j + 36064;
++                    drawBuffer = j + 36064;
+                     usedColorAttachs = Math.max(usedColorAttachs, j);
+                     usedColorBuffers = Math.max(usedColorBuffers, j);
+                 }
+ 
+-                return i;
++                return drawBuffer;
+             }
+         }
+     }
+@@ -4281,15 +4283,15 @@
+         GlStateManager.setActiveTexture(33984);
+     }
+ 
+-    public static void checkWorldChanged(World world)
++    public static void checkWorldChanged(World worldin)
+     {
+-        if (currentWorld != world)
++        if (currentWorld != worldin)
+         {
+-            World world = currentWorld;
+-            currentWorld = world;
++            World oldworld = currentWorld;
++            currentWorld = worldin;
+             setCameraOffset(mc.getRenderViewEntity());
+-            int i = getDimensionId(world);
+-            int j = getDimensionId(world);
++            int i = getDimensionId(oldworld);
++            int j = getDimensionId(worldin);
+ 
+             if (j != i)
+             {
+@@ -5751,7 +5753,7 @@
+                         Lang.loadLocaleData(inputstream, properties);
+                         inputstream.close();
+ 
+-                        for (String s4 : properties.keySet())
++                        for (String s4 : (Set<String>)(Set<?>)properties.keySet())
+                         {
+                             String s5 = properties.getProperty(s4);
+                             shaderPackResources.put(s4, s5);

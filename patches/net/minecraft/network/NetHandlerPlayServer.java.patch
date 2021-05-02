@@ -1,0 +1,201 @@
+--- a/net/minecraft/network/NetHandlerPlayServer.java
++++ b/net/minecraft/network/NetHandlerPlayServer.java
+@@ -1,12 +1,21 @@
+ package net.minecraft.network;
+ 
++import com.google.common.base.Charsets;
+ import com.google.common.collect.Lists;
+ import com.google.common.primitives.Doubles;
+ import com.google.common.primitives.Floats;
+ import com.google.common.util.concurrent.Futures;
++
++import io.netty.buffer.ByteBuf;
+ import io.netty.util.concurrent.Future;
+ import io.netty.util.concurrent.GenericFutureListener;
++
++import java.io.BufferedReader;
++import java.io.ByteArrayInputStream;
++import java.io.DataInputStream;
+ import java.io.IOException;
++import java.io.InputStreamReader;
++import java.util.Arrays;
+ import java.util.Collections;
+ import java.util.List;
+ import java.util.Set;
+@@ -15,6 +24,7 @@
+ import net.minecraft.block.BlockCommandBlock;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.state.IBlockState;
++import net.minecraft.client.Minecraft;
+ import net.minecraft.crash.CrashReport;
+ import net.minecraft.crash.CrashReportCategory;
+ import net.minecraft.crash.ICrashReportDetail;
+@@ -90,6 +100,7 @@
+ import net.minecraft.network.play.server.SPacketSetSlot;
+ import net.minecraft.network.play.server.SPacketTabComplete;
+ import net.minecraft.server.MinecraftServer;
++import net.optifine.reflect.Reflector;
+ import net.minecraft.tileentity.CommandBlockBaseLogic;
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.tileentity.TileEntityCommandBlock;
+@@ -120,6 +131,9 @@
+ import org.apache.commons.lang3.StringUtils;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.vivecraft.api.NetworkHelper;
++import org.vivecraft.api.VivePlayer;
++import org.vivecraft.api.NetworkHelper.PacketDiscriminators;
+ 
+ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
+ {
+@@ -274,6 +288,10 @@
+         {
+             this.disconnect(new TextComponentTranslation("multiplayer.disconnect.idling", new Object[0]));
+         }
++        
++        //VIVECRAFT
++        NetworkHelper.sendPosData(player); //has to go somewhere?
++        
+     }
+ 
+     private void captureCurrentPosition()
+@@ -296,6 +314,9 @@
+      */
+     public void disconnect(final ITextComponent textComponent)
+     {
++    	//VIVECRAFT
++    	NetworkHelper.vivePlayers.remove(this.player.getUniqueID());
++    	//
+         this.netManager.sendPacket(new SPacketDisconnect(textComponent), new GenericFutureListener < Future <? super Void >> ()
+         {
+             public void operationComplete(Future <? super Void > p_operationComplete_1_) throws Exception
+@@ -597,8 +618,8 @@
+ 
+                                 if (flag2 && (flag || !flag1))
+                                 {
+-                                    this.setPlayerLocation(d0, d1, d2, f, f1);
+-                                    return;
++                                  //  this.setPlayerLocation(d0, d1, d2, f, f1);
++                                 //   return;
+                                 }
+                             }
+ 
+@@ -705,7 +726,14 @@
+                 double d2 = this.player.posZ - ((double)blockpos.getZ() + 0.5D);
+                 double d3 = d0 * d0 + d1 * d1 + d2 * d2;
+ 
+-                if (d3 > 36.0D)
++                double dist = 262144.0D;
++                if (Reflector.forgeExists()) {
++	                double newDist = Reflector.callDouble(this.player.interactionManager, Reflector.PlayerInteractionManager_getBlockReachDistance) + 1;
++	                newDist *= newDist;
++	                if (newDist > dist) dist = newDist;
++                }
++
++                if (d3 > dist)
+                 {
+                     return;
+                 }
+@@ -763,7 +791,13 @@
+ 
+         if (blockpos.getY() < this.serverController.getBuildLimit() - 1 || enumfacing != EnumFacing.UP && blockpos.getY() < this.serverController.getBuildLimit())
+         {
+-            if (this.targetPos == null && this.player.getDistanceSq((double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.5D, (double)blockpos.getZ() + 0.5D) < 64.0D && !this.serverController.isBlockProtected(worldserver, blockpos, this.player) && worldserver.getWorldBorder().contains(blockpos))
++            double dist = 262144.0D;
++            if (Reflector.forgeExists()) {
++                double newDist = Reflector.callDouble(this.player.interactionManager, Reflector.PlayerInteractionManager_getBlockReachDistance) + 3;
++                newDist *= newDist;
++                if (newDist > dist) dist = newDist;
++            }
++            if (this.targetPos == null && this.player.getDistanceSq((double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.5D, (double)blockpos.getZ() + 0.5D) < dist && !this.serverController.isBlockProtected(worldserver, blockpos, this.player) && worldserver.getWorldBorder().contains(blockpos))
+             {
+                 this.player.interactionManager.processRightClickBlock(this.player, worldserver, itemstack, enumhand, blockpos, enumfacing, packetIn.getFacingX(), packetIn.getFacingY(), packetIn.getFacingZ());
+             }
+@@ -1852,5 +1886,87 @@
+                 LOGGER.error("Couldn't pick item", (Throwable)exception);
+             }
+         }
++        // VIVE START - client querying if server is running this mod too
++        else if ("Vivecraft".equals(packetIn.getChannelName()))
++        {
++        	int len = packetIn.getBufferData().readableBytes();
++        	PacketDiscriminators dis = PacketDiscriminators.values()[packetIn.getBufferData().readByte()];
++    		byte[] data = new byte[len-1];
++        	packetIn.getBufferData().readBytes(data);
++    		VivePlayer vp = NetworkHelper.vivePlayers.get(this.player.getUniqueID());
++    		if(vp == null && dis != PacketDiscriminators.VERSION) {
++    			//how?
++    			return;
++    		}
++        	switch (dis){
++        	case VERSION:
++            	String ver = Minecraft.getMinecraft().minecriftVerString;
++            	sendPacket(NetworkHelper.getVivecraftServerPacket(PacketDiscriminators.VERSION,ver));
++            	sendPacket(NetworkHelper.getVivecraftServerPacket(PacketDiscriminators.REQUESTDATA, new byte[]{}));  
++            	sendPacket(NetworkHelper.getVivecraftServerPacket(PacketDiscriminators.CLIMBING, new byte[]{}));
++            	sendPacket(NetworkHelper.getVivecraftServerPacket(PacketDiscriminators.TELEPORT, new byte[]{})); 
++    			vp = new VivePlayer(this.player);
++            	NetworkHelper.vivePlayers.put(this.player.getUniqueID(), vp);
++            	
++            	BufferedReader br = new BufferedReader(
++            			new InputStreamReader(
++            					new DataInputStream(
++            							new ByteArrayInputStream(data))));
++    			
++    			String v;
++				try {
++					v = br.readLine();
++					if(v.contains("NONVR")){
++						this.player.sendMessage(new TextComponentString("NONVR: " + this.player.getDisplayName().getFormattedText()));
++						vp.setVR(false);
++					}
++					else{
++						this.player.sendMessage(new TextComponentString("VR: " + this.player.getDisplayName().getFormattedText()));
++						vp.setVR(true);
++					}  
++				} catch (IOException e) {
++					// TODO Auto-generated catch block
++					e.printStackTrace();
++				}
++	
++        
++        		break;
++    		case CONTROLLER0DATA:
++    			vp.controller0data = data;
++    			break;
++    		case CONTROLLER1DATA:
++    			vp.controller1data = data;
++    			break;
++    		case DRAW:
++    			vp.draw = data;
++    			break;
++    		case HEADDATA:
++    			vp.hmdData = data;
++    			break;	
++    		case MOVEMODE:
++    			break;
++    		case REQUESTDATA:
++    			//only we can use that word.
++    			break;
++    		case WORLDSCALE:
++            	packetIn.getBufferData().resetReaderIndex();
++            	packetIn.getBufferData().readByte();
++    			vp.worldScale = packetIn.getBufferData().readFloat();
++    			break;
++    		case TELEPORT:
++            	packetIn.getBufferData().resetReaderIndex();
++            	packetIn.getBufferData().readByte();
++    			float x = packetIn.getBufferData().readFloat();
++				float y = packetIn.getBufferData().readFloat();
++				float z = packetIn.getBufferData().readFloat();
++				this.player.setPositionAndRotation(x, y, z, this.player.rotationYaw, this.player.rotationPitch);
++    			break;
++    		case CLIMBING:
++    			this.player.fallDistance = 0;
++        	default:
++        		break;
++        	}
++        }
++        // VIVE END - vivecraft packets
+     }
+ }

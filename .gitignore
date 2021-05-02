@@ -1,0 +1,27 @@
+*.DS_Store
+*~
+.*.swp
+/logs/
+/*.pyc
+/mcp9*/
+.idea/
+*.iml
+releases/
+*zip
+*.class
+*-install*.jar
+*install*.exe
+patches/Start.java.patch
+installer/out/
+lib/
+patchsrc/
+
+src/JRift
+bin/intelij_prod
+optionsvrprofiles.txt
+crash-reports/
+saves/
+jars/
+*.ex_
+mcppatches - Copy/
+hs_err_pid*.log

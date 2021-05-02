@@ -1,0 +1,50 @@
+--- a/net/minecraft/client/renderer/entity/RenderManager.java
++++ b/net/minecraft/client/renderer/entity/RenderManager.java
+@@ -1,9 +1,13 @@
+ package net.minecraft.client.renderer.entity;
+ 
+ import com.google.common.collect.Maps;
++
+ import java.util.Collections;
+ import java.util.Map;
+ import javax.annotation.Nullable;
++
++import org.vivecraft.render.PlayerModelController;
++
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockBed;
+ import net.minecraft.block.state.IBlockState;
+@@ -122,6 +126,7 @@
+     private final Map < Class <? extends Entity > , Render <? extends Entity >> entityRenderMap = Maps. < Class <? extends Entity > , Render <? extends Entity >> newHashMap();
+     private final Map<String, RenderPlayer> skinMap = Maps.<String, RenderPlayer>newHashMap();
+     private final RenderPlayer playerRenderer;
++    RenderPlayerVR n;
+ 
+     /** Renders fonts */
+     private FontRenderer textRenderer;
+@@ -273,7 +278,13 @@
+         if (entityIn instanceof AbstractClientPlayer)
+         {
+             String s = ((AbstractClientPlayer)entityIn).getSkinType();
+-            RenderPlayer renderplayer = this.skinMap.get(s);
++    		RenderPlayer renderplayer = (RenderPlayer)this.skinMap.get(s);
++
++    		if(PlayerModelController.getInstance().isTracked(entityIn.getUniqueID()))
++    		{
++    			if(n==null) n = new RenderPlayerVR(this);
++    			return (Render<T>) n;            	
++    		}  else 
+             return (Render<T>)(renderplayer != null ? renderplayer : this.playerRenderer);
+         }
+         else
+@@ -571,8 +582,10 @@
+         return this.entityRenderMap;
+     }
+ 
++    //Forge
+     public Map<String, RenderPlayer> getSkinMap()
+     {
+         return Collections.<String, RenderPlayer>unmodifiableMap(this.skinMap);
+     }
++    ///
+ }

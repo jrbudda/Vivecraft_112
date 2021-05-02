@@ -1,0 +1,47 @@
+--- a/net/minecraft/src/Config.java
++++ b/net/minecraft/src/Config.java
+@@ -1138,7 +1138,7 @@
+         List list = resourcepackrepository.getRepositoryEntries();
+         List list1 = new ArrayList();
+ 
+-        for (ResourcePackRepository.Entry resourcepackrepository$entry : list)
++        for (ResourcePackRepository.Entry resourcepackrepository$entry :  (Collection<ResourcePackRepository.Entry>)(Collection<?>)list)
+         {
+             list1.add(resourcepackrepository$entry.getResourcePack());
+         }
+@@ -2291,7 +2291,7 @@
+         {
+             int i = p_addObjectToArray_0_.length;
+             int j = i + 1;
+-            Object[] aobject = Array.newInstance(p_addObjectToArray_0_.getClass().getComponentType(), j);
++            Object[] aobject = (Object[]) Array.newInstance(p_addObjectToArray_0_.getClass().getComponentType(), j);
+             System.arraycopy(p_addObjectToArray_0_, 0, aobject, 0, i);
+             aobject[i] = p_addObjectToArray_1_;
+             return aobject;
+@@ -2302,7 +2302,7 @@
+     {
+         List list = new ArrayList(Arrays.asList(p_addObjectToArray_0_));
+         list.add(p_addObjectToArray_2_, p_addObjectToArray_1_);
+-        Object[] aobject = Array.newInstance(p_addObjectToArray_0_.getClass().getComponentType(), list.size());
++        Object[] aobject = (Object[]) Array.newInstance(p_addObjectToArray_0_.getClass().getComponentType(), list.size());
+         return list.toArray(aobject);
+     }
+ 
+@@ -2320,7 +2320,7 @@
+         {
+             int i = p_addObjectsToArray_0_.length;
+             int j = i + p_addObjectsToArray_1_.length;
+-            Object[] aobject = Array.newInstance(p_addObjectsToArray_0_.getClass().getComponentType(), j);
++            Object[] aobject = (Object[]) Array.newInstance(p_addObjectsToArray_0_.getClass().getComponentType(), j);
+             System.arraycopy(p_addObjectsToArray_0_, 0, aobject, 0, i);
+             System.arraycopy(p_addObjectsToArray_1_, 0, aobject, i, p_addObjectsToArray_1_.length);
+             return aobject;
+@@ -2351,7 +2351,7 @@
+         }
+         else
+         {
+-            Object[] aobject = Array.newInstance(p_collectionToArray_1_, p_collectionToArray_0_.size());
++            Object[] aobject = (Object[]) Array.newInstance(p_collectionToArray_1_, p_collectionToArray_0_.size());
+             return p_collectionToArray_0_.toArray(aobject);
+         }
+     }

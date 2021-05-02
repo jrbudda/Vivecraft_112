@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/entity/RenderLivingBase.java
++++ b/net/minecraft/client/renderer/entity/RenderLivingBase.java
+@@ -58,7 +58,7 @@
+ 
+     public <V extends EntityLivingBase, U extends LayerRenderer<V>> boolean addLayer(U layer)
+     {
+-        return this.layerRenderers.add(layer);
++        return this.layerRenderers.add((LayerRenderer<T>) layer);
+     }
+ 
+     public ModelBase getMainModel()

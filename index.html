@@ -1,0 +1,225 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Minecraft VR by mabrowning and StellaArtois</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">Minecrift</h1>
+        <p class="header">Virtual Reality mod for Minecraft; specifically targetting Oculus Rift, but support for other peripherals</p>
+
+        <ul>
+			<!--
+          <li class="download"><a class="buttons" href="https://github.com/mabrowning/minecrift/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/mabrowning/minecrift/tarball/master">Download TAR</a></li>
+		  -->
+          <li><a class="buttons github" href="https://github.com/mabrowning/minecrift">View On GitHub</a></li>
+        </ul>
+
+		<p class="header">This project is maintained by <a class="header name" href="https://github.com/mabrowning">mabrowning</a> and <a class="header name" href="https://github.com/StellaArtois">StellaArtois</a></p>
+
+<p class="header"><a href="https://minecraftvr.ci.cloudbees.com/job/minecrift-1.6.2/"><img class="header" style="left:-40px"src="http://www.cloudbees.com/sites/default/files/Button-Powered-by-CB.png" alt="Powered By CloudBees"></a></p>
+
+
+      </header>
+      <section>
+        <h1>
+<a name="minecrift-mod-for-minecraft" class="anchor" href="#mgnecrift-mod-for-minecraft"><span class="octicon octicon-link"></span></a>Minecraft VR Mod (Minecrift)</h1>
+
+<p>Current Version: 1.1 beta</p>
+
+<h2>
+<a name="what-is-minecrift" class="anchor" href="#what-is-minecrift"><span class="octicon octicon-link"></span></a>What is Minecrift?</h2>
+
+<p>
+The cheesy name apart, Minecrift attempts to update Minecraft to support the
+Oculus Rift. Initially this means allowing head-tracking input and using the
+correct stereo rendering parameters for the Rift. We also are in the progress
+of supporting different control schemes and positional head tracking. Minecraft
+for various control schemes. If and when Minecraft officially supports the
+Rift, Minecrift development might cease, but probably not.</p>
+<h1>
+<a name="where-to-get-it" class="anchor" href="#where-to-get-it"><span class="octicon octicon-link"></span></a>Where to get it?</h1>
+
+<p>We make regular releases and update the MTBS3D forum thread when a release is 
+ready for general use. However, if you can't wait that long, we do have a 
+continuous integration service generously provided by 
+<a href="http://www.cloudbees.com">CloudBees</a>. Click the CloudBees button on the left-hand bar to go to the download site.</p>
+
+<h2> <a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>First, download the Minecraft launcher and start Minecraft 1.6.2 at least once.</p>
+<p>Then, Download and run the latest minecrift-1.6.2-b###-installer.exe/jar.</p>
+<p> <b>WINDOWS USERS: IMPORTANT </b> (but only required once). Install the Microsoft
+VS2010 C++ redists (both x86 and x64) from
+<a href="http://www.microsoft.com/en-us/download/details.aspx?id=5555">here</a></p>
+<p>Finally, start the game and choose the "minecrift-1.6.2-b###" Minecraft "version".</p>
+
+
+<h2><a name="controller" class="anchor" href="#controller"><span class="octicon octicon-link"></span></a>Controllers/JoyPads</h2>
+Version 1.2 supports many different controllers. Change VR->Move/Aim Mode: to 
+'Controller' and then remap the keys that best fit your controller in 'Remap 
+Controls'.
+
+<h2><a name="razer-hydra" class="anchor" href="#razer-hydra"><span class="octicon octicon-link"></span></a>Razer Hydra</h2>
+
+<p>Version 1.0 is the first to include full Razer Hydra support.</p>
+
+<ul>
+<li>OrientationTracker: If you don't have an Oculus Rift, you can use the left
+controler for head orientation (direction).</li>
+<li>PositionTracker: This makes a huge immersion difference. The Hydra can feed
+position data the game engine to allow you to look up, down, around corners,
+squat, and generally move around. Use one or two controllers attached to
+your head and adjust the offsets from your eye center on the VR Options.</li>
+<li>Controller: Use the right controller to turn the view left/right, move
+forward and backwards, place blocks, mine, select item, jump, sneak, access
+your inventory and navigate menus. The controls are currently hardcoded:</li>
+<li>
+<p>In game:</p>
+
+<ul>
+<li>Joystick X: Turn left/right</li>
+<li>Joystick Y: Move forward/back</li>
+<li>1: Drop item</li>
+<li>2: Jump</li>
+<li>3: Select next left item (mousewheel up)</li>
+<li>4: Select next right item (mousewheel down)</li>
+<li>JOYSTICK: Sneak</li>
+<li>Bumper: Place block/use item/interact (right mouse)</li>
+<li>Trigger: Mine block (left mouse)</li>
+<li>Start: Access Inventory</li>
+</ul>
+</li>
+<li>
+<p>In Menus/Inventories:</p>
+
+<ul>
+<li>Joystick: mouse up/down/left/right (don't use the actual mouse at
+       the same time: known issue)</li>
+<li>Trigger: Left Click</li>
+<li>Bumper: Right Click</li>
+<li>JOYSTICK: "Shift"</li>
+</ul>
+</li>
+<li><p>You should be able to take advantage of the new 1.5 inventory management
+ controls with this joystick mapping.</p></li>
+</ul><p>Joystick sensitivity can be set in VR Options.</p>
+
+<h2>
+<a name="controlsusage" class="anchor" href="#controlsusage"><span class="octicon octicon-link"></span></a>Controls/Usage</h2>
+
+<p>Here are some other hotkeys that allow quick access to changing VR settings.</p>
+
+<ul>
+<li>All Minecrift settings are present in the Options-&gt;Minecrift screen, but
+keyboard shortcuts are also available for convenience</li>
+<li>Make sure to read the tool-tips on each setting in VR Options to get an
+understanding for what it is adjusting. VR is best when you tune the experience
+to your setup.</li>
+<li><p>Pressing space-bar while in a menu will reset the orientation of the head tracker 
+to make the current direction "forward"</p></li>
+<li><p>F1 to bring up the game HUD / overlay if it isn't already up. </p></li>
+<li><p>Ctrl and - / = for IPD adjustment. Hold ALT as well for fine adjustment. The
+IPD setting should be saved between sessions.</p></li>
+<li><p>Ctrl O to attempt to reinitialise the Rift (including head tracking).</p></li>
+<li><p>Ctrl P while not in a menu to turn distortion on / off. Sometimes useful if
+the offset mouse pointer is a pain in the menus. Ctrl-Alt P to toggle
+chromatic aberration correction.</p></li>
+<li><p>Ctrl L toggles head-tracking ON/OFF. Ctrl-Alt L toggles tracking prediction
+ON/OFF. It is OFF by default.</p></li>
+<li><p>Ctrl U changes the HUD distance. Ctrl-Alt U changes the HUD scale. Ctrl-Alt Y
+toggles opacity on the HUD.</p></li>
+<li><p>Ctrl-M toggles rendering of the player's mask ON/OFF.</p></li>
+<li><p>FOV adjustment within Minecraft will have no effect - I use the FOV as
+calculated from within the Oculus SDK.</p></li>
+<li><p>Allow user to use mouse pitch input as well as yaw. Use Ctrl-N to toggle.</p></li>
+<li><p>Large or Auto GUI size recommended.</p></li>
+<li><p>Use Ctrl-B to turn Full Scene Anti-aliasing (FSAA) on/off. Use Ctrl-Alt B to
+cycle the FSAA renderscale. Be warned; this feature is a resource hog!! If
+you cannot get 60fps at your desired FSAA level, cycle it to a lower scale
+factor. Anyone with a nVidia GTX Titan please let me know what average FPS
+you get at scale factor 4.0!</p></li>
+<li><p>Ctrl , or . decreases or increases the FOV scale factor. This can be used to
+fine tune FOV if it doesn't look quite right to you.</p></li>
+<li><p>Ctrl-Alt , or . decreases or increases various sizes of distortion border.
+This can be used to improve rendering speed, at a potential loss of FOV.</p></li>
+<li><p>Ctrl V cycles through head track sensitivity multipliers. Try this at your
+own risk!</p></li>
+</ul><h2>
+<a name="known-issues" class="anchor" href="#known-issues"><span class="octicon octicon-link"></span></a>Known Issues</h2>
+
+<ul>
+<li>FSAA (Super Sampling) doesn't work on OSX and is disabled.</li>
+<li> There are quite a small bugs that can be seen on the <a href="https://github.com/mabrowning/minecrift/issues">GitHub issue tracker</li>
+</ul><h2>
+<a name="feedback-bug-reporting" class="anchor" href="#feedback-bug-reporting"><span class="octicon octicon-link"></span></a>Feedback, bug reporting</h2>
+
+<p>Please post feedback, bug reports etc. to the <a href="https://github.com/mabrowning/minecrift/issues">GitHub issue
+tracker</a>. Please search before
+posting to see if the issue has already been reported</p>
+
+<p>There is also discussion happening at this <a href="http://www.mtbs3d.com/phpbb/viewtopic.php?f=140&amp;t=17146">forum thread at
+MTBS</a></p>
+
+<h2>
+<a name="roadmap" class="anchor" href="#roadmap"><span class="octicon octicon-link"></span></a>Roadmap</h2>
+
+<ul>
+<li>Investigate gamepad support.</li>
+<li>Make controls remappable.</li>
+<li>Add more natural VR interfaces.</li>
+<li>Fix bugs.</li>
+</ul>
+
+<h2>Special thanks to:</h2>
+
+<ul>
+<li>Palmer Luckey and his team for creating the Oculus Rift. The future is
+finally here (well for some people anyway; mine hasn't arrived yet).</li>
+<li>Markus "Notch" Persson for creating Minecraft. What has it grown into?</li>
+<li>The team behind the MCP coders' pack, and the Minecraft community - why
+Mojang bother obfuscating the source when you guys have done such a fantastic
+job of de-obfuscating it is beyond me!</li>
+<li>Powback for his initial work on the Java JNI wrapper to the SDK. Seeing this
+inspired me to get off my arse and get modding. See
+<a href="http://www.reddit.com/r/oculus/comments/1c1vh0/java_wrapper_for_devs/">this Reddit thread</a>
+</li>
+<li>shakesoda and Ben (and others?) at MTBS for creating the initial GLSL version of the
+Oculus distortion shader.</li>
+<li>The guys at Valve for giving some good advice on updating a game for VR.</li>
+<li>Brad Larson and his GPUImage library, for the Lanczos GLSL shader
+implementation for the FSAA.</li>
+<li>All the feedback and support of the folks in the MTBS3D forums!</li>
+</ul>
+
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		          <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-42183544-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>

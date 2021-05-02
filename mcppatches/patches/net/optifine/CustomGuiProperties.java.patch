@@ -1,0 +1,20 @@
+--- a/net/optifine/CustomGuiProperties.java
++++ b/net/optifine/CustomGuiProperties.java
+@@ -3,6 +3,8 @@
+ import java.util.HashMap;
+ import java.util.Map;
+ import java.util.Properties;
++import java.util.Set;
++
+ import net.minecraft.block.BlockChest;
+ import net.minecraft.client.gui.GuiEnchantment;
+ import net.minecraft.client.gui.GuiHopper;
+@@ -209,7 +211,7 @@
+ 
+         String s5 = property + ".";
+ 
+-        for (String s1 : props.keySet())
++        for (String s1 : (Set<String>)(Set<?>)props.keySet())
+         {
+             if (s1.startsWith(s5))
+             {

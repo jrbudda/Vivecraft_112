@@ -1,0 +1,18 @@
+--- a/net/optifine/SmartLeaves.java
++++ b/net/optifine/SmartLeaves.java
+@@ -1,5 +1,6 @@
+ package net.optifine;
+ 
++import java.lang.reflect.Field;
+ import java.util.ArrayList;
+ import java.util.List;
+ import net.minecraft.block.Block;
+@@ -176,7 +177,7 @@
+                         }
+                         else
+                         {
+-                            for (BakedQuad bakedquad : list)
++                            for (BakedQuad bakedquad : (List<BakedQuad>)(List<?>)list)
+                             {
+                                 List list1 = ibakedmodel.getQuads((IBlockState)null, bakedquad.getFace(), 0L);
+ 

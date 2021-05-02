@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/particle/ParticleFirework.java
++++ b/net/minecraft/client/particle/ParticleFirework.java
+@@ -21,6 +21,8 @@
+         {
+             ParticleFirework.Spark particlefirework$spark = new ParticleFirework.Spark(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn, Minecraft.getMinecraft().effectRenderer);
+             particlefirework$spark.setAlphaF(0.99F);
++            if(p_178902_15_.length >=3)
++            	particlefirework$spark.setRBGColorF(p_178902_15_[0]/255f, p_178902_15_[1]/255f,p_178902_15_[2]/255f);
+             return particlefirework$spark;
+         }
+     }

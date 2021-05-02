@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/texture/TextureManager.java
++++ b/net/minecraft/client/renderer/texture/TextureManager.java
+@@ -220,7 +220,7 @@
+ 
+     public void reloadBannerTextures()
+     {
+-        for (Entry<ResourceLocation, ITextureObject> entry : new HashSet(this.mapTextureObjects.entrySet()))
++        for (Entry<ResourceLocation, ITextureObject> entry : (Set<Entry<ResourceLocation, ITextureObject>>)(Set<?>)new HashSet(this.mapTextureObjects.entrySet()))
+         {
+             ResourceLocation resourcelocation = entry.getKey();
+             ITextureObject itextureobject = entry.getValue();

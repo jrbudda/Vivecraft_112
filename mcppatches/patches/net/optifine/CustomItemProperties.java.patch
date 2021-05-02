@@ -1,0 +1,38 @@
+--- a/net/optifine/CustomItemProperties.java
++++ b/net/optifine/CustomItemProperties.java
+@@ -350,7 +350,7 @@
+             Set set = map.keySet();
+             Map map1 = new LinkedHashMap();
+ 
+-            for (String s1 : set)
++            for (String s1 : (Set<String>)(Set<?>)set)
+             {
+                 String s2 = (String)map.get(s1);
+                 s2 = fixTextureName(s2, basePath);
+@@ -431,7 +431,7 @@
+             Set set = map.keySet();
+             Map map1 = new LinkedHashMap();
+ 
+-            for (String s1 : set)
++            for (String s1 : (Set<String>)(Set<?>)set)
+             {
+                 String s2 = (String)map.get(s1);
+                 s2 = fixModelName(s2, basePath);
+@@ -639,7 +639,7 @@
+         {
+             List list = new ArrayList();
+ 
+-            for (String s1 : map.keySet())
++            for (String s1 : (Set<String>)(Set<?>)map.keySet())
+             {
+                 String s2 = (String)map.get(s1);
+                 String s3 = s1.substring(s.length());
+@@ -656,7 +656,7 @@
+     {
+         Map map = new LinkedHashMap();
+ 
+-        for (String s : props.keySet())
++        for (String s : (Set<String>)(Set<?>)props.keySet())
+         {
+             String s1 = props.getProperty(s);
+ 

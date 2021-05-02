@@ -1,0 +1,20 @@
+--- a/net/minecraft/client/renderer/entity/RenderManager.java
++++ b/net/minecraft/client/renderer/entity/RenderManager.java
+@@ -260,7 +260,7 @@
+ 
+         if (render == null && entityClass != Entity.class)
+         {
+-            render = this.<T>getEntityClassRenderObject(entityClass.getSuperclass());
++            render = this.getEntityClassRenderObject((Class<? extends Entity>) entityClass.getSuperclass());
+             this.entityRenderMap.put(entityClass, render);
+         }
+ 
+@@ -566,7 +566,7 @@
+         this.renderOutlines = renderOutlinesIn;
+     }
+ 
+-    public Map<Class, Render> getEntityRenderMap()
++    public Map getEntityRenderMap()
+     {
+         return this.entityRenderMap;
+     }

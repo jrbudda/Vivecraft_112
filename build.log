@@ -1,0 +1,796 @@
+== MCP 9.04 (data: 9.08, client: 1.7.10, server: 1.7.10) ==
+"scalac" is not found on the PATH.  Scala files will not be recompiled
+# found ff, ff patches, srgs, name csvs, doc csvs, param csvs, astyle, astyle config, rg, ss
+== Recompiling client ==
+> Cleaning bin
+> Recompiling
+- Done in 12.04 seconds
+== Reobfuscating client ==
+> Cleaning reobf
+> Generating md5s
+> Packing jar
+> Generating class markers
+> Creating reobf mapping
+> Reobfuscating jar
+> Extracting modified classes
+> New inner class found: jopenvr/VREvent_Process_t$ByValue
+> New class found: jopenvr/VREvent_Process_t
+> New inner class found: jopenvr/VREvent_Process_t$ByReference
+> Modified inner class found: net/minecraft/entity/Entity$1
+> Modified inner class found: net/minecraft/entity/Entity$2
+> Modified inner class found: net/minecraft/entity/Entity$EnumEntitySize
+> Modified inner class found: net/minecraft/entity/Entity$SwitchEnumEntitySize
+> Modified class found      : net/minecraft/entity/Entity
+> New inner class found: jopenvr/Compositor_OverlaySettings$ByValue
+> New class found: jopenvr/Compositor_OverlaySettings
+> New inner class found: jopenvr/Compositor_OverlaySettings$ByReference
+> New inner class found: jopenvr/NotificationBitmap_t$ByReference
+> New class found: jopenvr/NotificationBitmap_t
+> New inner class found: jopenvr/NotificationBitmap_t$ByValue
+> New inner class found: jopenvr/VREvent_Controller_t$ByReference
+> New inner class found: jopenvr/VREvent_Controller_t$ByValue
+> New class found: jopenvr/VREvent_Controller_t
+> New class found: com/mtbs3d/minecrift/settings/OptionValue
+> New inner class found: jopenvr/JOpenVRLibrary$EVRInitError
+> New inner class found: jopenvr/JOpenVRLibrary$EVREventType
+> New inner class found: jopenvr/JOpenVRLibrary$EColorSpace
+> New inner class found: jopenvr/JOpenVRLibrary$EVREye
+> New inner class found: jopenvr/JOpenVRLibrary$EVRNotificationStyle
+> New inner class found: jopenvr/JOpenVRLibrary$ECameraVideoStreamFormat
+> New inner class found: jopenvr/JOpenVRLibrary$EChaperoneConfigFile
+> New inner class found: jopenvr/JOpenVRLibrary$EVRApplicationProperty
+> New inner class found: jopenvr/JOpenVRLibrary$EVRApplicationError
+> New inner class found: jopenvr/JOpenVRLibrary$IVRApplications
+> New inner class found: jopenvr/JOpenVRLibrary$IVRSystem
+> New inner class found: jopenvr/JOpenVRLibrary$EVRApplicationType
+> New inner class found: jopenvr/JOpenVRLibrary$EVRState
+> New inner class found: jopenvr/JOpenVRLibrary$EVRNotificationType
+> New inner class found: jopenvr/JOpenVRLibrary$EVRNotificationError
+> New inner class found: jopenvr/JOpenVRLibrary$ChaperoneCalibrationState
+> New inner class found: jopenvr/JOpenVRLibrary$ETrackingUniverseOrigin
+> New inner class found: jopenvr/JOpenVRLibrary$EVRApplicationTransitionState
+> New inner class found: jopenvr/JOpenVRLibrary$IVRSettings
+> New inner class found: jopenvr/JOpenVRLibrary$IVROverlay
+> New inner class found: jopenvr/JOpenVRLibrary$ETrackedDeviceClass
+> New inner class found: jopenvr/JOpenVRLibrary$IVRCompositor
+> New inner class found: jopenvr/JOpenVRLibrary$EVRSubmitFlags
+> New inner class found: jopenvr/JOpenVRLibrary$IVRChaperone
+> New inner class found: jopenvr/JOpenVRLibrary$IVRChaperoneSetup
+> New inner class found: jopenvr/JOpenVRLibrary$EOverlayDirection
+> New inner class found: jopenvr/JOpenVRLibrary$EVRCompositorError
+> New inner class found: jopenvr/JOpenVRLibrary$EVRSettingsError
+> New inner class found: jopenvr/JOpenVRLibrary$EVRMouseButton
+> New inner class found: jopenvr/JOpenVRLibrary$VROverlayInputMethod
+> New inner class found: jopenvr/JOpenVRLibrary$EGraphicsAPIConvention
+> New inner class found: jopenvr/JOpenVRLibrary$ETrackedControllerRole
+> New inner class found: jopenvr/JOpenVRLibrary$EGamepadTextInputLineMode
+> New inner class found: jopenvr/JOpenVRLibrary$IVRExtendedDisplay
+> New inner class found: jopenvr/JOpenVRLibrary$VROverlayFlags
+> New inner class found: jopenvr/JOpenVRLibrary$ETrackedDeviceProperty
+> New inner class found: jopenvr/JOpenVRLibrary$EVRControllerEventOutputType
+> New inner class found: jopenvr/JOpenVRLibrary$EGamepadTextInputMode
+> New inner class found: jopenvr/JOpenVRLibrary$VREvent_t
+> New inner class found: jopenvr/JOpenVRLibrary$ETrackingResult
+> New inner class found: jopenvr/JOpenVRLibrary$EDeviceActivityLevel
+> New inner class found: jopenvr/JOpenVRLibrary$EVRComponentProperty
+> New inner class found: jopenvr/JOpenVRLibrary$ECollisionBoundsStyle
+> New inner class found: jopenvr/JOpenVRLibrary$IVRRenderModels
+> New inner class found: jopenvr/JOpenVRLibrary$EVRRenderModelError
+> New inner class found: jopenvr/JOpenVRLibrary$EVROverlayError
+> New inner class found: jopenvr/JOpenVRLibrary$ETrackedPropertyError
+> New inner class found: jopenvr/JOpenVRLibrary$EVRButtonId
+> New class found: jopenvr/JOpenVRLibrary
+> New inner class found: jopenvr/JOpenVRLibrary$VROverlayTransformType
+> New inner class found: jopenvr/JOpenVRLibrary$EVRControllerAxisType
+> New inner class found: jopenvr/JOpenVRLibrary$EVRFirmwareError
+> Modified inner class found: net/minecraft/client/gui/inventory/GuiContainerCreative$ContainerCreative
+> Modified inner class found: net/minecraft/client/gui/inventory/GuiContainerCreative$CreativeSlot
+> Modified class found      : net/minecraft/client/gui/inventory/GuiContainerCreative
+> New class found: com/mtbs3d/minecrift/gui/GuiOtherHUDSettings
+> New inner class found: com/mtbs3d/minecrift/gui/GuiOtherHUDSettings$1
+> Modified class found      : net/minecraft/client/renderer/RenderBlocks
+> New class found: jopenvr/VRControllerAxis_t
+> New inner class found: jopenvr/VRControllerAxis_t$ByReference
+> New inner class found: jopenvr/VRControllerAxis_t$ByValue
+> New class found: com/mtbs3d/minecrift/provider/MCOpenVR
+> New inner class found: jopenvr/TrackedDevicePose_t$ByValue
+> New class found: jopenvr/TrackedDevicePose_t
+> New inner class found: jopenvr/TrackedDevicePose_t$ByReference
+> New inner class found: jopenvr/HmdMatrix34_t$ByValue
+> New inner class found: jopenvr/HmdMatrix34_t$ByReference
+> New class found: jopenvr/HmdMatrix34_t
+> Modified class found      : net/minecraft/client/gui/achievement/GuiAchievements
+> Modified class found      : net/minecraft/client/shader/Framebuffer
+> New class found: jopenvr/RenderModel_Vertex_t
+> New inner class found: jopenvr/RenderModel_Vertex_t$ByReference
+> New inner class found: jopenvr/RenderModel_Vertex_t$ByValue
+> New inner class found: com/mtbs3d/minecrift/gui/GuiHeadPositionSettings$1
+> New class found: com/mtbs3d/minecrift/gui/GuiHeadPositionSettings
+> New inner class found: com/mtbs3d/minecrift/control/JoystickAim$JoyAimCenterBinding
+> New inner class found: com/mtbs3d/minecrift/control/JoystickAim$JoyAimPitchBinding
+> New inner class found: com/mtbs3d/minecrift/control/JoystickAim$JoyAimYawBinding
+> New class found: com/mtbs3d/minecrift/control/JoystickAim
+> Modified class found      : net/minecraft/util/MovementInputFromOptions
+> New class found: com/mtbs3d/minecrift/control/JoystickAimLoose
+> New inner class found: jopenvr/COpenVRContext$ByValue
+> New class found: jopenvr/COpenVRContext
+> New inner class found: jopenvr/COpenVRContext$ByReference
+> New inner class found: com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiDownBinding
+> New inner class found: com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiCursorAimPitchBinding
+> New inner class found: com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiBackBinding
+> New inner class found: com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiRightBinding
+> New class found: com/mtbs3d/minecrift/control/GuiScreenNavigator
+> New inner class found: com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiShiftBinding
+> New inner class found: com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiControlBinding
+> New inner class found: com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiSelectBinding
+> New inner class found: com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiAltSelectBinding
+> New inner class found: com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiLeftBinding
+> New inner class found: com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiCursorAimYawBinding
+> New inner class found: com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiUpBinding
+> New inner class found: jopenvr/HmdMatrix44_t$ByReference
+> New class found: jopenvr/HmdMatrix44_t
+> New inner class found: jopenvr/HmdMatrix44_t$ByValue
+> New class found: com/mtbs3d/minecrift/provider/MCHydra
+> New inner class found: com/mtbs3d/minecrift/provider/MCHydra$1
+> New class found: com/mtbs3d/minecrift/gui/GuiHeadOrientationSettings
+> New inner class found: com/mtbs3d/minecrift/gui/GuiHeadOrientationSettings$1
+> Modified class found      : net/minecraft/util/FoodStats
+> New class found: jopenvr/HmdRect2_t
+> New inner class found: jopenvr/HmdRect2_t$ByReference
+> New inner class found: jopenvr/HmdRect2_t$ByValue
+> Modified inner class found: net/minecraft/client/settings/GameSettings$Options
+> Modified class found      : net/minecraft/client/settings/GameSettings
+> Modified inner class found: net/minecraft/client/settings/GameSettings$SwitchOptions
+> Modified inner class found: net/minecraft/client/settings/GameSettings$1
+> Modified inner class found: net/minecraft/client/settings/GameSettings$Options$1
+> New class found: com/mtbs3d/minecrift/gui/framework/PluginModeChangeButton
+> New class found: jopenvr/RenderModel_ComponentState_t
+> New inner class found: jopenvr/RenderModel_ComponentState_t$ByReference
+> New inner class found: jopenvr/RenderModel_ComponentState_t$ByValue
+> New class found: com/mtbs3d/minecrift/gameplay/VRMovementStyle
+> Modified class found      : net/minecraft/src/WorldRendererThreaded
+> New class found: com/mtbs3d/minecrift/settings/profile/ProfileReader
+> New class found: com/mtbs3d/minecrift/control/InventoryBinding
+> New inner class found: com/mtbs3d/minecrift/tweaker/MinecriftClassTransformer$EntityTransform
+> New class found: com/mtbs3d/minecrift/tweaker/MinecriftClassTransformer
+> New inner class found: jopenvr/VREvent_Data_t$ByValue
+> New inner class found: jopenvr/VREvent_Data_t$ByReference
+> New class found: jopenvr/VREvent_Data_t
+> New inner class found: jopenvr/VRControllerState_t$ByReference
+> New class found: jopenvr/VRControllerState_t
+> New inner class found: jopenvr/VRControllerState_t$ByValue
+> New inner class found: jopenvr/VRTextureBounds_t$ByReference
+> New inner class found: jopenvr/VRTextureBounds_t$ByValue
+> New class found: jopenvr/VRTextureBounds_t
+> New class found: com/mtbs3d/minecrift/control/KeyControlBinding
+> New inner class found: jopenvr/Compositor_FrameTiming$ByReference
+> New class found: jopenvr/Compositor_FrameTiming
+> New inner class found: jopenvr/Compositor_FrameTiming$ByValue
+> New class found: com/mtbs3d/minecrift/api/IBodyAimController
+> New inner class found: jopenvr/RenderModel_ControllerMode_State_t$ByReference
+> New class found: jopenvr/RenderModel_ControllerMode_State_t
+> New inner class found: jopenvr/RenderModel_ControllerMode_State_t$ByValue
+> Modified class found      : net/minecraft/client/gui/GuiVideoSettings
+> Modified class found      : net/minecraft/client/renderer/ItemRenderer
+> New class found: com/mtbs3d/minecrift/provider/NullStereoRenderer
+> New class found: jopenvr/VREvent_Reserved_t
+> New inner class found: jopenvr/VREvent_Reserved_t$ByValue
+> New inner class found: jopenvr/VREvent_Reserved_t$ByReference
+> New class found: com/mtbs3d/minecrift/gui/framework/BaseGuiSettings
+> New inner class found: com/mtbs3d/minecrift/settings/VRSettings$VrOptions
+> New class found: com/mtbs3d/minecrift/settings/VRSettings
+> New inner class found: com/mtbs3d/minecrift/settings/VRSettings$1
+> New class found: jopenvr/RenderModel_t
+> New inner class found: jopenvr/RenderModel_t$ByValue
+> New inner class found: jopenvr/RenderModel_t$ByReference
+> New inner class found: jopenvr/HmdQuad_t$ByReference
+> New class found: jopenvr/HmdQuad_t
+> New inner class found: jopenvr/HmdQuad_t$ByValue
+> New inner class found: jopenvr/VREvent_Mouse_t$ByValue
+> New inner class found: jopenvr/VREvent_Mouse_t$ByReference
+> New class found: jopenvr/VREvent_Mouse_t
+> New inner class found: com/mtbs3d/minecrift/gui/GuiMoveAimSettings$1
+> New class found: com/mtbs3d/minecrift/gui/GuiMoveAimSettings
+> Modified inner class found: net/minecraft/entity/player/EntityPlayer$EnumChatVisibility
+> Modified class found      : net/minecraft/entity/player/EntityPlayer
+> Modified inner class found: net/minecraft/entity/player/EntityPlayer$EnumStatus
+> New class found: com/mtbs3d/minecrift/api/IHMDInfo
+> New class found: com/mtbs3d/minecrift/api/PluginType
+> New inner class found: com/mtbs3d/minecrift/api/PluginType$1
+> New class found: com/mtbs3d/minecrift/settings/IntValue
+> Modified class found      : net/minecraft/client/entity/EntityClientPlayerMP
+> Modified class found      : net/minecraft/src/WorldRendererSmooth
+> New class found: com/mtbs3d/minecrift/control/ControlBinding
+> New inner class found: com/mtbs3d/minecrift/control/ControlBinding$ControlBindCallback
+> New class found: com/mtbs3d/minecrift/api/IOrientationProvider
+> New class found: com/mtbs3d/minecrift/control/WalkLeftBinding
+> Modified inner class found: net/minecraft/client/network/NetHandlerPlayClient$1
+> Modified class found      : net/minecraft/client/network/NetHandlerPlayClient
+> New class found: com/mtbs3d/minecrift/gui/framework/GuiSmallButtonEx
+> New inner class found: com/mtbs3d/minecrift/control/DiscreteAngle$DiscreteAngleState
+> New class found: com/mtbs3d/minecrift/control/DiscreteAngle
+> New inner class found: com/mtbs3d/minecrift/control/DiscreteAngle$1
+> Modified class found      : net/minecraft/client/renderer/RenderGlobal
+> Modified inner class found: net/minecraft/client/renderer/RenderGlobal$1
+> Modified class found      : net/minecraft/entity/projectile/EntityThrowable
+> New class found: com/mtbs3d/minecrift/settings/PluginValue
+> New inner class found: jopenvr/VROverlayIntersectionResults_t$ByValue
+> New inner class found: jopenvr/VROverlayIntersectionResults_t$ByReference
+> New class found: jopenvr/VROverlayIntersectionResults_t
+> New class found: net/minecraft/client/particle/EntityVRTeleportFX
+> New class found: com/mtbs3d/minecrift/provider/NeckModelEyePosition
+> New inner class found: jopenvr/RenderModel_TextureMap_t$ByReference
+> New class found: jopenvr/RenderModel_TextureMap_t
+> New inner class found: jopenvr/RenderModel_TextureMap_t$ByValue
+> New inner class found: jopenvr/HmdColor_t$ByReference
+> New inner class found: jopenvr/HmdColor_t$ByValue
+> New class found: jopenvr/HmdColor_t
+> New class found: com/mtbs3d/minecrift/api/CalibrationHelper
+> New class found: com/mtbs3d/minecrift/settings/profile/ProfileManager
+> New class found: com/mtbs3d/minecrift/render/FBOParams
+> New inner class found: com/mtbs3d/minecrift/render/FBOParams$FBO_SUPPORT
+> New class found: com/mtbs3d/minecrift/api/IEventNotifier
+> New class found: com/mtbs3d/minecrift/gui/GuiSelectSettingsProfile
+> New inner class found: com/mtbs3d/minecrift/gui/GuiSelectSettingsProfile$List
+> New class found: jopenvr/Texture_t
+> New inner class found: jopenvr/Texture_t$ByValue
+> New inner class found: jopenvr/Texture_t$ByReference
+> New class found: com/mtbs3d/minecrift/gui/GuiHUDSettings
+> New inner class found: com/mtbs3d/minecrift/gui/GuiHUDSettings$1
+> New class found: com/mtbs3d/minecrift/gui/framework/GuiEventEx
+> Modified inner class found: net/minecraft/network/NetHandlerPlayServer$SwitchEnumState
+> Modified inner class found: net/minecraft/network/NetHandlerPlayServer$1
+> Modified inner class found: net/minecraft/network/NetHandlerPlayServer$2
+> Modified class found      : net/minecraft/network/NetHandlerPlayServer
+> New class found: com/mtbs3d/minecrift/settings/VRHotkeys
+> Modified class found      : net/minecraft/entity/projectile/EntityArrow
+> Modified class found      : net/minecraft/client/model/ModelBiped
+> New class found: com/mtbs3d/minecrift/render/ik/IKHelper
+> New class found: com/mtbs3d/minecrift/render/RenderConfigException
+> New class found: jopenvr/HmdVector4_t
+> New inner class found: jopenvr/HmdVector4_t$ByValue
+> New inner class found: jopenvr/HmdVector4_t$ByReference
+> New class found: com/mtbs3d/minecrift/provider/NullHmdInfo
+> New class found: com/mtbs3d/minecrift/api/IEyePositionProvider
+> New class found: jopenvr/HmdVector2_t
+> New inner class found: jopenvr/HmdVector2_t$ByReference
+> New inner class found: jopenvr/HmdVector2_t$ByValue
+> New inner class found: jopenvr/HmdQuaternion_t$ByValue
+> New inner class found: jopenvr/HmdQuaternion_t$ByReference
+> New class found: jopenvr/HmdQuaternion_t
+> New class found: com/mtbs3d/minecrift/render/QuaternionHelper
+> Modified class found      : net/minecraft/client/renderer/EntityRenderer
+> Modified inner class found: net/minecraft/client/renderer/EntityRenderer$2
+> Modified inner class found: net/minecraft/client/renderer/EntityRenderer$3
+> Modified inner class found: net/minecraft/client/renderer/EntityRenderer$1
+> New inner class found: net/minecraft/client/renderer/EntityRenderer$6
+> New inner class found: net/minecraft/client/renderer/EntityRenderer$4
+> New inner class found: net/minecraft/client/renderer/EntityRenderer$5
+> New class found: jopenvr/NativeLong64
+> New inner class found: jopenvr/HiddenAreaMesh_t$ByReference
+> New inner class found: jopenvr/HiddenAreaMesh_t$ByValue
+> New class found: jopenvr/HiddenAreaMesh_t
+> New inner class found: com/mtbs3d/minecrift/gui/GuiRenderOpticsSettings$1
+> New class found: com/mtbs3d/minecrift/gui/GuiRenderOpticsSettings
+> New inner class found: com/mtbs3d/minecrift/gui/GuiVRControls$ControlSlot
+> New class found: com/mtbs3d/minecrift/gui/GuiVRControls
+> New class found: com/mtbs3d/minecrift/gui/GuiMinecriftSettings
+> New inner class found: com/mtbs3d/minecrift/gui/GuiMinecriftSettings$1
+> New inner class found: jopenvr/VROverlayIntersectionParams_t$ByReference
+> New inner class found: jopenvr/VROverlayIntersectionParams_t$ByValue
+> New class found: jopenvr/VROverlayIntersectionParams_t
+> New class found: com/mtbs3d/minecrift/gui/GuiOtherRenderOpticsSettings
+> New inner class found: com/mtbs3d/minecrift/gui/GuiOtherRenderOpticsSettings$1
+> New class found: com/mtbs3d/minecrift/gui/GuiLocomotionSettings
+> New inner class found: com/mtbs3d/minecrift/gui/GuiLocomotionSettings$1
+> Modified class found      : net/minecraft/client/renderer/WorldRenderer
+> New class found: jopenvr/JMonkeyHelpers
+> New class found: com/mtbs3d/minecrift/gui/GuiPlayerPreferenceSettings
+> New inner class found: com/mtbs3d/minecrift/gui/GuiPlayerPreferenceSettings$1
+> New class found: com/mtbs3d/minecrift/settings/profile/ProfileWriter
+> New class found: com/mtbs3d/minecrift/gui/framework/GuiEnterText
+> Modified inner class found: net/minecraft/client/gui/GuiOptions$1
+> Modified class found      : net/minecraft/client/gui/GuiOptions
+> Modified class found      : net/minecraft/util/MovementInput
+> Modified class found      : net/minecraft/client/entity/EntityPlayerSP
+> New class found: com/mtbs3d/minecrift/render/GLUtils
+> New inner class found: jopenvr/CameraVideoStreamFrame_t$ByValue
+> New inner class found: jopenvr/CameraVideoStreamFrame_t$ByReference
+> New class found: jopenvr/CameraVideoStreamFrame_t
+> New class found: com/mtbs3d/minecrift/control/ItemLeftControlBinding
+> Modified class found      : net/minecraft/client/gui/GuiNewChat
+> New class found: com/mtbs3d/minecrift/render/OpenGLdebugging
+> New inner class found: com/mtbs3d/minecrift/render/OpenGLdebugging$GLproperty
+> Modified class found      : net/minecraft/client/renderer/tileentity/TileEntityMobSpawnerRenderer
+> Modified class found      : net/minecraft/client/Minecraft
+> Modified inner class found: net/minecraft/client/Minecraft$15
+> Modified inner class found: net/minecraft/client/Minecraft$14
+> Modified inner class found: net/minecraft/client/Minecraft$16
+> Modified inner class found: net/minecraft/client/Minecraft$11
+> Modified inner class found: net/minecraft/client/Minecraft$10
+> Modified inner class found: net/minecraft/client/Minecraft$13
+> Modified inner class found: net/minecraft/client/Minecraft$12
+> Modified inner class found: net/minecraft/client/Minecraft$SwitchMovingObjectType
+> Modified inner class found: net/minecraft/client/Minecraft$9
+> Modified inner class found: net/minecraft/client/Minecraft$8
+> Modified inner class found: net/minecraft/client/Minecraft$5
+> Modified inner class found: net/minecraft/client/Minecraft$4
+> Modified inner class found: net/minecraft/client/Minecraft$7
+> Modified inner class found: net/minecraft/client/Minecraft$6
+> Modified inner class found: net/minecraft/client/Minecraft$1
+> Modified inner class found: net/minecraft/client/Minecraft$3
+> Modified inner class found: net/minecraft/client/Minecraft$2
+> New inner class found: com/mtbs3d/minecrift/provider/MCController$BindingMap
+> New class found: com/mtbs3d/minecrift/provider/MCController
+> Modified class found      : net/minecraft/item/ItemBow
+> New class found: com/mtbs3d/minecrift/provider/NullPositionAndOrientation
+> Modified class found      : net/minecraft/client/model/ModelBase
+> New class found: com/mtbs3d/minecrift/gameplay/VRPlayer
+> New inner class found: jopenvr/DistortionCoordinates_t$ByReference
+> New inner class found: jopenvr/DistortionCoordinates_t$ByValue
+> New class found: jopenvr/DistortionCoordinates_t
+> New class found: com/mtbs3d/minecrift/gui/framework/VROption
+> New inner class found: com/mtbs3d/minecrift/gui/framework/VROption$Position
+> Modified class found      : net/minecraft/entity/player/EntityPlayerMP
+> New inner class found: jopenvr/HmdVector3_t$ByReference
+> New class found: jopenvr/HmdVector3_t
+> New inner class found: jopenvr/HmdVector3_t$ByValue
+> Modified inner class found: net/minecraft/creativetab/CreativeTabs$1
+> Modified inner class found: net/minecraft/creativetab/CreativeTabs$2
+> Modified inner class found: net/minecraft/creativetab/CreativeTabs$3
+> Modified inner class found: net/minecraft/creativetab/CreativeTabs$4
+> Modified inner class found: net/minecraft/creativetab/CreativeTabs$5
+> Modified inner class found: net/minecraft/creativetab/CreativeTabs$6
+> Modified inner class found: net/minecraft/creativetab/CreativeTabs$7
+> Modified inner class found: net/minecraft/creativetab/CreativeTabs$9
+> Modified inner class found: net/minecraft/creativetab/CreativeTabs$12
+> Modified inner class found: net/minecraft/creativetab/CreativeTabs$10
+> Modified inner class found: net/minecraft/creativetab/CreativeTabs$11
+> Modified inner class found: net/minecraft/creativetab/CreativeTabs$8
+> Modified class found      : net/minecraft/creativetab/CreativeTabs
+> New class found: com/mtbs3d/minecrift/settings/StringValue
+> Modified class found      : net/minecraft/client/renderer/entity/RenderPlayer
+> Modified class found      : net/minecraft/client/gui/GuiScreen
+> New class found: com/mtbs3d/minecrift/render/ik/IKInfo
+> Modified class found      : net/minecraft/client/renderer/entity/RenderManager
+> New class found: com/mtbs3d/minecrift/api/IEventListener
+> Modified inner class found: net/minecraft/network/play/client/C03PacketPlayer$C06PacketPlayerPosLook
+> Modified inner class found: net/minecraft/network/play/client/C03PacketPlayer$C04PacketPlayerPosition
+> Modified class found      : net/minecraft/network/play/client/C03PacketPlayer
+> Modified inner class found: net/minecraft/network/play/client/C03PacketPlayer$C05PacketPlayerLook
+> New class found: com/mtbs3d/minecrift/control/WalkRightBinding
+> Modified class found      : net/minecraft/client/gui/GuiButton
+> New class found: com/mtbs3d/minecrift/gui/framework/GuiButtonEx
+> New inner class found: jopenvr/HmdVector3d_t$ByReference
+> New inner class found: jopenvr/HmdVector3d_t$ByValue
+> New class found: jopenvr/HmdVector3d_t
+> New class found: com/mtbs3d/minecrift/settings/BooleanValue
+> Modified class found      : net/minecraft/client/renderer/entity/RenderFish
+> New class found: com/mtbs3d/minecrift/control/ItemRightControlBinding
+> New class found: com/mtbs3d/minecrift/control/Aim
+> Modified class found      : net/minecraft/src/Reflector
+> New class found: com/mtbs3d/minecrift/tweaker/MinecriftForgeTweaker
+> New class found: com/mtbs3d/minecrift/provider/MCMouse
+> Modified class found      : net/minecraft/client/LoadingScreenRenderer
+> Modified class found      : net/minecraft/client/renderer/OpenGlHelper
+> Modified class found      : net/minecraft/client/renderer/ActiveRenderInfo
+> Modified class found      : net/minecraft/entity/EntityLivingBase
+> Modified class found      : net/minecraft/client/gui/GuiIngame
+> Modified class found      : net/minecraft/client/settings/KeyBinding
+> New class found: com/mtbs3d/minecrift/api/ErrorHelper
+> Modified class found      : net/minecraft/client/multiplayer/PlayerControllerMP
+> Modified inner class found: optifine/Utils$OS
+> New class found: com/mtbs3d/minecrift/utils/Utils
+> Modified class found      : optifine/Utils
+> New class found: com/mtbs3d/minecrift/api/PluginManager
+> New class found: com/mtbs3d/minecrift/render/ShaderHelper
+> Modified class found      : net/minecraft/entity/projectile/EntityFireball
+> Modified class found      : net/minecraft/client/gui/GuiSlot
+> New class found: com/mtbs3d/minecrift/control/MenuBinding
+> New class found: com/mtbs3d/minecrift/settings/FloatValue
+> Modified class found      : net/minecraft/client/model/ModelRenderer
+> Modified class found      : net/minecraft/client/gui/GuiMainMenu
+> New class found: com/mtbs3d/minecrift/control/WalkBackwardBinding
+> New class found: jopenvr/OpenVRUtil
+> New class found: com/mtbs3d/minecrift/gui/framework/GuiSelectOption
+> New class found: com/mtbs3d/minecrift/gui/framework/GuiSliderEx
+> New class found: com/mtbs3d/minecrift/api/IStereoProvider
+> New class found: com/mtbs3d/minecrift/control/JoystickRecenterAim
+> New class found: com/mtbs3d/minecrift/api/IBasePlugin
+> New class found: com/mtbs3d/minecrift/provider/MCOculus
+> New class found: com/mtbs3d/minecrift/control/WalkForwardBinding
+> New class found: com/mtbs3d/minecrift/utils/TextureSelector
+> New class found: com/mtbs3d/minecrift/api/BasePlugin
+> Outputted jopenvr/VREvent_Process_t$ByValue   to reobf\minecraft as jopenvr/VREvent_Process_t$ByValue.class
+> Outputted jopenvr/VREvent_Process_t           to reobf\minecraft as jopenvr/VREvent_Process_t.class
+> Outputted jopenvr/VREvent_Process_t$ByReference to reobf\minecraft as jopenvr/VREvent_Process_t$ByReference.class
+> Outputted net/minecraft/entity/Entity$1       to reobf\minecraft as sb.class
+> Outputted net/minecraft/entity/Entity$2       to reobf\minecraft as sc.class
+> Outputted net/minecraft/entity/Entity$EnumEntitySize to reobf\minecraft as se.class
+> Outputted net/minecraft/entity/Entity$SwitchEnumEntitySize to reobf\minecraft as sd.class
+> Outputted net/minecraft/entity/Entity         to reobf\minecraft as sa.class
+> Outputted jopenvr/Compositor_OverlaySettings$ByValue to reobf\minecraft as jopenvr/Compositor_OverlaySettings$ByValue.class
+> Outputted jopenvr/Compositor_OverlaySettings  to reobf\minecraft as jopenvr/Compositor_OverlaySettings.class
+> Outputted jopenvr/Compositor_OverlaySettings$ByReference to reobf\minecraft as jopenvr/Compositor_OverlaySettings$ByReference.class
+> Outputted jopenvr/NotificationBitmap_t$ByReference to reobf\minecraft as jopenvr/NotificationBitmap_t$ByReference.class
+> Outputted jopenvr/NotificationBitmap_t        to reobf\minecraft as jopenvr/NotificationBitmap_t.class
+> Outputted jopenvr/NotificationBitmap_t$ByValue to reobf\minecraft as jopenvr/NotificationBitmap_t$ByValue.class
+> Outputted jopenvr/VREvent_Controller_t$ByReference to reobf\minecraft as jopenvr/VREvent_Controller_t$ByReference.class
+> Outputted jopenvr/VREvent_Controller_t$ByValue to reobf\minecraft as jopenvr/VREvent_Controller_t$ByValue.class
+> Outputted jopenvr/VREvent_Controller_t        to reobf\minecraft as jopenvr/VREvent_Controller_t.class
+> Outputted com/mtbs3d/minecrift/settings/OptionValue to reobf\minecraft as com/mtbs3d/minecrift/settings/OptionValue.class
+> Outputted jopenvr/JOpenVRLibrary$EVRInitError to reobf\minecraft as jopenvr/JOpenVRLibrary$EVRInitError.class
+> Outputted jopenvr/JOpenVRLibrary$EVREventType to reobf\minecraft as jopenvr/JOpenVRLibrary$EVREventType.class
+> Outputted jopenvr/JOpenVRLibrary$EColorSpace  to reobf\minecraft as jopenvr/JOpenVRLibrary$EColorSpace.class
+> Outputted jopenvr/JOpenVRLibrary$EVREye       to reobf\minecraft as jopenvr/JOpenVRLibrary$EVREye.class
+> Outputted jopenvr/JOpenVRLibrary$EVRNotificationStyle to reobf\minecraft as jopenvr/JOpenVRLibrary$EVRNotificationStyle.class
+> Outputted jopenvr/JOpenVRLibrary$ECameraVideoStreamFormat to reobf\minecraft as jopenvr/JOpenVRLibrary$ECameraVideoStreamFormat.class
+> Outputted jopenvr/JOpenVRLibrary$EChaperoneConfigFile to reobf\minecraft as jopenvr/JOpenVRLibrary$EChaperoneConfigFile.class
+> Outputted jopenvr/JOpenVRLibrary$EVRApplicationProperty to reobf\minecraft as jopenvr/JOpenVRLibrary$EVRApplicationProperty.class
+> Outputted jopenvr/JOpenVRLibrary$EVRApplicationError to reobf\minecraft as jopenvr/JOpenVRLibrary$EVRApplicationError.class
+> Outputted jopenvr/JOpenVRLibrary$IVRApplications to reobf\minecraft as jopenvr/JOpenVRLibrary$IVRApplications.class
+> Outputted jopenvr/JOpenVRLibrary$IVRSystem    to reobf\minecraft as jopenvr/JOpenVRLibrary$IVRSystem.class
+> Outputted jopenvr/JOpenVRLibrary$EVRApplicationType to reobf\minecraft as jopenvr/JOpenVRLibrary$EVRApplicationType.class
+> Outputted jopenvr/JOpenVRLibrary$EVRState     to reobf\minecraft as jopenvr/JOpenVRLibrary$EVRState.class
+> Outputted jopenvr/JOpenVRLibrary$EVRNotificationType to reobf\minecraft as jopenvr/JOpenVRLibrary$EVRNotificationType.class
+> Outputted jopenvr/JOpenVRLibrary$EVRNotificationError to reobf\minecraft as jopenvr/JOpenVRLibrary$EVRNotificationError.class
+> Outputted jopenvr/JOpenVRLibrary$ChaperoneCalibrationState to reobf\minecraft as jopenvr/JOpenVRLibrary$ChaperoneCalibrationState.class
+> Outputted jopenvr/JOpenVRLibrary$ETrackingUniverseOrigin to reobf\minecraft as jopenvr/JOpenVRLibrary$ETrackingUniverseOrigin.class
+> Outputted jopenvr/JOpenVRLibrary$EVRApplicationTransitionState to reobf\minecraft as jopenvr/JOpenVRLibrary$EVRApplicationTransitionState.class
+> Outputted jopenvr/JOpenVRLibrary$IVRSettings  to reobf\minecraft as jopenvr/JOpenVRLibrary$IVRSettings.class
+> Outputted jopenvr/JOpenVRLibrary$IVROverlay   to reobf\minecraft as jopenvr/JOpenVRLibrary$IVROverlay.class
+> Outputted jopenvr/JOpenVRLibrary$ETrackedDeviceClass to reobf\minecraft as jopenvr/JOpenVRLibrary$ETrackedDeviceClass.class
+> Outputted jopenvr/JOpenVRLibrary$IVRCompositor to reobf\minecraft as jopenvr/JOpenVRLibrary$IVRCompositor.class
+> Outputted jopenvr/JOpenVRLibrary$EVRSubmitFlags to reobf\minecraft as jopenvr/JOpenVRLibrary$EVRSubmitFlags.class
+> Outputted jopenvr/JOpenVRLibrary$IVRChaperone to reobf\minecraft as jopenvr/JOpenVRLibrary$IVRChaperone.class
+> Outputted jopenvr/JOpenVRLibrary$IVRChaperoneSetup to reobf\minecraft as jopenvr/JOpenVRLibrary$IVRChaperoneSetup.class
+> Outputted jopenvr/JOpenVRLibrary$EOverlayDirection to reobf\minecraft as jopenvr/JOpenVRLibrary$EOverlayDirection.class
+> Outputted jopenvr/JOpenVRLibrary$EVRCompositorError to reobf\minecraft as jopenvr/JOpenVRLibrary$EVRCompositorError.class
+> Outputted jopenvr/JOpenVRLibrary$EVRSettingsError to reobf\minecraft as jopenvr/JOpenVRLibrary$EVRSettingsError.class
+> Outputted jopenvr/JOpenVRLibrary$EVRMouseButton to reobf\minecraft as jopenvr/JOpenVRLibrary$EVRMouseButton.class
+> Outputted jopenvr/JOpenVRLibrary$VROverlayInputMethod to reobf\minecraft as jopenvr/JOpenVRLibrary$VROverlayInputMethod.class
+> Outputted jopenvr/JOpenVRLibrary$EGraphicsAPIConvention to reobf\minecraft as jopenvr/JOpenVRLibrary$EGraphicsAPIConvention.class
+> Outputted jopenvr/JOpenVRLibrary$ETrackedControllerRole to reobf\minecraft as jopenvr/JOpenVRLibrary$ETrackedControllerRole.class
+> Outputted jopenvr/JOpenVRLibrary$EGamepadTextInputLineMode to reobf\minecraft as jopenvr/JOpenVRLibrary$EGamepadTextInputLineMode.class
+> Outputted jopenvr/JOpenVRLibrary$IVRExtendedDisplay to reobf\minecraft as jopenvr/JOpenVRLibrary$IVRExtendedDisplay.class
+> Outputted jopenvr/JOpenVRLibrary$VROverlayFlags to reobf\minecraft as jopenvr/JOpenVRLibrary$VROverlayFlags.class
+> Outputted jopenvr/JOpenVRLibrary$ETrackedDeviceProperty to reobf\minecraft as jopenvr/JOpenVRLibrary$ETrackedDeviceProperty.class
+> Outputted jopenvr/JOpenVRLibrary$EVRControllerEventOutputType to reobf\minecraft as jopenvr/JOpenVRLibrary$EVRControllerEventOutputType.class
+> Outputted jopenvr/JOpenVRLibrary$EGamepadTextInputMode to reobf\minecraft as jopenvr/JOpenVRLibrary$EGamepadTextInputMode.class
+> Outputted jopenvr/JOpenVRLibrary$VREvent_t    to reobf\minecraft as jopenvr/JOpenVRLibrary$VREvent_t.class
+> Outputted jopenvr/JOpenVRLibrary$ETrackingResult to reobf\minecraft as jopenvr/JOpenVRLibrary$ETrackingResult.class
+> Outputted jopenvr/JOpenVRLibrary$EDeviceActivityLevel to reobf\minecraft as jopenvr/JOpenVRLibrary$EDeviceActivityLevel.class
+> Outputted jopenvr/JOpenVRLibrary$EVRComponentProperty to reobf\minecraft as jopenvr/JOpenVRLibrary$EVRComponentProperty.class
+> Outputted jopenvr/JOpenVRLibrary$ECollisionBoundsStyle to reobf\minecraft as jopenvr/JOpenVRLibrary$ECollisionBoundsStyle.class
+> Outputted jopenvr/JOpenVRLibrary$IVRRenderModels to reobf\minecraft as jopenvr/JOpenVRLibrary$IVRRenderModels.class
+> Outputted jopenvr/JOpenVRLibrary$EVRRenderModelError to reobf\minecraft as jopenvr/JOpenVRLibrary$EVRRenderModelError.class
+> Outputted jopenvr/JOpenVRLibrary$EVROverlayError to reobf\minecraft as jopenvr/JOpenVRLibrary$EVROverlayError.class
+> Outputted jopenvr/JOpenVRLibrary$ETrackedPropertyError to reobf\minecraft as jopenvr/JOpenVRLibrary$ETrackedPropertyError.class
+> Outputted jopenvr/JOpenVRLibrary$EVRButtonId  to reobf\minecraft as jopenvr/JOpenVRLibrary$EVRButtonId.class
+> Outputted jopenvr/JOpenVRLibrary              to reobf\minecraft as jopenvr/JOpenVRLibrary.class
+> Outputted jopenvr/JOpenVRLibrary$VROverlayTransformType to reobf\minecraft as jopenvr/JOpenVRLibrary$VROverlayTransformType.class
+> Outputted jopenvr/JOpenVRLibrary$EVRControllerAxisType to reobf\minecraft as jopenvr/JOpenVRLibrary$EVRControllerAxisType.class
+> Outputted jopenvr/JOpenVRLibrary$EVRFirmwareError to reobf\minecraft as jopenvr/JOpenVRLibrary$EVRFirmwareError.class
+> Outputted net/minecraft/client/gui/inventory/GuiContainerCreative$ContainerCreative to reobf\minecraft as bfm.class
+> Outputted net/minecraft/client/gui/inventory/GuiContainerCreative$CreativeSlot to reobf\minecraft as bfn.class
+> Outputted net/minecraft/client/gui/inventory/GuiContainerCreative to reobf\minecraft as bfl.class
+> Outputted com/mtbs3d/minecrift/gui/GuiOtherHUDSettings to reobf\minecraft as com/mtbs3d/minecrift/gui/GuiOtherHUDSettings.class
+> Outputted com/mtbs3d/minecrift/gui/GuiOtherHUDSettings$1 to reobf\minecraft as com/mtbs3d/minecrift/gui/GuiOtherHUDSettings$1.class
+> Outputted net/minecraft/client/renderer/RenderBlocks to reobf\minecraft as blm.class
+> Outputted jopenvr/VRControllerAxis_t          to reobf\minecraft as jopenvr/VRControllerAxis_t.class
+> Outputted jopenvr/VRControllerAxis_t$ByReference to reobf\minecraft as jopenvr/VRControllerAxis_t$ByReference.class
+> Outputted jopenvr/VRControllerAxis_t$ByValue  to reobf\minecraft as jopenvr/VRControllerAxis_t$ByValue.class
+> Outputted com/mtbs3d/minecrift/provider/MCOpenVR to reobf\minecraft as com/mtbs3d/minecrift/provider/MCOpenVR.class
+> Outputted jopenvr/TrackedDevicePose_t$ByValue to reobf\minecraft as jopenvr/TrackedDevicePose_t$ByValue.class
+> Outputted jopenvr/TrackedDevicePose_t         to reobf\minecraft as jopenvr/TrackedDevicePose_t.class
+> Outputted jopenvr/TrackedDevicePose_t$ByReference to reobf\minecraft as jopenvr/TrackedDevicePose_t$ByReference.class
+> Outputted jopenvr/HmdMatrix34_t$ByValue       to reobf\minecraft as jopenvr/HmdMatrix34_t$ByValue.class
+> Outputted jopenvr/HmdMatrix34_t$ByReference   to reobf\minecraft as jopenvr/HmdMatrix34_t$ByReference.class
+> Outputted jopenvr/HmdMatrix34_t               to reobf\minecraft as jopenvr/HmdMatrix34_t.class
+> Outputted net/minecraft/client/gui/achievement/GuiAchievements to reobf\minecraft as bei.class
+> Outputted net/minecraft/client/shader/Framebuffer to reobf\minecraft as bmg.class
+> Outputted jopenvr/RenderModel_Vertex_t        to reobf\minecraft as jopenvr/RenderModel_Vertex_t.class
+> Outputted jopenvr/RenderModel_Vertex_t$ByReference to reobf\minecraft as jopenvr/RenderModel_Vertex_t$ByReference.class
+> Outputted jopenvr/RenderModel_Vertex_t$ByValue to reobf\minecraft as jopenvr/RenderModel_Vertex_t$ByValue.class
+> Outputted com/mtbs3d/minecrift/gui/GuiHeadPositionSettings$1 to reobf\minecraft as com/mtbs3d/minecrift/gui/GuiHeadPositionSettings$1.class
+> Outputted com/mtbs3d/minecrift/gui/GuiHeadPositionSettings to reobf\minecraft as com/mtbs3d/minecrift/gui/GuiHeadPositionSettings.class
+> Outputted com/mtbs3d/minecrift/control/JoystickAim$JoyAimCenterBinding to reobf\minecraft as com/mtbs3d/minecrift/control/JoystickAim$JoyAimCenterBinding.class
+> Outputted com/mtbs3d/minecrift/control/JoystickAim$JoyAimPitchBinding to reobf\minecraft as com/mtbs3d/minecrift/control/JoystickAim$JoyAimPitchBinding.class
+> Outputted com/mtbs3d/minecrift/control/JoystickAim$JoyAimYawBinding to reobf\minecraft as com/mtbs3d/minecrift/control/JoystickAim$JoyAimYawBinding.class
+> Outputted com/mtbs3d/minecrift/control/JoystickAim to reobf\minecraft as com/mtbs3d/minecrift/control/JoystickAim.class
+> Outputted net/minecraft/util/MovementInputFromOptions to reobf\minecraft as blj.class
+> Outputted com/mtbs3d/minecrift/control/JoystickAimLoose to reobf\minecraft as com/mtbs3d/minecrift/control/JoystickAimLoose.class
+> Outputted jopenvr/COpenVRContext$ByValue      to reobf\minecraft as jopenvr/COpenVRContext$ByValue.class
+> Outputted jopenvr/COpenVRContext              to reobf\minecraft as jopenvr/COpenVRContext.class
+> Outputted jopenvr/COpenVRContext$ByReference  to reobf\minecraft as jopenvr/COpenVRContext$ByReference.class
+> Outputted com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiDownBinding to reobf\minecraft as com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiDownBinding.class
+> Outputted com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiCursorAimPitchBinding to reobf\minecraft as com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiCursorAimPitchBinding.class
+> Outputted com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiBackBinding to reobf\minecraft as com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiBackBinding.class
+> Outputted com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiRightBinding to reobf\minecraft as com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiRightBinding.class
+> Outputted com/mtbs3d/minecrift/control/GuiScreenNavigator to reobf\minecraft as com/mtbs3d/minecrift/control/GuiScreenNavigator.class
+> Outputted com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiShiftBinding to reobf\minecraft as com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiShiftBinding.class
+> Outputted com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiControlBinding to reobf\minecraft as com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiControlBinding.class
+> Outputted com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiSelectBinding to reobf\minecraft as com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiSelectBinding.class
+> Outputted com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiAltSelectBinding to reobf\minecraft as com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiAltSelectBinding.class
+> Outputted com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiLeftBinding to reobf\minecraft as com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiLeftBinding.class
+> Outputted com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiCursorAimYawBinding to reobf\minecraft as com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiCursorAimYawBinding.class
+> Outputted com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiUpBinding to reobf\minecraft as com/mtbs3d/minecrift/control/GuiScreenNavigator$GuiUpBinding.class
+> Outputted jopenvr/HmdMatrix44_t$ByReference   to reobf\minecraft as jopenvr/HmdMatrix44_t$ByReference.class
+> Outputted jopenvr/HmdMatrix44_t               to reobf\minecraft as jopenvr/HmdMatrix44_t.class
+> Outputted jopenvr/HmdMatrix44_t$ByValue       to reobf\minecraft as jopenvr/HmdMatrix44_t$ByValue.class
+> Outputted com/mtbs3d/minecrift/provider/MCHydra to reobf\minecraft as com/mtbs3d/minecrift/provider/MCHydra.class
+> Outputted com/mtbs3d/minecrift/provider/MCHydra$1 to reobf\minecraft as com/mtbs3d/minecrift/provider/MCHydra$1.class
+> Outputted com/mtbs3d/minecrift/gui/GuiHeadOrientationSettings to reobf\minecraft as com/mtbs3d/minecrift/gui/GuiHeadOrientationSettings.class
+> Outputted com/mtbs3d/minecrift/gui/GuiHeadOrientationSettings$1 to reobf\minecraft as com/mtbs3d/minecrift/gui/GuiHeadOrientationSettings$1.class
+> Outputted net/minecraft/util/FoodStats        to reobf\minecraft as zr.class
+> Outputted jopenvr/HmdRect2_t                  to reobf\minecraft as jopenvr/HmdRect2_t.class
+> Outputted jopenvr/HmdRect2_t$ByReference      to reobf\minecraft as jopenvr/HmdRect2_t$ByReference.class
+> Outputted jopenvr/HmdRect2_t$ByValue          to reobf\minecraft as jopenvr/HmdRect2_t$ByValue.class
+> Outputted net/minecraft/client/settings/GameSettings$Options to reobf\minecraft as bbm.class
+> Outputted net/minecraft/client/settings/GameSettings to reobf\minecraft as bbj.class
+> Outputted net/minecraft/client/settings/GameSettings$SwitchOptions to reobf\minecraft as bbl.class
+> Outputted net/minecraft/client/settings/GameSettings$1 to reobf\minecraft as bbk.class
+> Outputted net/minecraft/client/settings/GameSettings$Options$1 to reobf\minecraft as bbn.class
+> Outputted com/mtbs3d/minecrift/gui/framework/PluginModeChangeButton to reobf\minecraft as com/mtbs3d/minecrift/gui/framework/PluginModeChangeButton.class
+> Outputted jopenvr/RenderModel_ComponentState_t to reobf\minecraft as jopenvr/RenderModel_ComponentState_t.class
+> Outputted jopenvr/RenderModel_ComponentState_t$ByReference to reobf\minecraft as jopenvr/RenderModel_ComponentState_t$ByReference.class
+> Outputted jopenvr/RenderModel_ComponentState_t$ByValue to reobf\minecraft as jopenvr/RenderModel_ComponentState_t$ByValue.class
+> Outputted com/mtbs3d/minecrift/gameplay/VRMovementStyle to reobf\minecraft as com/mtbs3d/minecrift/gameplay/VRMovementStyle.class
+> Outputted net/minecraft/src/WorldRendererThreaded to reobf\minecraft as WorldRendererThreaded.class
+> Outputted com/mtbs3d/minecrift/settings/profile/ProfileReader to reobf\minecraft as com/mtbs3d/minecrift/settings/profile/ProfileReader.class
+> Outputted com/mtbs3d/minecrift/control/InventoryBinding to reobf\minecraft as com/mtbs3d/minecrift/control/InventoryBinding.class
+> Outputted com/mtbs3d/minecrift/tweaker/MinecriftClassTransformer$EntityTransform to reobf\minecraft as com/mtbs3d/minecrift/tweaker/MinecriftClassTransformer$EntityTransform.class
+> Outputted com/mtbs3d/minecrift/tweaker/MinecriftClassTransformer to reobf\minecraft as com/mtbs3d/minecrift/tweaker/MinecriftClassTransformer.class
+> Outputted jopenvr/VREvent_Data_t$ByValue      to reobf\minecraft as jopenvr/VREvent_Data_t$ByValue.class
+> Outputted jopenvr/VREvent_Data_t$ByReference  to reobf\minecraft as jopenvr/VREvent_Data_t$ByReference.class
+> Outputted jopenvr/VREvent_Data_t              to reobf\minecraft as jopenvr/VREvent_Data_t.class
+> Outputted jopenvr/VRControllerState_t$ByReference to reobf\minecraft as jopenvr/VRControllerState_t$ByReference.class
+> Outputted jopenvr/VRControllerState_t         to reobf\minecraft as jopenvr/VRControllerState_t.class
+> Outputted jopenvr/VRControllerState_t$ByValue to reobf\minecraft as jopenvr/VRControllerState_t$ByValue.class
+> Outputted jopenvr/VRTextureBounds_t$ByReference to reobf\minecraft as jopenvr/VRTextureBounds_t$ByReference.class
+> Outputted jopenvr/VRTextureBounds_t$ByValue   to reobf\minecraft as jopenvr/VRTextureBounds_t$ByValue.class
+> Outputted jopenvr/VRTextureBounds_t           to reobf\minecraft as jopenvr/VRTextureBounds_t.class
+> Outputted com/mtbs3d/minecrift/control/KeyControlBinding to reobf\minecraft as com/mtbs3d/minecrift/control/KeyControlBinding.class
+> Outputted jopenvr/Compositor_FrameTiming$ByReference to reobf\minecraft as jopenvr/Compositor_FrameTiming$ByReference.class
+> Outputted jopenvr/Compositor_FrameTiming      to reobf\minecraft as jopenvr/Compositor_FrameTiming.class
+> Outputted jopenvr/Compositor_FrameTiming$ByValue to reobf\minecraft as jopenvr/Compositor_FrameTiming$ByValue.class
+> Outputted com/mtbs3d/minecrift/api/IBodyAimController to reobf\minecraft as com/mtbs3d/minecrift/api/IBodyAimController.class
+> Outputted jopenvr/RenderModel_ControllerMode_State_t$ByReference to reobf\minecraft as jopenvr/RenderModel_ControllerMode_State_t$ByReference.class
+> Outputted jopenvr/RenderModel_ControllerMode_State_t to reobf\minecraft as jopenvr/RenderModel_ControllerMode_State_t.class
+> Outputted jopenvr/RenderModel_ControllerMode_State_t$ByValue to reobf\minecraft as jopenvr/RenderModel_ControllerMode_State_t$ByValue.class
+> Outputted net/minecraft/client/gui/GuiVideoSettings to reobf\minecraft as bef.class
+> Outputted net/minecraft/client/renderer/ItemRenderer to reobf\minecraft as bly.class
+> Outputted com/mtbs3d/minecrift/provider/NullStereoRenderer to reobf\minecraft as com/mtbs3d/minecrift/provider/NullStereoRenderer.class
+> Outputted jopenvr/VREvent_Reserved_t          to reobf\minecraft as jopenvr/VREvent_Reserved_t.class
+> Outputted jopenvr/VREvent_Reserved_t$ByValue  to reobf\minecraft as jopenvr/VREvent_Reserved_t$ByValue.class
+> Outputted jopenvr/VREvent_Reserved_t$ByReference to reobf\minecraft as jopenvr/VREvent_Reserved_t$ByReference.class
+> Outputted com/mtbs3d/minecrift/gui/framework/BaseGuiSettings to reobf\minecraft as com/mtbs3d/minecrift/gui/framework/BaseGuiSettings.class
+> Outputted com/mtbs3d/minecrift/settings/VRSettings$VrOptions to reobf\minecraft as com/mtbs3d/minecrift/settings/VRSettings$VrOptions.class
+> Outputted com/mtbs3d/minecrift/settings/VRSettings to reobf\minecraft as com/mtbs3d/minecrift/settings/VRSettings.class
+> Outputted com/mtbs3d/minecrift/settings/VRSettings$1 to reobf\minecraft as com/mtbs3d/minecrift/settings/VRSettings$1.class
+> Outputted jopenvr/RenderModel_t               to reobf\minecraft as jopenvr/RenderModel_t.class
+> Outputted jopenvr/RenderModel_t$ByValue       to reobf\minecraft as jopenvr/RenderModel_t$ByValue.class
+> Outputted jopenvr/RenderModel_t$ByReference   to reobf\minecraft as jopenvr/RenderModel_t$ByReference.class
+> Outputted jopenvr/HmdQuad_t$ByReference       to reobf\minecraft as jopenvr/HmdQuad_t$ByReference.class
+> Outputted jopenvr/HmdQuad_t                   to reobf\minecraft as jopenvr/HmdQuad_t.class
+> Outputted jopenvr/HmdQuad_t$ByValue           to reobf\minecraft as jopenvr/HmdQuad_t$ByValue.class
+> Outputted jopenvr/VREvent_Mouse_t$ByValue     to reobf\minecraft as jopenvr/VREvent_Mouse_t$ByValue.class
+> Outputted jopenvr/VREvent_Mouse_t$ByReference to reobf\minecraft as jopenvr/VREvent_Mouse_t$ByReference.class
+> Outputted jopenvr/VREvent_Mouse_t             to reobf\minecraft as jopenvr/VREvent_Mouse_t.class
+> Outputted com/mtbs3d/minecrift/gui/GuiMoveAimSettings$1 to reobf\minecraft as com/mtbs3d/minecrift/gui/GuiMoveAimSettings$1.class
+> Outputted com/mtbs3d/minecrift/gui/GuiMoveAimSettings to reobf\minecraft as com/mtbs3d/minecrift/gui/GuiMoveAimSettings.class
+> Outputted net/minecraft/entity/player/EntityPlayer$EnumChatVisibility to reobf\minecraft as zb.class
+> Outputted net/minecraft/entity/player/EntityPlayer to reobf\minecraft as yz.class
+> Outputted net/minecraft/entity/player/EntityPlayer$EnumStatus to reobf\minecraft as za.class
+> Outputted com/mtbs3d/minecrift/api/IHMDInfo   to reobf\minecraft as com/mtbs3d/minecrift/api/IHMDInfo.class
+> Outputted com/mtbs3d/minecrift/api/PluginType to reobf\minecraft as com/mtbs3d/minecrift/api/PluginType.class
+> Outputted com/mtbs3d/minecrift/api/PluginType$1 to reobf\minecraft as com/mtbs3d/minecrift/api/PluginType$1.class
+> Outputted com/mtbs3d/minecrift/settings/IntValue to reobf\minecraft as com/mtbs3d/minecrift/settings/IntValue.class
+> Outputted net/minecraft/client/entity/EntityClientPlayerMP to reobf\minecraft as bjk.class
+> Outputted net/minecraft/src/WorldRendererSmooth to reobf\minecraft as WorldRendererSmooth.class
+> Outputted com/mtbs3d/minecrift/control/ControlBinding to reobf\minecraft as com/mtbs3d/minecrift/control/ControlBinding.class
+> Outputted com/mtbs3d/minecrift/control/ControlBinding$ControlBindCallback to reobf\minecraft as com/mtbs3d/minecrift/control/ControlBinding$ControlBindCallback.class
+> Outputted com/mtbs3d/minecrift/api/IOrientationProvider to reobf\minecraft as com/mtbs3d/minecrift/api/IOrientationProvider.class
+> Outputted com/mtbs3d/minecrift/control/WalkLeftBinding to reobf\minecraft as com/mtbs3d/minecrift/control/WalkLeftBinding.class
+> Outputted net/minecraft/client/network/NetHandlerPlayClient$1 to reobf\minecraft as bjc.class
+> Outputted net/minecraft/client/network/NetHandlerPlayClient to reobf\minecraft as bjb.class
+> Outputted com/mtbs3d/minecrift/gui/framework/GuiSmallButtonEx to reobf\minecraft as com/mtbs3d/minecrift/gui/framework/GuiSmallButtonEx.class
+> Outputted com/mtbs3d/minecrift/control/DiscreteAngle$DiscreteAngleState to reobf\minecraft as com/mtbs3d/minecrift/control/DiscreteAngle$DiscreteAngleState.class
+> Outputted com/mtbs3d/minecrift/control/DiscreteAngle to reobf\minecraft as com/mtbs3d/minecrift/control/DiscreteAngle.class
+> Outputted com/mtbs3d/minecrift/control/DiscreteAngle$1 to reobf\minecraft as com/mtbs3d/minecrift/control/DiscreteAngle$1.class
+> Outputted net/minecraft/client/renderer/RenderGlobal to reobf\minecraft as bma.class
+> Outputted net/minecraft/client/renderer/RenderGlobal$1 to reobf\minecraft as bmb.class
+> Outputted net/minecraft/entity/projectile/EntityThrowable to reobf\minecraft as zk.class
+> Outputted com/mtbs3d/minecrift/settings/PluginValue to reobf\minecraft as com/mtbs3d/minecrift/settings/PluginValue.class
+> Outputted jopenvr/VROverlayIntersectionResults_t$ByValue to reobf\minecraft as jopenvr/VROverlayIntersectionResults_t$ByValue.class
+> Outputted jopenvr/VROverlayIntersectionResults_t$ByReference to reobf\minecraft as jopenvr/VROverlayIntersectionResults_t$ByReference.class
+> Outputted jopenvr/VROverlayIntersectionResults_t to reobf\minecraft as jopenvr/VROverlayIntersectionResults_t.class
+> Outputted net/minecraft/client/particle/EntityVRTeleportFX to reobf\minecraft as net/minecraft/client/particle/EntityVRTeleportFX.class
+> Outputted com/mtbs3d/minecrift/provider/NeckModelEyePosition to reobf\minecraft as com/mtbs3d/minecrift/provider/NeckModelEyePosition.class
+> Outputted jopenvr/RenderModel_TextureMap_t$ByReference to reobf\minecraft as jopenvr/RenderModel_TextureMap_t$ByReference.class
+> Outputted jopenvr/RenderModel_TextureMap_t    to reobf\minecraft as jopenvr/RenderModel_TextureMap_t.class
+> Outputted jopenvr/RenderModel_TextureMap_t$ByValue to reobf\minecraft as jopenvr/RenderModel_TextureMap_t$ByValue.class
+> Outputted jopenvr/HmdColor_t$ByReference      to reobf\minecraft as jopenvr/HmdColor_t$ByReference.class
+> Outputted jopenvr/HmdColor_t$ByValue          to reobf\minecraft as jopenvr/HmdColor_t$ByValue.class
+> Outputted jopenvr/HmdColor_t                  to reobf\minecraft as jopenvr/HmdColor_t.class
+> Outputted com/mtbs3d/minecrift/api/CalibrationHelper to reobf\minecraft as com/mtbs3d/minecrift/api/CalibrationHelper.class
+> Outputted com/mtbs3d/minecrift/settings/profile/ProfileManager to reobf\minecraft as com/mtbs3d/minecrift/settings/profile/ProfileManager.class
+> Outputted com/mtbs3d/minecrift/render/FBOParams to reobf\minecraft as com/mtbs3d/minecrift/render/FBOParams.class
+> Outputted com/mtbs3d/minecrift/render/FBOParams$FBO_SUPPORT to reobf\minecraft as com/mtbs3d/minecrift/render/FBOParams$FBO_SUPPORT.class
+> Outputted com/mtbs3d/minecrift/api/IEventNotifier to reobf\minecraft as com/mtbs3d/minecrift/api/IEventNotifier.class
+> Outputted com/mtbs3d/minecrift/gui/GuiSelectSettingsProfile to reobf\minecraft as com/mtbs3d/minecrift/gui/GuiSelectSettingsProfile.class
+> Outputted com/mtbs3d/minecrift/gui/GuiSelectSettingsProfile$List to reobf\minecraft as com/mtbs3d/minecrift/gui/GuiSelectSettingsProfile$List.class
+> Outputted jopenvr/Texture_t                   to reobf\minecraft as jopenvr/Texture_t.class
+> Outputted jopenvr/Texture_t$ByValue           to reobf\minecraft as jopenvr/Texture_t$ByValue.class
+> Outputted jopenvr/Texture_t$ByReference       to reobf\minecraft as jopenvr/Texture_t$ByReference.class
+> Outputted com/mtbs3d/minecrift/gui/GuiHUDSettings to reobf\minecraft as com/mtbs3d/minecrift/gui/GuiHUDSettings.class
+> Outputted com/mtbs3d/minecrift/gui/GuiHUDSettings$1 to reobf\minecraft as com/mtbs3d/minecrift/gui/GuiHUDSettings$1.class
+> Outputted com/mtbs3d/minecrift/gui/framework/GuiEventEx to reobf\minecraft as com/mtbs3d/minecrift/gui/framework/GuiEventEx.class
+> Outputted net/minecraft/network/NetHandlerPlayServer$SwitchEnumState to reobf\minecraft as nk.class
+> Outputted net/minecraft/network/NetHandlerPlayServer$1 to reobf\minecraft as ni.class
+> Outputted net/minecraft/network/NetHandlerPlayServer$2 to reobf\minecraft as nj.class
+> Outputted net/minecraft/network/NetHandlerPlayServer to reobf\minecraft as nh.class
+> Outputted com/mtbs3d/minecrift/settings/VRHotkeys to reobf\minecraft as com/mtbs3d/minecrift/settings/VRHotkeys.class
+> Outputted net/minecraft/entity/projectile/EntityArrow to reobf\minecraft as zc.class
+> Outputted net/minecraft/client/model/ModelBiped to reobf\minecraft as bhm.class
+> Outputted com/mtbs3d/minecrift/render/ik/IKHelper to reobf\minecraft as com/mtbs3d/minecrift/render/ik/IKHelper.class
+> Outputted com/mtbs3d/minecrift/render/RenderConfigException to reobf\minecraft as com/mtbs3d/minecrift/render/RenderConfigException.class
+> Outputted jopenvr/HmdVector4_t                to reobf\minecraft as jopenvr/HmdVector4_t.class
+> Outputted jopenvr/HmdVector4_t$ByValue        to reobf\minecraft as jopenvr/HmdVector4_t$ByValue.class
+> Outputted jopenvr/HmdVector4_t$ByReference    to reobf\minecraft as jopenvr/HmdVector4_t$ByReference.class
+> Outputted com/mtbs3d/minecrift/provider/NullHmdInfo to reobf\minecraft as com/mtbs3d/minecrift/provider/NullHmdInfo.class
+> Outputted com/mtbs3d/minecrift/api/IEyePositionProvider to reobf\minecraft as com/mtbs3d/minecrift/api/IEyePositionProvider.class
+> Outputted jopenvr/HmdVector2_t                to reobf\minecraft as jopenvr/HmdVector2_t.class
+> Outputted jopenvr/HmdVector2_t$ByReference    to reobf\minecraft as jopenvr/HmdVector2_t$ByReference.class
+> Outputted jopenvr/HmdVector2_t$ByValue        to reobf\minecraft as jopenvr/HmdVector2_t$ByValue.class
+> Outputted jopenvr/HmdQuaternion_t$ByValue     to reobf\minecraft as jopenvr/HmdQuaternion_t$ByValue.class
+> Outputted jopenvr/HmdQuaternion_t$ByReference to reobf\minecraft as jopenvr/HmdQuaternion_t$ByReference.class
+> Outputted jopenvr/HmdQuaternion_t             to reobf\minecraft as jopenvr/HmdQuaternion_t.class
+> Outputted com/mtbs3d/minecrift/render/QuaternionHelper to reobf\minecraft as com/mtbs3d/minecrift/render/QuaternionHelper.class
+> Outputted net/minecraft/client/renderer/EntityRenderer to reobf\minecraft as blt.class
+> Outputted net/minecraft/client/renderer/EntityRenderer$2 to reobf\minecraft as blv.class
+> Outputted net/minecraft/client/renderer/EntityRenderer$3 to reobf\minecraft as blw.class
+> Outputted net/minecraft/client/renderer/EntityRenderer$1 to reobf\minecraft as blu.class
+* File blt$6.class not found for net/minecraft/client/renderer/EntityRenderer$6
+* File blt$4.class not found for net/minecraft/client/renderer/EntityRenderer$4
+* File blt$5.class not found for net/minecraft/client/renderer/EntityRenderer$5
+> Outputted jopenvr/NativeLong64                to reobf\minecraft as jopenvr/NativeLong64.class
+> Outputted jopenvr/HiddenAreaMesh_t$ByReference to reobf\minecraft as jopenvr/HiddenAreaMesh_t$ByReference.class
+> Outputted jopenvr/HiddenAreaMesh_t$ByValue    to reobf\minecraft as jopenvr/HiddenAreaMesh_t$ByValue.class
+> Outputted jopenvr/HiddenAreaMesh_t            to reobf\minecraft as jopenvr/HiddenAreaMesh_t.class
+> Outputted com/mtbs3d/minecrift/gui/GuiRenderOpticsSettings$1 to reobf\minecraft as com/mtbs3d/minecrift/gui/GuiRenderOpticsSettings$1.class
+> Outputted com/mtbs3d/minecrift/gui/GuiRenderOpticsSettings to reobf\minecraft as com/mtbs3d/minecrift/gui/GuiRenderOpticsSettings.class
+> Outputted com/mtbs3d/minecrift/gui/GuiVRControls$ControlSlot to reobf\minecraft as com/mtbs3d/minecrift/gui/GuiVRControls$ControlSlot.class
+> Outputted com/mtbs3d/minecrift/gui/GuiVRControls to reobf\minecraft as com/mtbs3d/minecrift/gui/GuiVRControls.class
+> Outputted com/mtbs3d/minecrift/gui/GuiMinecriftSettings to reobf\minecraft as com/mtbs3d/minecrift/gui/GuiMinecriftSettings.class
+> Outputted com/mtbs3d/minecrift/gui/GuiMinecriftSettings$1 to reobf\minecraft as com/mtbs3d/minecrift/gui/GuiMinecriftSettings$1.class
+> Outputted jopenvr/VROverlayIntersectionParams_t$ByReference to reobf\minecraft as jopenvr/VROverlayIntersectionParams_t$ByReference.class
+> Outputted jopenvr/VROverlayIntersectionParams_t$ByValue to reobf\minecraft as jopenvr/VROverlayIntersectionParams_t$ByValue.class
+> Outputted jopenvr/VROverlayIntersectionParams_t to reobf\minecraft as jopenvr/VROverlayIntersectionParams_t.class
+> Outputted com/mtbs3d/minecrift/gui/GuiOtherRenderOpticsSettings to reobf\minecraft as com/mtbs3d/minecrift/gui/GuiOtherRenderOpticsSettings.class
+> Outputted com/mtbs3d/minecrift/gui/GuiOtherRenderOpticsSettings$1 to reobf\minecraft as com/mtbs3d/minecrift/gui/GuiOtherRenderOpticsSettings$1.class
+> Outputted com/mtbs3d/minecrift/gui/GuiLocomotionSettings to reobf\minecraft as com/mtbs3d/minecrift/gui/GuiLocomotionSettings.class
+> Outputted com/mtbs3d/minecrift/gui/GuiLocomotionSettings$1 to reobf\minecraft as com/mtbs3d/minecrift/gui/GuiLocomotionSettings$1.class
+> Outputted net/minecraft/client/renderer/WorldRenderer to reobf\minecraft as blo.class
+> Outputted jopenvr/JMonkeyHelpers              to reobf\minecraft as jopenvr/JMonkeyHelpers.class
+> Outputted com/mtbs3d/minecrift/gui/GuiPlayerPreferenceSettings to reobf\minecraft as com/mtbs3d/minecrift/gui/GuiPlayerPreferenceSettings.class
+> Outputted com/mtbs3d/minecrift/gui/GuiPlayerPreferenceSettings$1 to reobf\minecraft as com/mtbs3d/minecrift/gui/GuiPlayerPreferenceSettings$1.class
+> Outputted com/mtbs3d/minecrift/settings/profile/ProfileWriter to reobf\minecraft as com/mtbs3d/minecrift/settings/profile/ProfileWriter.class
+> Outputted com/mtbs3d/minecrift/gui/framework/GuiEnterText to reobf\minecraft as com/mtbs3d/minecrift/gui/framework/GuiEnterText.class
+> Outputted net/minecraft/client/gui/GuiOptions$1 to reobf\minecraft as bdn.class
+> Outputted net/minecraft/client/gui/GuiOptions to reobf\minecraft as bdm.class
+> Outputted net/minecraft/util/MovementInput    to reobf\minecraft as bli.class
+> Outputted net/minecraft/client/entity/EntityPlayerSP to reobf\minecraft as blk.class
+> Outputted com/mtbs3d/minecrift/render/GLUtils to reobf\minecraft as com/mtbs3d/minecrift/render/GLUtils.class
+> Outputted jopenvr/CameraVideoStreamFrame_t$ByValue to reobf\minecraft as jopenvr/CameraVideoStreamFrame_t$ByValue.class
+> Outputted jopenvr/CameraVideoStreamFrame_t$ByReference to reobf\minecraft as jopenvr/CameraVideoStreamFrame_t$ByReference.class
+> Outputted jopenvr/CameraVideoStreamFrame_t    to reobf\minecraft as jopenvr/CameraVideoStreamFrame_t.class
+> Outputted com/mtbs3d/minecrift/control/ItemLeftControlBinding to reobf\minecraft as com/mtbs3d/minecrift/control/ItemLeftControlBinding.class
+> Outputted net/minecraft/client/gui/GuiNewChat to reobf\minecraft as bcc.class
+> Outputted com/mtbs3d/minecrift/render/OpenGLdebugging to reobf\minecraft as com/mtbs3d/minecrift/render/OpenGLdebugging.class
+> Outputted com/mtbs3d/minecrift/render/OpenGLdebugging$GLproperty to reobf\minecraft as com/mtbs3d/minecrift/render/OpenGLdebugging$GLproperty.class
+> Outputted net/minecraft/client/renderer/tileentity/TileEntityMobSpawnerRenderer to reobf\minecraft as bmp.class
+> Outputted net/minecraft/client/Minecraft      to reobf\minecraft as bao.class
+> Outputted net/minecraft/client/Minecraft$15   to reobf\minecraft as bav.class
+> Outputted net/minecraft/client/Minecraft$14   to reobf\minecraft as bau.class
+> Outputted net/minecraft/client/Minecraft$16   to reobf\minecraft as baw.class
+> Outputted net/minecraft/client/Minecraft$11   to reobf\minecraft as bar.class
+> Outputted net/minecraft/client/Minecraft$10   to reobf\minecraft as baq.class
+> Outputted net/minecraft/client/Minecraft$13   to reobf\minecraft as bat.class
+> Outputted net/minecraft/client/Minecraft$12   to reobf\minecraft as bas.class
+> Outputted net/minecraft/client/Minecraft$SwitchMovingObjectType to reobf\minecraft as bax.class
+> Outputted net/minecraft/client/Minecraft$9    to reobf\minecraft as bbf.class
+> Outputted net/minecraft/client/Minecraft$8    to reobf\minecraft as bbe.class
+> Outputted net/minecraft/client/Minecraft$5    to reobf\minecraft as bbb.class
+> Outputted net/minecraft/client/Minecraft$4    to reobf\minecraft as bba.class
+> Outputted net/minecraft/client/Minecraft$7    to reobf\minecraft as bbd.class
+> Outputted net/minecraft/client/Minecraft$6    to reobf\minecraft as bbc.class
+> Outputted net/minecraft/client/Minecraft$1    to reobf\minecraft as bap.class
+> Outputted net/minecraft/client/Minecraft$3    to reobf\minecraft as baz.class
+> Outputted net/minecraft/client/Minecraft$2    to reobf\minecraft as bay.class
+> Outputted com/mtbs3d/minecrift/provider/MCController$BindingMap to reobf\minecraft as com/mtbs3d/minecrift/provider/MCController$BindingMap.class
+> Outputted com/mtbs3d/minecrift/provider/MCController to reobf\minecraft as com/mtbs3d/minecrift/provider/MCController.class
+> Outputted net/minecraft/item/ItemBow          to reobf\minecraft as abm.class
+> Outputted com/mtbs3d/minecrift/provider/NullPositionAndOrientation to reobf\minecraft as com/mtbs3d/minecrift/provider/NullPositionAndOrientation.class
+> Outputted net/minecraft/client/model/ModelBase to reobf\minecraft as bhr.class
+> Outputted com/mtbs3d/minecrift/gameplay/VRPlayer to reobf\minecraft as com/mtbs3d/minecrift/gameplay/VRPlayer.class
+> Outputted jopenvr/DistortionCoordinates_t$ByReference to reobf\minecraft as jopenvr/DistortionCoordinates_t$ByReference.class
+> Outputted jopenvr/DistortionCoordinates_t$ByValue to reobf\minecraft as jopenvr/DistortionCoordinates_t$ByValue.class
+> Outputted jopenvr/DistortionCoordinates_t     to reobf\minecraft as jopenvr/DistortionCoordinates_t.class
+> Outputted com/mtbs3d/minecrift/gui/framework/VROption to reobf\minecraft as com/mtbs3d/minecrift/gui/framework/VROption.class
+> Outputted com/mtbs3d/minecrift/gui/framework/VROption$Position to reobf\minecraft as com/mtbs3d/minecrift/gui/framework/VROption$Position.class
+> Outputted net/minecraft/entity/player/EntityPlayerMP to reobf\minecraft as mw.class
+> Outputted jopenvr/HmdVector3_t$ByReference    to reobf\minecraft as jopenvr/HmdVector3_t$ByReference.class
+> Outputted jopenvr/HmdVector3_t                to reobf\minecraft as jopenvr/HmdVector3_t.class
+> Outputted jopenvr/HmdVector3_t$ByValue        to reobf\minecraft as jopenvr/HmdVector3_t$ByValue.class
+> Outputted net/minecraft/creativetab/CreativeTabs$1 to reobf\minecraft as abu.class
+> Outputted net/minecraft/creativetab/CreativeTabs$2 to reobf\minecraft as aby.class
+> Outputted net/minecraft/creativetab/CreativeTabs$3 to reobf\minecraft as abz.class
+> Outputted net/minecraft/creativetab/CreativeTabs$4 to reobf\minecraft as aca.class
+> Outputted net/minecraft/creativetab/CreativeTabs$5 to reobf\minecraft as acb.class
+> Outputted net/minecraft/creativetab/CreativeTabs$6 to reobf\minecraft as acc.class
+> Outputted net/minecraft/creativetab/CreativeTabs$7 to reobf\minecraft as acd.class
+> Outputted net/minecraft/creativetab/CreativeTabs$9 to reobf\minecraft as acf.class
+> Outputted net/minecraft/creativetab/CreativeTabs$12 to reobf\minecraft as abx.class
+> Outputted net/minecraft/creativetab/CreativeTabs$10 to reobf\minecraft as abv.class
+> Outputted net/minecraft/creativetab/CreativeTabs$11 to reobf\minecraft as abw.class
+> Outputted net/minecraft/creativetab/CreativeTabs$8 to reobf\minecraft as ace.class
+> Outputted net/minecraft/creativetab/CreativeTabs to reobf\minecraft as abt.class
+> Outputted com/mtbs3d/minecrift/settings/StringValue to reobf\minecraft as com/mtbs3d/minecrift/settings/StringValue.class
+> Outputted net/minecraft/client/renderer/entity/RenderPlayer to reobf\minecraft as bop.class
+> Outputted net/minecraft/client/gui/GuiScreen  to reobf\minecraft as bdw.class
+> Outputted com/mtbs3d/minecrift/render/ik/IKInfo to reobf\minecraft as com/mtbs3d/minecrift/render/ik/IKInfo.class
+> Outputted net/minecraft/client/renderer/entity/RenderManager to reobf\minecraft as bnn.class
+> Outputted com/mtbs3d/minecrift/api/IEventListener to reobf\minecraft as com/mtbs3d/minecrift/api/IEventListener.class
+> Outputted net/minecraft/network/play/client/C03PacketPlayer$C06PacketPlayerPosLook to reobf\minecraft as jf.class
+> Outputted net/minecraft/network/play/client/C03PacketPlayer$C04PacketPlayerPosition to reobf\minecraft as je.class
+> Outputted net/minecraft/network/play/client/C03PacketPlayer to reobf\minecraft as jd.class
+> Outputted net/minecraft/network/play/client/C03PacketPlayer$C05PacketPlayerLook to reobf\minecraft as jg.class
+> Outputted com/mtbs3d/minecrift/control/WalkRightBinding to reobf\minecraft as com/mtbs3d/minecrift/control/WalkRightBinding.class
+> Outputted net/minecraft/client/gui/GuiButton  to reobf\minecraft as bcb.class
+> Outputted com/mtbs3d/minecrift/gui/framework/GuiButtonEx to reobf\minecraft as com/mtbs3d/minecrift/gui/framework/GuiButtonEx.class
+> Outputted jopenvr/HmdVector3d_t$ByReference   to reobf\minecraft as jopenvr/HmdVector3d_t$ByReference.class
+> Outputted jopenvr/HmdVector3d_t$ByValue       to reobf\minecraft as jopenvr/HmdVector3d_t$ByValue.class
+> Outputted jopenvr/HmdVector3d_t               to reobf\minecraft as jopenvr/HmdVector3d_t.class
+> Outputted com/mtbs3d/minecrift/settings/BooleanValue to reobf\minecraft as com/mtbs3d/minecrift/settings/BooleanValue.class
+> Outputted net/minecraft/client/renderer/entity/RenderFish to reobf\minecraft as bns.class
+> Outputted com/mtbs3d/minecrift/control/ItemRightControlBinding to reobf\minecraft as com/mtbs3d/minecrift/control/ItemRightControlBinding.class
+> Outputted com/mtbs3d/minecrift/control/Aim    to reobf\minecraft as com/mtbs3d/minecrift/control/Aim.class
+> Outputted net/minecraft/src/Reflector         to reobf\minecraft as Reflector.class
+> Outputted com/mtbs3d/minecrift/tweaker/MinecriftForgeTweaker to reobf\minecraft as com/mtbs3d/minecrift/tweaker/MinecriftForgeTweaker.class
+> Outputted com/mtbs3d/minecrift/provider/MCMouse to reobf\minecraft as com/mtbs3d/minecrift/provider/MCMouse.class
+> Outputted net/minecraft/client/LoadingScreenRenderer to reobf\minecraft as bbo.class
+> Outputted net/minecraft/client/renderer/OpenGlHelper to reobf\minecraft as buu.class
+> Outputted net/minecraft/client/renderer/ActiveRenderInfo to reobf\minecraft as baj.class
+> Outputted net/minecraft/entity/EntityLivingBase to reobf\minecraft as sv.class
+> Outputted net/minecraft/client/gui/GuiIngame  to reobf\minecraft as bbv.class
+> Outputted net/minecraft/client/settings/KeyBinding to reobf\minecraft as bal.class
+> Outputted com/mtbs3d/minecrift/api/ErrorHelper to reobf\minecraft as com/mtbs3d/minecrift/api/ErrorHelper.class
+> Outputted net/minecraft/client/multiplayer/PlayerControllerMP to reobf\minecraft as bje.class
+> Outputted optifine/Utils$OS                   to reobf\minecraft as optifine/Utils$OS.class
+> Outputted com/mtbs3d/minecrift/utils/Utils    to reobf\minecraft as com/mtbs3d/minecrift/utils/Utils.class
+> Outputted optifine/Utils                      to reobf\minecraft as optifine/Utils.class
+> Outputted com/mtbs3d/minecrift/api/PluginManager to reobf\minecraft as com/mtbs3d/minecrift/api/PluginManager.class
+> Outputted com/mtbs3d/minecrift/render/ShaderHelper to reobf\minecraft as com/mtbs3d/minecrift/render/ShaderHelper.class
+> Outputted net/minecraft/entity/projectile/EntityFireball to reobf\minecraft as ze.class
+> Outputted net/minecraft/client/gui/GuiSlot    to reobf\minecraft as bcm.class
+> Outputted com/mtbs3d/minecrift/control/MenuBinding to reobf\minecraft as com/mtbs3d/minecrift/control/MenuBinding.class
+> Outputted com/mtbs3d/minecrift/settings/FloatValue to reobf\minecraft as com/mtbs3d/minecrift/settings/FloatValue.class
+> Outputted net/minecraft/client/model/ModelRenderer to reobf\minecraft as bix.class
+> Outputted net/minecraft/client/gui/GuiMainMenu to reobf\minecraft as bee.class
+> Outputted com/mtbs3d/minecrift/control/WalkBackwardBinding to reobf\minecraft as com/mtbs3d/minecrift/control/WalkBackwardBinding.class
+> Outputted jopenvr/OpenVRUtil                  to reobf\minecraft as jopenvr/OpenVRUtil.class
+> Outputted com/mtbs3d/minecrift/gui/framework/GuiSelectOption to reobf\minecraft as com/mtbs3d/minecrift/gui/framework/GuiSelectOption.class
+> Outputted com/mtbs3d/minecrift/gui/framework/GuiSliderEx to reobf\minecraft as com/mtbs3d/minecrift/gui/framework/GuiSliderEx.class
+> Outputted com/mtbs3d/minecrift/api/IStereoProvider to reobf\minecraft as com/mtbs3d/minecrift/api/IStereoProvider.class
+> Outputted com/mtbs3d/minecrift/control/JoystickRecenterAim to reobf\minecraft as com/mtbs3d/minecrift/control/JoystickRecenterAim.class
+> Outputted com/mtbs3d/minecrift/api/IBasePlugin to reobf\minecraft as com/mtbs3d/minecrift/api/IBasePlugin.class
+> Outputted com/mtbs3d/minecrift/provider/MCOculus to reobf\minecraft as com/mtbs3d/minecrift/provider/MCOculus.class
+> Outputted com/mtbs3d/minecrift/control/WalkForwardBinding to reobf\minecraft as com/mtbs3d/minecrift/control/WalkForwardBinding.class
+> Outputted com/mtbs3d/minecrift/utils/TextureSelector to reobf\minecraft as com/mtbs3d/minecrift/utils/TextureSelector.class
+> Outputted com/mtbs3d/minecrift/api/BasePlugin to reobf\minecraft as com/mtbs3d/minecrift/api/BasePlugin.class
+- Done in 10.89 seconds
+warning: [options] bootstrap class path not set in conjunction with -source 1.6
+Note: C:\Vivecraft\minecrift_git\minecrift\installer\Installer.java uses unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+1 warning
