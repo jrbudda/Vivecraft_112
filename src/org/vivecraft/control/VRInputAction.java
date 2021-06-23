@@ -35,6 +35,8 @@ public class VRInputAction {
 	private boolean[] enabled = new boolean[ControllerType.values().length];
 	private List<KeyListener> listeners = new ArrayList<>();
 	private ControllerType currentHand = ControllerType.RIGHT;
+	// Only used for the UseTracked axis methods
+	private boolean currentlyInUse;
 
 	private long handle;
 	private boolean[] pressed = new boolean[ControllerType.values().length];
@@ -124,6 +126,51 @@ public class VRInputAction {
 			default:
 				return new Vector3();
 		}
+	}
+
+	/**
+	 * This special variant of getAxis1D internally handles the isEnabled check and will continue
+	 * to give an output even after disabled until the user lets go of the input.
+	 *
+	 * Cannot provide delta values as it wouldn't make any sense.
+	 */
+	public float getAxis1DUseTracked() {
+		if (currentlyInUse || isEnabled()) {
+			float axis = getAxis1D(false);
+			currentlyInUse = axis != 0;
+			return axis;
+		}
+		return 0;
+	}
+
+	/**
+	 * This special variant of getAxis1D internally handles the isEnabled check and will continue
+	 * to give an output even after disabled until the user lets go of the input.
+	 *
+	 * Cannot provide delta values as it wouldn't make any sense.
+	 */
+	public Vector2 getAxis2DUseTracked() {
+		if (currentlyInUse || isEnabled()) {
+			Vector2 axis = getAxis2D(false);
+			currentlyInUse = axis.getX() != 0 || axis.getY() != 0;
+			return axis;
+		}
+		return new Vector2();
+	}
+
+	/**
+	 * This special variant of getAxis1D internally handles the isEnabled check and will continue
+	 * to give an output even after disabled until the user lets go of the input.
+	 *
+	 * Cannot provide delta values as it wouldn't make any sense.
+	 */
+	Vector3 getAxis3DUseTracked() {
+		if (currentlyInUse || isEnabled()) {
+			Vector3 axis = getAxis3D(false);
+			currentlyInUse = axis.getX() != 0 || axis.getY() != 0 || axis.getZ() != 0;
+			return axis;
+		}
+		return new Vector3();
 	}
 
 	private float digitalToAnalog(boolean delta) {
@@ -255,7 +302,7 @@ public class VRInputAction {
 
 		long lastOrigin = this.getLastOrigin();
 		ControllerType hand = MCOpenVR.getOriginControllerType(lastOrigin);
-		if (hand == null)
+		if (hand == null && this.isHanded())
 			return false;
 
 		for (VRInputAction action : MCOpenVR.getInputActions()) {

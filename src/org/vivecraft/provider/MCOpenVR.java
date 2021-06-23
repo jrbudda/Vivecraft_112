@@ -1597,8 +1597,8 @@ public class MCOpenVR
 		}
 
 		if(mc.vrSettings.vrWorldRotationIncrement == 0){
-			float ax = getInputAction(keyRotateAxis).isEnabled() ? getInputAction(keyRotateAxis).getAxis2D(false).getX() : 0;
-			if (ax == 0) ax = getInputAction(keyFreeMoveRotate).isEnabled() ? getInputAction(keyFreeMoveRotate).getAxis2D(false).getX() : 0;
+			float ax = getInputAction(keyRotateAxis).getAxis2DUseTracked().getX();
+			if (ax == 0) ax = getInputAction(keyFreeMoveRotate).getAxis2DUseTracked().getX();
 			if (ax != 0) {
 				float analogRotSpeed = 10 * ax;
 				mc.vrSettings.vrWorldRotation -= analogRotSpeed;
@@ -1693,7 +1693,7 @@ public class MCOpenVR
 					KeyboardSimulator.robot.keyPress(KeyEvent.VK_ESCAPE); //window focus... yadda yadda
 					KeyboardSimulator.robot.keyRelease(KeyEvent.VK_ESCAPE); //window focus... yadda yadda
 				} else {
-					mc.player.closeScreen();
+					if (mc.player != null) mc.player.closeScreen();
 				}
 			}
 			KeyboardHandler.setOverlayShowing(false);
@@ -1754,8 +1754,6 @@ public class MCOpenVR
 		KeyboardHandler.processBindings();
 		mc.interactTracker.processBindings();
 	}
-
-
 
 	private static void changeHotbar(int dir){
 		if(mc.player == null || (mc.climbTracker.isGrabbingLadder() && 
@@ -2450,21 +2448,21 @@ public class MCOpenVR
 				double nPitch=-v;
 				if(Display.isActive()){
 					float rotStart = mc.vrSettings.keyholeX;
-					float rotSpeed = 2000 * mc.vrSettings.xSensitivity;
+					float rotSpeed = 11 * mc.vrSettings.xSensitivity;
 					int leftedge=(int)((-rotStart + (hRange / 2)) *(double) mc.displayWidth / hRange )+1;
 					int rightedge=(int)((rotStart + (hRange / 2)) *(double) mc.displayWidth / hRange )-1;
 					float rotMul = ((float)Math.abs(h) - rotStart) / ((hRange / 2) - rotStart); // Scaled 0...1 from rotStart to FOV edge
-					if(rotMul > 0.15) rotMul = 0.15f;
+					//if(rotMul > 0.15) rotMul = 0.15f;
 
 					if(h < -rotStart){
-						seatedRot += rotSpeed * rotMul * mc.getFrameDelta();
+						seatedRot += rotSpeed * rotMul;
 						seatedRot %= 360; // Prevent stupidly large values
 						hmdForwardYaw = (float)Math.toDegrees(Math.atan2(hdir.x, hdir.z));    
 						Mouse.setCursorPosition(leftedge,Mouse.getY());
 						h=-rotStart;
 					}
 					if(h > rotStart){
-						seatedRot -= rotSpeed * rotMul * mc.getFrameDelta();
+						seatedRot -= rotSpeed * rotMul;
 						seatedRot %= 360; // Prevent stupidly large values
 						hmdForwardYaw = (float)Math.toDegrees(Math.atan2(hdir.x, hdir.z));    
 						Mouse.setCursorPosition(rightedge,Mouse.getY());

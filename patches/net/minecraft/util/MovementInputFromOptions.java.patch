@@ -66,7 +66,7 @@
 -        }
 +	public static float getMovementAxisValue(KeyBinding keyBinding) {
 +		VRInputAction action = MCOpenVR.getInputAction(keyBinding);
-+		return action.isEnabled() ? Math.abs(action.getAxis1D(false)) : 0;
++		return Math.abs(action.getAxis1DUseTracked());
 +	}
 +
 +	private float axisToDigitalMovement(float value) {
@@ -121,8 +121,8 @@
 +
 +			VRInputAction strafeAction = MCOpenVR.getInputAction(MCOpenVR.keyFreeMoveStrafe);
 +			VRInputAction rotateAction = MCOpenVR.getInputAction(MCOpenVR.keyFreeMoveRotate);
-+			Vector2 strafeAxis = strafeAction.isEnabled() ? strafeAction.getAxis2D(false) : new Vector2();
-+			Vector2 rotateAxis = rotateAction.isEnabled() ? rotateAction.getAxis2D(false) : new Vector2();
++			Vector2 strafeAxis = strafeAction.getAxis2DUseTracked();
++			Vector2 rotateAxis = rotateAction.getAxis2DUseTracked();
 +
 +			if (strafeAxis.getX() != 0 || strafeAxis.getY() != 0) {
 +				setMovement = true;
