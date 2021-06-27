@@ -318,7 +318,7 @@ public class VRInputAction {
 
 	public boolean isEnabledRaw(ControllerType hand) {
 		if (isHanded())
-			return enabled[hand.ordinal()];
+			return hand != null && enabled[hand.ordinal()];
 		else
 			return enabled[0];
 	}
