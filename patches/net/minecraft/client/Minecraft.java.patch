@@ -624,7 +624,7 @@
 +			this.ingameGUI.getChatGUI().printChatMessage(chatText);
 +		}
 +	}
-+    public final String minecriftVerString = "Vivecraft 1.12.2 jrbudda-NONVR-11-r4";
++    public final String minecriftVerString = "Vivecraft 1.12.2 jrbudda-NONVR-11-r5";
 +	// FORGE
 +	public ItemColors getItemColors()
 +	{
