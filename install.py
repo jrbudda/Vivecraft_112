@@ -137,6 +137,16 @@ def installAndPatchMcp( mcp_dir ):
     if mcp_exists == False:
         print "No %s directory or zip file found. Please copy the %s.zip file into %s and re-run the command." % (mcp_version, mcp_version, base_dir)
         exit(1)
+    #Remove outdated mcp patches
+    mcppatchesdir = os.path.join(mcp_dir,"conf","patches")
+    if os.path.exists(mcppatchesdir):
+        reallyrmtree(mcppatchesdir)
+        
+    # Patch in mcp (if present)
+    mappingsdir = os.path.join(base_dir,"mcppatches","mappings")
+    mappingstarget = os.path.join(mcp_dir)
+    if os.path.exists(mappingsdir):
+        distutils.dir_util.copy_tree(mappingsdir, mappingstarget);
        
     # Use fixed fernflower.jar
     ff_jar_source_path = os.path.join(base_dir, "mcppatches", "fernflower-opt-fix.jar")
@@ -496,9 +506,11 @@ def main(mcp_dir):
         shutil.rmtree( org_src_dir, True )
     #cleanup expected hunk failure artifacts
     print("Cleaning up...")
-    removeFilesByMatchingPattern(src_dir,"*~")
-    removeFilesByMatchingPattern(src_dir,"*#")
-    
+    if not nocompilefixpatch:
+        removeFilesByMatchingPattern(src_dir,"*~")
+        removeFilesByMatchingPattern(src_dir,"*#")
+        removeFilesByMatchingPattern(src_dir,"*.rej")
+        
     #Copy to org
     shutil.copytree( src_dir, org_src_dir )
 
@@ -544,7 +556,7 @@ def main(mcp_dir):
             applychanges( mcp_dir, patch_dir="mcppatches/patches", backup=False, copyOriginal=False, mergeInNew=False )
         else:
             print("Applying full Vivecraft patches...")
-        applychanges( mcp_dir )
+            applychanges( mcp_dir )
     else:
         print("Apply patches skipped!")
 
